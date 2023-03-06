@@ -12,7 +12,7 @@
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
           "Microsoft.EntityFrameworkCore.SqlServer": "7.0.3",
           "Microsoft.EntityFrameworkCore.Tools": "7.0.3",
-          "Ultility": "1.0.0"
+          "Utility": "1.0.0"
         },
         "runtime": {
           "Data.dll": {}
@@ -968,9 +968,9 @@
           }
         }
       },
-      "Ultility/1.0.0": {
+      "Utility/1.0.0": {
         "runtime": {
-          "Ultility.dll": {}
+          "Utility.dll": {}
         }
       }
     }
@@ -1604,7 +1604,7 @@
       "path": "system.windows.extensions/5.0.0",
       "hashPath": "system.windows.extensions.5.0.0.nupkg.sha512"
     },
-    "Ultility/1.0.0": {
+    "Utility/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

@@ -1,6 +1,6 @@
-﻿using Data.Models.Get;
+﻿using Application.Configurations.Middleware;
+using Data.Models.Get;
 using Data.Models.View;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.Interfaces;
 using System.ComponentModel.DataAnnotations;
