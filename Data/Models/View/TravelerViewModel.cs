@@ -1,6 +1,6 @@
 ﻿namespace Data.Models.View;
 
-public class TravellerViewModel
+public class TravelerViewModel
 {
     public Guid Id { get; set; }
 

@@ -8,7 +8,7 @@ public interface IUnitOfWork
     public IAccountRepository Account { get; }
     public IManagerRepository Manager { get; }
     public ITourGuideRepository TourGuide { get; }
-    public ITravellerRepository Traveller { get; }
+    public ITravelerRepository Traveler { get; }
 
     Task<int> SaveChanges();
     IDbContextTransaction Transaction();

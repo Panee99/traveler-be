@@ -1,6 +1,6 @@
 ﻿namespace Data.Entities;
 
-public class Traveller
+public class Traveler
 {
     public Guid Id { get; set; }
 

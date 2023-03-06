@@ -17,14 +17,14 @@ namespace Service.Implementations;
 public class AuthService : BaseService, IAuthService
 {
     private readonly IManagerRepository _managerRepository;
-    private readonly ITravellerRepository _travellerRepository;
+    private readonly ITravelerRepository _travelerRepository;
     private readonly ITourGuideRepository _tourGuideRepository;
     private readonly AppSetting _appSettings;
 
     public AuthService(IUnitOfWork unitOfWork, IOptions<AppSetting> appSettings) : base(unitOfWork)
     {
         _managerRepository = unitOfWork.Manager;
-        _travellerRepository = unitOfWork.Traveller;
+        _travelerRepository = unitOfWork.Traveler;
         _tourGuideRepository = unitOfWork.TourGuide;
         _appSettings = appSettings.Value;
     }
@@ -52,19 +52,19 @@ public class AuthService : BaseService, IAuthService
         return null!;
     }
 
-    public async Task<TokenViewModel> AuthenticateTraveller(AuthRequestModel model)
+    public async Task<TokenViewModel> AuthenticateTraveler(AuthRequestModel model)
     {
-        var traveller = await _travellerRepository.GetMany(traveller =>
-                traveller.Account.Email.Equals(model.Email) && traveller.Account.Password.Equals(model.Password))
-            .Include(traveller => traveller.Account)
+        var traveler = await _travelerRepository.GetMany(traveler =>
+                traveler.Account.Email.Equals(model.Email) && traveler.Account.Password.Equals(model.Password))
+            .Include(traveler => traveler.Account)
             .FirstOrDefaultAsync();
-        if (traveller != null)
+        if (traveler != null)
         {
             var token = GenerateJwtToken(new AuthViewModel
             {
-                Id = traveller.Id,
-                Role = UserRole.Traveller.ToString(),
-                Status = traveller.Account.Status,
+                Id = traveler.Id,
+                Role = UserRole.Traveler.ToString(),
+                Status = traveler.Account.Status,
             });
             return new TokenViewModel
             {
@@ -140,22 +140,22 @@ public class AuthService : BaseService, IAuthService
         return null!;
     }
 
-    public async Task<TravellerViewModel> GetTravellerById(Guid id)
+    public async Task<TravelerViewModel> GetTravelerById(Guid id)
     {
-        var traveller = await _travellerRepository.GetMany(traveller => traveller.Id.Equals(id))
-            .Include(traveller => traveller.Account)
+        var traveler = await _travelerRepository.GetMany(traveler => traveler.Id.Equals(id))
+            .Include(traveler => traveler.Account)
             .FirstOrDefaultAsync();
-        if (traveller != null)
+        if (traveler != null)
         {
-            return new TravellerViewModel
+            return new TravelerViewModel
             {
-                Id = traveller.Id,
-                AvatarUrl = traveller.AvatarUrl,
-                Birthday = traveller.Birthday,
-                FirstName = traveller.FirstName,
-                LastName = traveller.LastName,
-                Gender = traveller.Gender,
-                Address = traveller.Address,
+                Id = traveler.Id,
+                AvatarUrl = traveler.AvatarUrl,
+                Birthday = traveler.Birthday,
+                FirstName = traveler.FirstName,
+                LastName = traveler.LastName,
+                Gender = traveler.Gender,
+                Address = traveler.Address,
             };
         }
 
@@ -186,14 +186,14 @@ public class AuthService : BaseService, IAuthService
                 }).FirstOrDefaultAsync() ?? null!;
         }
 
-        if (_travellerRepository.Any(traveller => traveller.Id.Equals(id)))
+        if (_travelerRepository.Any(traveler => traveler.Id.Equals(id)))
         {
-            return await _travellerRepository.GetMany(traveller => traveller.Id.Equals(id)).Select(traveller =>
+            return await _travelerRepository.GetMany(traveler => traveler.Id.Equals(id)).Select(traveler =>
                 new AuthViewModel
                 {
-                    Id = traveller.Id,
-                    Role = UserRole.Traveller.ToString(),
-                    Status = traveller.Account.Status
+                    Id = traveler.Id,
+                    Role = UserRole.Traveler.ToString(),
+                    Status = traveler.Account.Status
                 }).FirstOrDefaultAsync() ?? null!;
         }
 

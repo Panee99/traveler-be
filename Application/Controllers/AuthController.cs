@@ -46,18 +46,18 @@ namespace Application.Controllers
             return Ok(tourGuide);
         }
 
-        [Route("travellers")]
+        [Route("travelers")]
         [HttpPost]
         [ProducesResponseType(typeof(AuthViewModel), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<AuthViewModel>> AuthenticateTraveller([FromBody][Required] AuthRequestModel model)
+        public async Task<ActionResult<AuthViewModel>> AuthenticateTraveler([FromBody][Required] AuthRequestModel model)
         {
-            var traveller = await _authService.AuthenticateTraveller(model);
-            if (traveller is null)
+            var traveler = await _authService.AuthenticateTraveler(model);
+            if (traveler is null)
             {
                 return NotFound();
             }
-            return Ok(traveller);
+            return Ok(traveler);
         }
 
         [HttpGet]
@@ -108,18 +108,18 @@ namespace Application.Controllers
 
         [HttpGet]
         [Authorize]
-        [Route("travellers")]
-        [ProducesResponseType(typeof(TravellerViewModel), StatusCodes.Status200OK)]
+        [Route("travelers")]
+        [ProducesResponseType(typeof(TravelerViewModel), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<TravellerViewModel>> GetTraveller()
+        public async Task<ActionResult<TravelerViewModel>> GetTraveler()
         {
             try
             {
                 var auth = (AuthViewModel?)HttpContext.Items["User"];
                 if (auth != null)
                 {
-                    var traveller = await _authService.GetTravellerById(auth.Id);
-                    return traveller != null ? Ok(traveller) : NotFound();
+                    var traveler = await _authService.GetTravelerById(auth.Id);
+                    return traveler != null ? Ok(traveler) : NotFound();
                 }
                 return BadRequest();
             }

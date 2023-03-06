@@ -9,7 +9,7 @@ public interface IAuthService
     Task<ManagerViewModel> GetManagerById(Guid id);
     Task<TokenViewModel> AuthenticateTourGuide(AuthRequestModel model);
     Task<TourGuideViewModel> GetTourGuideById(Guid id);
-    Task<TokenViewModel> AuthenticateTraveller(AuthRequestModel model);
-    Task<TravellerViewModel> GetTravellerById(Guid id);
+    Task<TokenViewModel> AuthenticateTraveler(AuthRequestModel model);
+    Task<TravelerViewModel> GetTravelerById(Guid id);
     Task<AuthViewModel> AuthById(Guid id);
 }

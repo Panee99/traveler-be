@@ -9,7 +9,7 @@ public class UnitOfWork : IUnitOfWork
     private readonly TravelerDbContext _context;
 
     private IAccountRepository? _account;
-    private ITravellerRepository? _traveller;
+    private ITravelerRepository? _traveler;
     private IManagerRepository? _manager;
     private ITourGuideRepository? _tourGuide;
 
@@ -23,9 +23,9 @@ public class UnitOfWork : IUnitOfWork
         get { return _account ??= new AccountRepository(_context); }
     }
 
-    public ITravellerRepository Traveller
+    public ITravelerRepository Traveler
     {
-        get { return _traveller ??= new TravellerRepository(_context); }
+        get { return _traveler ??= new TravelerRepository(_context); }
     }
 
     public IManagerRepository Manager

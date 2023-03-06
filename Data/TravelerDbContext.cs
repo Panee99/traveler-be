@@ -38,7 +38,7 @@ public class TravelerDbContext : DbContext
 
     public virtual DbSet<Transaction> Transactions { get; set; } = null!;
 
-    public virtual DbSet<Traveller> Travellers { get; set; } = null!;
+    public virtual DbSet<Traveler> Travelers { get; set; } = null!;
 
     public virtual DbSet<Waypoint> Waypoints { get; set; } = null!;
 
@@ -89,8 +89,8 @@ public class TravelerDbContext : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__Booking__TourId__4D94879B");
 
-            entity.HasOne(d => d.Traveller).WithMany(p => p.Bookings)
-                .HasForeignKey(d => d.TravellerId)
+            entity.HasOne(d => d.Traveler).WithMany(p => p.Bookings)
+                .HasForeignKey(d => d.TravelerId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__Booking__Travell__4E88ABD4");
         });
@@ -283,11 +283,11 @@ public class TravelerDbContext : DbContext
                 .HasConstraintName("FK__Transacti__Booki__5629CD9C");
         });
 
-        modelBuilder.Entity<Traveller>(entity =>
+        modelBuilder.Entity<Traveler>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__Travelle__3214EC070C655034");
 
-            entity.ToTable("Traveller");
+            entity.ToTable("Traveler");
 
             entity.Property(e => e.Id).ValueGeneratedNever();
             entity.Property(e => e.Address).HasMaxLength(256);
@@ -296,10 +296,10 @@ public class TravelerDbContext : DbContext
             entity.Property(e => e.Gender).HasMaxLength(256);
             entity.Property(e => e.LastName).HasMaxLength(256);
 
-            entity.HasOne(d => d.Account).WithMany(p => p.Travellers)
+            entity.HasOne(d => d.Account).WithMany(p => p.Travelers)
                 .HasForeignKey(d => d.AccountId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Traveller__Accou__4222D4EF");
+                .HasConstraintName("FK__Traveler__Accou__4222D4EF");
         });
 
         modelBuilder.Entity<Waypoint>(entity =>

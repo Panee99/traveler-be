@@ -6,7 +6,7 @@ public class Booking
 
     public Guid TourId { get; set; }
 
-    public Guid TravellerId { get; set; }
+    public Guid TravelerId { get; set; }
 
     public int AdultQuantity { get; set; }
 
@@ -26,5 +26,5 @@ public class Booking
 
     public virtual ICollection<Transaction> Transactions { get; } = new List<Transaction>();
 
-    public virtual Traveller Traveller { get; set; } = null!;
+    public virtual Traveler Traveler { get; set; } = null!;
 }

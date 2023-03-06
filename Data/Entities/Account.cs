@@ -22,5 +22,5 @@ public class Account
 
     public virtual ICollection<Transaction> Transactions { get; } = new List<Transaction>();
 
-    public virtual ICollection<Traveller> Travellers { get; } = new List<Traveller>();
+    public virtual ICollection<Traveler> Travelers { get; } = new List<Traveler>();
 }

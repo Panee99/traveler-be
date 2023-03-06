@@ -2,6 +2,6 @@
 
 namespace Data.Repositories.Interfaces;
 
-public interface ITravellerRepository : IRepository<Traveller>
+public interface ITravelerRepository : IRepository<Traveler>
 {
 }
