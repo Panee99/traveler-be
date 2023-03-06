@@ -1,0 +1,12 @@
+D:\Source\Traveler\Ultility\bin\Debug\net6.0\Ultility.deps.json
+D:\Source\Traveler\Ultility\bin\Debug\net6.0\Ultility.dll
+D:\Source\Traveler\Ultility\bin\Debug\net6.0\Ultility.pdb
+D:\Source\Traveler\Ultility\obj\Debug\net6.0\Ultility.csproj.AssemblyReference.cache
+D:\Source\Traveler\Ultility\obj\Debug\net6.0\Ultility.GeneratedMSBuildEditorConfig.editorconfig
+D:\Source\Traveler\Ultility\obj\Debug\net6.0\Ultility.AssemblyInfoInputs.cache
+D:\Source\Traveler\Ultility\obj\Debug\net6.0\Ultility.AssemblyInfo.cs
+D:\Source\Traveler\Ultility\obj\Debug\net6.0\Ultility.csproj.CoreCompileInputs.cache
+D:\Source\Traveler\Ultility\obj\Debug\net6.0\Ultility.dll
+D:\Source\Traveler\Ultility\obj\Debug\net6.0\refint\Ultility.dll
+D:\Source\Traveler\Ultility\obj\Debug\net6.0\Ultility.pdb
+D:\Source\Traveler\Ultility\obj\Debug\net6.0\ref\Ultility.dll
