@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace Data.Entities;
 
-namespace Data.Entities;
-
-public partial class Manager
+public class Manager
 {
     public Guid Id { get; set; }
 

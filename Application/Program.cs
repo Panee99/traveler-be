@@ -1,4 +1,5 @@
 using Application.Configurations;
+using Data;
 using Data.Entities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -10,7 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.Configure<AppSetting>(builder.Configuration.GetSection("AppSetting"));
 // Add services to the container.
-builder.Services.AddDbContext<TravellerContext>(options =>
+builder.Services.AddDbContext<TravelerDbContext>(options =>
         options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddControllers();
 builder.Services.AddControllersWithViews()

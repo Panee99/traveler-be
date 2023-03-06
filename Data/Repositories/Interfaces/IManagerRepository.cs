@@ -1,8 +1,7 @@
 ﻿using Data.Entities;
 
-namespace Data.Repositories.Interfaces
+namespace Data.Repositories.Interfaces;
+
+public interface IManagerRepository : IRepository<Manager>
 {
-    public interface IManagerRepository: IRepository<Manager>
-    {
-    }
 }

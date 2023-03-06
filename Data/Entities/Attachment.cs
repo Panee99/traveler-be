@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace Data.Entities;
 
-namespace Data.Entities;
-
-public partial class Attachment
+public class Attachment
 {
     public Guid Id { get; set; }
 

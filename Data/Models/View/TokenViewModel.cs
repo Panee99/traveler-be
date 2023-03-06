@@ -1,7 +1,6 @@
-﻿namespace Data.Models.View
+﻿namespace Data.Models.View;
+
+public class TokenViewModel
 {
-    public class TokenViewModel
-    {
-        public string Token { get; set; } = null!;
-    }
+    public string Token { get; set; } = null!;
 }

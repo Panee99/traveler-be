@@ -1,51 +1,46 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Data.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace Data.Entities;
+namespace Data;
 
-public partial class TravellerContext : DbContext
+public class TravelerDbContext : DbContext
 {
-    public TravellerContext()
-    {
-    }
-
-    public TravellerContext(DbContextOptions<TravellerContext> options)
+    public TravelerDbContext(DbContextOptions<TravelerDbContext> options)
         : base(options)
     {
     }
 
-    public virtual DbSet<Account> Accounts { get; set; }
+    public virtual DbSet<Account> Accounts { get; set; } = null!;
 
-    public virtual DbSet<Attachment> Attachments { get; set; }
+    public virtual DbSet<Attachment> Attachments { get; set; } = null!;
 
-    public virtual DbSet<Booking> Bookings { get; set; }
+    public virtual DbSet<Booking> Bookings { get; set; } = null!;
 
-    public virtual DbSet<BookingAppliedDiscount> BookingAppliedDiscounts { get; set; }
+    public virtual DbSet<BookingAppliedDiscount> BookingAppliedDiscounts { get; set; } = null!;
 
-    public virtual DbSet<IncurredCost> IncurredCosts { get; set; }
+    public virtual DbSet<IncurredCost> IncurredCosts { get; set; } = null!;
 
-    public virtual DbSet<Location> Locations { get; set; }
+    public virtual DbSet<Location> Locations { get; set; } = null!;
 
-    public virtual DbSet<LocationTag> LocationTags { get; set; }
+    public virtual DbSet<LocationTag> LocationTags { get; set; } = null!;
 
-    public virtual DbSet<Manager> Managers { get; set; }
+    public virtual DbSet<Manager> Managers { get; set; } = null!;
 
-    public virtual DbSet<Tag> Tags { get; set; }
+    public virtual DbSet<Tag> Tags { get; set; } = null!;
 
-    public virtual DbSet<Tour> Tours { get; set; }
+    public virtual DbSet<Tour> Tours { get; set; } = null!;
 
-    public virtual DbSet<TourCarousel> TourCarousels { get; set; }
+    public virtual DbSet<TourCarousel> TourCarousels { get; set; } = null!;
 
-    public virtual DbSet<TourDiscount> TourDiscounts { get; set; }
+    public virtual DbSet<TourDiscount> TourDiscounts { get; set; } = null!;
 
-    public virtual DbSet<TourGuide> TourGuides { get; set; }
+    public virtual DbSet<TourGuide> TourGuides { get; set; } = null!;
 
-    public virtual DbSet<Transaction> Transactions { get; set; }
+    public virtual DbSet<Transaction> Transactions { get; set; } = null!;
 
-    public virtual DbSet<Traveller> Travellers { get; set; }
+    public virtual DbSet<Traveller> Travellers { get; set; } = null!;
 
-    public virtual DbSet<Waypoint> Waypoints { get; set; }
+    public virtual DbSet<Waypoint> Waypoints { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -326,9 +321,5 @@ public partial class TravellerContext : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__Waypoint__TourId__6477ECF3");
         });
-
-        OnModelCreatingPartial(modelBuilder);
     }
-
-    partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 }
