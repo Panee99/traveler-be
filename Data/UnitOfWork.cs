@@ -43,7 +43,7 @@ public class UnitOfWork : IUnitOfWork
         return await _context.SaveChangesAsync();
     }
 
-    public IDbContextTransaction Transaction()
+    public IDbContextTransaction BeginTransaction()
     {
         return _context.Database.BeginTransaction();
     }

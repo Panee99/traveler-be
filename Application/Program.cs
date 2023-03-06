@@ -1,7 +1,5 @@
 using Application.Configurations;
 using Data;
-using Data.Entities;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;

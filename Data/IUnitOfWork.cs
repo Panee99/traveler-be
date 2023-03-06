@@ -11,5 +11,5 @@ public interface IUnitOfWork
     public ITravelerRepository Traveler { get; }
 
     Task<int> SaveChanges();
-    IDbContextTransaction Transaction();
+    IDbContextTransaction BeginTransaction();
 }
