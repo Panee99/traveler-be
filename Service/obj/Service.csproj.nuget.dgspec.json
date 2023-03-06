@@ -1,35 +1,33 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Source\\Traveler\\Service\\Service.csproj": {}
+    "D:\\Capstone\\traveler-be\\Service\\Service.csproj": {}
   },
   "projects": {
-    "D:\\Source\\Traveler\\Data\\Data.csproj": {
+    "D:\\Capstone\\traveler-be\\Data\\Data.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Source\\Traveler\\Data\\Data.csproj",
+        "projectUniqueName": "D:\\Capstone\\traveler-be\\Data\\Data.csproj",
         "projectName": "Data",
-        "projectPath": "D:\\Source\\Traveler\\Data\\Data.csproj",
-        "packagesPath": "C:\\Users\\Janglee\\.nuget\\packages\\",
-        "outputPath": "D:\\Source\\Traveler\\Data\\obj\\",
+        "projectPath": "D:\\Capstone\\traveler-be\\Data\\Data.csproj",
+        "packagesPath": "C:\\Users\\truon\\.nuget\\packages\\",
+        "outputPath": "D:\\Capstone\\traveler-be\\Data\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Janglee\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "C:\\Users\\truon\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net6.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net6.0": {
             "targetAlias": "net6.0",
             "projectReferences": {
-              "D:\\Source\\Traveler\\Ultility\\Ultility.csproj": {
-                "projectPath": "D:\\Source\\Traveler\\Ultility\\Ultility.csproj"
+              "D:\\Capstone\\traveler-be\\Utility\\Utility.csproj": {
+                "projectPath": "D:\\Capstone\\traveler-be\\Utility\\Utility.csproj"
               }
             }
           }
@@ -79,36 +77,34 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.200\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.406\\RuntimeIdentifierGraph.json"
         }
       }
     },
-    "D:\\Source\\Traveler\\Service\\Service.csproj": {
+    "D:\\Capstone\\traveler-be\\Service\\Service.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Source\\Traveler\\Service\\Service.csproj",
+        "projectUniqueName": "D:\\Capstone\\traveler-be\\Service\\Service.csproj",
         "projectName": "Service",
-        "projectPath": "D:\\Source\\Traveler\\Service\\Service.csproj",
-        "packagesPath": "C:\\Users\\Janglee\\.nuget\\packages\\",
-        "outputPath": "D:\\Source\\Traveler\\Service\\obj\\",
+        "projectPath": "D:\\Capstone\\traveler-be\\Service\\Service.csproj",
+        "packagesPath": "C:\\Users\\truon\\.nuget\\packages\\",
+        "outputPath": "D:\\Capstone\\traveler-be\\Service\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Janglee\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "C:\\Users\\truon\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net6.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net6.0": {
             "targetAlias": "net6.0",
             "projectReferences": {
-              "D:\\Source\\Traveler\\Data\\Data.csproj": {
-                "projectPath": "D:\\Source\\Traveler\\Data\\Data.csproj"
+              "D:\\Capstone\\traveler-be\\Data\\Data.csproj": {
+                "projectPath": "D:\\Capstone\\traveler-be\\Data\\Data.csproj"
               }
             }
           }
@@ -144,28 +140,26 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.200\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.406\\RuntimeIdentifierGraph.json"
         }
       }
     },
-    "D:\\Source\\Traveler\\Ultility\\Ultility.csproj": {
+    "D:\\Capstone\\traveler-be\\Utility\\Utility.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Source\\Traveler\\Ultility\\Ultility.csproj",
-        "projectName": "Ultility",
-        "projectPath": "D:\\Source\\Traveler\\Ultility\\Ultility.csproj",
-        "packagesPath": "C:\\Users\\Janglee\\.nuget\\packages\\",
-        "outputPath": "D:\\Source\\Traveler\\Ultility\\obj\\",
+        "projectUniqueName": "D:\\Capstone\\traveler-be\\Utility\\Utility.csproj",
+        "projectName": "Utility",
+        "projectPath": "D:\\Capstone\\traveler-be\\Utility\\Utility.csproj",
+        "packagesPath": "C:\\Users\\truon\\.nuget\\packages\\",
+        "outputPath": "D:\\Capstone\\traveler-be\\Utility\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Janglee\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "C:\\Users\\truon\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net6.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -199,7 +193,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.200\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.406\\RuntimeIdentifierGraph.json"
         }
       }
     }

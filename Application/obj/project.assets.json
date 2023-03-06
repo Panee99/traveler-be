@@ -2114,7 +2114,7 @@
           "Microsoft.AspNetCore.Http.Features": "5.0.17",
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
           "Microsoft.EntityFrameworkCore.SqlServer": "7.0.3",
-          "Ultility": "1.0.0"
+          "Utility": "1.0.0"
         },
         "compile": {
           "bin/placeholder/Data.dll": {}
@@ -2137,14 +2137,14 @@
           "bin/placeholder/Service.dll": {}
         }
       },
-      "Ultility/1.0.0": {
+      "Utility/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v6.0",
         "compile": {
-          "bin/placeholder/Ultility.dll": {}
+          "bin/placeholder/Utility.dll": {}
         },
         "runtime": {
-          "bin/placeholder/Ultility.dll": {}
+          "bin/placeholder/Utility.dll": {}
         }
       }
     }
@@ -6528,10 +6528,10 @@
       "path": "../Service/Service.csproj",
       "msbuildProject": "../Service/Service.csproj"
     },
-    "Ultility/1.0.0": {
+    "Utility/1.0.0": {
       "type": "project",
-      "path": "../Ultility/Ultility.csproj",
-      "msbuildProject": "../Ultility/Ultility.csproj"
+      "path": "../Utility/Utility.csproj",
+      "msbuildProject": "../Utility/Utility.csproj"
     }
   },
   "projectFileDependencyGroups": {
@@ -6542,44 +6542,42 @@
       "Swashbuckle.AspNetCore >= 6.5.0",
       "Swashbuckle.AspNetCore.Newtonsoft >= 6.5.0",
       "System.IdentityModel.Tokens.Jwt >= 6.26.1",
-      "Ultility >= 1.0.0"
+      "Utility >= 1.0.0"
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Janglee\\.nuget\\packages\\": {}
+    "C:\\Users\\truon\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Source\\Traveler\\Application\\Application.csproj",
+      "projectUniqueName": "D:\\Capstone\\traveler-be\\Application\\Application.csproj",
       "projectName": "Application",
-      "projectPath": "D:\\Source\\Traveler\\Application\\Application.csproj",
-      "packagesPath": "C:\\Users\\Janglee\\.nuget\\packages\\",
-      "outputPath": "D:\\Source\\Traveler\\Application\\obj\\",
+      "projectPath": "D:\\Capstone\\traveler-be\\Application\\Application.csproj",
+      "packagesPath": "C:\\Users\\truon\\.nuget\\packages\\",
+      "outputPath": "D:\\Capstone\\traveler-be\\Application\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\Janglee\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "C:\\Users\\truon\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net6.0"
       ],
       "sources": {
-        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
         "net6.0": {
           "targetAlias": "net6.0",
           "projectReferences": {
-            "D:\\Source\\Traveler\\Data\\Data.csproj": {
-              "projectPath": "D:\\Source\\Traveler\\Data\\Data.csproj"
+            "D:\\Capstone\\traveler-be\\Data\\Data.csproj": {
+              "projectPath": "D:\\Capstone\\traveler-be\\Data\\Data.csproj"
             },
-            "D:\\Source\\Traveler\\Service\\Service.csproj": {
-              "projectPath": "D:\\Source\\Traveler\\Service\\Service.csproj"
+            "D:\\Capstone\\traveler-be\\Service\\Service.csproj": {
+              "projectPath": "D:\\Capstone\\traveler-be\\Service\\Service.csproj"
             },
-            "D:\\Source\\Traveler\\Ultility\\Ultility.csproj": {
-              "projectPath": "D:\\Source\\Traveler\\Ultility\\Ultility.csproj"
+            "D:\\Capstone\\traveler-be\\Utility\\Utility.csproj": {
+              "projectPath": "D:\\Capstone\\traveler-be\\Utility\\Utility.csproj"
             }
           }
         }
@@ -6630,7 +6628,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.200\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.406\\RuntimeIdentifierGraph.json"
       }
     }
   }
