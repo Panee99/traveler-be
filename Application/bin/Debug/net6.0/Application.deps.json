@@ -14,7 +14,7 @@
           "Swashbuckle.AspNetCore": "6.5.0",
           "Swashbuckle.AspNetCore.Newtonsoft": "6.5.0",
           "System.IdentityModel.Tokens.Jwt": "6.26.1",
-          "Ultility": "1.0.0"
+          "Utility": "1.0.0"
         },
         "runtime": {
           "Application.dll": {}
@@ -1178,7 +1178,7 @@
           "Microsoft.AspNetCore.Http.Features": "5.0.17",
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
           "Microsoft.EntityFrameworkCore.SqlServer": "7.0.3",
-          "Ultility": "1.0.0"
+          "Utility": "1.0.0"
         },
         "runtime": {
           "Data.dll": {}
@@ -1193,9 +1193,9 @@
           "Service.dll": {}
         }
       },
-      "Ultility/1.0.0": {
+      "Utility/1.0.0": {
         "runtime": {
-          "Ultility.dll": {}
+          "Utility.dll": {}
         }
       }
     }
@@ -2091,7 +2091,7 @@
       "serviceable": false,
       "sha512": ""
     },
-    "Ultility/1.0.0": {
+    "Utility/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
