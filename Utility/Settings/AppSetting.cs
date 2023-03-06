@@ -1,7 +1,6 @@
-﻿namespace Utility.Settings
+﻿namespace Utility.Settings;
+
+public class AppSetting
 {
-    public class AppSetting
-    {
-        public string Secret { get; set; } = null!;
-    }
+    public string Secret { get; set; } = null!;
 }

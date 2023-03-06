@@ -1,9 +1,8 @@
-﻿namespace Ultility.Enums
+﻿namespace Utility.Enums;
+
+public enum UserRole
 {
-    public enum UserRole
-    {
-        Manager,
-        TourGuide,
-        Traveller,
-    }
+    Manager,
+    TourGuide,
+    Traveller,
 }

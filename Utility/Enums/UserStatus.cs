@@ -1,8 +1,7 @@
-﻿namespace Ultility.Enums
+﻿namespace Utility.Enums;
+
+public enum UserStatus
 {
-    public enum UserStatus
-    {
-        Active,
-        Blocked,
-    }
+    Active,
+    Blocked,
 }

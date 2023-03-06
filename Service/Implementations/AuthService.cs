@@ -9,7 +9,7 @@ using Service.Interfaces;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Ultility.Enums;
+using Utility.Enums;
 using Utility.Settings;
 
 namespace Service.Implementations
@@ -194,7 +194,7 @@ namespace Service.Implementations
                 {
                     new Claim("id", model.Id.ToString()),
                     new Claim("role", model.Role),
-                    new Claim("status", model.Status.ToString()),
+                    new Claim("status", model.Status),
                 }),
                 Expires = DateTime.Now.AddDays(7),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
