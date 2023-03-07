@@ -1,13 +1,13 @@
 ﻿using Data;
 
-namespace Service
+namespace Service;
+
+public class BaseService
 {
-    public class BaseService
+    private IUnitOfWork _unitOfWork;
+
+    protected BaseService(IUnitOfWork unitOfWork)
     {
-        protected IUnitOfWork _unitOfWork;
-        public BaseService(IUnitOfWork unitOfWork)
-        {
-            _unitOfWork = unitOfWork;
-        }
+        _unitOfWork = unitOfWork;
     }
 }

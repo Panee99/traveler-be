@@ -2,6 +2,6 @@
 
 namespace Data.Repositories.Interfaces;
 
-public interface IAccountRepository : IRepository<Account>
+public interface ITravelerRepository : IRepository<Traveler>
 {
 }

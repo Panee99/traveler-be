@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace Data.Entities;
 
-namespace Data.Entities;
-
-public partial class LocationTag
+public class LocationTag
 {
     public Guid LocationId { get; set; }
 

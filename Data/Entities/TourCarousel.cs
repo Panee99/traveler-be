@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace Data.Entities;
 
-namespace Data.Entities;
-
-public partial class TourCarousel
+public class TourCarousel
 {
     public Guid Id { get; set; }
 

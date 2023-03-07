@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace Data.Entities;
 
-namespace Data.Entities;
-
-public partial class TourDiscount
+public class TourDiscount
 {
     public Guid Id { get; set; }
 

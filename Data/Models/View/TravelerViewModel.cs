@@ -1,6 +1,6 @@
-﻿namespace Data.Entities;
+﻿namespace Data.Models.View;
 
-public class Manager
+public class TravelerViewModel
 {
     public Guid Id { get; set; }
 
@@ -14,7 +14,5 @@ public class Manager
 
     public string Gender { get; set; } = null!;
 
-    public Guid AccountId { get; set; }
-
-    public virtual Account Account { get; set; } = null!;
+    public string? Address { get; set; }
 }

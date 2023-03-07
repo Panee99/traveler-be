@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace Data.Entities;
 
-namespace Data.Entities;
-
-public partial class Booking
+public class Booking
 {
     public Guid Id { get; set; }
 
     public Guid TourId { get; set; }
 
-    public Guid TravellerId { get; set; }
+    public Guid TravelerId { get; set; }
 
     public int AdultQuantity { get; set; }
 
@@ -29,5 +26,5 @@ public partial class Booking
 
     public virtual ICollection<Transaction> Transactions { get; } = new List<Transaction>();
 
-    public virtual Traveller Traveller { get; set; } = null!;
+    public virtual Traveler Traveler { get; set; } = null!;
 }

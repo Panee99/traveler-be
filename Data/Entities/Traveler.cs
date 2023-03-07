@@ -1,6 +1,6 @@
 ﻿namespace Data.Entities;
 
-public class Manager
+public class Traveler
 {
     public Guid Id { get; set; }
 
@@ -14,7 +14,11 @@ public class Manager
 
     public string Gender { get; set; } = null!;
 
+    public string? Address { get; set; }
+
     public Guid AccountId { get; set; }
 
     public virtual Account Account { get; set; } = null!;
+
+    public virtual ICollection<Booking> Bookings { get; } = new List<Booking>();
 }

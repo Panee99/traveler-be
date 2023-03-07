@@ -1,17 +1,16 @@
-﻿namespace Data.Models.View
+﻿namespace Data.Models.View;
+
+public class TourGuideViewModel
 {
-    public class TourGuideViewModel
-    {
-        public Guid Id { get; set; }
+    public Guid Id { get; set; }
 
-        public string FirstName { get; set; } = null!;
+    public string FirstName { get; set; } = null!;
 
-        public string LastName { get; set; } = null!;
+    public string LastName { get; set; } = null!;
 
-        public string? AvatarUrl { get; set; }
+    public string? AvatarUrl { get; set; }
 
-        public DateTime? Birthday { get; set; }
+    public DateTime? Birthday { get; set; }
 
-        public string Gender { get; set; } = null!;
-    }
+    public string Gender { get; set; } = null!;
 }

@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace Data.Entities;
 
-namespace Data.Entities;
-
-public partial class Account
+public class Account
 {
     public Guid Id { get; set; }
 
@@ -25,5 +22,5 @@ public partial class Account
 
     public virtual ICollection<Transaction> Transactions { get; } = new List<Transaction>();
 
-    public virtual ICollection<Traveller> Travellers { get; } = new List<Traveller>();
+    public virtual ICollection<Traveler> Travelers { get; } = new List<Traveler>();
 }

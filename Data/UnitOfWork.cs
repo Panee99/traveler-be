@@ -1,52 +1,50 @@
-﻿using Data.Entities;
-using Data.Repositories.Implementations;
+﻿using Data.Repositories.Implementations;
 using Data.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore.Storage;
 
-namespace Data
+namespace Data;
+
+public class UnitOfWork : IUnitOfWork
 {
-    public class UnitOfWork : IUnitOfWork
+    private readonly TravelerDbContext _context;
+
+    private IAccountRepository? _account;
+    private ITravelerRepository? _traveler;
+    private IManagerRepository? _manager;
+    private ITourGuideRepository? _tourGuide;
+
+    public UnitOfWork(TravelerDbContext context)
     {
-        private readonly TravellerContext _context;
+        _context = context;
+    }
 
-        private IAccountRepository _account = null!;
-        private ITravellerRepository _traveller = null!;
-        private IManagerRepository _manager = null!;
-        private ITourGuideRepository _tourGuide = null!;
+    public IAccountRepository Account
+    {
+        get { return _account ??= new AccountRepository(_context); }
+    }
 
-        public UnitOfWork(TravellerContext context)
-        {
-            _context = context;
-        }
+    public ITravelerRepository Traveler
+    {
+        get { return _traveler ??= new TravelerRepository(_context); }
+    }
 
-        public IAccountRepository Account
-        {
-            get { return _account ??= new AccountRepository(_context); }
-        }
+    public IManagerRepository Manager
+    {
+        get { return _manager ??= new ManagerRepository(_context); }
+    }
 
-        public ITravellerRepository Traveller
-        {
-            get { return _traveller ??= new TravellerRepository(_context); }
-        }
+    public ITourGuideRepository TourGuide
+    {
+        get { return _tourGuide ??= new TourGuideRepository(_context); }
+    }
 
-        public IManagerRepository Manager
-        {
-            get { return _manager ??= new ManagerRepository(_context); }
-        }
+    public async Task<int> SaveChanges()
+    {
+        return await _context.SaveChangesAsync();
+    }
 
-        public ITourGuideRepository TourGuide
-        {
-            get { return _tourGuide ??= new TourGuideRepository(_context); }
-        }
-
-        public async Task<int> SaveChanges()
-        {
-            return await _context.SaveChangesAsync();
-        }
-
-        public IDbContextTransaction Transaction()
-        {
-            return _context.Database.BeginTransaction();
-        }
+    public IDbContextTransaction BeginTransaction()
+    {
+        return _context.Database.BeginTransaction();
     }
 }

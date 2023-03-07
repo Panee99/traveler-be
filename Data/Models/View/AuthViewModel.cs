@@ -1,9 +1,8 @@
-﻿namespace Data.Models.View
+﻿namespace Data.Models.View;
+
+public class AuthViewModel
 {
-    public class AuthViewModel
-    {
-        public Guid Id { get; set; }
-        public string Role { get; set; } = null!;
-        public string Status { get; set; } = null!;
-    }
+    public Guid Id { get; set; }
+    public string Role { get; set; } = null!;
+    public string Status { get; set; } = null!;
 }
