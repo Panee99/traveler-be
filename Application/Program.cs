@@ -3,7 +3,7 @@ using Data;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
-using Utility.Settings;
+using Shared.Settings;
 
 var builder = WebApplication.CreateBuilder(args);
 

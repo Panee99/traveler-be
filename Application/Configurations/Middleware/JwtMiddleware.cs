@@ -3,7 +3,7 @@ using Microsoft.IdentityModel.Tokens;
 using Service.Interfaces;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
-using Utility.Settings;
+using Shared.Settings;
 
 namespace Application.Configurations.Middleware
 {
