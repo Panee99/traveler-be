@@ -5,7 +5,7 @@ namespace Data.Repositories.Implementations;
 
 public class TravelerRepository : Repository<Traveler>, ITravelerRepository
 {
-    public TravelerRepository(TravelerDbContext context) : base(context)
+    public TravelerRepository(AppDbContext context) : base(context)
     {
     }
 }

@@ -5,7 +5,7 @@ namespace Data.Repositories.Implementations;
 
 public class AccountRepository : Repository<Account>, IAccountRepository
 {
-    public AccountRepository(TravelerDbContext context) : base(context)
+    public AccountRepository(AppDbContext context) : base(context)
     {
     }
 }

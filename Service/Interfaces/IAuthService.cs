@@ -1,5 +1,5 @@
-﻿using Data.Models.Get;
-using Data.Models.View;
+﻿using Service.Models.Get;
+using Service.Models.View;
 
 namespace Service.Interfaces;
 

@@ -7,7 +7,7 @@ public class Repository<T> : IRepository<T> where T : class
 {
     private readonly DbSet<T> _entities;
 
-    protected Repository(TravelerDbContext context)
+    protected Repository(AppDbContext context)
     {
         _entities = context.Set<T>();
     }

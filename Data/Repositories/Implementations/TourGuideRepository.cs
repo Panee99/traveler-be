@@ -5,7 +5,7 @@ namespace Data.Repositories.Implementations;
 
 public class TourGuideRepository : Repository<TourGuide>, ITourGuideRepository
 {
-    public TourGuideRepository(TravelerDbContext context) : base(context)
+    public TourGuideRepository(AppDbContext context) : base(context)
     {
     }
 }
