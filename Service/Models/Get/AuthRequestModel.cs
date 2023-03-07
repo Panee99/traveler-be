@@ -1,4 +1,4 @@
-﻿namespace Data.Models.Get;
+﻿namespace Service.Models.Get;
 
 public class AuthRequestModel
 {

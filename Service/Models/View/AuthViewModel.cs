@@ -1,4 +1,4 @@
-﻿namespace Data.Models.View;
+﻿namespace Service.Models.View;
 
 public class AuthViewModel
 {

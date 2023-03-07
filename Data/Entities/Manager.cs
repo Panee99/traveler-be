@@ -1,4 +1,6 @@
-﻿namespace Data.Entities;
+﻿using Data.Enums;
+
+namespace Data.Entities;
 
 public class Manager
 {
@@ -12,7 +14,7 @@ public class Manager
 
     public string? AvatarUrl { get; set; }
 
-    public string Gender { get; set; } = null!;
+    public Gender Gender { get; set; }
 
     public Guid AccountId { get; set; }
 

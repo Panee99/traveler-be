@@ -33,6 +33,7 @@ public class AppDbContext : DbContext
         base.ConfigureConventions(configurationBuilder);
         configurationBuilder.Properties<AccountStatus>().HaveConversion<string>();
         configurationBuilder.Properties<PaymentStatus>().HaveConversion<string>();
+        configurationBuilder.Properties<Gender>().HaveConversion<string>();
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

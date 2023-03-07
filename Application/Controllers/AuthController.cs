@@ -1,9 +1,9 @@
 ﻿using Application.Configurations.Middleware;
-using Data.Models.Get;
-using Data.Models.View;
 using Microsoft.AspNetCore.Mvc;
 using Service.Interfaces;
 using System.ComponentModel.DataAnnotations;
+using Service.Models.Get;
+using Service.Models.View;
 
 namespace Application.Controllers
 {

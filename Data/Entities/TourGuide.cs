@@ -1,4 +1,6 @@
-﻿namespace Data.Entities;
+﻿using Data.Enums;
+
+namespace Data.Entities;
 
 public class TourGuide
 {
@@ -12,7 +14,7 @@ public class TourGuide
 
     public DateTime? Birthday { get; set; }
 
-    public string Gender { get; set; } = null!;
+    public Gender Gender { get; set; }
 
     public Guid AccountId { get; set; }
 
