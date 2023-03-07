@@ -1,4 +1,4 @@
-﻿namespace Utility.Enums;
+﻿namespace Shared.Enums;
 
 public enum UserStatus
 {

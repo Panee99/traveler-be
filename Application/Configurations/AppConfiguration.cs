@@ -11,7 +11,8 @@ namespace Application.Configurations
         public static void AddDependenceInjection(this IServiceCollection services)
         {
             services.AddScoped<IAuthService, AuthService>();
-
+            services.AddScoped<ICloudMessagingService, CloudMessagingService>();
+            
             services.AddTransient<IUnitOfWork, UnitOfWork>();
         }
         public static void AddSwagger(this IServiceCollection services)

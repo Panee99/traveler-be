@@ -9,8 +9,8 @@ using Service.Interfaces;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Utility.Enums;
-using Utility.Settings;
+using Shared.Enums;
+using Shared.Settings;
 
 namespace Service.Implementations;
 

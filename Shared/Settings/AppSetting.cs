@@ -1,4 +1,4 @@
-﻿namespace Utility.Settings;
+﻿namespace Shared.Settings;
 
 public class AppSetting
 {
