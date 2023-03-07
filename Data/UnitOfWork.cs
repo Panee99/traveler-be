@@ -6,14 +6,14 @@ namespace Data;
 
 public class UnitOfWork : IUnitOfWork
 {
-    private readonly TravelerDbContext _context;
+    private readonly AppDbContext _context;
 
     private IAccountRepository? _account;
     private ITravelerRepository? _traveler;
     private IManagerRepository? _manager;
     private ITourGuideRepository? _tourGuide;
 
-    public UnitOfWork(TravelerDbContext context)
+    public UnitOfWork(AppDbContext context)
     {
         _context = context;
     }

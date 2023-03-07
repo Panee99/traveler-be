@@ -9,7 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.Configure<AppSetting>(builder.Configuration.GetSection("AppSetting"));
 // Add services to the container.
-builder.Services.AddDbContext<TravelerDbContext>(options =>
+builder.Services.AddDbContext<AppDbContext>(options =>
         options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddControllers();
 builder.Services.AddControllersWithViews()
