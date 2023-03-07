@@ -1,4 +1,6 @@
-﻿namespace Data.Entities;
+﻿using Data.Enums;
+
+namespace Data.Entities;
 
 public class Account
 {
@@ -14,8 +16,8 @@ public class Account
 
     public string? BankAccountNumber { get; set; }
 
-    public string Status { get; set; } = null!;
-
+    public AccountStatus Status { get; set; }
+    
     public virtual ICollection<Manager> Managers { get; } = new List<Manager>();
 
     public virtual ICollection<TourGuide> TourGuides { get; } = new List<TourGuide>();
@@ -24,3 +26,5 @@ public class Account
 
     public virtual ICollection<Traveler> Travelers { get; } = new List<Traveler>();
 }
+
+

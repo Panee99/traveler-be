@@ -10,12 +10,12 @@ namespace Application.Configurations.Middleware
     public class JwtMiddleware
     {
         private readonly RequestDelegate _next;
-        private readonly AppSetting _appSettings;
+        private readonly AppSettings _appSettingses;
 
-        public JwtMiddleware(RequestDelegate next, IOptions<AppSetting> appSettings)
+        public JwtMiddleware(RequestDelegate next, IOptions<AppSettings> appSettings)
         {
             _next = next;
-            _appSettings = appSettings.Value;
+            _appSettingses = appSettings.Value;
         }
 
         public async Task Invoke(HttpContext context, IAuthService authService)
@@ -31,7 +31,7 @@ namespace Application.Configurations.Middleware
             try
             {
                 var tokenHandler = new JwtSecurityTokenHandler();
-                var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
+                var key = Encoding.ASCII.GetBytes(_appSettingses.JwtSecret);
                 tokenHandler.ValidateToken(token, new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,

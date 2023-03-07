@@ -1,6 +1,4 @@
 ﻿using Data;
-using Data.Models.Get;
-using Data.Models.View;
 using Data.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -9,6 +7,8 @@ using Service.Interfaces;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Service.Models.Get;
+using Service.Models.View;
 using Shared.Enums;
 using Shared.Settings;
 
@@ -19,14 +19,14 @@ public class AuthService : BaseService, IAuthService
     private readonly IManagerRepository _managerRepository;
     private readonly ITravelerRepository _travelerRepository;
     private readonly ITourGuideRepository _tourGuideRepository;
-    private readonly AppSetting _appSettings;
+    private readonly AppSettings _appSettingses;
 
-    public AuthService(IUnitOfWork unitOfWork, IOptions<AppSetting> appSettings) : base(unitOfWork)
+    public AuthService(IUnitOfWork unitOfWork, IOptions<AppSettings> appSettings) : base(unitOfWork)
     {
         _managerRepository = unitOfWork.Manager;
         _travelerRepository = unitOfWork.Traveler;
         _tourGuideRepository = unitOfWork.TourGuide;
-        _appSettings = appSettings.Value;
+        _appSettingses = appSettings.Value;
     }
 
     public async Task<TokenViewModel> AuthenticateManager(AuthRequestModel model)
@@ -41,7 +41,7 @@ public class AuthService : BaseService, IAuthService
             {
                 Id = manager.Id,
                 Role = UserRole.Manager.ToString(),
-                Status = manager.Account.Status,
+                Status = manager.Account.Status.ToString(),
             });
             return new TokenViewModel
             {
@@ -64,7 +64,7 @@ public class AuthService : BaseService, IAuthService
             {
                 Id = traveler.Id,
                 Role = UserRole.Traveler.ToString(),
-                Status = traveler.Account.Status,
+                Status = traveler.Account.Status.ToString(),
             });
             return new TokenViewModel
             {
@@ -87,7 +87,7 @@ public class AuthService : BaseService, IAuthService
             {
                 Id = tourGuide.Id,
                 Role = UserRole.TourGuide.ToString(),
-                Status = tourGuide.Account.Status,
+                Status = tourGuide.Account.Status.ToString(),
             });
             return new TokenViewModel
             {
@@ -112,7 +112,7 @@ public class AuthService : BaseService, IAuthService
                 Birthday = manager.Birthday,
                 FirstName = manager.FirstName,
                 LastName = manager.LastName,
-                Gender = manager.Gender,
+                Gender = manager.Gender.ToString(),
             };
         }
 
@@ -133,7 +133,7 @@ public class AuthService : BaseService, IAuthService
                 Birthday = tourGuide.Birthday,
                 FirstName = tourGuide.FirstName,
                 LastName = tourGuide.LastName,
-                Gender = tourGuide.Gender,
+                Gender = tourGuide.Gender.ToString(),
             };
         }
 
@@ -154,7 +154,7 @@ public class AuthService : BaseService, IAuthService
                 Birthday = traveler.Birthday,
                 FirstName = traveler.FirstName,
                 LastName = traveler.LastName,
-                Gender = traveler.Gender,
+                Gender = traveler.Gender.ToString(),
                 Address = traveler.Address,
             };
         }
@@ -171,7 +171,7 @@ public class AuthService : BaseService, IAuthService
                 {
                     Id = manager.Id,
                     Role = UserRole.Manager.ToString(),
-                    Status = manager.Account.Status
+                    Status = manager.Account.Status.ToString()
                 }).FirstOrDefaultAsync() ?? null!;
         }
 
@@ -182,7 +182,7 @@ public class AuthService : BaseService, IAuthService
                 {
                     Id = tourGuide.Id,
                     Role = UserRole.TourGuide.ToString(),
-                    Status = tourGuide.Account.Status
+                    Status = tourGuide.Account.Status.ToString()
                 }).FirstOrDefaultAsync() ?? null!;
         }
 
@@ -193,7 +193,7 @@ public class AuthService : BaseService, IAuthService
                 {
                     Id = traveler.Id,
                     Role = UserRole.Traveler.ToString(),
-                    Status = traveler.Account.Status
+                    Status = traveler.Account.Status.ToString()
                 }).FirstOrDefaultAsync() ?? null!;
         }
 
@@ -203,7 +203,7 @@ public class AuthService : BaseService, IAuthService
     private string GenerateJwtToken(AuthViewModel model)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
+        var key = Encoding.ASCII.GetBytes(_appSettingses.JwtSecret);
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(new[]

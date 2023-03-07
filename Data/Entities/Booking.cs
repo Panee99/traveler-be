@@ -1,4 +1,6 @@
-﻿namespace Data.Entities;
+﻿using Data.Enums;
+
+namespace Data.Entities;
 
 public class Booking
 {
@@ -18,7 +20,7 @@ public class Booking
 
     public DateTime UpdatedAt { get; set; }
 
-    public string PaymentStatus { get; set; } = null!;
+    public PaymentStatus PaymentStatus { get; set; }
 
     public virtual ICollection<BookingAppliedDiscount> BookingAppliedDiscounts { get; } = new List<BookingAppliedDiscount>();
 

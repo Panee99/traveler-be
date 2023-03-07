@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using Data.Models.View;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Service.Models.View;
 
 namespace Application.Configurations.Middleware
 {
