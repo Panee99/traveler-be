@@ -12,9 +12,10 @@ public class Repository<T> : IRepository<T> where T : class
         _entities = context.Set<T>();
     }
 
-    public void Add(T entity)
+    public async Task<T> Add(T entity)
     {
-        _entities.Add(entity);
+        var result = await _entities.AddAsync(entity);
+        return result.Entity;
     }
 
     public void AddRange(IEnumerable<T> entities)

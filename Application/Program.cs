@@ -8,6 +8,8 @@ using Shared.Settings;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
+builder.Services.Configure<VnPaySettings>(builder.Configuration.GetSection("VnPaySettings"));
+
 // Add services to the container.
 builder.Services.AddDbContext<AppDbContext>(options =>
         options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
