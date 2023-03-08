@@ -12,7 +12,8 @@ public class UnitOfWork : IUnitOfWork
     private ITravelerRepository? _traveler;
     private IManagerRepository? _manager;
     private ITourGuideRepository? _tourGuide;
-
+    private ITourRepository? _tour;
+    
     public UnitOfWork(AppDbContext context)
     {
         _context = context;
@@ -26,6 +27,11 @@ public class UnitOfWork : IUnitOfWork
     public ITravelerRepository Traveler
     {
         get { return _traveler ??= new TravelerRepository(_context); }
+    }
+
+    public ITourRepository Tour
+    {
+        get { return _tour ??= new TourRepository(_context); }
     }
 
     public IManagerRepository Manager
