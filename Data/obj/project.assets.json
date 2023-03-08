@@ -4198,11 +4198,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Source\\traveler-be\\Data\\Data.csproj",
+      "projectUniqueName": "D:\\Source\\Traveler-BE\\Data\\Data.csproj",
       "projectName": "Data",
-      "projectPath": "D:\\Source\\traveler-be\\Data\\Data.csproj",
+      "projectPath": "D:\\Source\\Traveler-BE\\Data\\Data.csproj",
       "packagesPath": "C:\\Users\\Janglee\\.nuget\\packages\\",
-      "outputPath": "D:\\Source\\traveler-be\\Data\\obj\\",
+      "outputPath": "D:\\Source\\Traveler-BE\\Data\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Janglee\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -4219,8 +4219,8 @@
         "net6.0": {
           "targetAlias": "net6.0",
           "projectReferences": {
-            "D:\\Source\\traveler-be\\Utility\\Utility.csproj": {
-              "projectPath": "D:\\Source\\traveler-be\\Utility\\Utility.csproj"
+            "D:\\Source\\Traveler-BE\\Utility\\Utility.csproj": {
+              "projectPath": "D:\\Source\\Traveler-BE\\Utility\\Utility.csproj"
             }
           }
         }
@@ -4270,7 +4270,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.200\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.201\\RuntimeIdentifierGraph.json"
       }
     }
   }
