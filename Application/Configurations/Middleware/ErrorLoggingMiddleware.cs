@@ -11,7 +11,7 @@ public class ErrorLoggingMiddleware
     {
         Log.Logger = new LoggerConfiguration()
             .MinimumLevel.Warning()
-            .WriteTo.File("logs/log.txt", rollingInterval: RollingInterval.Month,
+            .WriteTo.File("logs/log-.txt", rollingInterval: RollingInterval.Month,
                 outputTemplate:
                 "{Properties:j}{NewLine}{Timestamp:dd-MM-yyyy HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}")
             .CreateLogger();
