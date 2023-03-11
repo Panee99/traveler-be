@@ -1,11 +1,11 @@
 using Application.Configurations;
+using Application.Configurations.Middleware;
 using Data;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
-
 // Add services to the container.
 builder.AddSettings();
 builder.Services.AddDependenceInjection();
@@ -28,17 +28,17 @@ builder.Services.AddControllersWithViews()
 
 var app = builder.Build();
 Console.WriteLine(app.Environment.EnvironmentName);
+app.UseMiddleware<ErrorLoggingMiddleware>();
 
+// Configure the HTTP request pipeline.
 app.UseCors(x => x
     .AllowAnyHeader()
     .AllowAnyMethod()
     .AllowAnyOrigin());
-
-// Configure the HTTP request pipeline.
 app.UseSwagger();
 app.UseSwaggerUI();
 app.UseAuthentication();
-app.UseJwt();
+app.UseMiddleware<JwtMiddleware>();
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
