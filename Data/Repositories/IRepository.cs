@@ -12,7 +12,7 @@ public interface IRepository<T> where T : class
 
     int Count();
 
-    void Add(T entity);
+    Task<T> Add(T entity);
 
     void AddRange(IEnumerable<T> entities);
 
