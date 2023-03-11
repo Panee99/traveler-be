@@ -18,8 +18,6 @@ public class Error
         ErrorDetails = errorDetails ?? new Dictionary<string, string>();
     }
 
-    public static Error Failure(IDictionary<string, string>? errorDetails = null) =>
-        new(ErrorType.Failure, "General.Failure", "A failure error has occurred.", errorDetails);
 
     public static Error Validation(IDictionary<string, string>? errorDetails = null) =>
         new(ErrorType.Validation, "General.Validation", "A validation error has occurred.", errorDetails);

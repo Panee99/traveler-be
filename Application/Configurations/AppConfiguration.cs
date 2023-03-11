@@ -3,11 +3,18 @@ using Data;
 using Microsoft.OpenApi.Models;
 using Service.Implementations;
 using Service.Interfaces;
+using Shared.Settings;
 
 namespace Application.Configurations
 {
     public static class AppConfiguration
     {
+        public static void AddSettings(this WebApplicationBuilder builder)
+        {
+            builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
+            builder.Services.Configure<VnPaySettings>(builder.Configuration.GetSection("VnPaySettings"));
+        }
+        
         public static void AddDependenceInjection(this IServiceCollection services)
         {
             services.AddScoped<IAuthService, AuthService>();

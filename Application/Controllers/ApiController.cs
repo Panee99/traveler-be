@@ -31,10 +31,6 @@ public class ApiController : ControllerBase
                 _logger.LogError("Unexpected error: {Code} - {Message}", error.Code, error.Message);
                 response.StatusCode = (int)HttpStatusCode.InternalServerError;
                 break;
-            case ErrorType.Failure:
-                _logger.LogError("Failure error: {Code} - {Message}", error.Code, error.Message);
-                response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                break;
             case ErrorType.Validation:
                 response.StatusCode = (int)HttpStatusCode.BadRequest;
                 break;
