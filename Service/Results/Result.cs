@@ -6,8 +6,8 @@ public class Result
 
     public Error Error { get; }
 
-    protected static readonly Error NoError = new(ErrorType.Unexpected, "General.NoError",
-        "Success result has no error.");
+    protected static readonly Error NoError =
+        Error.Custom(ErrorType.Unexpected, "General.NoError", "Success result has no error.");
 
     protected Result(bool isSuccess, Error error)
     {
@@ -18,7 +18,7 @@ public class Result
     public static Result Success() => new(true, NoError);
 
     public static implicit operator Result(Error error) => new(false, error);
-    
+
     public TResult Match<TResult>(Func<TResult> onSuccess, Func<Error, TResult> onError) =>
         IsSuccess ? onSuccess() : onError(Error);
 }
