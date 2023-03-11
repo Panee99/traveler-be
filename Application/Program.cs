@@ -29,7 +29,10 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwagger();
 builder.Services.AddDependenceInjection();
 
+
 var app = builder.Build();
+
+Console.WriteLine(app.Environment.EnvironmentName);
 
 app.UseCors(x => x
                           .AllowAnyHeader()
@@ -53,3 +56,5 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+
