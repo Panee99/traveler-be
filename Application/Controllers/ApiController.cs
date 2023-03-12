@@ -2,24 +2,18 @@
 using Application.Commons;
 using Microsoft.AspNetCore.Mvc;
 using Service.Results;
+using Shared;
 
 namespace Application.Controllers;
 
 [ApiController]
 public class ApiController : ControllerBase
 {
-    private readonly ILogger<ApiController> _logger;
-
-    public ApiController(ILogger<ApiController> logger)
-    {
-        _logger = logger;
-    }
-
     protected IActionResult OnError(Error error)
     {
         var response = new ObjectResult(new ErrorResponsePayload()
         {
-            Timestamp = DateTime.Now,
+            Timestamp = DateTimeHelper.VnNow(),
             Code = error.Code,
             Message = error.Message,
             Details = error.ErrorDetails
@@ -28,7 +22,7 @@ public class ApiController : ControllerBase
         switch (error.ErrorType)
         {
             case ErrorType.Unexpected:
-                _logger.LogError("Unexpected error: {Code} - {Message}", error.Code, error.Message);
+                // Log.Warning("Unexpected error: {Code} - {Message}", error.Code, error.Message);
                 response.StatusCode = (int)HttpStatusCode.InternalServerError;
                 break;
             case ErrorType.Validation:

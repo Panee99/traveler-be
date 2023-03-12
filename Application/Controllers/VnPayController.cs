@@ -1,0 +1,66 @@
+﻿using Data.Models.Create;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
+using Service.Interfaces;
+using Shared;
+using Shared.Settings;
+using Shared.VnPay;
+using Shared.VnPay.Models;
+
+namespace Application.Controllers;
+
+[Route("pay")]
+public class VnPayController : ApiController
+{
+    private readonly VnPaySettings _vnPaySettings;
+    private readonly IVnPayRequestService _vnPayRequestService;
+    private readonly IVnPayResponseService _vnPayResponseService;
+
+    public VnPayController(IOptions<VnPaySettings> vnPaySettings,
+        IVnPayRequestService vnPayRequestService, IVnPayResponseService vnPayResponseService)
+    {
+        _vnPayRequestService = vnPayRequestService;
+        _vnPayResponseService = vnPayResponseService;
+        _vnPaySettings = vnPaySettings.Value;
+    }
+
+    [HttpPost("request")]
+    public async Task<IActionResult> Deposit(VnPayInputModel input)
+    {
+        var now = DateTimeHelper.VnNow();
+        var clientIp = HttpContext.Connection.RemoteIpAddress?.MapToIPv4().ToString() ?? "";
+        var requestModel = new VnPayRequestModel()
+        {
+            TxnRef = Guid.NewGuid(),
+            Command = VnPayConstants.Command,
+            Locale = VnPayConstants.Locale,
+            Version = VnPayConstants.Version,
+            CurrencyCode = VnPayConstants.CurrencyCode,
+            Amount = input.Amount,
+            CreateDate = now,
+            ExpireDate = now.AddMinutes(15),
+            OrderInfo = $"User A pay booking B: {input.Amount} VND",
+            IpAddress = clientIp,
+            ReturnUrl = $"{_vnPaySettings.ReturnUrl}/pay/response",
+            TmnCode = _vnPaySettings.TmnCode
+        };
+
+        var result = await _vnPayRequestService.Add(requestModel);
+        return result.Match(() =>
+        {
+            var url = VnPay.CreateRequestUrl(requestModel, _vnPaySettings.BaseUrl, _vnPaySettings.HashSecret);
+            return Ok(url);
+        }, OnError);
+    }
+
+    [HttpGet("ipn")]
+    public async Task<IActionResult> DepositResponse([FromQuery] Dictionary<string, string> queryParams)
+    {
+        if (!VnPay.ValidateSignature(_vnPaySettings.HashSecret, queryParams))
+            return BadRequest("Invalid Signature.");
+
+        var model = VnPay.ParseToResponseModel(queryParams);
+        var result = await _vnPayResponseService.Add(model);
+        return result.Match(Ok, OnError);
+    }
+}

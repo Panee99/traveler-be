@@ -1,4 +1,5 @@
-﻿using Data.Repositories.Implementations;
+﻿using Data.Repositories;
+using Data.Repositories.Implementations;
 using Data.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore.Storage;
 
@@ -7,13 +8,11 @@ namespace Data;
 public class UnitOfWork : IUnitOfWork
 {
     private readonly AppDbContext _context;
-
     private IAccountRepository? _account;
     private ITravelerRepository? _traveler;
     private IManagerRepository? _manager;
     private ITourGuideRepository? _tourGuide;
-    private ITourRepository? _tour;
-    
+
     public UnitOfWork(AppDbContext context)
     {
         _context = context;
@@ -29,11 +28,6 @@ public class UnitOfWork : IUnitOfWork
         get { return _traveler ??= new TravelerRepository(_context); }
     }
 
-    public ITourRepository Tour
-    {
-        get { return _tour ??= new TourRepository(_context); }
-    }
-
     public IManagerRepository Manager
     {
         get { return _manager ??= new ManagerRepository(_context); }
@@ -44,13 +38,21 @@ public class UnitOfWork : IUnitOfWork
         get { return _tourGuide ??= new TourGuideRepository(_context); }
     }
 
-    public async Task<int> SaveChanges()
+
+    // Generic Repository
+    private readonly Dictionary<Type, object> _repoCache = new();
+
+    public IRepository<T> Repo<T>() where T : class
     {
-        return await _context.SaveChangesAsync();
+        if (_repoCache.TryGetValue(typeof(T), out var repo))
+            return (IRepository<T>)repo;
+
+        var newRepo = new Repository<T>(_context);
+        _repoCache.Add(typeof(T), newRepo);
+        return newRepo;
     }
 
-    public IDbContextTransaction BeginTransaction()
-    {
-        return _context.Database.BeginTransaction();
-    }
+    public async Task<int> SaveChangesAsync() => await _context.SaveChangesAsync();
+
+    public IDbContextTransaction BeginTransaction() => _context.Database.BeginTransaction();
 }

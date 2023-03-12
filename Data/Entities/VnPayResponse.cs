@@ -1,8 +1,8 @@
-﻿namespace Shared.VnPay.Models;
+﻿
+namespace Data.Entities;
 
-public class VnPayResponseModel
+public class VnPayResponse
 {
-    public Guid TxnRef { get; set; }
     public string TmnCode { get; set; } = null!;
     public int Amount { get; set; }
     public string BankCode { get; set; } = null!;
@@ -11,8 +11,15 @@ public class VnPayResponseModel
     public string ResponseCode { get; set; } = null!;
     public string TransactionStatus { get; set; } = null!;
     public string SecureHash { get; set; } = null!;
+    public DateTime Timestamp { get; set; }
     public string? BankTranNo { get; set; }
     public string? CardType { get; set; }
     public string? PayDate { get; set; }
     public string? SecureHashType { get; set; }
+    
+    /// <summary>
+    /// Reference and Key
+    /// </summary>
+    public Guid TxnRef { get; set; }
+    public virtual VnPayRequest? VnPayRequest { get; set; }
 }

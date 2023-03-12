@@ -1,4 +1,7 @@
-﻿using Data;
+﻿using System.Reflection;
+using Data;
+using Mapster;
+using MapsterMapper;
 using Microsoft.OpenApi.Models;
 using Service.Implementations;
 using Service.Interfaces;
@@ -16,9 +19,18 @@ namespace Application.Configurations
 
         public static void AddDependenceInjection(this IServiceCollection services)
         {
+            // Add Mapper
+            var config = TypeAdapterConfig.GlobalSettings;
+            config.Scan(Assembly.GetExecutingAssembly());
+            services.AddSingleton(config);
+            services.AddScoped<IMapper, ServiceMapper>();
+            
+            // Add Services
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<ICloudMessagingService, CloudMessagingService>();
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IVnPayRequestService, VnPayRequestService>();
+            services.AddScoped<IVnPayResponseService, VnPayResponseService>();
         }
 
         public static void AddSwagger(this IServiceCollection services)

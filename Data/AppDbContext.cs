@@ -27,6 +27,8 @@ public class AppDbContext : DbContext
     public virtual DbSet<Transaction> Transactions { get; set; } = null!;
     public virtual DbSet<Traveler> Travelers { get; set; } = null!;
     public virtual DbSet<Waypoint> Waypoints { get; set; } = null!;
+    public virtual DbSet<VnPayRequest> VnPayRequests { get; set; } = null!;
+    public virtual DbSet<VnPayResponse> VnPayResponses { get; set; } = null!;
 
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
     {
@@ -34,6 +36,7 @@ public class AppDbContext : DbContext
         configurationBuilder.Properties<AccountStatus>().HaveConversion<string>();
         configurationBuilder.Properties<PaymentStatus>().HaveConversion<string>();
         configurationBuilder.Properties<Gender>().HaveConversion<string>();
+        configurationBuilder.Properties<VnPayRequestStatus>().HaveConversion<string>();
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -228,5 +231,13 @@ public class AppDbContext : DbContext
                 .HasForeignKey(d => d.TourId)
                 .OnDelete(DeleteBehavior.ClientSetNull);
         });
+
+        modelBuilder.Entity<VnPayRequest>(entity => { entity.HasKey(e => e.TxnRef); });
+        
+        modelBuilder.Entity<VnPayResponse>(entity => { entity.HasKey(e => e.TxnRef); });
+        modelBuilder.Entity<VnPayResponse>()
+            .HasOne(response => response.VnPayRequest)
+            .WithOne(request => request.VnPayResponse)
+            .HasForeignKey<VnPayResponse>(x => x.TxnRef);
     }
 }
