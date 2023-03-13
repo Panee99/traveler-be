@@ -7,7 +7,7 @@ public class VnPayResponseModel
     public int Amount { get; set; }
     public string BankCode { get; set; } = null!;
     public string OrderInfo { get; set; } = null!;
-    public int TransactionNo { get; set; }
+    public string TransactionNo { get; set; } = null!;
     public string ResponseCode { get; set; } = null!;
     public string TransactionStatus { get; set; } = null!;
     public string SecureHash { get; set; } = null!;
