@@ -1,4 +1,5 @@
-﻿using Data.Repositories.Interfaces;
+﻿using Data.Repositories;
+using Data.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Data;
@@ -9,8 +10,8 @@ public interface IUnitOfWork
     public IManagerRepository Manager { get; }
     public ITourGuideRepository TourGuide { get; }
     public ITravelerRepository Traveler { get; }
-    public ITourRepository Tour { get; }
-    
-    Task<int> SaveChanges();
+
+    IRepository<T> Repo<T>() where T : class;
+    Task<int> SaveChangesAsync();
     IDbContextTransaction BeginTransaction();
 }

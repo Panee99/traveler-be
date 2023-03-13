@@ -19,14 +19,14 @@ public class AuthService : BaseService, IAuthService
     private readonly IManagerRepository _managerRepository;
     private readonly ITravelerRepository _travelerRepository;
     private readonly ITourGuideRepository _tourGuideRepository;
-    private readonly AppSettings _appSettingses;
+    private readonly AppSettings _appSettings;
 
     public AuthService(IUnitOfWork unitOfWork, IOptions<AppSettings> appSettings) : base(unitOfWork)
     {
         _managerRepository = unitOfWork.Manager;
         _travelerRepository = unitOfWork.Traveler;
         _tourGuideRepository = unitOfWork.TourGuide;
-        _appSettingses = appSettings.Value;
+        _appSettings = appSettings.Value;
     }
 
     public async Task<TokenViewModel> AuthenticateManager(AuthRequestModel model)
@@ -203,7 +203,7 @@ public class AuthService : BaseService, IAuthService
     private string GenerateJwtToken(AuthViewModel model)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.ASCII.GetBytes(_appSettingses.JwtSecret);
+        var key = Encoding.ASCII.GetBytes(_appSettings.JwtSecret);
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(new[]

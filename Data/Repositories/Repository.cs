@@ -7,14 +7,14 @@ public class Repository<T> : IRepository<T> where T : class
 {
     private readonly DbSet<T> _entities;
 
-    protected Repository(AppDbContext context)
+    public Repository(AppDbContext context)
     {
         _entities = context.Set<T>();
     }
 
-    public async Task<T> Add(T entity)
+    public T Add(T entity)
     {
-        var result = await _entities.AddAsync(entity);
+        var result = _entities.Add(entity);
         return result.Entity;
     }
 
