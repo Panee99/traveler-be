@@ -1,4 +1,4 @@
-﻿using Data.Models.Create;
+﻿using Data.Models.VnPay;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Service.Interfaces;
@@ -25,7 +25,7 @@ public class VnPayController : ApiController
     }
 
     [HttpPost("request")]
-    public async Task<IActionResult> Deposit(VnPayInputModel input)
+    public async Task<IActionResult> CreatePayRequest(VnPayInputModel input)
     {
         var now = DateTimeHelper.VnNow();
         var clientIp = HttpContext.Connection.RemoteIpAddress?.MapToIPv4().ToString() ?? "";
@@ -41,7 +41,7 @@ public class VnPayController : ApiController
             ExpireDate = now.AddMinutes(15),
             OrderInfo = $"User A pay booking B: {input.Amount} VND",
             IpAddress = clientIp,
-            ReturnUrl = $"{_vnPaySettings.ReturnUrl}/pay/response",
+            ReturnUrl = _vnPaySettings.ReturnUrl,
             TmnCode = _vnPaySettings.TmnCode
         };
 
@@ -53,9 +53,11 @@ public class VnPayController : ApiController
         }, OnError);
     }
 
+    [ApiExplorerSettings(IgnoreApi = true)]
     [HttpGet("ipn")]
-    public async Task<IActionResult> DepositResponse([FromQuery] Dictionary<string, string> queryParams)
+    public async Task<IActionResult> VnPayIpnEntry([FromQuery] Dictionary<string, string> queryParams)
     {
+        // TODO: return RspCode, Message 
         if (!VnPay.ValidateSignature(_vnPaySettings.HashSecret, queryParams))
             return BadRequest("Invalid Signature.");
 
@@ -63,4 +65,29 @@ public class VnPayController : ApiController
         var result = await _vnPayResponseService.Add(model);
         return result.Match(Ok, OnError);
     }
+
+    [HttpGet("result")]
+    public IActionResult PaymentResult([FromQuery] Dictionary<string, string> queryParams)
+    {
+        if (!VnPay.ValidateSignature(_vnPaySettings.HashSecret, queryParams))
+            return BadRequest("Invalid Signature.");
+        var model = VnPay.ParseToResponseModel(queryParams);
+
+        DateTime? payDate = model.PayDate is null
+            ? null
+            : DateTime.ParseExact(model.PayDate, "yyyyMMddHHmmss", System.Globalization.CultureInfo.InvariantCulture);
+
+        return Ok(new PaymentResultModel()
+        {
+            TransactionStatus = model.TransactionStatus,
+            Response = model.ResponseCode,
+            OrderInfo = model.OrderInfo,
+            BankCode = model.BankCode,
+            Amount = model.Amount,
+            CardType = model.CardType,
+            PayDate = payDate,
+            TransactionNo = model.TransactionNo,
+        });
+    }
 }
+

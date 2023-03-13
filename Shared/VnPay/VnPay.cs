@@ -65,11 +65,11 @@ public static class VnPay
     {
         var model = new VnPayResponseModel()
         {
-            TransactionNo = int.Parse(_tryGetRequiredParam("vnp_TransactionNo", queryParams)),
+            TransactionNo = _tryGetRequiredParam("vnp_TransactionNo", queryParams),
             TransactionStatus = _tryGetRequiredParam("vnp_TransactionStatus", queryParams),
             ResponseCode = _tryGetRequiredParam("vnp_ResponseCode", queryParams),
             TxnRef = Guid.Parse(_tryGetRequiredParam("vnp_TxnRef", queryParams)),
-            Amount = int.Parse(_tryGetRequiredParam("vnp_Amount", queryParams)),
+            Amount = int.Parse(_tryGetRequiredParam("vnp_Amount", queryParams)) / 100,
             SecureHash = _tryGetRequiredParam("vnp_SecureHash", queryParams),
             OrderInfo = _tryGetRequiredParam("vnp_OrderInfo", queryParams),
             BankCode = _tryGetRequiredParam("vnp_BankCode", queryParams),
