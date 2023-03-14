@@ -5,13 +5,17 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using Serilog;
+using Shared.Firebase;
 
 // Serilog for file logging
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Warning()
     .WriteTo.File(path: "logs/log-.txt", rollingInterval: RollingInterval.Month,
-        outputTemplate: "[{Level:w3}] {Timestamp:dd-MM-yyyy HH:mm:ss.fff zzz}{NewLine}{Message:lj}{NewLine}{Exception}")
+        outputTemplate: "[{Level:w3}] {Timestamp:dd-MM-yyyy HH:mm:ss.fff zzz}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}")
     .CreateLogger();
+
+// Init Firebase
+FirebaseAppInitializer.Init();
 
 // BUILDER
 var builder = WebApplication.CreateBuilder(args);
@@ -21,13 +25,17 @@ var builder = WebApplication.CreateBuilder(args);
         .ClearProviders()
         .AddConsole()
         .AddSerilog();
-    
+
     // Add services to the container.
     builder.AddSettings();
     builder.Services.AddDependenceInjection();
 
-    builder.Services.AddDbContext<AppDbContext>(options =>
-        options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    builder.Services.AddDbContextPool<AppDbContext>(optionsBuilder =>
+        optionsBuilder.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    
+    // builder.Services.AddDbContext<AppDbContext>(options =>
+    //     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    
     builder.Services.AddControllers();
     builder.Services.AddSwaggerGenNewtonsoftSupport();
     builder.Services.AddSwagger();

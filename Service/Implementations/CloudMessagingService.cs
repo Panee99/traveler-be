@@ -13,8 +13,6 @@ public class CloudMessagingService : ICloudMessagingService
     
     static CloudMessagingService()
     {
-        Console.WriteLine(FirebaseApp.DefaultInstance);
-        if (FirebaseApp.DefaultInstance is null) FirebaseAppInitializer.Init();
         Messaging = FirebaseMessaging.DefaultInstance;
     }
     
