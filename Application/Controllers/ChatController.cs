@@ -1,6 +1,6 @@
-﻿using Data.Models.Chat;
-using FirebaseAdmin.Auth;
+﻿using FirebaseAdmin.Auth;
 using Microsoft.AspNetCore.Mvc;
+using Service.Models.Chat;
 
 namespace Application.Controllers;
 

@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Service.Models.View;
+using Service.Models.Auth;
 
 namespace Application.Configurations.Middleware
 {

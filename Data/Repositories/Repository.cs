@@ -68,14 +68,9 @@ public class Repository<T> : IRepository<T> where T : class
         _entities.UpdateRange(entities);
     }
 
-    public T FirstOrDefault(Expression<Func<T, bool>> predicate)
+    public T? FirstOrDefault(Expression<Func<T, bool>> predicate)
     {
-        return _entities.FirstOrDefault(predicate) ?? null!;
-    }
-
-    public async Task<T> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate)
-    {
-        return await _entities.FirstOrDefaultAsync(predicate) ?? null!;
+        return _entities.FirstOrDefault(predicate);
     }
 
     public bool Contains(Expression<Func<T, bool>> predicate)

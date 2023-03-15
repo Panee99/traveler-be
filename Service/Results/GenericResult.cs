@@ -1,6 +1,6 @@
 ﻿namespace Service.Results;
 
-public class Result<TValue> : Result where TValue : class
+public class Result<TValue> : Result
 {
     private readonly TValue? _value;
 
@@ -8,12 +8,17 @@ public class Result<TValue> : Result where TValue : class
 
     public static implicit operator Result<TValue>(TValue value) => new(value, true, NoError);
 
-    public static implicit operator Result<TValue>(Error error) => new(null, false, error);
+    public static implicit operator Result<TValue>(Error error) => new(false, error);
 
-    private Result(TValue? value, bool isSuccess, Error error) : base(
+    private Result(TValue value, bool isSuccess, Error error) : base(
         isSuccess, error)
     {
         _value = value;
+    }
+
+    private Result(bool isSuccess, Error error) : base(
+        isSuccess, error)
+    {
     }
 
     public TResult Match<TResult>(Func<TValue, TResult> onValue, Func<Error, TResult> onError) =>

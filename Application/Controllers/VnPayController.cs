@@ -1,7 +1,7 @@
-﻿using Data.Models.VnPay;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Service.Interfaces;
+using Service.Models.VnPay;
 using Shared;
 using Shared.Settings;
 using Shared.VnPay;
@@ -66,6 +66,7 @@ public class VnPayController : ApiController
         return result.Match(Ok, OnError);
     }
 
+    [ApiExplorerSettings(IgnoreApi = true)]    
     [HttpGet("result")]
     public IActionResult PaymentResult([FromQuery] Dictionary<string, string> queryParams)
     {

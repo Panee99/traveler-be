@@ -1,4 +1,4 @@
-﻿namespace Data.Models.VnPay;
+﻿namespace Service.Models.VnPay;
 
 public class VnPayInputModel
 {

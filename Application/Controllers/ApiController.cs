@@ -7,6 +7,7 @@ using Shared;
 namespace Application.Controllers;
 
 [ApiController]
+[Produces("application/json")]
 public class ApiController : ControllerBase
 {
     protected IActionResult OnError(Error error)

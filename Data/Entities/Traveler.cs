@@ -22,5 +22,5 @@ public class Traveler
 
     public virtual Account Account { get; set; } = null!;
 
-    public virtual ICollection<Booking> Bookings { get; } = new List<Booking>();
+    public virtual ICollection<Booking> Bookings { get; set; } = new List<Booking>();
 }

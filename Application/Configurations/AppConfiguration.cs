@@ -2,6 +2,7 @@
 using Data;
 using Mapster;
 using MapsterMapper;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Service.Implementations;
 using Service.Interfaces;
@@ -11,29 +12,35 @@ namespace Application.Configurations
 {
     public static class AppConfiguration
     {
-        public static void AddSettings(this WebApplicationBuilder builder)
+        public static IServiceCollection AddDependenceInjection(this IServiceCollection services,
+            IConfiguration configuration)
         {
-            builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
-            builder.Services.Configure<VnPaySettings>(builder.Configuration.GetSection("VnPaySettings"));
-        }
-
-        public static void AddDependenceInjection(this IServiceCollection services)
-        {
-            // Add Mapper
+            // Mapper
             var config = TypeAdapterConfig.GlobalSettings;
             config.Scan(Assembly.GetExecutingAssembly());
             services.AddSingleton(config);
             services.AddScoped<IMapper, ServiceMapper>();
-            
-            // Add Services
+
+            // Settings
+            services.Configure<AppSettings>(configuration.GetSection("AppSettings"));
+            services.Configure<VnPaySettings>(configuration.GetSection("VnPaySettings"));
+
+            // DbContext
+            services.AddDbContextPool<AppDbContext>(options =>
+                options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+
+            // Services
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IAuthService, AuthService>();
-            services.AddScoped<ICloudMessagingService, CloudMessagingService>();
+            services.AddScoped<ILocationService, LocationService>();
             services.AddScoped<IVnPayRequestService, VnPayRequestService>();
             services.AddScoped<IVnPayResponseService, VnPayResponseService>();
+            services.AddScoped<ICloudMessagingService, CloudMessagingService>();
+
+            return services;
         }
 
-        public static void AddSwagger(this IServiceCollection services)
+        public static IServiceCollection AddSwagger(this IServiceCollection services)
         {
             services.AddSwaggerGen(c =>
             {
@@ -71,6 +78,8 @@ namespace Application.Configurations
                     }
                 });
             });
+
+            return services;
         }
     }
 }

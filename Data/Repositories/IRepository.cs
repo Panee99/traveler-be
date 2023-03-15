@@ -24,9 +24,7 @@ public interface IRepository<T> where T : class
 
     void RemoveRange(IEnumerable<T> entities);
 
-    T FirstOrDefault(Expression<Func<T, bool>> predicate);
-
-    Task<T> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate);
+    T? FirstOrDefault(Expression<Func<T, bool>> predicate);
 
     bool Contains(Expression<Func<T, bool>> predicate);
 

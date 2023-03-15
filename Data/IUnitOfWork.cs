@@ -12,6 +12,7 @@ public interface IUnitOfWork
     public ITravelerRepository Traveler { get; }
 
     IRepository<T> Repo<T>() where T : class;
+    int SaveChanges();
     Task<int> SaveChangesAsync();
     IDbContextTransaction BeginTransaction();
 }

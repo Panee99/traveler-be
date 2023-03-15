@@ -1,6 +1,6 @@
-﻿namespace Service.Models.View;
+﻿namespace Service.Models.Account;
 
-public class TourGuideViewModel
+public class ManagerViewModel
 {
     public Guid Id { get; set; }
 
@@ -8,9 +8,9 @@ public class TourGuideViewModel
 
     public string LastName { get; set; } = null!;
 
-    public string? AvatarUrl { get; set; }
-
     public DateTime? Birthday { get; set; }
+
+    public string? AvatarUrl { get; set; }
 
     public string Gender { get; set; } = null!;
 }

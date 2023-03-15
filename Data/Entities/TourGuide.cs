@@ -20,5 +20,5 @@ public class TourGuide
 
     public virtual Account Account { get; set; } = null!;
 
-    public virtual ICollection<IncurredCost> IncurredCosts { get; } = new List<IncurredCost>();
+    public virtual ICollection<IncurredCost> IncurredCosts { get; set; } = new List<IncurredCost>();
 }

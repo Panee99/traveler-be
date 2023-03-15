@@ -1,4 +1,4 @@
-﻿namespace Service.Models.View;
+﻿namespace Service.Models.Account;
 
 public class TravelerViewModel
 {

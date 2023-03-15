@@ -1,4 +1,4 @@
-﻿namespace Data.Models.Chat;
+﻿namespace Service.Models.Chat;
 
 public class TokenResponseModel
 {

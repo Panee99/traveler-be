@@ -52,6 +52,8 @@ public class UnitOfWork : IUnitOfWork
         return newRepo;
     }
 
+    public int SaveChanges() => _context.SaveChanges();
+    
     public async Task<int> SaveChangesAsync() => await _context.SaveChangesAsync();
 
     public IDbContextTransaction BeginTransaction() => _context.Database.BeginTransaction();

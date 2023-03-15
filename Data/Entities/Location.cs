@@ -14,7 +14,9 @@ public class Location
 
     public double Latitude { get; set; }
 
-    public virtual ICollection<LocationTag> LocationTags { get; } = new List<LocationTag>();
+    public virtual ICollection<LocationTag> LocationTags { get; set; } = new List<LocationTag>();
 
-    public virtual ICollection<Waypoint> Waypoints { get; } = new List<Waypoint>();
+    public virtual ICollection<Waypoint> Waypoints { get; set; } = new List<Waypoint>();
+
+    public virtual ICollection<LocationAttachment> LocationAttachments { get; set; } = new List<LocationAttachment>();
 }

@@ -1,5 +1,5 @@
-﻿using Service.Models.Get;
-using Service.Models.View;
+﻿using Service.Models.Account;
+using Service.Models.Auth;
 
 namespace Service.Interfaces;
 

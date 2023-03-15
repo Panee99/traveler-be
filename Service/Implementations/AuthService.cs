@@ -7,8 +7,8 @@ using Service.Interfaces;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Service.Models.Get;
-using Service.Models.View;
+using Service.Models.Account;
+using Service.Models.Auth;
 using Shared.Enums;
 using Shared.Settings;
 

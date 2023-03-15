@@ -2,8 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Service.Interfaces;
 using System.ComponentModel.DataAnnotations;
-using Service.Models.Get;
-using Service.Models.View;
+using Service.Models.Account;
+using Service.Models.Auth;
 
 namespace Application.Controllers
 {
