@@ -1,7 +1,5 @@
 using Application.Configurations;
 using Application.Configurations.Middleware;
-using Data;
-using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
