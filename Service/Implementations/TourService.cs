@@ -3,12 +3,9 @@ using Service.Interfaces;
 
 namespace Service.Implementations;
 
-public class TourService : ITourService
+public class TourService : BaseService, ITourService
 {
-    private readonly IUnitOfWork _unitOfWork;
-
-    public TourService(IUnitOfWork unitOfWork)
+    public TourService(IUnitOfWork unitOfWork) : base(unitOfWork)
     {
-        _unitOfWork = unitOfWork;
     }
 }

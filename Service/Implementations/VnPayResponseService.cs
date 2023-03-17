@@ -9,15 +9,13 @@ using Shared.VnPay.Models;
 
 namespace Service.Implementations;
 
-public class VnPayResponseService : IVnPayResponseService
+public class VnPayResponseService : BaseService, IVnPayResponseService
 {
-    private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
     private readonly ILogger<VnPayResponseService> _logger;
 
-    public VnPayResponseService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<VnPayResponseService> logger)
+    public VnPayResponseService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<VnPayResponseService> logger) : base(unitOfWork)
     {
-        _unitOfWork = unitOfWork;
         _mapper = mapper;
         _logger = logger;
     }

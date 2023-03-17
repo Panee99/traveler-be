@@ -22,11 +22,11 @@ public class Booking
 
     public PaymentStatus PaymentStatus { get; set; }
 
-    public virtual ICollection<BookingAppliedDiscount> BookingAppliedDiscounts { get; } = new List<BookingAppliedDiscount>();
+    public virtual ICollection<BookingAppliedDiscount> BookingAppliedDiscounts { get; set; } = new List<BookingAppliedDiscount>();
 
     public virtual Tour Tour { get; set; } = null!;
 
-    public virtual ICollection<Transaction> Transactions { get; } = new List<Transaction>();
+    public virtual ICollection<Transaction> Transactions { get; set; } = new List<Transaction>();
 
     public virtual Traveler Traveler { get; set; } = null!;
 }

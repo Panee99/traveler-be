@@ -2,23 +2,17 @@
 
 namespace Data.Entities;
 
-public class TourGuide
+public class TourGuide : Account
 {
-    public Guid Id { get; set; }
-
     public string FirstName { get; set; } = null!;
 
     public string LastName { get; set; } = null!;
 
-    public string? AvatarUrl { get; set; }
-
+    public string Email { get; set; } = null!;
+    
     public DateTime? Birthday { get; set; }
 
     public Gender Gender { get; set; }
 
-    public Guid AccountId { get; set; }
-
-    public virtual Account Account { get; set; } = null!;
-
-    public virtual ICollection<IncurredCost> IncurredCosts { get; } = new List<IncurredCost>();
+    public virtual ICollection<IncurredCost> IncurredCosts { get; set; } = new List<IncurredCost>();
 }

@@ -22,13 +22,11 @@ public class Tour
 
     public int NumberOfTickets { get; set; }
 
-    public virtual ICollection<Booking> Bookings { get; } = new List<Booking>();
+    public virtual ICollection<Booking> Bookings { get; set; } = new List<Booking>();
 
-    public virtual ICollection<IncurredCost> IncurredCosts { get; } = new List<IncurredCost>();
+    public virtual ICollection<IncurredCost> IncurredCosts { get; set; } = new List<IncurredCost>();
 
-    public virtual ICollection<TourCarousel> TourCarousels { get; } = new List<TourCarousel>();
+    public virtual ICollection<TourDiscount> TourDiscounts { get; set; } = new List<TourDiscount>();
 
-    public virtual ICollection<TourDiscount> TourDiscounts { get; } = new List<TourDiscount>();
-
-    public virtual ICollection<Waypoint> Waypoints { get; } = new List<Waypoint>();
+    public virtual ICollection<Waypoint> Waypoints { get; set; } = new List<Waypoint>();
 }

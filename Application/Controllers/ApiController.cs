@@ -1,14 +1,19 @@
 ﻿using System.Net;
 using Application.Commons;
+using Application.Configurations.Auth;
 using Microsoft.AspNetCore.Mvc;
 using Service.Results;
 using Shared;
+using Shared.Enums;
 
 namespace Application.Controllers;
 
 [ApiController]
+[Produces("application/json")]
 public class ApiController : ControllerBase
 {
+    protected AuthUser? CurrentUser => (AuthUser?) HttpContext.Items["User"];
+
     protected IActionResult OnError(Error error)
     {
         var response = new ObjectResult(new ErrorResponsePayload()
@@ -34,7 +39,13 @@ public class ApiController : ControllerBase
             case ErrorType.NotFound:
                 response.StatusCode = (int)HttpStatusCode.NotFound;
                 break;
+            case ErrorType.Authentication:
+                response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
         }
+
         return response;
     }
 }

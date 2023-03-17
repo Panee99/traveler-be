@@ -4,31 +4,23 @@ namespace Data.Repositories;
 
 public interface IRepository<T> where T : class
 {
-    IQueryable<T> GetAll();
-
-    IQueryable<T> GetMany(Expression<Func<T, bool>> predicate);
-
-    IQueryable<T> SkipAndTake(int skip, int take);
-
-    int Count();
-
     T Add(T entity);
+
+    T Update(T entity);
+
+    T Remove(T entity);
 
     void AddRange(IEnumerable<T> entities);
 
-    void Update(T entity);
-
     void UpdateRange(IEnumerable<T> entities);
-
-    void Remove(T entity);
 
     void RemoveRange(IEnumerable<T> entities);
 
-    T FirstOrDefault(Expression<Func<T, bool>> predicate);
+    IQueryable<T> TrackingQuery();
 
-    Task<T> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate);
+    IQueryable<T> Query();
 
-    bool Contains(Expression<Func<T, bool>> predicate);
+    T? FirstOrDefault(Expression<Func<T, bool>> predicate);
 
     bool Any(Expression<Func<T, bool>> predicate);
 }

@@ -6,5 +6,5 @@ public class Tag
 
     public string Name { get; set; } = null!;
 
-    public virtual ICollection<LocationTag> LocationTags { get; } = new List<LocationTag>();
+    public virtual ICollection<LocationTag> LocationTags { get; set; } = new List<LocationTag>();
 }

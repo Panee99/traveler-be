@@ -4,7 +4,7 @@ namespace Service;
 
 public class BaseService
 {
-    private IUnitOfWork _unitOfWork;
+    protected readonly IUnitOfWork _unitOfWork;
 
     protected BaseService(IUnitOfWork unitOfWork)
     {
