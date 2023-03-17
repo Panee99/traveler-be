@@ -9,9 +9,10 @@ namespace Application.Controllers;
 
 [ApiController]
 [Produces("application/json")]
+[Authorize]
 public class ApiController : ControllerBase
 {
-    protected AuthUser? CurrentUser => (AuthUser?) HttpContext.Items[AppConstants.UserContextKey];
+    protected AuthUser CurrentUser => (AuthUser) HttpContext.Items[AppConstants.UserContextKey]!;
 
     protected static IActionResult OnError(Error error)
     {

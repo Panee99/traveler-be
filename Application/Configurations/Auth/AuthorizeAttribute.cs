@@ -18,18 +18,20 @@ public sealed class AuthorizeAttribute : Attribute, IAuthorizationFilter
         _roles = Array.Empty<UserRole>();
     }
 
-    public AuthorizeAttribute(UserRole role)
+    public AuthorizeAttribute(params UserRole[] roles)
     {
-        _roles = new[] { role };
-    }
-
-    public AuthorizeAttribute(UserRole[] Roles)
-    {
-        _roles = Roles;
+        _checkDuplicate(roles);
+        _roles = roles;
     }
 
     public void OnAuthorization(AuthorizationFilterContext context)
     {
+        Console.WriteLine("Authorize Here: " + _roles.FirstOrDefault());
+
+        // [AllowAnonymous]
+        if (context.ActionDescriptor.EndpointMetadata
+            .OfType<Microsoft.AspNetCore.Authorization.AllowAnonymousAttribute>().Any()) return;
+
         var user = (AuthUser?)context.HttpContext.Items[AppConstants.UserContextKey];
 
         // Unauthorized
@@ -60,5 +62,12 @@ public sealed class AuthorizeAttribute : Attribute, IAuthorizationFilter
         {
             StatusCode = StatusCode,
         };
+    }
+
+    private void _checkDuplicate(UserRole[] roles)
+    {
+        var hasDuplicates = roles.Length != roles.Distinct().Count();
+        if (hasDuplicates)
+            throw new ArgumentException("\"Authorize\" attribute parameter \"roles\" can not have duplicates");
     }
 }

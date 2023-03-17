@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Service.Interfaces;
 using Service.Models.Traveler;
@@ -17,6 +18,7 @@ public class TravelersController : ApiController
         _logger = logger;
     }
 
+    [AllowAnonymous]
     [HttpPost("register")]
     public async Task<IActionResult> Register(TravelerRegistrationModel model)
     {
@@ -26,9 +28,11 @@ public class TravelersController : ApiController
     }
 
     [HttpGet("profile")]
-    public IActionResult GetProfile(Guid id)
+    public IActionResult GetProfile(Guid? id)
     {
-        var result = _travelerService.GetProfile(id);
+        id ??= CurrentUser.Id;
+
+        var result = _travelerService.GetProfile(id.Value);
 
         _logger.LogInformation("{Message}", JsonConvert.SerializeObject(result.Value));
 

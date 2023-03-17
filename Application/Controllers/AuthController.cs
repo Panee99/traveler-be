@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Service.Interfaces;
 using Service.Models.Auth;
 using Service.Models.Chat;
 
 namespace Application.Controllers
 {
+    [AllowAnonymous]
     [Route("auth")]
     public class AuthController : ApiController
     {

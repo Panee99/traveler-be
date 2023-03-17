@@ -52,7 +52,6 @@ var app = builder.Build();
             .AllowAnyMethod()
             .AllowAnyOrigin())
         .UseMiddleware<JwtMiddleware>()
-        // .UseAuthorization()
         .UseSwagger()
         .UseSwaggerUI();
 

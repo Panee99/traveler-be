@@ -74,7 +74,7 @@ public class TravelerService : BaseService, ITravelerService
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "{Message}", typeof(TravelerService).ToString());
+            _logger.LogDebug(e, "{Message}", typeof(TravelerService).ToString());
         }
 
         return false;
