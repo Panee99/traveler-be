@@ -1,0 +1,16 @@
+﻿[
+  {
+    "Id": "e6618130-62e9-4053-4047-08db269c26be",
+    "FirstName": "Xuan",
+    "LastName": "Truong",
+    "Gender": "Male",
+    "Phone": "84389376290",
+    "Password": "96cae35ce8a9b0244178bf28e4966c2ce1b8385723a96a6b838858cdd6ca0a1e",
+    "Status": "ACTIVE",
+    "Address": null,
+    "Birthday": null,
+    "AttachmentId": null,
+    "BankName": null,
+    "BankAccountNumber": null
+  }
+]

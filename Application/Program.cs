@@ -51,10 +51,10 @@ var app = builder.Build();
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowAnyOrigin())
+        .UseMiddleware<JwtMiddleware>()
+        // .UseAuthorization()
         .UseSwagger()
-        .UseSwaggerUI()
-        .UseMiddleware<JwtMiddleware>();
-    // .UseAuthorization();
+        .UseSwaggerUI();
 
     app.MapControllers();
     app.Run();
