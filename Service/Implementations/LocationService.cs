@@ -7,15 +7,13 @@ using Service.Results;
 
 namespace Service.Implementations;
 
-public class LocationService : ILocationService
+public class LocationService : BaseService, ILocationService
 {
-    private readonly IUnitOfWork _unitOfWork;
 
     private readonly IMapper _mapper;
 
-    public LocationService(IUnitOfWork unitOfWork, IMapper mapper)
+    public LocationService(IUnitOfWork unitOfWork, IMapper mapper) : base(unitOfWork)
     {
-        _unitOfWork = unitOfWork;
         _mapper = mapper;
     }
 

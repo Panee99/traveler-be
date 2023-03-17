@@ -1,5 +1,5 @@
 using Application.Configurations;
-using Application.Configurations.Middleware;
+using Application.Configurations.Auth;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
@@ -29,7 +29,7 @@ var builder = WebApplication.CreateBuilder(args);
         .AddSwagger()
         .AddEndpointsApiExplorer()
         .AddSwaggerGenNewtonsoftSupport()
-        .AddDependenceInjection(builder.Configuration)
+        .AddDependencyInjection(builder.Configuration)
         .AddControllers()
         .AddNewtonsoftJson(options =>
             {
@@ -45,16 +45,17 @@ var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
 {
     Console.WriteLine(app.Environment.EnvironmentName);
-    app.MapControllers();
-    app.UseCors(x => x
+    app
+        .UseHttpsRedirection()
+        .UseCors(x => x
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowAnyOrigin())
         .UseSwagger()
         .UseSwaggerUI()
-        .UseAuthentication()
-        .UseMiddleware<JwtMiddleware>()
-        .UseHttpsRedirection()
-        .UseAuthorization();
+        .UseMiddleware<JwtMiddleware>();
+    // .UseAuthorization();
+
+    app.MapControllers();
     app.Run();
 }

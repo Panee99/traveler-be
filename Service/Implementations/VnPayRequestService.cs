@@ -7,14 +7,12 @@ using Shared.VnPay.Models;
 
 namespace Service.Implementations;
 
-public class VnPayRequestService : IVnPayRequestService
+public class VnPayRequestService : BaseService, IVnPayRequestService
 {
-    private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
 
-    public VnPayRequestService(IUnitOfWork unitOfWork, IMapper mapper)
+    public VnPayRequestService(IUnitOfWork unitOfWork, IMapper mapper) : base(unitOfWork)
     {
-        _unitOfWork = unitOfWork;
         _mapper = mapper;
     }
 

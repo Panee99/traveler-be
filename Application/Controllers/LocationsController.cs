@@ -5,11 +5,11 @@ using Service.Models.Location;
 namespace Application.Controllers;
 
 [Route("locations")]
-public class LocationController : ApiController
+public class LocationsController : ApiController
 {
     private readonly ILocationService _locationService;
 
-    public LocationController(ILocationService locationService)
+    public LocationsController(ILocationService locationService)
     {
         _locationService = locationService;
     }
@@ -18,8 +18,7 @@ public class LocationController : ApiController
     public IActionResult Create(LocationCreateModel model)
     {
         return _locationService.Create(model)
-            .Match(
-                value => CreatedAtAction(nameof(Find), new { Id = value }, null),
+            .Match(value => CreatedAtAction(nameof(Find), new { Id = value }, value),
                 OnError);
     }
 
@@ -28,7 +27,7 @@ public class LocationController : ApiController
     {
         var result = _locationService
             .Find(id);
-        
+
         return result.Match(Ok, OnError);
     }
 }

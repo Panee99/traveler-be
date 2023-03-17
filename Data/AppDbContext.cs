@@ -11,7 +11,7 @@ public class AppDbContext : DbContext
     {
     }
 
-    public virtual DbSet<Account> Accounts { get; set; } = null!;
+    // public virtual DbSet<Account> Accounts { get; set; } = null!;
     public virtual DbSet<Attachment> Attachments { get; set; } = null!;
     public virtual DbSet<Booking> Bookings { get; set; } = null!;
     public virtual DbSet<BookingAppliedDiscount> BookingAppliedDiscounts { get; set; } = null!;

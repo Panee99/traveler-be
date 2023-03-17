@@ -19,6 +19,9 @@ public class Error
     }
 
 
+    public static Error Custom(ErrorType errorType, string code, string message,
+        IDictionary<string, string>? errorDetails = null) => new(errorType, code, message, errorDetails);
+    
     public static Error Validation(IDictionary<string, string>? errorDetails = null) =>
         new(ErrorType.Validation, "General.Validation", "A validation error has occurred.", errorDetails);
 
@@ -30,7 +33,9 @@ public class Error
 
     public static Error Unexpected(IDictionary<string, string>? errorDetails = null) =>
         new(ErrorType.Unexpected, "General.Unexpected", "A unexpected error has occurred.", errorDetails);
+    
+    public static Error Authentication(IDictionary<string, string>? errorDetails = null) =>
+        new(ErrorType.Unexpected, "General.Authentication", "Authentication failed.", errorDetails);
 
-    public static Error Custom(ErrorType errorType, string code, string message,
-        IDictionary<string, string>? errorDetails = null) => new(errorType, code, message, errorDetails);
+    
 }

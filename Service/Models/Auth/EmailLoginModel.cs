@@ -1,6 +1,6 @@
 ﻿namespace Service.Models.Auth;
 
-public class AuthRequestModel
+public class EmailLoginModel
 {
     public string Email { get; set; } = null!;
     public string Password { get; set; } = null!;

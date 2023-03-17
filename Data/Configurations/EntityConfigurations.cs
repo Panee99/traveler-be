@@ -9,12 +9,12 @@ public static class EntityConfigurations
     {
         modelBuilder.Entity<Account>(entity =>
         {
+            entity.ToTable("Accounts");
             entity.HasKey(e => e.Id);
             entity.HasIndex(e => e.Phone).IsUnique();
+            entity.Property(e => e.Password).HasMaxLength(256);
             entity.Property(e => e.BankAccountNumber).HasMaxLength(256);
             entity.Property(e => e.BankName).HasMaxLength(256);
-            entity.Property(e => e.Email).HasMaxLength(256);
-            entity.Property(e => e.Password).HasMaxLength(256);
             entity.Property(e => e.Phone).HasMaxLength(256).IsUnicode(false);
             entity.Property(e => e.Status).HasMaxLength(256);
         });
@@ -92,15 +92,12 @@ public static class EntityConfigurations
 
         modelBuilder.Entity<Manager>(entity =>
         {
-            entity.HasKey(e => e.Id);
+            entity.ToTable("Managers");
+            entity.Property(e => e.Email).HasMaxLength(256);
             entity.Property(e => e.Birthday).HasColumnType("datetime");
             entity.Property(e => e.FirstName).HasMaxLength(256);
             entity.Property(e => e.Gender).HasMaxLength(256);
             entity.Property(e => e.LastName).HasMaxLength(256);
-
-            entity.HasOne(d => d.Account).WithMany(p => p.Managers)
-                .HasForeignKey(d => d.AccountId)
-                .OnDelete(DeleteBehavior.ClientSetNull);
         });
 
         modelBuilder.Entity<Tag>(entity =>
@@ -136,15 +133,12 @@ public static class EntityConfigurations
 
         modelBuilder.Entity<TourGuide>(entity =>
         {
-            entity.HasKey(e => e.Id);
+            entity.ToTable("TourGuides");
+            entity.Property(e => e.Email).HasMaxLength(256);
             entity.Property(e => e.Birthday).HasColumnType("datetime");
             entity.Property(e => e.FirstName).HasMaxLength(256);
             entity.Property(e => e.Gender).HasMaxLength(256);
             entity.Property(e => e.LastName).HasMaxLength(256);
-
-            entity.HasOne(d => d.Account).WithMany(p => p.TourGuides)
-                .HasForeignKey(d => d.AccountId)
-                .OnDelete(DeleteBehavior.ClientSetNull);
         });
 
         modelBuilder.Entity<Transaction>(entity =>
@@ -165,16 +159,12 @@ public static class EntityConfigurations
 
         modelBuilder.Entity<Traveler>(entity =>
         {
-            entity.HasKey(e => e.Id);
+            entity.ToTable("Travelers");
             entity.Property(e => e.Address).HasMaxLength(256);
             entity.Property(e => e.Birthday).HasColumnType("datetime");
             entity.Property(e => e.FirstName).HasMaxLength(256);
             entity.Property(e => e.Gender).HasMaxLength(256);
             entity.Property(e => e.LastName).HasMaxLength(256);
-
-            entity.HasOne(d => d.Account).WithMany(p => p.Travelers)
-                .HasForeignKey(d => d.AccountId)
-                .OnDelete(DeleteBehavior.ClientSetNull);
         });
 
         modelBuilder.Entity<Waypoint>(entity =>
