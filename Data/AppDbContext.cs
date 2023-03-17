@@ -1,6 +1,8 @@
-﻿using Data.Configurations;
+﻿using System.Reflection;
+using Data.Configurations;
 using Data.Entities;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace Data;
 
@@ -30,15 +32,28 @@ public class AppDbContext : DbContext
     public virtual DbSet<VnPayResponse> VnPayResponses { get; set; } = null!;
 
     // protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) => base.OnConfiguring(optionsBuilder);
-    
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        modelBuilder.ConfigureEntities();
-    }
 
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
     {
         base.ConfigureConventions(configurationBuilder);
         configurationBuilder.ConfigureEnums();
+    }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.ConfigureEntities();
+
+        // Seeds
+        modelBuilder.Entity<Traveler>().HasData(FromSeed<Traveler>("travelers.json"));
+        modelBuilder.Entity<TourGuide>().HasData(FromSeed<TourGuide>("tour-guides.json"));
+        modelBuilder.Entity<Manager>().HasData(FromSeed<Manager>("managers.json"));
+    }
+
+    // PRIVATE
+    private static List<T> FromSeed<T>(string fileName)
+    {
+        var projectPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? "";
+        var seedPath = Path.Combine(projectPath, "Seeds", fileName);
+        return JsonConvert.DeserializeObject<List<T>>(File.ReadAllText(seedPath));
     }
 }
