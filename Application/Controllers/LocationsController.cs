@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Application.Configurations.Auth;
+using Microsoft.AspNetCore.Mvc;
 using Service.Interfaces;
 using Service.Models.Location;
+using Shared.Enums;
 
 namespace Application.Controllers;
 
@@ -14,6 +16,7 @@ public class LocationsController : ApiController
         _locationService = locationService;
     }
 
+    [Authorize(UserRole.Manager)]
     [HttpPost("")]
     public IActionResult Create(LocationCreateModel model)
     {

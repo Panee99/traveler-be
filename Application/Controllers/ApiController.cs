@@ -4,7 +4,6 @@ using Application.Configurations.Auth;
 using Microsoft.AspNetCore.Mvc;
 using Service.Results;
 using Shared;
-using Shared.Enums;
 
 namespace Application.Controllers;
 
@@ -12,9 +11,9 @@ namespace Application.Controllers;
 [Produces("application/json")]
 public class ApiController : ControllerBase
 {
-    protected AuthUser? CurrentUser => (AuthUser?) HttpContext.Items["User"];
+    protected AuthUser? CurrentUser => (AuthUser?) HttpContext.Items[AppConstants.UserContextKey];
 
-    protected IActionResult OnError(Error error)
+    protected static IActionResult OnError(Error error)
     {
         var response = new ObjectResult(new ErrorResponsePayload()
         {

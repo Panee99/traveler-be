@@ -35,7 +35,8 @@ public class Error
         new(ErrorType.Unexpected, "General.Unexpected", "A unexpected error has occurred.", errorDetails);
     
     public static Error Authentication(IDictionary<string, string>? errorDetails = null) =>
-        new(ErrorType.Unexpected, "General.Authentication", "Authentication failed.", errorDetails);
-
+        new(ErrorType.Authentication, "General.Authentication", "Unauthorized", errorDetails);
     
+    public static Error Authorization(IDictionary<string, string>? errorDetails = null) =>
+        new(ErrorType.Authorization, "General.Authorization", "Forbidden", errorDetails);
 }

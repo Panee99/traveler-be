@@ -5,6 +5,7 @@ using Data.Entities;
 using Data.Enums;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Shared;
 using Shared.Enums;
 using Shared.Settings;
 
@@ -59,9 +60,8 @@ public class JwtMiddleware : IMiddleware
             var id = Guid.Parse(jwtToken.Claims.First(x => x.Type == "id").Value);
             var role = Enum.Parse<UserRole>(jwtToken.Claims.First(x => x.Type == "role").Value);
 
-            if (_checkUserClaims(id, role)) return;
-
-            context.Items["User"] = new AuthUser(id, role);
+            if (!_checkUserClaims(id, role)) return;
+            context.Items[AppConstants.UserContextKey] = new AuthUser(id, role);
         }
 
         catch (Exception e)
@@ -74,7 +74,7 @@ public class JwtMiddleware : IMiddleware
     {
         return role switch
         {
-            UserRole.Manager => _unitOfWork.Repo<TourGuide>().Any(e => e.Id == id && e.Status == AccountStatus.ACTIVE),
+            UserRole.Manager => _unitOfWork.Repo<Manager>().Any(e => e.Id == id && e.Status == AccountStatus.ACTIVE),
             UserRole.Traveler => _unitOfWork.Repo<Traveler>().Any(e => e.Id == id && e.Status == AccountStatus.ACTIVE),
             UserRole.TourGuide => _unitOfWork.Repo<TourGuide>().Any(e => e.Id == id && e.Status == AccountStatus.ACTIVE),
             _ => throw new ArgumentOutOfRangeException(typeof(JwtMiddleware).ToString())

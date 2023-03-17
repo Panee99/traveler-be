@@ -1,5 +1,4 @@
-﻿using System.Net;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Service.Interfaces;
 using Service.Models.Traveler;
@@ -21,16 +20,15 @@ public class TravelersController : ApiController
     [HttpPost("register")]
     public async Task<IActionResult> Register(TravelerRegistrationModel model)
     {
+        if (!model.Phone.StartsWith('+')) model.Phone = '+' + model.Phone;
         var result = await _travelerService.Register(model);
         return result.Match(Ok, OnError);
     }
 
     [HttpGet("profile")]
-    public IActionResult GetProfile()
+    public IActionResult GetProfile(Guid id)
     {
-        if (CurrentUser is null) return StatusCode((int)HttpStatusCode.Forbidden);
-        
-        var result = _travelerService.GetProfile(CurrentUser.Id);
+        var result = _travelerService.GetProfile(id);
 
         _logger.LogInformation("{Message}", JsonConvert.SerializeObject(result.Value));
 
