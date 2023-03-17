@@ -3,8 +3,7 @@
 namespace Service.Models.Tag;
 
 public record TagUpdateModel
-{
-    public string Name = "";
-
-    public TagType Type;
-}
+(
+    string? Name,
+    TagType? Type
+);

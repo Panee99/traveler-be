@@ -39,6 +39,36 @@ public class LocationService : BaseService, ILocationService
         return viewModel;
     }
 
+    public async Task<Result> Update(Guid id, LocationUpdateModel model)
+    {
+        var entity = _unitOfWork.Repo<Location>()
+            .TrackingQuery()
+            .Include(e => e.LocationTags)
+            .FirstOrDefault(e => e.Id == id);
+        
+        if (entity is null) return Error.NotFound();
+
+        if (model.Name != null) entity.Name = model.Name;
+        if (model.Country != null) entity.Country = model.Country;
+        if (model.City != null) entity.City = model.City;
+        if (model.Address != null) entity.Address = model.Address;
+        if (model.Longitude != null) entity.Longitude = model.Longitude.Value;
+        if (model.Latitude != null) entity.Latitude = model.Latitude.Value;
+        if (model.Description != null) entity.Description = model.Description;
+
+        if (model.Tags != null)
+            entity.LocationTags = model.Tags.Select(t =>
+                new LocationTag()
+                {
+                    LocationId = entity.Id,
+                    TagId = t
+                }
+            ).ToList();
+
+        await _unitOfWork.SaveChangesAsync();
+        return Result.Success();
+    }
+
     public async Task<Result> Delete(Guid id)
     {
         var entity = _unitOfWork.Repo<Location>().FirstOrDefault(e => e.Id == id);
@@ -69,8 +99,6 @@ public class LocationService : BaseService, ILocationService
                 Tags = e.LocationTags.Select(lt => lt.Tag).ToList(),
                 Attachments = e.LocationAttachments.Select(la => la.Attachment).ToList()
             })
-            // .SelectMany(e => e.LocationTags)
-            // .SelectMany(e => e.LocationAttachments.Select(a => a.Attachment))
             .FirstOrDefaultAsync(e => e.Id == id);
 
         if (entity is null) return Error.NotFound();

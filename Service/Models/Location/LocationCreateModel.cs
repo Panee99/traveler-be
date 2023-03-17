@@ -1,20 +1,13 @@
 ﻿namespace Service.Models.Location;
 
-public class LocationCreateModel
-{
-    public string Name { get; set; } = null!;
-
-    public string Address { get; set; } = null!;
-    
-    public string Country { get; set; } = null!;
-
-    public string City { get; set; } = null!;
-
-    public long Longitude { get; set; }
-
-    public long Latitude { get; set; }
-
-    public string? Description { get; set; }
-
-    public ICollection<Guid> Tags { get; set; } = new List<Guid>();
-}
+public record LocationCreateModel
+(
+    string Name,
+    string Address,
+    string Country,
+    string City,
+    long Longitude,
+    long Latitude,
+    string? Description,
+    ICollection<Guid> Tags
+);

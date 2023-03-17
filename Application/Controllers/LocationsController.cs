@@ -41,4 +41,12 @@ public class LocationsController : ApiController
         var result = await _locationService.Delete(id);
         return result.Match(Ok, OnError);
     }
+
+    [Authorize(UserRole.Manager)]
+    [HttpPatch("{id:guid}")]
+    public async Task<IActionResult> Update(Guid id, LocationUpdateModel model)
+    {
+        var result = await _locationService.Update(id, model);
+        return result.Match(Ok, OnError);
+    }
 }

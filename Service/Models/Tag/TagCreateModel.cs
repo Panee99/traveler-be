@@ -2,9 +2,8 @@
 
 namespace Service.Models.Tag;
 
-public record TagCreateModel()
-{
-    public string Name = null!;
-    
-    public TagType Type;
-}
+public record TagCreateModel
+(
+    string Name,
+    TagType Type
+);

@@ -25,7 +25,7 @@ public class TagsController : ApiController
     }
 
     [Authorize(UserRole.Manager)]
-    [HttpPut("{id:guid}")]
+    [HttpPatch("{id:guid}")]
     public IActionResult Update(Guid id, TagUpdateModel model)
     {
         var result = _tagService.Update(id, model);

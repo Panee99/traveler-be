@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Service.Interfaces;
 using Service.Models.Traveler;
+using Shared.Enums;
 
 namespace Application.Controllers;
 
@@ -33,8 +34,6 @@ public class TravelersController : ApiController
         id ??= CurrentUser.Id;
 
         var result = _travelerService.GetProfile(id.Value);
-
-        _logger.LogInformation("{Message}", JsonConvert.SerializeObject(result.Value));
 
         return result.Match(Ok, OnError);
     }

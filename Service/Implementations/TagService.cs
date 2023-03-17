@@ -32,8 +32,8 @@ public class TagService : ITagService
 
         if (entity is null) return Error.NotFound();
 
-        entity.Name = model.Name;
-        entity.Type = model.Type;
+        if (model.Name != null) entity.Name = model.Name;
+        if (model.Type != null) entity.Type = model.Type.Value;
 
         entity = _unitOfWork.Repo<Tag>().Update(entity);
         _unitOfWork.SaveChanges();

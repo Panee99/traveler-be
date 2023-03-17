@@ -50,7 +50,7 @@ public class TravelerService : BaseService, ITravelerService
             .Query()
             .FirstOrDefault(e => e.Id == id && e.Status == AccountStatus.ACTIVE);
 
-        if (entity is null) return Error.Unexpected();
+        if (entity is null) return Error.NotFound();
         return _mapper.Map<TravelerProfileViewModel>(entity);
     }
 
