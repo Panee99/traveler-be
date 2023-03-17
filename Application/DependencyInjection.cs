@@ -29,7 +29,8 @@ public static class DependencyInjection
         services.AddScoped<IVnPayResponseService, VnPayResponseService>();
         services.AddScoped<ICloudMessagingService, CloudMessagingService>();
         services.AddScoped<ITravelerService, TravelerService>();
-
+        services.AddScoped<ITagService, TagService>();
+        
         return services;
     }
 }

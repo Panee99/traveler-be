@@ -2,9 +2,9 @@
 
 namespace Service.Models.Tag;
 
-public record TagCreateModel()
+public record TagUpdateModel
 {
-    public string Name = null!;
-    
+    public string Name = "";
+
     public TagType Type;
 }

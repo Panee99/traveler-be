@@ -11,5 +11,6 @@ public static class ConventionConfigurations
         configurationBuilder.Properties<PaymentStatus>().HaveConversion<string>();
         configurationBuilder.Properties<Gender>().HaveConversion<string>();
         configurationBuilder.Properties<VnPayRequestStatus>().HaveConversion<string>();
+        configurationBuilder.Properties<TagType>().HaveConversion<string>();
     }
 }

@@ -17,7 +17,7 @@ namespace Application.Configurations
             // DbContext
             services.AddDbContextPool<AppDbContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
-
+            
             return services.AddDependencies();
         }
 

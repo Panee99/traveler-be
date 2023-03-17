@@ -9,15 +9,19 @@ public class LocationViewModel
 
     public string Name { get; set; } = null!;
 
-    public string? Description { get; set; }
-
     public string Address { get; set; } = null!;
+
+    public string Country { get; set; } = null!;
+
+    public string City { get; set; } = null!;
 
     public double Longitude { get; set; }
 
     public double Latitude { get; set; }
 
-    public ICollection<Attachment>? Attachments { get; set; } = null;
+    public string? Description { get; set; }
 
-    public ICollection<TagViewModel>? Tags { get; set; } = null;
+    public ICollection<string> Attachments { get; set; } = new List<string>();
+
+    public ICollection<TagViewModel> Tags { get; set; } = new List<TagViewModel>();
 }

@@ -1,4 +1,5 @@
-﻿using Application.Configurations.Auth;
+﻿using System.Net;
+using Application.Configurations.Auth;
 using Microsoft.AspNetCore.Mvc;
 using Service.Interfaces;
 using Service.Models.Location;
@@ -18,19 +19,26 @@ public class LocationsController : ApiController
 
     [Authorize(UserRole.Manager)]
     [HttpPost("")]
-    public IActionResult Create(LocationCreateModel model)
+    public async Task<IActionResult> Create(LocationCreateModel model)
     {
-        return _locationService.Create(model)
-            .Match(value => CreatedAtAction(nameof(Find), new { Id = value }, value),
-                OnError);
+        var result = await _locationService.Create(model);
+        return result.Match(
+            value => new ObjectResult(value) { StatusCode = (int)HttpStatusCode.Created },
+            OnError);
     }
 
     [HttpGet("{id:guid}")]
-    public IActionResult Find([FromRoute] Guid id)
+    public async Task<IActionResult> Find(Guid id)
     {
-        var result = _locationService
-            .Find(id);
+        var result = await _locationService.Find(id);
+        return result.Match(Ok, OnError);
+    }
 
+    [Authorize(UserRole.Manager)]
+    [HttpDelete("{id:guid}")]
+    public async Task<IActionResult> Delete(Guid id)
+    {
+        var result = await _locationService.Delete(id);
         return result.Match(Ok, OnError);
     }
 }

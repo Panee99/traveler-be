@@ -11,6 +11,7 @@ public static class EntityConfigurations
         {
             entity.ToTable("Accounts");
             entity.HasKey(e => e.Id);
+            entity.HasIndex(e => e.Status);
             entity.HasIndex(e => e.Phone).IsUnique();
             entity.Property(e => e.Password).HasMaxLength(256);
             entity.Property(e => e.BankAccountNumber).HasMaxLength(256);
@@ -69,26 +70,15 @@ public static class EntityConfigurations
         modelBuilder.Entity<Location>(entity =>
         {
             entity.HasKey(e => e.Id);
-            entity.Property(e => e.Address).HasMaxLength(256);
             entity.Property(e => e.Name).HasMaxLength(256);
+            entity.Property(e => e.Address).HasMaxLength(256);
+            entity.Property(e => e.Country).HasMaxLength(256);
+            entity.Property(e => e.City).HasMaxLength(256);
         });
 
-        modelBuilder.Entity<LocationTag>(entity =>
-        {
-            entity.HasKey(e => new { e.LocationId, e.TagId });
-            entity.HasOne(d => d.Location).WithMany(p => p.LocationTags)
-                .HasForeignKey(d => d.LocationId)
-                .OnDelete(DeleteBehavior.ClientSetNull);
+        modelBuilder.Entity<LocationTag>().HasKey(e => new { e.LocationId, e.TagId });
 
-            entity.HasOne(d => d.Tag).WithMany(p => p.LocationTags)
-                .HasForeignKey(d => d.TagId)
-                .OnDelete(DeleteBehavior.ClientSetNull);
-        });
-
-        modelBuilder.Entity<LocationAttachment>(entity =>
-        {
-            entity.HasKey(e => new { e.LocationId, e.AttachmentId });
-        });
+        modelBuilder.Entity<LocationAttachment>().HasKey(e => new { e.LocationId, e.AttachmentId });
 
         modelBuilder.Entity<Manager>(entity =>
         {
@@ -103,6 +93,9 @@ public static class EntityConfigurations
         modelBuilder.Entity<Tag>(entity =>
         {
             entity.HasKey(e => e.Id);
+            entity.HasIndex(e => e.Type);
+            entity.HasIndex(e => e.Name).IsUnique();
+            entity.Property(e => e.Type).HasMaxLength(256);
             entity.Property(e => e.Name).HasMaxLength(256);
         });
 
@@ -167,19 +160,19 @@ public static class EntityConfigurations
             entity.Property(e => e.LastName).HasMaxLength(256);
         });
 
-        modelBuilder.Entity<Waypoint>(entity =>
-        {
-            entity.HasKey(e => e.Id);
-            entity.Property(e => e.ArrivalAt).HasColumnType("datetime");
-
-            entity.HasOne(d => d.Location).WithMany(p => p.Waypoints)
-                .HasForeignKey(d => d.LocationId)
-                .OnDelete(DeleteBehavior.ClientSetNull);
-
-            entity.HasOne(d => d.Tour).WithMany(p => p.Waypoints)
-                .HasForeignKey(d => d.TourId)
-                .OnDelete(DeleteBehavior.ClientSetNull);
-        });
+        // modelBuilder.Entity<Waypoint>(entity =>
+        // {
+        //     entity.HasKey(e => e.Id);
+        //     entity.Property(e => e.ArrivalAt).HasColumnType("datetime");
+        //
+        //     entity.HasOne(d => d.Location).WithMany(p => p.Waypoints)
+        //         .HasForeignKey(d => d.LocationId)
+        //         .OnDelete(DeleteBehavior.ClientSetNull);
+        //
+        //     entity.HasOne(d => d.Tour).WithMany(p => p.Waypoints)
+        //         .HasForeignKey(d => d.TourId)
+        //         .OnDelete(DeleteBehavior.ClientSetNull);
+        // });
 
         modelBuilder.Entity<VnPayRequest>(entity => { entity.HasKey(e => e.TxnRef); });
 

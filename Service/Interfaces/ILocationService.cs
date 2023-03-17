@@ -5,6 +5,9 @@ namespace Service.Interfaces;
 
 public interface ILocationService
 {
-    Result<Guid> Create(LocationCreateModel model);
-    Result<LocationViewModel> Find(Guid id);
+    Task<Result<LocationViewModel>> Create(LocationCreateModel model);
+
+    Task<Result> Delete(Guid id);
+    
+    Task<Result<LocationViewModel>> Find(Guid id);
 }

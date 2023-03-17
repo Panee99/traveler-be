@@ -26,8 +26,6 @@ public sealed class AuthorizeAttribute : Attribute, IAuthorizationFilter
 
     public void OnAuthorization(AuthorizationFilterContext context)
     {
-        Console.WriteLine("Authorize Here: " + _roles.FirstOrDefault());
-
         // [AllowAnonymous]
         if (context.ActionDescriptor.EndpointMetadata
             .OfType<Microsoft.AspNetCore.Authorization.AllowAnonymousAttribute>().Any()) return;

@@ -6,9 +6,7 @@ public class LocationTag
 
     public Guid TagId { get; set; }
 
-    public string? Description { get; set; }
+    public Location Location { get; set; } = null!;
 
-    public virtual Location Location { get; set; } = null!;
-
-    public virtual Tag Tag { get; set; } = null!;
+    public Tag Tag { get; set; } = null!;
 }
