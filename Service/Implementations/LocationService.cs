@@ -2,20 +2,28 @@
 using Data.Entities;
 using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Service.Interfaces;
+using Service.Models.Attachment;
 using Service.Models.Location;
 using Service.Models.Tag;
 using Service.Results;
+using Shared;
 
 namespace Service.Implementations;
 
 public class LocationService : BaseService, ILocationService
 {
     private readonly IMapper _mapper;
+    private readonly IFileUploadService _fileUploadService;
+    private readonly ILogger<LocationService> _logger;
 
-    public LocationService(IUnitOfWork unitOfWork, IMapper mapper) : base(unitOfWork)
+    public LocationService(IUnitOfWork unitOfWork, IMapper mapper, IFileUploadService fileUploadService,
+        ILogger<LocationService> logger) : base(unitOfWork)
     {
         _mapper = mapper;
+        _fileUploadService = fileUploadService;
+        _logger = logger;
     }
 
     public async Task<Result<LocationViewModel>> Create(LocationCreateModel model)
@@ -39,13 +47,13 @@ public class LocationService : BaseService, ILocationService
         return viewModel;
     }
 
-    public async Task<Result> Update(Guid id, LocationUpdateModel model)
+    public async Task<Result<LocationViewModel>> Update(Guid id, LocationUpdateModel model)
     {
         var entity = _unitOfWork.Repo<Location>()
             .TrackingQuery()
             .Include(e => e.LocationTags)
             .FirstOrDefault(e => e.Id == id);
-        
+
         if (entity is null) return Error.NotFound();
 
         if (model.Name != null) entity.Name = model.Name;
@@ -66,7 +74,18 @@ public class LocationService : BaseService, ILocationService
             ).ToList();
 
         await _unitOfWork.SaveChangesAsync();
-        return Result.Success();
+
+        await _unitOfWork.Entry(entity).Collection(e => e.LocationAttachments).LoadAsync();
+
+        var tags = await _unitOfWork.Repo<Location>().Query()
+            .Where(e => e.Id == id)
+            .SelectMany(e => e.LocationTags)
+            .Select(lt => lt.Tag)
+            .ToListAsync();
+
+        var viewModel = _mapper.Map<LocationViewModel>(entity);
+        viewModel.Tags = _mapper.Map<List<TagViewModel>>(tags);
+        return viewModel;
     }
 
     public async Task<Result> Delete(Guid id)
@@ -107,5 +126,48 @@ public class LocationService : BaseService, ILocationService
         viewModel.Tags = _mapper.Map<List<TagViewModel>>(entity.Tags);
 
         return viewModel;
+    }
+
+    public async Task<Result> CreateAttachment(Guid locationId, AttachmentCreateModel model)
+    {
+        await using var transaction = _unitOfWork.BeginTransaction();
+
+        try
+        {
+            if (!_unitOfWork.Repo<Location>().Any(e => e.Id == locationId))
+                return Error.NotFound();
+
+            var attachment = _unitOfWork.Repo<Attachment>().Add(new Attachment()
+            {
+                ContentType = model.ContentType,
+                CreatedAt = DateTimeHelper.VnNow()
+            });
+
+            _unitOfWork.Repo<LocationAttachment>().Add(new LocationAttachment()
+            {
+                LocationId = locationId,
+                AttachmentId = attachment.Id
+            });
+
+            await _unitOfWork.SaveChangesAsync();
+
+            var uploadResult = await _fileUploadService.Upload(attachment.Id, attachment.ContentType, model.Stream);
+
+            if (!uploadResult.IsSuccess)
+            {
+                await transaction.RollbackAsync();
+                return Error.Unexpected();
+            }
+
+            await transaction.CommitAsync();
+        }
+        catch (Exception e)
+        {
+            _logger.LogWarning(e, "{Message}", e.Message);
+            await transaction.RollbackAsync();
+            return Error.Unexpected();
+        }
+
+        return Result.Success();
     }
 }

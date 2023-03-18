@@ -40,14 +40,14 @@ public class TagService : ITagService
         return _mapper.Map<TagViewModel>(entity);
     }
 
-    public Result<TagViewModel> Delete(Guid id)
+    public Result Delete(Guid id)
     {
         var entity = _unitOfWork.Repo<Tag>().FirstOrDefault(e => e.Id == id);
         if (entity is null) return Error.NotFound();
-        entity = _unitOfWork.Repo<Tag>().Remove(entity);
+        _unitOfWork.Repo<Tag>().Remove(entity);
 
         _unitOfWork.SaveChanges();
-        return _mapper.Map<TagViewModel>(entity);
+        return Result.Success();
     }
 
     public Result<TagViewModel> Find(Guid id)

@@ -1,9 +1,8 @@
 ﻿using Application.Configurations.Auth;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using Service.Interfaces;
 using Service.Models.Traveler;
-using Shared.Enums;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Application.Controllers;
 
@@ -19,6 +18,8 @@ public class TravelersController : ApiController
         _logger = logger;
     }
 
+    [SwaggerOperation(Description = "Phone format: '84' or '+84'.")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     [HttpPost("register")]
     public async Task<IActionResult> Register(TravelerRegistrationModel model)
     {
@@ -27,6 +28,8 @@ public class TravelersController : ApiController
         return result.Match(Ok, OnError);
     }
 
+    [SwaggerOperation(Description = "Leave 'id' empty to get self profile")]
+    [ProducesResponseType(typeof(TravelerProfileViewModel), StatusCodes.Status200OK)]
     [Authorize]
     [HttpGet("profile")]
     public IActionResult GetProfile(Guid? id)

@@ -13,11 +13,12 @@ namespace Application.Configurations
             // Settings
             services.Configure<AppSettings>(configuration.GetSection("AppSettings"));
             services.Configure<VnPaySettings>(configuration.GetSection("VnPaySettings"));
+            services.Configure<CloudStorageSettings>(configuration.GetSection("CloudStorageSettings"));
 
             // DbContext
             services.AddDbContextPool<AppDbContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
-            
+
             return services.AddDependencies();
         }
 
@@ -25,6 +26,7 @@ namespace Application.Configurations
         {
             services.AddSwaggerGen(c =>
             {
+                c.EnableAnnotations();
                 c.SwaggerDoc("v1",
                     new OpenApiInfo
                     {

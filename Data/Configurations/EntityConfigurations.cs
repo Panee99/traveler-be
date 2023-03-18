@@ -23,7 +23,7 @@ public static class EntityConfigurations
         modelBuilder.Entity<Attachment>(entity =>
         {
             entity.HasKey(e => e.Id);
-            entity.Property(e => e.Format).HasMaxLength(256);
+            entity.Property(e => e.ContentType).HasMaxLength(256);
         });
 
         modelBuilder.Entity<Booking>(entity =>

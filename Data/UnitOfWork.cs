@@ -1,4 +1,5 @@
 ﻿using Data.Repositories;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Data;
@@ -30,4 +31,9 @@ public class UnitOfWork : IUnitOfWork
     public async Task<int> SaveChangesAsync() => await _context.SaveChangesAsync();
 
     public IDbContextTransaction BeginTransaction() => _context.Database.BeginTransaction();
+    
+    public EntityEntry<T> Entry<T>(T entity) where T : class
+    {
+        return _context.Entry(entity);
+    }
 }

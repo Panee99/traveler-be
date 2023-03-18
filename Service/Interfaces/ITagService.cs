@@ -9,7 +9,7 @@ public interface ITagService
 
     Result<TagViewModel> Update(Guid id, TagUpdateModel model);
     
-    Result<TagViewModel> Delete(Guid id);
+    Result Delete(Guid id);
 
     Result<TagViewModel> Find(Guid id);
 

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Service.Interfaces;
 using Service.Models.Tag;
 using Shared.Enums;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Application.Controllers;
 
@@ -16,6 +17,7 @@ public class TagsController : ApiController
         _tagService = tagService;
     }
 
+    [ProducesResponseType(typeof(TagViewModel), StatusCodes.Status201Created)]
     [Authorize(UserRole.Manager)]
     [HttpPost("")]
     public IActionResult Create(TagCreateModel model)
@@ -24,6 +26,7 @@ public class TagsController : ApiController
         return result.Match(value => CreatedAtAction(nameof(Find), new { value.Id }, value), OnError);
     }
 
+    [ProducesResponseType(typeof(TagViewModel), StatusCodes.Status200OK)]
     [Authorize(UserRole.Manager)]
     [HttpPatch("{id:guid}")]
     public IActionResult Update(Guid id, TagUpdateModel model)
@@ -32,6 +35,7 @@ public class TagsController : ApiController
         return result.Match(Ok, OnError);
     }
 
+    [ProducesResponseType(StatusCodes.Status200OK)]
     [Authorize(UserRole.Manager)]
     [HttpDelete("{id:guid}")]
     public IActionResult Delete(Guid id)
@@ -40,6 +44,7 @@ public class TagsController : ApiController
         return result.Match(Ok, OnError);
     }
 
+    [ProducesResponseType(typeof(TagViewModel), StatusCodes.Status200OK)]
     [HttpGet("{id:guid}")]
     public IActionResult Find(Guid id)
     {
@@ -47,6 +52,7 @@ public class TagsController : ApiController
         return result.Match(Ok, OnError);
     }
 
+    [ProducesResponseType(typeof(ICollection<TagViewModel>), StatusCodes.Status200OK)]
     [HttpPost("filter")]
     public async Task<IActionResult> Filter(TagFilterModel model)
     {

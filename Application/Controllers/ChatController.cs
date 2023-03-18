@@ -7,6 +7,7 @@ namespace Application.Controllers;
 [Route("chat")]
 public class ChatController : ApiController
 {
+    [ApiExplorerSettings(IgnoreApi = true)]
     [HttpGet("token")]
     public async Task<IActionResult> GetToken()
     {

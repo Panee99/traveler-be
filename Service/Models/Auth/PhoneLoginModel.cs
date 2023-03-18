@@ -1,7 +1,8 @@
-﻿namespace Service.Models.Auth;
+﻿// ReSharper disable FieldCanBeMadeReadOnly.Global
+namespace Service.Models.Auth;
 
 public record PhoneLoginModel
-(
-    string Phone,
-    string Password
-);
+{
+    public string Phone = null!;
+    public string Password = null!;
+}
