@@ -1,4 +1,7 @@
-﻿using Data;
+﻿using System.Reflection;
+using Data;
+using Mapster;
+using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Shared.Settings;
@@ -10,6 +13,12 @@ namespace Application.Configurations
         public static IServiceCollection AddDependencyInjection(this IServiceCollection services,
             IConfiguration configuration)
         {
+            // Mapper
+            var config = TypeAdapterConfig.GlobalSettings;
+            config.Scan(Assembly.GetExecutingAssembly());
+            services.AddSingleton(config);
+            services.AddScoped<IMapper, ServiceMapper>();
+
             // Settings
             services.Configure<AppSettings>(configuration.GetSection("AppSettings"));
             services.Configure<VnPaySettings>(configuration.GetSection("VnPaySettings"));

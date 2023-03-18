@@ -1,10 +1,9 @@
 ﻿namespace Shared.Settings;
 
-public record VnPaySettings
-(
-    string BaseUrl,
-    string IpnUrl,
-    string ReturnUrl,
-    string TmnCode,
-    string HashSecret
-);
+public class VnPaySettings
+{
+    public string BaseUrl { get; set; } = null!;
+    public string ReturnUrl { get; set; } = null!;
+    public string TmnCode { get; set; } = null!;
+    public string HashSecret { get; set; } = null!;
+}

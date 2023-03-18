@@ -4,7 +4,10 @@ using Microsoft.AspNetCore.Mvc;
 using Service.Interfaces;
 using Service.Models.Attachment;
 using Service.Models.Location;
+using Service.Pagination;
+using Shared;
 using Shared.Enums;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Application.Controllers;
 
@@ -55,19 +58,41 @@ public class LocationsController : ApiController
         return result.Match(Ok, OnError);
     }
 
-    // 5_MB
-    private const int FileSizeMax = 5 * 1024 * 1024;
-    [HttpPost("{id:guid}/attachments")]
-    public async Task<IActionResult> AddAttachments(Guid id, [FromForm] IFormFile file)
+    [SwaggerOperation(description: "File size < 5MB")]
+    [Authorize(UserRole.Manager)]
+    [ProducesResponseType(typeof(AttachmentViewModel), StatusCodes.Status200OK)]
+    [HttpPost("{locationId:guid}/attachments")]
+    public async Task<IActionResult> AddAttachment([FromRoute] Guid locationId, IFormFile file)
     {
-        if (file.Length > FileSizeMax) return BadRequest("File too big, max = 5mb");
+        if (file.Length > AppConstants.FileSizeMax) return BadRequest("File too big, max = 5mb");
 
-        Console.WriteLine(file.Length);
-        Console.WriteLine(file.ContentType);
-
-        var result = await _locationService.CreateAttachment(id,
+        var result = await _locationService.CreateAttachment(locationId,
             new AttachmentCreateModel(file.ContentType, file.OpenReadStream()));
 
+        return result.Match(Ok, OnError);
+    }
+
+    [Authorize(UserRole.Manager)]
+    [HttpDelete("{locationId:guid}/attachments/{attachmentId:guid}")]
+    public async Task<IActionResult> DeleteAttachment(Guid locationId, Guid attachmentId)
+    {
+        var result = await _locationService.DeleteAttachment(locationId, attachmentId);
+        return result.Match(Ok, OnError);
+    }
+
+    [ProducesResponseType(typeof(List<AttachmentViewModel>), StatusCodes.Status200OK)]
+    [HttpGet("{id:guid}/attachments")]
+    public async Task<IActionResult> ListAttachments(Guid id)
+    {
+        var result = await _locationService.ListAttachments(id);
+        return result.Match(Ok, OnError);
+    }
+
+    [ProducesResponseType(typeof(PaginationModel<LocationViewModel>), StatusCodes.Status200OK)]
+    [HttpPost("filter")]
+    public async Task<IActionResult> Filter(LocationFilterModel model)
+    {
+        var result = await _locationService.Filter(model);
         return result.Match(Ok, OnError);
     }
 }

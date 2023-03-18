@@ -54,6 +54,6 @@ public class AppDbContext : DbContext
     {
         var projectPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? "";
         var seedPath = Path.Combine(projectPath, "Seeds", fileName);
-        return JsonConvert.DeserializeObject<List<T>>(File.ReadAllText(seedPath));
+        return JsonConvert.DeserializeObject<List<T>>(File.ReadAllText(seedPath))!;
     }
 }

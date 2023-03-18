@@ -1,7 +1,7 @@
 ﻿namespace Shared.Settings;
 
-public record CloudStorageSettings
-(
-    string Bucket,
-    string Folder
-);
+public class CloudStorageSettings
+{
+    public string Bucket { get; set; } = null!;
+    public string Folder { get; set; } = null!;
+}

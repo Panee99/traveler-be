@@ -12,6 +12,5 @@ public record LocationViewModel
     public double Longitude;
     public double Latitude;
     public string? Description;
-    public ICollection<string> Attachments = new List<string>();
     public ICollection<TagViewModel> Tags = new List<TagViewModel>();
 }

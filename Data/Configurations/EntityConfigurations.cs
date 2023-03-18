@@ -74,6 +74,7 @@ public static class EntityConfigurations
             entity.Property(e => e.Address).HasMaxLength(256);
             entity.Property(e => e.Country).HasMaxLength(256);
             entity.Property(e => e.City).HasMaxLength(256);
+            entity.Property(e => e.CreatedAt).HasColumnType("datetime");
         });
 
         modelBuilder.Entity<LocationTag>().HasKey(e => new { e.LocationId, e.TagId });

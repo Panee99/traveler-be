@@ -12,11 +12,7 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddDependencies(this IServiceCollection services)
     {
-        // Mapper
-        var config = TypeAdapterConfig.GlobalSettings;
-        config.Scan(Assembly.GetExecutingAssembly());
-        services.AddSingleton(config);
-        services.AddScoped<IMapper, ServiceMapper>();
+        
         
         // Middleware
         services.AddScoped<JwtMiddleware>();
@@ -30,6 +26,7 @@ public static class DependencyInjection
         services.AddScoped<ICloudMessagingService, CloudMessagingService>();
         services.AddScoped<ITravelerService, TravelerService>();
         services.AddScoped<ITagService, TagService>();
+        services.AddScoped<ICloudStorageService, CloudStorageService>();
         
         return services;
     }

@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using Service.Interfaces;
 using Service.Models.Tag;
 using Shared.Enums;
-using Swashbuckle.AspNetCore.Annotations;
 
 namespace Application.Controllers;
 

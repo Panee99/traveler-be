@@ -7,6 +7,7 @@ using Service.Interfaces;
 using Service.Models.Attachment;
 using Service.Models.Location;
 using Service.Models.Tag;
+using Service.Pagination;
 using Service.Results;
 using Shared;
 
@@ -15,20 +16,21 @@ namespace Service.Implementations;
 public class LocationService : BaseService, ILocationService
 {
     private readonly IMapper _mapper;
-    private readonly IFileUploadService _fileUploadService;
+    private readonly ICloudStorageService _cloudStorageService;
     private readonly ILogger<LocationService> _logger;
 
-    public LocationService(IUnitOfWork unitOfWork, IMapper mapper, IFileUploadService fileUploadService,
+    public LocationService(IUnitOfWork unitOfWork, IMapper mapper, ICloudStorageService cloudStorageService,
         ILogger<LocationService> logger) : base(unitOfWork)
     {
         _mapper = mapper;
-        _fileUploadService = fileUploadService;
+        _cloudStorageService = cloudStorageService;
         _logger = logger;
     }
 
     public async Task<Result<LocationViewModel>> Create(LocationCreateModel model)
     {
         var entity = _unitOfWork.Repo<Location>().Add(_mapper.Map<Location>(model));
+        entity.CreatedAt = DateTimeHelper.VnNow();
 
         _unitOfWork.Repo<LocationTag>().AddRange(
             model.Tags.Select(id => new LocationTag()
@@ -75,8 +77,6 @@ public class LocationService : BaseService, ILocationService
 
         await _unitOfWork.SaveChangesAsync();
 
-        await _unitOfWork.Entry(entity).Collection(e => e.LocationAttachments).LoadAsync();
-
         var tags = await _unitOfWork.Repo<Location>().Query()
             .Where(e => e.Id == id)
             .SelectMany(e => e.LocationTags)
@@ -116,7 +116,6 @@ public class LocationService : BaseService, ILocationService
                 e.Latitude,
                 e.Description,
                 Tags = e.LocationTags.Select(lt => lt.Tag).ToList(),
-                Attachments = e.LocationAttachments.Select(la => la.Attachment).ToList()
             })
             .FirstOrDefaultAsync(e => e.Id == id);
 
@@ -128,7 +127,7 @@ public class LocationService : BaseService, ILocationService
         return viewModel;
     }
 
-    public async Task<Result> CreateAttachment(Guid locationId, AttachmentCreateModel model)
+    public async Task<Result<AttachmentViewModel>> CreateAttachment(Guid locationId, AttachmentCreateModel model)
     {
         await using var transaction = _unitOfWork.BeginTransaction();
 
@@ -151,7 +150,7 @@ public class LocationService : BaseService, ILocationService
 
             await _unitOfWork.SaveChangesAsync();
 
-            var uploadResult = await _fileUploadService.Upload(attachment.Id, attachment.ContentType, model.Stream);
+            var uploadResult = await _cloudStorageService.Upload(attachment.Id, attachment.ContentType, model.Stream);
 
             if (!uploadResult.IsSuccess)
             {
@@ -160,14 +159,109 @@ public class LocationService : BaseService, ILocationService
             }
 
             await transaction.CommitAsync();
+
+            return new AttachmentViewModel()
+            {
+                Id = attachment.Id,
+                ContentType = attachment.ContentType,
+                Url = uploadResult.Value
+            };
         }
         catch (Exception e)
         {
-            _logger.LogWarning(e, "{Message}", e.Message);
             await transaction.RollbackAsync();
+            _logger.LogWarning(e, "{Message}", e.Message);
             return Error.Unexpected();
         }
+    }
 
-        return Result.Success();
+    public async Task<Result> DeleteAttachment(Guid locationId, Guid attachmentId)
+    {
+        await using var transaction = _unitOfWork.BeginTransaction();
+
+        try
+        {
+            var attachment = _unitOfWork.Repo<Attachment>().FirstOrDefault(a => a.Id == attachmentId);
+            if (attachment is null) return Error.NotFound();
+
+            var locationAttachment = _unitOfWork.Repo<LocationAttachment>()
+                .FirstOrDefault(e => e.LocationId == locationId && e.AttachmentId == attachmentId);
+            if (locationAttachment is null) return Error.NotFound();
+
+            _unitOfWork.Repo<LocationAttachment>().Remove(locationAttachment);
+            _unitOfWork.Repo<Attachment>().Remove(attachment);
+            await _unitOfWork.SaveChangesAsync();
+
+            var storageResult = await _cloudStorageService.Delete(attachment.Id);
+            if (!storageResult.IsSuccess)
+            {
+                await transaction.RollbackAsync();
+                return Error.Unexpected();
+            }
+
+            await _unitOfWork.SaveChangesAsync();
+            await transaction.CommitAsync();
+            return Result.Success();
+        }
+        catch (Exception e)
+        {
+            await transaction.RollbackAsync();
+            _logger.LogWarning(e, "{Message}", e.Message);
+            return Error.Unexpected();
+        }
+    }
+
+    public async Task<Result<List<AttachmentViewModel>>> ListAttachments(Guid id)
+    {
+        if (!_unitOfWork.Repo<Location>().Any(e => e.Id == id))
+            return Error.NotFound();
+
+        var attachments = await _unitOfWork.Repo<LocationAttachment>().Query()
+            .Where(e => e.LocationId == id)
+            .Select(e => e.Attachment)
+            .ToListAsync();
+
+        var viewModels = new List<AttachmentViewModel>();
+
+        foreach (var attachment in attachments)
+        {
+            var result = await _cloudStorageService.GetMediaLink(attachment.Id);
+            viewModels.Add(new AttachmentViewModel()
+            {
+                Id = attachment.Id,
+                ContentType = attachment.ContentType,
+                Url = result.IsSuccess ? result.Value : null
+            });
+        }
+
+        return viewModels;
+    }
+
+    public async Task<Result<PaginationModel<LocationViewModel>>> Filter(LocationFilterModel model)
+    {
+        IQueryable<Location> locations;
+        if (model.Tags is { Count: > 0 })
+            locations = _unitOfWork
+                .Repo<LocationTag>()
+                .Query()
+                .Where(e => model.Tags.Contains(e.TagId))
+                .Select(e => e.Location);
+        else
+            locations = _unitOfWork.Repo<Location>().Query();
+
+        locations.Include(e => e.LocationTags).ThenInclude(lt => lt.Tag);
+        
+        var paginationModel = await locations.Paging(
+            page: model.Page,
+            size: model.Size,
+            orderBy: nameof(Location.CreatedAt),
+            PaginationExtensions.Order.ASC);
+
+        return paginationModel.Map<LocationViewModel>(x =>
+        {
+            var viewModel = _mapper.Map<LocationViewModel>(x);
+            viewModel.Tags = _mapper.Map<List<TagViewModel>>(x.LocationTags.Select(lt => lt.Tag));
+            return viewModel;
+        });
     }
 }
