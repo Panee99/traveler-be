@@ -8,14 +8,12 @@ using Service.Results;
 
 namespace Service.Implementations;
 
-public class TagService : ITagService
+public class TagService : BaseService, ITagService
 {
-    private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
 
-    public TagService(IUnitOfWork unitOfWork, IMapper mapper)
+    public TagService(IUnitOfWork unitOfWork, IMapper mapper) : base(unitOfWork)
     {
-        _unitOfWork = unitOfWork;
         _mapper = mapper;
     }
 

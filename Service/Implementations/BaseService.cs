@@ -1,6 +1,6 @@
 ﻿using Data;
 
-namespace Service;
+namespace Service.Implementations;
 
 public class BaseService
 {

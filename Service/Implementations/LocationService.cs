@@ -190,6 +190,7 @@ public class LocationService : BaseService, ILocationService
 
             _unitOfWork.Repo<LocationAttachment>().Remove(locationAttachment);
             _unitOfWork.Repo<Attachment>().Remove(attachment);
+            
             await _unitOfWork.SaveChangesAsync();
 
             var storageResult = await _cloudStorageService.Delete(attachment.Id);
@@ -199,7 +200,6 @@ public class LocationService : BaseService, ILocationService
                 return Error.Unexpected();
             }
 
-            await _unitOfWork.SaveChangesAsync();
             await transaction.CommitAsync();
             return Result.Success();
         }

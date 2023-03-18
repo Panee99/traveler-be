@@ -11,6 +11,7 @@ namespace Application.Controllers;
 [Produces("application/json")]
 public class ApiController : ControllerBase
 {
+    // Must use with [Authorize]
     protected AuthUser CurrentUser => (AuthUser) HttpContext.Items[AppConstants.UserContextKey]!;
 
     protected static IActionResult OnError(Error error)

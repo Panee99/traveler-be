@@ -18,8 +18,9 @@ public class AppDbContext : DbContext
     public virtual DbSet<Traveler> Travelers { get; set; } = null!;
     public virtual DbSet<TourGuide> TourGuides { get; set; } = null!;
     public virtual DbSet<Attachment> Attachments { get; set; } = null!;
-    public virtual DbSet<Tag> Tags { get; set; } = null!;
+    public virtual DbSet<LocationAttachment> LocationAttachments { get; set; } = null!;
     public virtual DbSet<Location> Locations { get; set; } = null!;
+    public virtual DbSet<Tag> Tags { get; set; } = null!;
     public virtual DbSet<LocationTag> LocationTags { get; set; } = null!;
     public virtual DbSet<Tour> Tours { get; set; } = null!;
     public virtual DbSet<Waypoint> Waypoints { get; set; } = null!;

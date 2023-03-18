@@ -12,13 +12,12 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddDependencies(this IServiceCollection services)
     {
-        
-        
         // Middleware
         services.AddScoped<JwtMiddleware>();
         
         // Services
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddScoped<IAccountService, AccountService>();
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<ILocationService, LocationService>();
         services.AddScoped<IVnPayRequestService, VnPayRequestService>();

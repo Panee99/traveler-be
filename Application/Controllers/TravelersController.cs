@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Service.Interfaces;
 using Service.Models.Traveler;
+using Shared.Enums;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace Application.Controllers;
@@ -28,15 +29,23 @@ public class TravelersController : ApiController
         return result.Match(Ok, OnError);
     }
 
-    [SwaggerOperation(Description = "Leave 'id' empty to get self profile")]
+    [SwaggerOperation(Description = "Self profile")]
+    [ProducesResponseType(typeof(TravelerProfileViewModel), StatusCodes.Status200OK)]
+    [Authorize(UserRole.Traveler)]
+    [HttpGet("profile")]
+    public IActionResult GetSelfProfile()
+    {
+        var result = _travelerService.GetProfile(CurrentUser.Id);
+        return result.Match(Ok, OnError);
+    }
+    
+    [SwaggerOperation(Description = "All travelers profile")]
     [ProducesResponseType(typeof(TravelerProfileViewModel), StatusCodes.Status200OK)]
     [Authorize]
-    [HttpGet("profile")]
-    public IActionResult GetProfile(Guid? id)
+    [HttpGet("{id:guid}/profile")]
+    public IActionResult GetProfile(Guid id)
     {
-        id ??= CurrentUser.Id;
-
-        var result = _travelerService.GetProfile(id.Value);
+        var result = _travelerService.GetProfile(id);
 
         return result.Match(Ok, OnError);
     }

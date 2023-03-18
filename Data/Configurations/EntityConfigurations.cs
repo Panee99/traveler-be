@@ -78,7 +78,6 @@ public static class EntityConfigurations
         });
 
         modelBuilder.Entity<LocationTag>().HasKey(e => new { e.LocationId, e.TagId });
-
         modelBuilder.Entity<LocationAttachment>().HasKey(e => new { e.LocationId, e.AttachmentId });
 
         modelBuilder.Entity<Manager>(entity =>

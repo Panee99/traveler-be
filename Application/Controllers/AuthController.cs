@@ -16,7 +16,7 @@ public class AuthController : ApiController
         _authService = authService;
     }
 
-    [SwaggerOperation(Description = "Phone format: '84' or '+84'.")]
+    [SwaggerOperation(Description = "Phone format: '84' or '+84'. Test: 84389376290 / 123123")]
     [HttpPost("traveler")]
     [ProducesResponseType(typeof(ChatTokenResponseModel), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -27,6 +27,7 @@ public class AuthController : ApiController
         return result.Match(Ok, OnError);
     }
 
+    [SwaggerOperation(Description = "manager@gmail.com / 123123")]
     [HttpPost("manager")]
     [ProducesResponseType(typeof(ChatTokenResponseModel), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -36,6 +37,7 @@ public class AuthController : ApiController
         return result.Match(Ok, OnError);
     }
 
+    [SwaggerOperation(Description = "guide@gmail.com / 123123")]
     [HttpPost("tour-guide")]
     [ProducesResponseType(typeof(ChatTokenResponseModel), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]

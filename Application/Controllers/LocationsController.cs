@@ -64,7 +64,7 @@ public class LocationsController : ApiController
     [HttpPost("{locationId:guid}/attachments")]
     public async Task<IActionResult> AddAttachment([FromRoute] Guid locationId, IFormFile file)
     {
-        if (file.Length > AppConstants.FileSizeMax) return BadRequest("File too big, max = 5mb");
+        if (file.Length > AppConstants.FileSizeMax) return BadRequest("File too big, max = 5mb.");
 
         var result = await _locationService.CreateAttachment(locationId,
             new AttachmentCreateModel(file.ContentType, file.OpenReadStream()));
