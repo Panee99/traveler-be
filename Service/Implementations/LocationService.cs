@@ -29,21 +29,32 @@ public class LocationService : BaseService, ILocationService
 
     public async Task<Result<LocationViewModel>> Create(LocationCreateModel model)
     {
-        var entity = _unitOfWork.Repo<Location>().Add(_mapper.Map<Location>(model));
+        // Create Location
+        var entity = _mapper.Map<Location>(model);
         entity.CreatedAt = DateTimeHelper.VnNow();
+        entity = _unitOfWork.Repo<Location>().Add(entity);
 
-        _unitOfWork.Repo<LocationTag>().AddRange(
-            model.Tags.Select(id => new LocationTag()
-                {
-                    LocationId = entity.Id,
-                    TagId = id
-                }
-            )
-        );
+        // Add Tags
+        if (model.Tags is { Count: > 0 })
+        {
+            _unitOfWork.Repo<LocationTag>().AddRange(
+                model.Tags.Select(id => new LocationTag()
+                    {
+                        LocationId = entity.Id,
+                        TagId = id
+                    }
+                )
+            );
+        }
+
         await _unitOfWork.SaveChangesAsync();
 
-        // result
-        var tags = await _unitOfWork.Repo<Tag>().Query().Where(e => model.Tags.Contains(e.Id)).ToListAsync();
+        // Result
+
+        var tags = new List<Tag>();
+        if (model.Tags is { Count: > 0 })
+            tags = await _unitOfWork.Repo<Tag>().Query().Where(e => model.Tags.Contains(e.Id)).ToListAsync();
+
         var viewModel = _mapper.Map<LocationViewModel>(entity);
         viewModel.Tags = _mapper.Map<List<TagViewModel>>(tags);
         return viewModel;

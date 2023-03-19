@@ -9,5 +9,5 @@ public record LocationCreateModel
     long Longitude,
     long Latitude,
     string? Description,
-    ICollection<Guid> Tags
+    ICollection<Guid>? Tags
 );
