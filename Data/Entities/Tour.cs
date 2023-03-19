@@ -1,4 +1,6 @@
-﻿namespace Data.Entities;
+﻿using Data.Enums;
+
+namespace Data.Entities;
 
 public class Tour
 {
@@ -21,6 +23,8 @@ public class Tour
     public string Vehicle { get; set; } = null!;
 
     public int NumberOfTickets { get; set; }
+
+    public TourStatus Status { get; set; }
 
     public virtual ICollection<Booking> Bookings { get; set; } = new List<Booking>();
 

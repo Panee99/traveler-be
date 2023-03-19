@@ -1,4 +1,5 @@
-﻿using Data.Enums;
+﻿using Data.Entities;
+using Data.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace Data.Configurations;
@@ -12,5 +13,6 @@ public static class ConventionConfigurations
         configurationBuilder.Properties<Gender>().HaveConversion<string>();
         configurationBuilder.Properties<VnPayRequestStatus>().HaveConversion<string>();
         configurationBuilder.Properties<TagType>().HaveConversion<string>();
+        configurationBuilder.Properties<TourStatus>().HaveConversion<string>();
     }
 }
