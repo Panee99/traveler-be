@@ -1,4 +1,5 @@
-﻿using FirebaseAdmin.Auth;
+﻿using Application.Configurations.Auth;
+using FirebaseAdmin.Auth;
 using Microsoft.AspNetCore.Mvc;
 using Service.Models.Chat;
 
@@ -7,16 +8,25 @@ namespace Application.Controllers;
 [Route("chat")]
 public class ChatController : ApiController
 {
-    [ApiExplorerSettings(IgnoreApi = true)]
+    
+    [ProducesResponseType(typeof(ChatTokenResponseModel), StatusCodes.Status200OK)]
+    [Authorize]
     [HttpGet("token")]
-    public async Task<IActionResult> GetToken()
+    public async Task<IActionResult> GetToken(Guid groupId)
     {
-        const string userId = "8831C0B0-DDBA-4758-B995-2F698391ABB5";
-        var token = await FirebaseAuth.DefaultInstance.CreateCustomTokenAsync(userId);
+        // TODO check group access
+        var claims = new Dictionary<string, object>()
+        {
+            { "group", groupId }
+        };
+        
+        var token = await FirebaseAuth.DefaultInstance.CreateCustomTokenAsync(CurrentUser.Id.ToString(), claims);
+        
         return Ok(new ChatTokenResponseModel()
         {
-            UserId = Guid.Parse(userId),
-            Token = token
+            UserId = CurrentUser.Id,
+            GroupId = groupId,
+            Token = token,
         });
     }
 }

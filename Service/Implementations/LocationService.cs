@@ -239,12 +239,18 @@ public class LocationService : BaseService, ILocationService
 
     public async Task<Result<PaginationModel<LocationViewModel>>> Filter(LocationFilterModel model)
     {
+        // No Tags
         if (model.Tags is null || model.Tags.Count == 0)
         {
-            var paginationModel = await _unitOfWork.Repo<Location>()
+            IQueryable<Location> query = _unitOfWork.Repo<Location>()
                 .Query()
-                .OrderByDescending(e => e.CreatedAt)
-                .Paging(model.Page, model.Size);
+                .OrderByDescending(e => e.CreatedAt);
+
+            // Name filter
+            if (model.Name != null)
+                query = query.Where(e => e.Name.Contains(model.Name));
+
+            var paginationModel = await query.Paging(model.Page, model.Size);
 
             return paginationModel.Map<LocationViewModel>(x =>
             {
@@ -254,25 +260,31 @@ public class LocationService : BaseService, ILocationService
             });
         }
 
-        // Filter by tags
-        var validLocations = _unitOfWork.Repo<LocationTag>()
-            .Query()
-            .Where(lt => model.Tags.Contains(lt.TagId))
-            .Select(lt => lt.LocationId);
-
-        var locations = await _unitOfWork.Repo<Location>()
-            .Query()
-            .OrderByDescending(l => l.CreatedAt)
-            .Where(l => validLocations.Contains(l.Id))
-            .Include(l => l.LocationTags)
-            .ThenInclude(lt => lt.Tag)
-            .Paging(model.Page, model.Size);
-
-        return locations.Map<LocationViewModel>(x =>
+        // With Tags
         {
-            var viewModel = _mapper.Map<LocationViewModel>(x);
-            viewModel.Tags = _mapper.Map<List<TagViewModel>>(x.LocationTags.Select(lt => lt.Tag));
-            return viewModel;
-        });
+            var validLocations = _unitOfWork.Repo<LocationTag>()
+                .Query()
+                .Where(lt => model.Tags.Contains(lt.TagId))
+                .Select(lt => lt.LocationId);
+
+            var query = _unitOfWork.Repo<Location>()
+                .Query()
+                .OrderByDescending(l => l.CreatedAt)
+                .Where(l => validLocations.Contains(l.Id));
+
+            if (model.Name != null)
+                query = query.Where(e => e.Name.Contains(model.Name));
+
+            var locations = await query.Include(l => l.LocationTags)
+                .ThenInclude(lt => lt.Tag)
+                .Paging(model.Page, model.Size);
+
+            return locations.Map<LocationViewModel>(x =>
+            {
+                var viewModel = _mapper.Map<LocationViewModel>(x);
+                viewModel.Tags = _mapper.Map<List<TagViewModel>>(x.LocationTags.Select(lt => lt.Tag));
+                return viewModel;
+            });
+        }
     }
 }
