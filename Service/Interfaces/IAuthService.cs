@@ -1,6 +1,6 @@
 ﻿using Service.Models.Account;
 using Service.Models.Auth;
-using Service.Results;
+using Shared.ResultExtensions;
 
 namespace Service.Interfaces;
 

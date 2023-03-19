@@ -2,9 +2,10 @@
 using Application.Commons;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Service.Results;
 using Shared;
 using Shared.Enums;
+using Shared.Helpers;
+using Shared.ResultExtensions;
 
 namespace Application.Configurations.Auth;
 

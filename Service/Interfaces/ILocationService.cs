@@ -2,7 +2,7 @@
 using Service.Models.Attachment;
 using Service.Models.Location;
 using Service.Pagination;
-using Service.Results;
+using Shared.ResultExtensions;
 
 namespace Service.Interfaces;
 

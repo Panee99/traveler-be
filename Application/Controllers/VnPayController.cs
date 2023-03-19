@@ -2,10 +2,10 @@
 using Microsoft.Extensions.Options;
 using Service.Interfaces;
 using Service.Models.VnPay;
-using Shared;
+using Shared.ExternalServices.VnPay;
+using Shared.ExternalServices.VnPay.Models;
+using Shared.Helpers;
 using Shared.Settings;
-using Shared.VnPay;
-using Shared.VnPay.Models;
 
 namespace Application.Controllers;
 

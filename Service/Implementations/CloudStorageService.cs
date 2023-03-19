@@ -1,10 +1,11 @@
 ﻿using System.Net;
+using System.Web;
 using Google.Cloud.Storage.V1;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Service.Interfaces;
-using Service.Results;
-using Shared.Firebase;
+using Shared.ExternalServices.CloudStorage;
+using Shared.ResultExtensions;
 using Shared.Settings;
 
 namespace Service.Implementations;
@@ -12,7 +13,6 @@ namespace Service.Implementations;
 public class CloudStorageService : ICloudStorageService
 {
     private static readonly StorageClient _storage;
-
     private readonly CloudStorageSettings _settings;
     private readonly ILogger<CloudStorageService> _logger;
 
@@ -76,31 +76,10 @@ public class CloudStorageService : ICloudStorageService
         }
     }
 
-    public async Task<Result<string>> GetMediaLink(Guid id)
+    public string GetMediaLink(Guid id)
     {
-        try
-        {
-            var obj = await _storage.GetObjectAsync(
-                _settings.Bucket,
-                $"{_settings.Folder}/{id}",
-                new GetObjectOptions() { Projection = Projection.NoAcl },
-                CancellationToken.None);
-
-            return obj.MediaLink;
-        }
-        catch (Google.GoogleApiException e)
-        {
-            _logger.LogWarning(e, "{Message}", e.Message);
-            if ((int)e.HttpStatusCode == (int)HttpStatusCode.NotFound)
-                return Error.NotFound();
-
-            _logger.LogWarning(e, "{Message}", e.Message);
-            return Error.Unexpected();
-        }
-        catch (Exception e)
-        {
-            _logger.LogWarning(e, "{Message}", e.Message);
-            return Error.Unexpected();
-        }
+        return CloudStorageHelper.GenerateV4UploadSignedUrl(
+            _settings.Bucket,
+            _settings.Folder + '/' + id);
     }
 }

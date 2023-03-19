@@ -7,8 +7,8 @@ using Microsoft.Extensions.Logging;
 using Service.Errors;
 using Service.Interfaces;
 using Service.Models.Traveler;
-using Service.Results;
 using Shared.Auth;
+using Shared.ResultExtensions;
 
 namespace Service.Implementations;
 
@@ -32,7 +32,7 @@ public class TravelerService : BaseService, ITravelerService
             new Traveler()
             {
                 Phone = _formatPhoneNum(model.Phone),
-                Password = AuthUtils.HashPassword(model.Password),
+                Password = AuthHelper.HashPassword(model.Password),
                 Status = AccountStatus.ACTIVE,
                 FirstName = model.FirstName,
                 LastName = model.LastName,

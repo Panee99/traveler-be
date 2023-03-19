@@ -2,7 +2,7 @@
 
 namespace Shared.Auth;
 
-public static class AuthUtils
+public static class AuthHelper
 {
     public static string HashPassword(string password)
     {

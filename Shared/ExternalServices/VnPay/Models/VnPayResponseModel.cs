@@ -1,4 +1,4 @@
-﻿namespace Shared.VnPay.Models;
+﻿namespace Shared.ExternalServices.VnPay.Models;
 
 public class VnPayResponseModel
 {

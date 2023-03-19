@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using Serilog;
-using Shared.Firebase;
+using Shared.ExternalServices.Firebase;
 
 // Serilog for file logging
 Log.Logger = new LoggerConfiguration()
@@ -14,7 +14,7 @@ Log.Logger = new LoggerConfiguration()
         "[{Level:w3}] {Timestamp:dd-MM-yyyy HH:mm:ss.fff zzz}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}")
     .CreateLogger();
 
-FirebaseAppInitializer.Init();
+FirebaseAppHelper.Init();
 
 // BUILDER
 var builder = WebApplication.CreateBuilder(args);

@@ -4,7 +4,7 @@ using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
 using Service.Interfaces;
 using Service.Models.Tag;
-using Service.Results;
+using Shared.ResultExtensions;
 
 namespace Service.Implementations;
 

@@ -1,7 +1,7 @@
 ﻿using Service.Models.Account;
 using Service.Models.Attachment;
-using Service.Results;
 using Shared.Enums;
+using Shared.ResultExtensions;
 
 namespace Service.Interfaces;
 
@@ -11,5 +11,5 @@ public interface IAccountService
     
     Result<ProfileViewModel> GetProfile(Guid id, UserRole role);
 
-    Task<Result<AvatarViewModel>> GetAvatar(Guid id);
+    Result<AvatarViewModel> GetAvatar(Guid id);
 }

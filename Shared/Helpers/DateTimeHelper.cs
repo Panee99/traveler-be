@@ -1,4 +1,4 @@
-﻿namespace Shared;
+﻿namespace Shared.Helpers;
 
 public static class DateTimeHelper
 {

@@ -6,9 +6,9 @@ using Microsoft.Extensions.Logging;
 using Service.Interfaces;
 using Service.Models.Account;
 using Service.Models.Attachment;
-using Service.Results;
-using Shared;
 using Shared.Enums;
+using Shared.Helpers;
+using Shared.ResultExtensions;
 
 namespace Service.Implementations;
 
@@ -26,7 +26,7 @@ public class AccountService : BaseService, IAccountService
         _mapper = mapper;
     }
 
-    public async Task<Result<AvatarViewModel>> GetAvatar(Guid id)
+    public Result<AvatarViewModel> GetAvatar(Guid id)
     {
         var attachmentId = _unitOfWork.Repo<Account>()
             .Query()
@@ -35,10 +35,11 @@ public class AccountService : BaseService, IAccountService
             .FirstOrDefault();
 
         if (attachmentId is null) return Error.NotFound();
-        
-        var result = await _cloudStorageService.GetMediaLink(attachmentId.Value);
-        if (result.IsSuccess) return new AvatarViewModel(result.Value);
-        return result.Error.ErrorType == ErrorType.NotFound ? Error.NotFound() : Error.Unexpected();
+
+        return new AvatarViewModel(
+            Id: attachmentId.Value,
+            Url: _cloudStorageService.GetMediaLink(attachmentId.Value)
+        );
     }
 
     public Result<ProfileViewModel> GetProfile(Guid id, UserRole role)

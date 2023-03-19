@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Service.Interfaces;
 using Service.Models.Account;
 using Service.Models.Attachment;
-using Shared;
+using Shared.Helpers;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace Application.Controllers;
@@ -21,12 +21,13 @@ public class AccountsController : ApiController
 
     [SwaggerOperation(description: "File size < 5MB")]
     [ProducesResponseType(typeof(AttachmentViewModel), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponsePayload), StatusCodes.Status400BadRequest)]
     [Authorize]
     [HttpPut("avatar")]
     public async Task<IActionResult> UpdateAvatar(IFormFile file)
     {
-        if (file.Length > AppConstants.FileSizeMax)
-            return BadRequest("File too big, max = 5mb.");
+        var validateResult = FileHelper.ValidateImageFile(file);
+        if (!validateResult.IsSuccess) return OnError(validateResult.Error);
 
         var result = await _accountService.UpdateAvatar(CurrentUser.Id, file.ContentType, file.OpenReadStream());
         return result.Match(Ok, OnError);
@@ -36,9 +37,9 @@ public class AccountsController : ApiController
     [ProducesResponseType(typeof(ErrorResponsePayload), StatusCodes.Status404NotFound)]
     [Authorize]
     [HttpGet("avatar")]
-    public async Task<IActionResult> GetAvatar()
+    public IActionResult GetAvatar()
     {
-        var result = await _accountService.GetAvatar(CurrentUser.Id);
+        var result = _accountService.GetAvatar(CurrentUser.Id);
         return result.Match(Ok, OnError);
     }
 

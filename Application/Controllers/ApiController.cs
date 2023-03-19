@@ -2,8 +2,9 @@
 using Application.Commons;
 using Application.Configurations.Auth;
 using Microsoft.AspNetCore.Mvc;
-using Service.Results;
 using Shared;
+using Shared.Helpers;
+using Shared.ResultExtensions;
 
 namespace Application.Controllers;
 

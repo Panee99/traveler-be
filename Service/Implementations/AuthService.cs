@@ -8,9 +8,9 @@ using System.Text;
 using Data.Entities;
 using Data.Enums;
 using Service.Models.Auth;
-using Service.Results;
 using Shared.Auth;
 using Shared.Enums;
+using Shared.ResultExtensions;
 using Shared.Settings;
 
 namespace Service.Implementations;
@@ -30,7 +30,7 @@ public class AuthService : BaseService, IAuthService
             .Query()
             .FirstOrDefault(e => e.Phone == model.Phone && e.Status == AccountStatus.ACTIVE);
 
-        if (traveler == null || !AuthUtils.VerifyPassword(model.Password, traveler.Password))
+        if (traveler == null || !AuthHelper.VerifyPassword(model.Password, traveler.Password))
             return Error.Authentication();
 
         return new AuthenticateResponseModel(Token: _generateJwtToken(traveler.Id, UserRole.Traveler));
@@ -42,7 +42,7 @@ public class AuthService : BaseService, IAuthService
             .Query()
             .FirstOrDefault(e => e.Email == model.Email && e.Status == AccountStatus.ACTIVE);
 
-        if (manager == null || !AuthUtils.VerifyPassword(model.Password, manager.Password))
+        if (manager == null || !AuthHelper.VerifyPassword(model.Password, manager.Password))
             return Error.Authentication();
 
         return new AuthenticateResponseModel(Token: _generateJwtToken(manager.Id, UserRole.Manager));
@@ -54,7 +54,7 @@ public class AuthService : BaseService, IAuthService
             .Query()
             .FirstOrDefault(e => e.Email == model.Email && e.Status == AccountStatus.ACTIVE);
 
-        if (tourGuide == null || !AuthUtils.VerifyPassword(model.Password, tourGuide.Password))
+        if (tourGuide == null || !AuthHelper.VerifyPassword(model.Password, tourGuide.Password))
             return Error.Authentication();
 
         return new AuthenticateResponseModel(Token: _generateJwtToken(tourGuide.Id, UserRole.TourGuide));

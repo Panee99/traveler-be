@@ -1,5 +1,5 @@
 ﻿using Service.Models.Traveler;
-using Service.Results;
+using Shared.ResultExtensions;
 
 namespace Service.Interfaces;
 

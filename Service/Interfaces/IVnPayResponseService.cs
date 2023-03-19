@@ -1,5 +1,5 @@
-﻿using Service.Results;
-using Shared.VnPay.Models;
+﻿using Shared.ExternalServices.VnPay.Models;
+using Shared.ResultExtensions;
 
 namespace Service.Interfaces;
 

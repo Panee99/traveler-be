@@ -2,5 +2,6 @@
 
 public record AvatarViewModel
 (
+    Guid Id,
     string? Url
 );

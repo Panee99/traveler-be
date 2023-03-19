@@ -2,9 +2,9 @@
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
-using Shared.VnPay.Models;
+using Shared.ExternalServices.VnPay.Models;
 
-namespace Shared.VnPay;
+namespace Shared.ExternalServices.VnPay;
 
 public static class VnPay
 {

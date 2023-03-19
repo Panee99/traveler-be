@@ -3,9 +3,10 @@ using Data.Entities;
 using MapsterMapper;
 using Microsoft.Extensions.Logging;
 using Service.Interfaces;
-using Service.Results;
 using Shared;
-using Shared.VnPay.Models;
+using Shared.ExternalServices.VnPay.Models;
+using Shared.Helpers;
+using Shared.ResultExtensions;
 
 namespace Service.Implementations;
 

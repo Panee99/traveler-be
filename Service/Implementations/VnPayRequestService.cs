@@ -2,8 +2,8 @@
 using Data.Entities;
 using MapsterMapper;
 using Service.Interfaces;
-using Service.Results;
-using Shared.VnPay.Models;
+using Shared.ExternalServices.VnPay.Models;
+using Shared.ResultExtensions;
 
 namespace Service.Implementations;
 

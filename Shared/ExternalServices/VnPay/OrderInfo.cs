@@ -1,4 +1,4 @@
-﻿namespace Shared.VnPay;
+﻿namespace Shared.ExternalServices.VnPay;
 
 public class OrderInfo
 {

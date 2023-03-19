@@ -8,8 +8,8 @@ using Service.Models.Attachment;
 using Service.Models.Location;
 using Service.Models.Tag;
 using Service.Pagination;
-using Service.Results;
-using Shared;
+using Shared.Helpers;
+using Shared.ResultExtensions;
 
 namespace Service.Implementations;
 
@@ -216,25 +216,20 @@ public class LocationService : BaseService, ILocationService
         if (!_unitOfWork.Repo<Location>().Any(e => e.Id == id))
             return Error.NotFound();
 
-        var attachments = await _unitOfWork.Repo<LocationAttachment>().Query()
+        var attachments = await _unitOfWork.Repo<LocationAttachment>()
+            .Query()
             .Where(e => e.LocationId == id)
             .Select(e => e.Attachment)
             .ToListAsync();
 
-        var viewModels = new List<AttachmentViewModel>();
-
-        foreach (var attachment in attachments)
-        {
-            var result = await _cloudStorageService.GetMediaLink(attachment.Id);
-            viewModels.Add(new AttachmentViewModel()
-            {
-                Id = attachment.Id,
-                ContentType = attachment.ContentType,
-                Url = result.IsSuccess ? result.Value : null
-            });
-        }
-
-        return viewModels;
+        return attachments.Select(attachment =>
+                new AttachmentViewModel()
+                {
+                    Id = attachment.Id,
+                    ContentType = attachment.ContentType,
+                    Url = _cloudStorageService.GetMediaLink(attachment.Id)
+                })
+            .ToList();
     }
 
     public async Task<Result<PaginationModel<LocationViewModel>>> Filter(LocationFilterModel model)
