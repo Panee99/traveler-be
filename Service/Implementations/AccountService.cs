@@ -4,9 +4,11 @@ using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Service.Interfaces;
+using Service.Models.Account;
 using Service.Models.Attachment;
 using Service.Results;
 using Shared;
+using Shared.Enums;
 
 namespace Service.Implementations;
 
@@ -22,6 +24,48 @@ public class AccountService : BaseService, IAccountService
         _logger = logger;
         _cloudStorageService = cloudStorageService;
         _mapper = mapper;
+    }
+
+    public async Task<Result<AvatarViewModel>> GetAvatar(Guid id)
+    {
+        var attachmentId = _unitOfWork.Repo<Account>()
+            .Query()
+            .Where(e => e.Id == id)
+            .Select(e => e.AttachmentId)
+            .FirstOrDefault();
+
+        if (attachmentId is null) return Error.NotFound();
+        
+        var result = await _cloudStorageService.GetMediaLink(attachmentId.Value);
+        if (result.IsSuccess) return new AvatarViewModel(result.Value);
+        return result.Error.ErrorType == ErrorType.NotFound ? Error.NotFound() : Error.Unexpected();
+    }
+
+    public Result<ProfileViewModel> GetProfile(Guid id, UserRole role)
+    {
+        ProfileViewModel viewModel;
+        switch (role)
+        {
+            case UserRole.Traveler:
+                var traveler = _unitOfWork.Repo<Traveler>().FirstOrDefault(e => e.Id == id);
+                if (traveler is null) return Error.Unexpected();
+                viewModel = _mapper.Map<ProfileViewModel>(traveler);
+                break;
+            case UserRole.TourGuide:
+                var tourGuide = _unitOfWork.Repo<TourGuide>().FirstOrDefault(e => e.Id == id);
+                if (tourGuide is null) return Error.Unexpected();
+                viewModel = _mapper.Map<ProfileViewModel>(tourGuide);
+                break;
+            case UserRole.Manager:
+                var manager = _unitOfWork.Repo<Manager>().FirstOrDefault(e => e.Id == id);
+                if (manager is null) return Error.Unexpected();
+                viewModel = _mapper.Map<ProfileViewModel>(manager);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+
+        return viewModel;
     }
 
     public async Task<Result<AttachmentViewModel>> UpdateAvatar(Guid id, string contentType, Stream stream)
@@ -68,7 +112,7 @@ public class AccountService : BaseService, IAccountService
             }
 
             await transaction.CommitAsync();
-            
+
             return new AttachmentViewModel()
             {
                 Id = newAttachment.Id,

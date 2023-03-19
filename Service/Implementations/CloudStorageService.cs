@@ -88,6 +88,15 @@ public class CloudStorageService : ICloudStorageService
 
             return obj.MediaLink;
         }
+        catch (Google.GoogleApiException e)
+        {
+            _logger.LogWarning(e, "{Message}", e.Message);
+            if ((int)e.HttpStatusCode == (int)HttpStatusCode.NotFound)
+                return Error.NotFound();
+
+            _logger.LogWarning(e, "{Message}", e.Message);
+            return Error.Unexpected();
+        }
         catch (Exception e)
         {
             _logger.LogWarning(e, "{Message}", e.Message);

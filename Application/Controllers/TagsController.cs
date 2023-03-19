@@ -1,4 +1,5 @@
-﻿using Application.Configurations.Auth;
+﻿using Application.Commons;
+using Application.Configurations.Auth;
 using Microsoft.AspNetCore.Mvc;
 using Service.Interfaces;
 using Service.Models.Tag;
@@ -26,6 +27,7 @@ public class TagsController : ApiController
     }
 
     [ProducesResponseType(typeof(TagViewModel), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponsePayload), StatusCodes.Status404NotFound)]
     [Authorize(UserRole.Manager)]
     [HttpPatch("{id:guid}")]
     public IActionResult Update(Guid id, TagUpdateModel model)
@@ -35,6 +37,7 @@ public class TagsController : ApiController
     }
 
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponsePayload), StatusCodes.Status404NotFound)]
     [Authorize(UserRole.Manager)]
     [HttpDelete("{id:guid}")]
     public IActionResult Delete(Guid id)
@@ -44,6 +47,7 @@ public class TagsController : ApiController
     }
 
     [ProducesResponseType(typeof(TagViewModel), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponsePayload), StatusCodes.Status404NotFound)]
     [HttpGet("{id:guid}")]
     public IActionResult Find(Guid id)
     {

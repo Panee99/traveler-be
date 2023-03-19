@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using Application.Commons;
 using Application.Configurations.Auth;
 using Microsoft.AspNetCore.Mvc;
 using Service.Interfaces;
@@ -33,6 +34,7 @@ public class LocationsController : ApiController
     }
 
     [ProducesResponseType(typeof(LocationViewModel), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponsePayload), StatusCodes.Status404NotFound)]
     [Authorize(UserRole.Manager)]
     [HttpPatch("{id:guid}")]
     public async Task<IActionResult> Update(Guid id, LocationUpdateModel model)
@@ -42,6 +44,7 @@ public class LocationsController : ApiController
     }
 
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponsePayload), StatusCodes.Status404NotFound)]
     [Authorize(UserRole.Manager)]
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete(Guid id)
@@ -51,6 +54,7 @@ public class LocationsController : ApiController
     }
 
     [ProducesResponseType(typeof(LocationViewModel), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponsePayload), StatusCodes.Status404NotFound)]
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> Find(Guid id)
     {
@@ -61,6 +65,7 @@ public class LocationsController : ApiController
     [SwaggerOperation(description: "File size < 5MB")]
     [Authorize(UserRole.Manager)]
     [ProducesResponseType(typeof(AttachmentViewModel), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponsePayload), StatusCodes.Status404NotFound)]
     [HttpPost("{locationId:guid}/attachments")]
     public async Task<IActionResult> AddAttachment([FromRoute] Guid locationId, IFormFile file)
     {
@@ -74,6 +79,7 @@ public class LocationsController : ApiController
 
     [Authorize(UserRole.Manager)]
     [HttpDelete("{locationId:guid}/attachments/{attachmentId:guid}")]
+    [ProducesResponseType(typeof(ErrorResponsePayload), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> DeleteAttachment(Guid locationId, Guid attachmentId)
     {
         var result = await _locationService.DeleteAttachment(locationId, attachmentId);
@@ -81,6 +87,7 @@ public class LocationsController : ApiController
     }
 
     [ProducesResponseType(typeof(List<AttachmentViewModel>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponsePayload), StatusCodes.Status404NotFound)]
     [HttpGet("{id:guid}/attachments")]
     public async Task<IActionResult> ListAttachments(Guid id)
     {

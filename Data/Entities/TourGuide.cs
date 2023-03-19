@@ -10,9 +10,9 @@ public class TourGuide : Account
 
     public string Email { get; set; } = null!;
     
-    public DateTime? Birthday { get; set; }
-
     public Gender Gender { get; set; }
+
+    public DateTime? Birthday { get; set; }
 
     public virtual ICollection<IncurredCost> IncurredCosts { get; set; } = new List<IncurredCost>();
 }

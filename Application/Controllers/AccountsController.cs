@@ -1,6 +1,8 @@
-﻿using Application.Configurations.Auth;
+﻿using Application.Commons;
+using Application.Configurations.Auth;
 using Microsoft.AspNetCore.Mvc;
 using Service.Interfaces;
+using Service.Models.Account;
 using Service.Models.Attachment;
 using Shared;
 using Swashbuckle.AspNetCore.Annotations;
@@ -18,8 +20,8 @@ public class AccountsController : ApiController
     }
 
     [SwaggerOperation(description: "File size < 5MB")]
-    [Authorize]
     [ProducesResponseType(typeof(AttachmentViewModel), StatusCodes.Status200OK)]
+    [Authorize]
     [HttpPut("avatar")]
     public async Task<IActionResult> UpdateAvatar(IFormFile file)
     {
@@ -27,6 +29,25 @@ public class AccountsController : ApiController
             return BadRequest("File too big, max = 5mb.");
 
         var result = await _accountService.UpdateAvatar(CurrentUser.Id, file.ContentType, file.OpenReadStream());
+        return result.Match(Ok, OnError);
+    }
+
+    [ProducesResponseType(typeof(AvatarViewModel), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponsePayload), StatusCodes.Status404NotFound)]
+    [Authorize]
+    [HttpGet("avatar")]
+    public async Task<IActionResult> GetAvatar()
+    {
+        var result = await _accountService.GetAvatar(CurrentUser.Id);
+        return result.Match(Ok, OnError);
+    }
+
+    [ProducesResponseType(typeof(ProfileViewModel), StatusCodes.Status200OK)]
+    [Authorize]
+    [HttpGet("profile")]
+    public IActionResult GetProfile()
+    {
+        var result = _accountService.GetProfile(CurrentUser.Id, CurrentUser.Role);
         return result.Match(Ok, OnError);
     }
 }
