@@ -9,7 +9,6 @@ public static class EntityConfigurations
     {
         modelBuilder.Entity<Account>(entity =>
         {
-            entity.ToTable("Accounts");
             entity.HasKey(e => e.Id);
             entity.HasIndex(e => e.Status);
             entity.HasIndex(e => e.Phone).IsUnique();
@@ -82,7 +81,6 @@ public static class EntityConfigurations
 
         modelBuilder.Entity<Manager>(entity =>
         {
-            entity.ToTable("Managers");
             entity.Property(e => e.Email).HasMaxLength(256);
             entity.Property(e => e.Birthday).HasColumnType("datetime");
             entity.Property(e => e.FirstName).HasMaxLength(256);
@@ -127,7 +125,6 @@ public static class EntityConfigurations
 
         modelBuilder.Entity<TourGuide>(entity =>
         {
-            entity.ToTable("TourGuides");
             entity.Property(e => e.Email).HasMaxLength(256);
             entity.Property(e => e.Birthday).HasColumnType("datetime");
             entity.Property(e => e.FirstName).HasMaxLength(256);
@@ -153,7 +150,6 @@ public static class EntityConfigurations
 
         modelBuilder.Entity<Traveler>(entity =>
         {
-            entity.ToTable("Travelers");
             entity.Property(e => e.Address).HasMaxLength(256);
             entity.Property(e => e.Birthday).HasColumnType("datetime");
             entity.Property(e => e.FirstName).HasMaxLength(256);
