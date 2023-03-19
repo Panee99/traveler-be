@@ -39,7 +39,9 @@ public class CloudStorageService : ICloudStorageService
                 null,
                 CancellationToken.None);
 
-            return obj.MediaLink;
+            return CloudStorageHelper.GenerateV4UploadSignedUrl(
+                _settings.Bucket,
+                $"{_settings.Folder}/{id}");
         }
         catch (Exception e)
         {
