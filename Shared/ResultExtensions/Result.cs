@@ -2,10 +2,6 @@
 
 public class Result
 {
-    public bool IsSuccess { get; }
-
-    public Error Error { get; }
-
     protected static readonly Error NoError =
         Error.Custom(ErrorType.Unexpected, "General.NoError", "Success result has no error.");
 
@@ -15,10 +11,22 @@ public class Result
         Error = error;
     }
 
-    public static Result Success() => new(true, NoError);
+    public bool IsSuccess { get; }
 
-    public static implicit operator Result(Error error) => new(false, error);
+    public Error Error { get; }
 
-    public TResult Match<TResult>(Func<TResult> onSuccess, Func<Error, TResult> onError) =>
-        IsSuccess ? onSuccess() : onError(Error);
+    public static Result Success()
+    {
+        return new(true, NoError);
+    }
+
+    public static implicit operator Result(Error error)
+    {
+        return new(false, error);
+    }
+
+    public TResult Match<TResult>(Func<TResult> onSuccess, Func<Error, TResult> onError)
+    {
+        return IsSuccess ? onSuccess() : onError(Error);
+    }
 }

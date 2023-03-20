@@ -10,4 +10,3 @@ public class Tag
 
     public TagType Type { get; set; }
 }
-

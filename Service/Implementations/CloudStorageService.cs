@@ -1,5 +1,5 @@
 ﻿using System.Net;
-using System.Web;
+using Google;
 using Google.Cloud.Storage.V1;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -13,8 +13,8 @@ namespace Service.Implementations;
 public class CloudStorageService : ICloudStorageService
 {
     private static readonly StorageClient _storage;
-    private readonly CloudStorageSettings _settings;
     private readonly ILogger<CloudStorageService> _logger;
+    private readonly CloudStorageSettings _settings;
 
     static CloudStorageService()
     {
@@ -63,7 +63,7 @@ public class CloudStorageService : ICloudStorageService
 
             return Result.Success();
         }
-        catch (Google.GoogleApiException e)
+        catch (GoogleApiException e)
         {
             if ((int)e.HttpStatusCode == (int)HttpStatusCode.NotFound)
                 return Result.Success();

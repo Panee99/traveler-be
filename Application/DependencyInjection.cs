@@ -1,8 +1,5 @@
-﻿using System.Reflection;
-using Application.Configurations.Auth;
-using Data;
-using Mapster;
-using MapsterMapper;
+﻿using Application.Configurations.Auth;
+using Data.EFCore;
 using Service.Implementations;
 using Service.Interfaces;
 
@@ -14,7 +11,7 @@ public static class DependencyInjection
     {
         // Middleware
         services.AddScoped<JwtMiddleware>();
-        
+
         // Services
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IAccountService, AccountService>();
@@ -26,7 +23,7 @@ public static class DependencyInjection
         services.AddScoped<ITravelerService, TravelerService>();
         services.AddScoped<ITagService, TagService>();
         services.AddScoped<ICloudStorageService, CloudStorageService>();
-        
+
         return services;
     }
 }

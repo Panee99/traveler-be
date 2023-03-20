@@ -4,12 +4,12 @@ namespace Service.Models.Traveler;
 
 public record TravelerProfileViewModel
 {
-    public Gender Gender;
-    public string Phone = null!;
-    public string FirstName = null!;
-    public string LastName = null!;
-    public string? BankName;
-    public string? BankAccountNumber;
     public string? Address;
+    public string? BankAccountNumber;
+    public string? BankName;
     public DateTime? BirthDay;
+    public string FirstName = null!;
+    public Gender Gender;
+    public string LastName = null!;
+    public string Phone = null!;
 }

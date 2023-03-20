@@ -1,9 +1,9 @@
 ﻿namespace Service.Models.Location;
 
 public record LocationFilterModel
-{
-    public int Page;
-    public int Size;
-    public string? Name;
-    public List<Guid>? Tags;
-}
+(
+    int Page,
+    int Size,
+    string? Name,
+    List<Guid>? Tags
+);

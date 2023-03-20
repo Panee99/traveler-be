@@ -1,4 +1,4 @@
-﻿using Data;
+﻿using Data.EFCore;
 using Data.Entities;
 using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
@@ -14,8 +14,8 @@ namespace Service.Implementations;
 
 public class AccountService : BaseService, IAccountService
 {
-    private readonly ILogger<AccountService> _logger;
     private readonly ICloudStorageService _cloudStorageService;
+    private readonly ILogger<AccountService> _logger;
     private readonly IMapper _mapper;
 
     public AccountService(IUnitOfWork unitOfWork, ILogger<AccountService> logger,
@@ -26,39 +26,39 @@ public class AccountService : BaseService, IAccountService
         _mapper = mapper;
     }
 
-    public Result<AvatarViewModel> GetAvatar(Guid id)
+    public async Task<Result<AvatarViewModel>> GetAvatar(Guid id)
     {
-        var attachmentId = _unitOfWork.Repo<Account>()
+        var attachmentId = await _unitOfWork.Repo<Account>()
             .Query()
             .Where(e => e.Id == id)
             .Select(e => e.AttachmentId)
-            .FirstOrDefault();
+            .FirstOrDefaultAsync();
 
         if (attachmentId is null) return Error.NotFound();
 
         return new AvatarViewModel(
-            Id: attachmentId.Value,
-            Url: _cloudStorageService.GetMediaLink(attachmentId.Value)
+            attachmentId.Value,
+            _cloudStorageService.GetMediaLink(attachmentId.Value)
         );
     }
 
-    public Result<ProfileViewModel> GetProfile(Guid id, UserRole role)
+    public async Task<Result<ProfileViewModel>> GetProfile(Guid id, UserRole role)
     {
         ProfileViewModel viewModel;
         switch (role)
         {
             case UserRole.Traveler:
-                var traveler = _unitOfWork.Repo<Traveler>().FirstOrDefault(e => e.Id == id);
+                var traveler = await _unitOfWork.Repo<Traveler>().FirstOrDefaultAsync(e => e.Id == id);
                 if (traveler is null) return Error.Unexpected();
                 viewModel = _mapper.Map<ProfileViewModel>(traveler);
                 break;
             case UserRole.TourGuide:
-                var tourGuide = _unitOfWork.Repo<TourGuide>().FirstOrDefault(e => e.Id == id);
+                var tourGuide = await _unitOfWork.Repo<TourGuide>().FirstOrDefaultAsync(e => e.Id == id);
                 if (tourGuide is null) return Error.Unexpected();
                 viewModel = _mapper.Map<ProfileViewModel>(tourGuide);
                 break;
             case UserRole.Manager:
-                var manager = _unitOfWork.Repo<Manager>().FirstOrDefault(e => e.Id == id);
+                var manager = await _unitOfWork.Repo<Manager>().FirstOrDefaultAsync(e => e.Id == id);
                 if (manager is null) return Error.Unexpected();
                 viewModel = _mapper.Map<ProfileViewModel>(manager);
                 break;
@@ -84,7 +84,7 @@ public class AccountService : BaseService, IAccountService
 
             var oldAttachment = account.Attachment;
 
-            var newAttachment = _unitOfWork.Repo<Attachment>().Add(new Attachment()
+            var newAttachment = _unitOfWork.Repo<Attachment>().Add(new Attachment
             {
                 ContentType = contentType,
                 CreatedAt = DateTimeHelper.VnNow()
@@ -114,7 +114,7 @@ public class AccountService : BaseService, IAccountService
 
             await transaction.CommitAsync();
 
-            return new AttachmentViewModel()
+            return new AttachmentViewModel
             {
                 Id = newAttachment.Id,
                 ContentType = newAttachment.ContentType,

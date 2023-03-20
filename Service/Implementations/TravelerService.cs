@@ -1,8 +1,9 @@
-﻿using Data;
+﻿using Data.EFCore;
 using Data.Entities;
 using Data.Enums;
 using FirebaseAdmin.Auth;
 using MapsterMapper;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Service.Errors;
 using Service.Interfaces;
@@ -14,8 +15,8 @@ namespace Service.Implementations;
 
 public class TravelerService : BaseService, ITravelerService
 {
-    private readonly IMapper _mapper;
     private readonly ILogger<TravelerService> _logger;
+    private readonly IMapper _mapper;
 
     public TravelerService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<TravelerService> logger) : base(unitOfWork)
     {
@@ -29,14 +30,14 @@ public class TravelerService : BaseService, ITravelerService
             return DomainErrors.Traveler.IdToken;
 
         _unitOfWork.Repo<Traveler>().Add(
-            new Traveler()
+            new Traveler
             {
                 Phone = _formatPhoneNum(model.Phone),
                 Password = AuthHelper.HashPassword(model.Password),
                 Status = AccountStatus.ACTIVE,
                 FirstName = model.FirstName,
                 LastName = model.LastName,
-                Gender = model.Gender,
+                Gender = model.Gender
             }
         );
 
@@ -44,15 +45,16 @@ public class TravelerService : BaseService, ITravelerService
         return Result.Success();
     }
 
-    public Result<TravelerProfileViewModel> GetProfile(Guid id)
+    public async Task<Result<TravelerProfileViewModel>> GetProfile(Guid id)
     {
-        var entity = _unitOfWork.Repo<Traveler>()
+        var entity = await _unitOfWork.Repo<Traveler>()
             .Query()
-            .FirstOrDefault(e => e.Id == id && e.Status == AccountStatus.ACTIVE);
+            .FirstOrDefaultAsync(e => e.Id == id && e.Status == AccountStatus.ACTIVE);
 
         if (entity is null) return Error.NotFound();
         return _mapper.Map<TravelerProfileViewModel>(entity);
     }
+
 
     // PRIVATE
 

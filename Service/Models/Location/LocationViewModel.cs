@@ -4,13 +4,13 @@ namespace Service.Models.Location;
 
 public record LocationViewModel
 {
-    public Guid Id;
-    public string Name = null!;
     public string Address = null!;
-    public string Country = null!;
     public string City = null!;
-    public double Longitude;
-    public double Latitude;
+    public string Country = null!;
     public string? Description;
+    public Guid Id;
+    public double Latitude;
+    public double Longitude;
+    public string Name = null!;
     public ICollection<TagViewModel> Tags = new List<TagViewModel>();
 }

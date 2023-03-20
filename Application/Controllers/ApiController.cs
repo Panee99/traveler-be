@@ -13,11 +13,11 @@ namespace Application.Controllers;
 public class ApiController : ControllerBase
 {
     // Must use with [Authorize]
-    protected AuthUser CurrentUser => (AuthUser) HttpContext.Items[AppConstants.UserContextKey]!;
+    protected AuthUser CurrentUser => (AuthUser)HttpContext.Items[AppConstants.UserContextKey]!;
 
     protected static IActionResult OnError(Error error)
     {
-        var response = new ObjectResult(new ErrorResponsePayload()
+        var response = new ObjectResult(new ErrorResponsePayload
         {
             Timestamp = DateTimeHelper.VnNow(),
             Code = error.Code,

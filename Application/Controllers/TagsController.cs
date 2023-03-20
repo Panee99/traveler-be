@@ -20,9 +20,9 @@ public class TagsController : ApiController
     [ProducesResponseType(typeof(TagViewModel), StatusCodes.Status201Created)]
     [Authorize(UserRole.Manager)]
     [HttpPost("")]
-    public IActionResult Create(TagCreateModel model)
+    public async Task<IActionResult> Create(TagCreateModel model)
     {
-        var result = _tagService.Create(model);
+        var result = await _tagService.Create(model);
         return result.Match(value => CreatedAtAction(nameof(Find), new { value.Id }, value), OnError);
     }
 
@@ -30,9 +30,9 @@ public class TagsController : ApiController
     [ProducesResponseType(typeof(ErrorResponsePayload), StatusCodes.Status404NotFound)]
     [Authorize(UserRole.Manager)]
     [HttpPatch("{id:guid}")]
-    public IActionResult Update(Guid id, TagUpdateModel model)
+    public async Task<IActionResult> Update(Guid id, TagUpdateModel model)
     {
-        var result = _tagService.Update(id, model);
+        var result = await _tagService.Update(id, model);
         return result.Match(Ok, OnError);
     }
 
@@ -40,18 +40,18 @@ public class TagsController : ApiController
     [ProducesResponseType(typeof(ErrorResponsePayload), StatusCodes.Status404NotFound)]
     [Authorize(UserRole.Manager)]
     [HttpDelete("{id:guid}")]
-    public IActionResult Delete(Guid id)
+    public async Task<IActionResult> Delete(Guid id)
     {
-        var result = _tagService.Delete(id);
+        var result = await _tagService.Delete(id);
         return result.Match(Ok, OnError);
     }
 
     [ProducesResponseType(typeof(TagViewModel), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponsePayload), StatusCodes.Status404NotFound)]
     [HttpGet("{id:guid}")]
-    public IActionResult Find(Guid id)
+    public async Task<IActionResult> Find(Guid id)
     {
-        var result = _tagService.Find(id);
+        var result = await _tagService.Find(id);
         return result.Match(Ok, OnError);
     }
 

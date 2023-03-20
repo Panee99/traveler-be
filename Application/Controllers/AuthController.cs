@@ -20,10 +20,10 @@ public class AuthController : ApiController
     [HttpPost("traveler")]
     [ProducesResponseType(typeof(ChatTokenResponseModel), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public IActionResult AuthenticateTraveler(PhoneLoginModel model)
+    public async Task<IActionResult> AuthenticateTraveler(PhoneLoginModel model)
     {
         if (model.Phone.StartsWith('+')) model.Phone = model.Phone.Substring(1);
-        var result = _authService.AuthenticateTraveler(model);
+        var result = await _authService.AuthenticateTraveler(model);
         return result.Match(Ok, OnError);
     }
 
@@ -31,9 +31,9 @@ public class AuthController : ApiController
     [HttpPost("manager")]
     [ProducesResponseType(typeof(ChatTokenResponseModel), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public IActionResult AuthenticateManager(EmailLoginModel model)
+    public async Task<IActionResult> AuthenticateManager(EmailLoginModel model)
     {
-        var result = _authService.AuthenticateManager(model);
+        var result = await _authService.AuthenticateManager(model);
         return result.Match(Ok, OnError);
     }
 
@@ -41,9 +41,9 @@ public class AuthController : ApiController
     [HttpPost("tour-guide")]
     [ProducesResponseType(typeof(ChatTokenResponseModel), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public IActionResult AuthenticateTourGuide(EmailLoginModel model)
+    public async Task<IActionResult> AuthenticateTourGuide(EmailLoginModel model)
     {
-        var result = _authService.AuthenticateTourGuide(model);
+        var result = await _authService.AuthenticateTourGuide(model);
         return result.Match(Ok, OnError);
     }
 }

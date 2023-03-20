@@ -9,7 +9,7 @@ using Shared.ExternalServices.Firebase;
 // Serilog for file logging
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Warning()
-    .WriteTo.File(path: "logs/log-.txt", rollingInterval: RollingInterval.Month,
+    .WriteTo.File("logs/log-.txt", rollingInterval: RollingInterval.Month,
         outputTemplate:
         "[{Level:w3}] {Timestamp:dd-MM-yyyy HH:mm:ss.fff zzz}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}")
     .CreateLogger();
@@ -31,10 +31,7 @@ var builder = WebApplication.CreateBuilder(args);
         .AddSwaggerGenNewtonsoftSupport()
         .AddDependencyInjection(builder.Configuration)
         .AddControllers()
-        .AddMvcOptions(options =>
-        {
-            options.SuppressAsyncSuffixInActionNames = true;
-        })
+        .AddMvcOptions(options => { options.SuppressAsyncSuffixInActionNames = true; })
         .AddNewtonsoftJson(options =>
             {
                 options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Serialize;

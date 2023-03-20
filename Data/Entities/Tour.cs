@@ -12,9 +12,13 @@ public class Tour
 
     public double Price { get; set; }
 
-    public string? Description { get; set; }
+    public double ChildrenPrice { get; set; }
 
-    public string Type { get; set; } = null!;
+    public double BabyPrice { get; set; }
+
+    public string Departure { get; set; } = null!;
+
+    public string Destination { get; set; } = null!;
 
     public DateTime StartTime { get; set; }
 
@@ -22,15 +26,19 @@ public class Tour
 
     public string Vehicle { get; set; } = null!;
 
-    public int NumberOfTickets { get; set; }
+    public int MaxOccupancy { get; set; }
+
+    public TourType Type { get; set; }
 
     public TourStatus Status { get; set; }
 
-    public virtual ICollection<Booking> Bookings { get; set; } = new List<Booking>();
+    public string? Description { get; set; }
 
-    public virtual ICollection<IncurredCost> IncurredCosts { get; set; } = new List<IncurredCost>();
+    public Guid? ThumbnailId { get; set; }
 
-    public virtual ICollection<TourDiscount> TourDiscounts { get; set; } = new List<TourDiscount>();
+    public Attachment? Thumbnail { get; set; }
 
     public virtual ICollection<Waypoint> Waypoints { get; set; } = new List<Waypoint>();
+
+    // public virtual ICollection<TourDiscount> TourDiscounts { get; set; } = new List<TourDiscount>();
 }

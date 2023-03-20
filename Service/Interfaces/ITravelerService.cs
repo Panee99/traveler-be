@@ -7,5 +7,5 @@ public interface ITravelerService
 {
     Task<Result> Register(TravelerRegistrationModel model);
 
-    Result<TravelerProfileViewModel> GetProfile(Guid id);
+    Task<Result<TravelerProfileViewModel>> GetProfile(Guid id);
 }

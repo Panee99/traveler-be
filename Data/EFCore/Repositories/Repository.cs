@@ -1,13 +1,13 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
 
-namespace Data.Repositories;
+namespace Data.EFCore.Repositories;
 
 public class Repository<T> : IRepository<T> where T : class
 {
     private readonly DbSet<T> _entities;
 
-    public Repository(AppDbContext context)
+    public Repository(DbContext context)
     {
         _entities = context.Set<T>();
     }
@@ -52,13 +52,13 @@ public class Repository<T> : IRepository<T> where T : class
         return _entities.AsQueryable();
     }
 
-    public bool Any(Expression<Func<T, bool>> predicate)
+    public Task<T?> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate)
     {
-        return _entities.Any(predicate);
+        return _entities.AsNoTracking().FirstOrDefaultAsync(predicate);
     }
 
-    public T? FirstOrDefault(Expression<Func<T, bool>> predicate)
+    public Task<bool> AnyAsync(Expression<Func<T, bool>> predicate)
     {
-        return _entities.AsNoTracking().FirstOrDefault(predicate);
+        return _entities.AnyAsync(predicate);
     }
 }

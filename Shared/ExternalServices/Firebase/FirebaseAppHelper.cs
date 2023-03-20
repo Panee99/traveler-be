@@ -11,7 +11,7 @@ public static class FirebaseAppHelper
         var projectPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? "";
         var credentialPath = Path.Combine(projectPath, "ExternalServices", "Firebase", "firebase-admin-sdk.json");
 
-        FirebaseApp.Create(new AppOptions()
+        FirebaseApp.Create(new AppOptions
         {
             Credential = GoogleCredential.FromFile(credentialPath)
         });

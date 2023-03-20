@@ -1,4 +1,4 @@
-﻿using Data;
+﻿using Data.EFCore;
 using Data.Entities;
 using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
@@ -15,9 +15,9 @@ namespace Service.Implementations;
 
 public class LocationService : BaseService, ILocationService
 {
-    private readonly IMapper _mapper;
     private readonly ICloudStorageService _cloudStorageService;
     private readonly ILogger<LocationService> _logger;
+    private readonly IMapper _mapper;
 
     public LocationService(IUnitOfWork unitOfWork, IMapper mapper, ICloudStorageService cloudStorageService,
         ILogger<LocationService> logger) : base(unitOfWork)
@@ -36,16 +36,14 @@ public class LocationService : BaseService, ILocationService
 
         // Add Tags
         if (model.Tags is { Count: > 0 })
-        {
             _unitOfWork.Repo<LocationTag>().AddRange(
-                model.Tags.Select(id => new LocationTag()
+                model.Tags.Select(id => new LocationTag
                     {
                         LocationId = entity.Id,
                         TagId = id
                     }
                 )
             );
-        }
 
         await _unitOfWork.SaveChangesAsync();
 
@@ -79,7 +77,7 @@ public class LocationService : BaseService, ILocationService
 
         if (model.Tags != null)
             entity.LocationTags = model.Tags.Select(t =>
-                new LocationTag()
+                new LocationTag
                 {
                     LocationId = entity.Id,
                     TagId = t
@@ -101,7 +99,7 @@ public class LocationService : BaseService, ILocationService
 
     public async Task<Result> Delete(Guid id)
     {
-        var entity = _unitOfWork.Repo<Location>().FirstOrDefault(e => e.Id == id);
+        var entity = await _unitOfWork.Repo<Location>().FirstOrDefaultAsync(e => e.Id == id);
         if (entity is null) return Error.NotFound();
 
         _unitOfWork.Repo<Location>().Remove(entity);
@@ -126,7 +124,7 @@ public class LocationService : BaseService, ILocationService
                 e.Longitude,
                 e.Latitude,
                 e.Description,
-                Tags = e.LocationTags.Select(lt => lt.Tag).ToList(),
+                Tags = e.LocationTags.Select(lt => lt.Tag).ToList()
             })
             .FirstOrDefaultAsync(e => e.Id == id);
 
@@ -144,16 +142,16 @@ public class LocationService : BaseService, ILocationService
 
         try
         {
-            if (!_unitOfWork.Repo<Location>().Any(e => e.Id == locationId))
+            if (!await _unitOfWork.Repo<Location>().AnyAsync(e => e.Id == locationId))
                 return Error.NotFound();
 
-            var attachment = _unitOfWork.Repo<Attachment>().Add(new Attachment()
+            var attachment = _unitOfWork.Repo<Attachment>().Add(new Attachment
             {
                 ContentType = model.ContentType,
                 CreatedAt = DateTimeHelper.VnNow()
             });
 
-            _unitOfWork.Repo<LocationAttachment>().Add(new LocationAttachment()
+            _unitOfWork.Repo<LocationAttachment>().Add(new LocationAttachment
             {
                 LocationId = locationId,
                 AttachmentId = attachment.Id
@@ -171,7 +169,7 @@ public class LocationService : BaseService, ILocationService
 
             await transaction.CommitAsync();
 
-            return new AttachmentViewModel()
+            return new AttachmentViewModel
             {
                 Id = attachment.Id,
                 ContentType = attachment.ContentType,
@@ -192,11 +190,11 @@ public class LocationService : BaseService, ILocationService
 
         try
         {
-            var attachment = _unitOfWork.Repo<Attachment>().FirstOrDefault(a => a.Id == attachmentId);
+            var attachment = await _unitOfWork.Repo<Attachment>().FirstOrDefaultAsync(a => a.Id == attachmentId);
             if (attachment is null) return Error.NotFound();
 
-            var locationAttachment = _unitOfWork.Repo<LocationAttachment>()
-                .FirstOrDefault(e => e.LocationId == locationId && e.AttachmentId == attachmentId);
+            var locationAttachment = await _unitOfWork.Repo<LocationAttachment>()
+                .FirstOrDefaultAsync(e => e.LocationId == locationId && e.AttachmentId == attachmentId);
             if (locationAttachment is null) return Error.NotFound();
 
             _unitOfWork.Repo<LocationAttachment>().Remove(locationAttachment);
@@ -224,7 +222,7 @@ public class LocationService : BaseService, ILocationService
 
     public async Task<Result<List<AttachmentViewModel>>> ListAttachments(Guid id)
     {
-        if (!_unitOfWork.Repo<Location>().Any(e => e.Id == id))
+        if (!await _unitOfWork.Repo<Location>().AnyAsync(e => e.Id == id))
             return Error.NotFound();
 
         var attachments = await _unitOfWork.Repo<LocationAttachment>()
@@ -234,7 +232,7 @@ public class LocationService : BaseService, ILocationService
             .ToListAsync();
 
         return attachments.Select(attachment =>
-                new AttachmentViewModel()
+                new AttachmentViewModel
                 {
                     Id = attachment.Id,
                     ContentType = attachment.ContentType,

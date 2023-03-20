@@ -12,23 +12,23 @@ public class PaginationModel<T>
 
     public PaginationModel<TResult> Map<TResult>(Func<T, TResult> selector)
     {
-        return new PaginationModel<TResult>()
+        return new PaginationModel<TResult>
         {
             Page = Page,
             Size = Size,
             Max = Max,
-            Values = Values.Select(selector).ToList(),
+            Values = Values.Select(selector).ToList()
         };
     }
 
     public PaginationModel<TResult> UseMapper<TResult>(Func<List<T>, List<TResult>> mapper)
     {
-        return new PaginationModel<TResult>()
+        return new PaginationModel<TResult>
         {
             Page = Page,
             Size = Size,
             Max = Max,
-            Values = mapper(Values),
+            Values = mapper(Values)
         };
     }
 }

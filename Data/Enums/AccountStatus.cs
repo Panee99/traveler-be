@@ -1,6 +1,7 @@
 ﻿namespace Data.Enums;
 
-public enum AccountStatus {
+public enum AccountStatus
+{
     ACTIVE,
     SUSPENDED
 }

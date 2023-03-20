@@ -1,5 +1,4 @@
-﻿using Data.Entities;
-using Service.Models.Attachment;
+﻿using Service.Models.Attachment;
 using Service.Models.Location;
 using Service.Pagination;
 using Shared.ResultExtensions;
@@ -19,7 +18,7 @@ public interface ILocationService
     Task<Result<AttachmentViewModel>> CreateAttachment(Guid locationId, AttachmentCreateModel model);
 
     Task<Result> DeleteAttachment(Guid locationId, Guid attachmentId);
-    
+
     Task<Result<List<AttachmentViewModel>>> ListAttachments(Guid id);
 
     Task<Result<PaginationModel<LocationViewModel>>> Filter(LocationFilterModel model);

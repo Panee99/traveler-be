@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace Data.Repositories;
+namespace Data.EFCore.Repositories;
 
 public interface IRepository<T> where T : class
 {
@@ -20,7 +20,7 @@ public interface IRepository<T> where T : class
 
     IQueryable<T> Query();
 
-    T? FirstOrDefault(Expression<Func<T, bool>> predicate);
+    Task<T?> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate);
 
-    bool Any(Expression<Func<T, bool>> predicate);
+    Task<bool> AnyAsync(Expression<Func<T, bool>> predicate);
 }

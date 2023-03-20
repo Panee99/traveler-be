@@ -1,4 +1,4 @@
-﻿using Data;
+﻿using Data.EFCore;
 using Data.Entities;
 using MapsterMapper;
 using Service.Interfaces;

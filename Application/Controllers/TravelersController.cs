@@ -10,8 +10,8 @@ namespace Application.Controllers;
 [Route("travelers")]
 public class TravelersController : ApiController
 {
-    private readonly ITravelerService _travelerService;
     private readonly ILogger<TravelersController> _logger;
+    private readonly ITravelerService _travelerService;
 
     public TravelersController(ITravelerService travelerService, ILogger<TravelersController> logger)
     {
@@ -34,9 +34,9 @@ public class TravelersController : ApiController
     [ProducesResponseType(typeof(ErrorResponsePayload), StatusCodes.Status404NotFound)]
     [Authorize]
     [HttpGet("{id:guid}/profile")]
-    public IActionResult GetProfile(Guid id)
+    public async Task<IActionResult> GetProfile(Guid id)
     {
-        var result = _travelerService.GetProfile(id);
+        var result = await _travelerService.GetProfile(id);
         return result.Match(Ok, OnError);
     }
 }

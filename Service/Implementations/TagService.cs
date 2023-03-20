@@ -1,4 +1,4 @@
-﻿using Data;
+﻿using Data.EFCore;
 using Data.Entities;
 using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
@@ -17,16 +17,16 @@ public class TagService : BaseService, ITagService
         _mapper = mapper;
     }
 
-    public Result<TagViewModel> Create(TagCreateModel model)
+    public async Task<Result<TagViewModel>> Create(TagCreateModel model)
     {
         var entity = _unitOfWork.Repo<Tag>().Add(_mapper.Map<Tag>(model));
-        _unitOfWork.SaveChanges();
+        await _unitOfWork.SaveChangesAsync();
         return _mapper.Map<TagViewModel>(entity);
     }
 
-    public Result<TagViewModel> Update(Guid id, TagUpdateModel model)
+    public async Task<Result<TagViewModel>> Update(Guid id, TagUpdateModel model)
     {
-        var entity = _unitOfWork.Repo<Tag>().FirstOrDefault(e => e.Id == id);
+        var entity = await _unitOfWork.Repo<Tag>().FirstOrDefaultAsync(e => e.Id == id);
 
         if (entity is null) return Error.NotFound();
 
@@ -34,23 +34,23 @@ public class TagService : BaseService, ITagService
         if (model.Type != null) entity.Type = model.Type.Value;
 
         entity = _unitOfWork.Repo<Tag>().Update(entity);
-        _unitOfWork.SaveChanges();
+        await _unitOfWork.SaveChangesAsync();
         return _mapper.Map<TagViewModel>(entity);
     }
 
-    public Result Delete(Guid id)
+    public async Task<Result> Delete(Guid id)
     {
-        var entity = _unitOfWork.Repo<Tag>().FirstOrDefault(e => e.Id == id);
+        var entity = await _unitOfWork.Repo<Tag>().FirstOrDefaultAsync(e => e.Id == id);
         if (entity is null) return Error.NotFound();
         _unitOfWork.Repo<Tag>().Remove(entity);
 
-        _unitOfWork.SaveChanges();
+        await _unitOfWork.SaveChangesAsync();
         return Result.Success();
     }
 
-    public Result<TagViewModel> Find(Guid id)
+    public async Task<Result<TagViewModel>> Find(Guid id)
     {
-        var entity = _unitOfWork.Repo<Tag>().FirstOrDefault(e => e.Id == id);
+        var entity = await _unitOfWork.Repo<Tag>().FirstOrDefaultAsync(e => e.Id == id);
         if (entity is null) return Error.NotFound();
         return _mapper.Map<TagViewModel>(entity);
     }

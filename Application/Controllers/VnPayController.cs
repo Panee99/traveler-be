@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Globalization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Service.Interfaces;
 using Service.Models.VnPay;
@@ -12,9 +13,9 @@ namespace Application.Controllers;
 [Route("pay")]
 public class VnPayController : ApiController
 {
-    private readonly VnPaySettings _vnPaySettings;
     private readonly IVnPayRequestService _vnPayRequestService;
     private readonly IVnPayResponseService _vnPayResponseService;
+    private readonly VnPaySettings _vnPaySettings;
 
     public VnPayController(IOptions<VnPaySettings> vnPaySettings,
         IVnPayRequestService vnPayRequestService, IVnPayResponseService vnPayResponseService)
@@ -29,7 +30,7 @@ public class VnPayController : ApiController
     {
         var now = DateTimeHelper.VnNow();
         var clientIp = HttpContext.Connection.RemoteIpAddress?.MapToIPv4().ToString() ?? "";
-        var requestModel = new VnPayRequestModel()
+        var requestModel = new VnPayRequestModel
         {
             TxnRef = Guid.NewGuid(),
             Command = VnPayConstants.Command,
@@ -66,7 +67,7 @@ public class VnPayController : ApiController
         return result.Match(Ok, OnError);
     }
 
-    [ApiExplorerSettings(IgnoreApi = true)]    
+    [ApiExplorerSettings(IgnoreApi = true)]
     [HttpGet("result")]
     public IActionResult PaymentResult([FromQuery] Dictionary<string, string> queryParams)
     {
@@ -76,9 +77,9 @@ public class VnPayController : ApiController
 
         DateTime? payDate = model.PayDate is null
             ? null
-            : DateTime.ParseExact(model.PayDate, "yyyyMMddHHmmss", System.Globalization.CultureInfo.InvariantCulture);
+            : DateTime.ParseExact(model.PayDate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture);
 
-        return Ok(new PaymentResultModel()
+        return Ok(new PaymentResultModel
         {
             TransactionStatus = model.TransactionStatus,
             Response = model.ResponseCode,
@@ -87,8 +88,7 @@ public class VnPayController : ApiController
             Amount = model.Amount,
             CardType = model.CardType,
             PayDate = payDate,
-            TransactionNo = model.TransactionNo,
+            TransactionNo = model.TransactionNo
         });
     }
 }
-

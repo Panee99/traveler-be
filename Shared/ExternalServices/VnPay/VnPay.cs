@@ -9,7 +9,7 @@ namespace Shared.ExternalServices.VnPay;
 public static class VnPay
 {
     /// <summary>
-    /// Request Processing
+    ///     Request Processing
     /// </summary>
 
     #region Generate Request
@@ -36,9 +36,7 @@ public static class VnPay
 
         var data = new StringBuilder();
         foreach (var pair in requestParams.Where(kv => kv.Value != null))
-        {
             data.Append(WebUtility.UrlEncode(pair.Key) + "=" + WebUtility.UrlEncode(pair.Value) + "&");
-        }
 
         var queryString = data.ToString();
 
@@ -55,15 +53,29 @@ public static class VnPay
 
     #endregion
 
+    private static string _hmacSHA512(string key, string inputData)
+    {
+        var hash = new StringBuilder();
+        var keyBytes = Encoding.UTF8.GetBytes(key);
+        var inputBytes = Encoding.UTF8.GetBytes(inputData);
+        using (var hmac = new HMACSHA512(keyBytes))
+        {
+            var hashValue = hmac.ComputeHash(inputBytes);
+            foreach (var theByte in hashValue) hash.Append(theByte.ToString("x2"));
+        }
+
+        return hash.ToString();
+    }
+
     /// <summary>
-    /// Response Processing
+    ///     Response Processing
     /// </summary>
 
     #region Response process
 
     public static VnPayResponseModel ParseToResponseModel(IDictionary<string, string> queryParams)
     {
-        var model = new VnPayResponseModel()
+        var model = new VnPayResponseModel
         {
             TransactionNo = _tryGetRequiredParam("vnp_TransactionNo", queryParams),
             TransactionStatus = _tryGetRequiredParam("vnp_TransactionStatus", queryParams),
@@ -77,7 +89,7 @@ public static class VnPay
             SecureHashType = _tryGetOptionalParam("vnp_SecureHashType", queryParams),
             BankTranNo = _tryGetOptionalParam("vnp_BankTranNo", queryParams),
             CardType = _tryGetOptionalParam("vnp_CardType", queryParams),
-            PayDate = _tryGetOptionalParam("vnp_PayDate", queryParams),
+            PayDate = _tryGetOptionalParam("vnp_PayDate", queryParams)
         };
         return model;
     }
@@ -123,23 +135,6 @@ public static class VnPay
     }
 
     #endregion
-
-    private static string _hmacSHA512(string key, string inputData)
-    {
-        var hash = new StringBuilder();
-        var keyBytes = Encoding.UTF8.GetBytes(key);
-        var inputBytes = Encoding.UTF8.GetBytes(inputData);
-        using (var hmac = new HMACSHA512(keyBytes))
-        {
-            var hashValue = hmac.ComputeHash(inputBytes);
-            foreach (var theByte in hashValue)
-            {
-                hash.Append(theByte.ToString("x2"));
-            }
-        }
-
-        return hash.ToString();
-    }
 }
 
 public class VnPayComparer : IComparer<string>

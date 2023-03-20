@@ -1,4 +1,4 @@
-﻿using Data;
+﻿using Data.EFCore;
 
 namespace Service.Implementations;
 

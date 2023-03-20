@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Service.Interfaces;
 using Service.Models.Account;
 using Service.Models.Attachment;
+using Shared.Enums;
 using Shared.Helpers;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -22,7 +23,7 @@ public class AccountsController : ApiController
     [SwaggerOperation(description: "File size < 5MB")]
     [ProducesResponseType(typeof(AttachmentViewModel), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponsePayload), StatusCodes.Status400BadRequest)]
-    [Authorize]
+    [Authorize(UserRole.Manager, UserRole.Traveler, UserRole.TourGuide)]
     [HttpPut("avatar")]
     public async Task<IActionResult> UpdateAvatar(IFormFile file)
     {
@@ -37,18 +38,18 @@ public class AccountsController : ApiController
     [ProducesResponseType(typeof(ErrorResponsePayload), StatusCodes.Status404NotFound)]
     [Authorize]
     [HttpGet("avatar")]
-    public IActionResult GetAvatar()
+    public async Task<IActionResult> GetAvatar()
     {
-        var result = _accountService.GetAvatar(CurrentUser.Id);
+        var result = await _accountService.GetAvatar(CurrentUser.Id);
         return result.Match(Ok, OnError);
     }
 
     [ProducesResponseType(typeof(ProfileViewModel), StatusCodes.Status200OK)]
     [Authorize]
     [HttpGet("profile")]
-    public IActionResult GetProfile()
+    public async Task<IActionResult> GetProfile()
     {
-        var result = _accountService.GetProfile(CurrentUser.Id, CurrentUser.Role);
+        var result = await _accountService.GetProfile(CurrentUser.Id, CurrentUser.Role);
         return result.Match(Ok, OnError);
     }
 }
