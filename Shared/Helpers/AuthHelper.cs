@@ -1,7 +1,7 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 
-namespace Shared.Auth;
+namespace Shared.Helpers;
 
 public static class AuthHelper
 {

@@ -31,7 +31,7 @@ public class CloudStorageService : ICloudStorageService
     {
         try
         {
-            var obj = await _storage.UploadObjectAsync(
+            await _storage.UploadObjectAsync(
                 _settings.Bucket,
                 $"{_settings.Folder}/{id}",
                 contentType,
@@ -50,6 +50,7 @@ public class CloudStorageService : ICloudStorageService
         }
     }
 
+    // Delete an object, IsSuccess if deleted successfully or not found
     public async Task<Result> Delete(Guid id)
     {
         try
@@ -78,6 +79,7 @@ public class CloudStorageService : ICloudStorageService
         }
     }
 
+    // Object url
     public string GetMediaLink(Guid id)
     {
         return CloudStorageHelper.GenerateV4UploadSignedUrl(

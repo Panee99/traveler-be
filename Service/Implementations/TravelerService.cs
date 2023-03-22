@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 using Service.Errors;
 using Service.Interfaces;
 using Service.Models.Traveler;
-using Shared.Auth;
+using Shared.Helpers;
 using Shared.ResultExtensions;
 
 namespace Service.Implementations;

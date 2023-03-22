@@ -35,7 +35,7 @@ public class AppDbContext : DbContext
     private static IEnumerable<T> _fromSeed<T>(string fileName)
     {
         var projectPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? "";
-        var seedPath = Path.Combine(projectPath, "Seeds", fileName);
+        var seedPath = Path.Combine(projectPath, "EFCore", "Seeds", fileName);
         return JsonConvert.DeserializeObject<IEnumerable<T>>(File.ReadAllText(seedPath))!;
     }
 }

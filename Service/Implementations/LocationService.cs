@@ -48,7 +48,6 @@ public class LocationService : BaseService, ILocationService
         await _unitOfWork.SaveChangesAsync();
 
         // Result
-
         var tags = new List<Tag>();
         if (model.Tags is { Count: > 0 })
             tags = await _unitOfWork.Repo<Tag>().Query().Where(e => model.Tags.Contains(e.Id)).ToListAsync();
@@ -60,11 +59,13 @@ public class LocationService : BaseService, ILocationService
 
     public async Task<Result<LocationViewModel>> Update(Guid id, LocationUpdateModel model)
     {
-        var entity = _unitOfWork.Repo<Location>()
+        // Get entity
+        var entity = await _unitOfWork.Repo<Location>()
             .TrackingQuery()
             .Include(e => e.LocationTags)
-            .FirstOrDefault(e => e.Id == id);
+            .FirstOrDefaultAsync(e => e.Id == id);
 
+        // Update
         if (entity is null) return Error.NotFound();
 
         if (model.Name != null) entity.Name = model.Name;
@@ -86,6 +87,7 @@ public class LocationService : BaseService, ILocationService
 
         await _unitOfWork.SaveChangesAsync();
 
+        // Result
         var tags = await _unitOfWork.Repo<Location>().Query()
             .Where(e => e.Id == id)
             .SelectMany(e => e.LocationTags)
@@ -142,9 +144,11 @@ public class LocationService : BaseService, ILocationService
 
         try
         {
+            // Validate
             if (!await _unitOfWork.Repo<Location>().AnyAsync(e => e.Id == locationId))
                 return Error.NotFound();
 
+            // Create new attachment then add to location
             var attachment = _unitOfWork.Repo<Attachment>().Add(new Attachment
             {
                 ContentType = model.ContentType,
@@ -159,6 +163,7 @@ public class LocationService : BaseService, ILocationService
 
             await _unitOfWork.SaveChangesAsync();
 
+            // Upload to cloud storage
             var uploadResult = await _cloudStorageService.Upload(attachment.Id, attachment.ContentType, model.Stream);
 
             if (!uploadResult.IsSuccess)
@@ -169,6 +174,7 @@ public class LocationService : BaseService, ILocationService
 
             await transaction.CommitAsync();
 
+            // Success result
             return new AttachmentViewModel
             {
                 Id = attachment.Id,
@@ -190,6 +196,7 @@ public class LocationService : BaseService, ILocationService
 
         try
         {
+            // Validate
             var attachment = await _unitOfWork.Repo<Attachment>().FirstOrDefaultAsync(a => a.Id == attachmentId);
             if (attachment is null) return Error.NotFound();
 
@@ -197,11 +204,13 @@ public class LocationService : BaseService, ILocationService
                 .FirstOrDefaultAsync(e => e.LocationId == locationId && e.AttachmentId == attachmentId);
             if (locationAttachment is null) return Error.NotFound();
 
+            // Remove old attachment in DB
             _unitOfWork.Repo<LocationAttachment>().Remove(locationAttachment);
             _unitOfWork.Repo<Attachment>().Remove(attachment);
 
             await _unitOfWork.SaveChangesAsync();
 
+            // Delete old attachment in cloud storage
             var storageResult = await _cloudStorageService.Delete(attachment.Id);
             if (!storageResult.IsSuccess)
             {
@@ -209,6 +218,7 @@ public class LocationService : BaseService, ILocationService
                 return Error.Unexpected();
             }
 
+            // Success result
             await transaction.CommitAsync();
             return Result.Success();
         }
@@ -254,6 +264,7 @@ public class LocationService : BaseService, ILocationService
             if (model.Name != null)
                 query = query.Where(e => e.Name.Contains(model.Name));
 
+            // Finalize
             var paginationModel = await query.Paging(model.Page, model.Size);
 
             return paginationModel.Map<LocationViewModel>(x =>
@@ -266,20 +277,25 @@ public class LocationService : BaseService, ILocationService
 
         // With Tags
         {
+            // Get location ids that have one of those tag
             var validLocations = _unitOfWork.Repo<LocationTag>()
                 .Query()
                 .Where(lt => model.Tags.Contains(lt.TagId))
                 .Select(lt => lt.LocationId);
 
+            // Get location entities
             var query = _unitOfWork.Repo<Location>()
                 .Query()
                 .OrderByDescending(l => l.CreatedAt)
                 .Where(l => validLocations.Contains(l.Id));
 
+            // Name filter
             if (model.Name != null)
                 query = query.Where(e => e.Name.Contains(model.Name));
 
-            var locations = await query.Include(l => l.LocationTags)
+            // Finalize
+            var locations = await query
+                .Include(l => l.LocationTags)
                 .ThenInclude(lt => lt.Tag)
                 .Paging(model.Page, model.Size);
 

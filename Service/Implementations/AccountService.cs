@@ -75,15 +75,17 @@ public class AccountService : BaseService, IAccountService
 
         try
         {
-            var account = _unitOfWork.Repo<Account>()
+            // Check if user exist
+            var account = await _unitOfWork.Repo<Account>()
                 .TrackingQuery()
                 .Include(e => e.Attachment)
-                .FirstOrDefault(e => e.Id == id);
+                .FirstOrDefaultAsync(e => e.Id == id);
 
             if (account is null) return Error.Unexpected();
 
             var oldAttachment = account.Attachment;
 
+            // Create new attachment in DB
             var newAttachment = _unitOfWork.Repo<Attachment>().Add(new Attachment
             {
                 ContentType = contentType,
@@ -93,6 +95,7 @@ public class AccountService : BaseService, IAccountService
             account.Attachment = newAttachment;
             await _unitOfWork.SaveChangesAsync();
 
+            // Delete old attachment from DB and Cloud
             if (oldAttachment is not null)
             {
                 _unitOfWork.Repo<Attachment>().Remove(oldAttachment);
@@ -105,6 +108,7 @@ public class AccountService : BaseService, IAccountService
                 }
             }
 
+            // Upload new attachment to Cloud
             var uploadResult = await _cloudStorageService.Upload(newAttachment.Id, contentType, stream);
             if (!uploadResult.IsSuccess)
             {

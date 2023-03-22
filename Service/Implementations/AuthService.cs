@@ -9,8 +9,8 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Service.Interfaces;
 using Service.Models.Auth;
-using Shared.Auth;
 using Shared.Enums;
+using Shared.Helpers;
 using Shared.ResultExtensions;
 using Shared.Settings;
 

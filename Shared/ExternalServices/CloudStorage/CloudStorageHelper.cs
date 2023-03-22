@@ -4,6 +4,7 @@ using Google.Cloud.Storage.V1;
 
 namespace Shared.ExternalServices.CloudStorage;
 
+// Create Cloud Storage needed instances
 public static class CloudStorageHelper
 {
     private static readonly StorageClient _storage;
@@ -27,9 +28,9 @@ public static class CloudStorageHelper
         return _storage;
     }
 
+    // Generate signed cloud storage object url 
     public static string GenerateV4UploadSignedUrl(string bucketName, string objectName)
     {
-        // V4 is the default signing version.
         var options = UrlSigner.Options.FromDuration(TimeSpan.FromHours(24));
 
         var template = UrlSigner.RequestTemplate
