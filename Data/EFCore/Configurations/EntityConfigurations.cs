@@ -26,6 +26,7 @@ public static class EntityConfigurations
             entity.HasKey(e => e.Id);
 
             entity.Property(e => e.ContentType).HasMaxLength(256);
+            entity.Property(e => e.CreatedAt).HasColumnType("datetime");
         });
 
         // modelBuilder.Entity<Booking>(entity =>
@@ -71,12 +72,13 @@ public static class EntityConfigurations
         modelBuilder.Entity<Location>(entity =>
         {
             entity.HasKey(e => e.Id);
+            entity.HasIndex(e => e.CreatedAt).IsUnique().IsClustered();
 
             entity.Property(e => e.Name).HasMaxLength(256);
             entity.Property(e => e.Address).HasMaxLength(256);
             entity.Property(e => e.Country).HasMaxLength(256);
             entity.Property(e => e.City).HasMaxLength(256);
-            entity.Property(e => e.CreatedAt).HasColumnType("datetime");
+            entity.Property(e => e.CreatedAt).HasColumnType("datetime2");
         });
 
         modelBuilder.Entity<LocationTag>().HasKey(e => new { e.LocationId, e.TagId });
@@ -106,6 +108,7 @@ public static class EntityConfigurations
         {
             entity.HasKey(e => e.Id);
             entity.HasIndex(e => e.Code).IsUnique();
+            entity.HasIndex(e => e.CreatedAt).IsUnique().IsClustered();
 
             entity.Property(e => e.Code).HasMaxLength(256);
             entity.Property(e => e.Title).HasMaxLength(256);
@@ -116,8 +119,8 @@ public static class EntityConfigurations
             entity.Property(e => e.Vehicle).HasMaxLength(256);
             entity.Property(e => e.Type).HasMaxLength(256);
             entity.Property(e => e.Status).HasMaxLength(256);
+            entity.Property(e => e.CreatedAt).HasColumnType("datetime2");
         });
-
 
         // modelBuilder.Entity<TourDiscount>(entity =>
         // {
@@ -170,7 +173,7 @@ public static class EntityConfigurations
             entity.Property(e => e.LastName).HasMaxLength(256);
         });
 
-        modelBuilder.Entity<Waypoint>(entity =>
+        modelBuilder.Entity<TourFlow>(entity =>
         {
             entity.HasKey(e => new { e.LocationId, e.TourId });
             entity.Property(e => e.ArrivalAt).HasColumnType("datetime");

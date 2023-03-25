@@ -32,13 +32,15 @@ public class Tour
 
     public TourStatus Status { get; set; }
 
+    public DateTime CreatedAt { get; set; }
+
     public string? Description { get; set; }
 
     public Guid? ThumbnailId { get; set; }
 
     public Attachment? Thumbnail { get; set; }
 
-    public virtual ICollection<Waypoint> Waypoints { get; set; } = new List<Waypoint>();
+    public virtual ICollection<TourFlow> Waypoints { get; set; } = new List<TourFlow>();
 
     // public virtual ICollection<TourDiscount> TourDiscounts { get; set; } = new List<TourDiscount>();
 }

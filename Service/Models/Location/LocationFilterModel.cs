@@ -1,9 +1,10 @@
-﻿namespace Service.Models.Location;
+﻿// ReSharper disable CollectionNeverUpdated.Global
+// ReSharper disable UnassignedField.Global
 
-public record LocationFilterModel
-(
-    int Page,
-    int Size,
-    string? Name,
-    List<Guid>? Tags
-);
+namespace Service.Models.Location;
+
+public record LocationFilterModel : PagingFilterModel
+{
+    public string? Name;
+    public List<Guid>? Tags;
+}

@@ -5,11 +5,12 @@ namespace Shared.Helpers;
 
 public static class AuthHelper
 {
+    private static readonly SHA256 Sha256 = SHA256.Create();
+
     public static string HashPassword(string password)
     {
-        using var sha256 = SHA256.Create();
         var passwordBytes = Encoding.UTF8.GetBytes(password);
-        var hashBytes = sha256.ComputeHash(passwordBytes);
+        var hashBytes = Sha256.ComputeHash(passwordBytes);
         return BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
     }
 

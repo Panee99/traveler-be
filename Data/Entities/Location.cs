@@ -24,5 +24,5 @@ public class Location
 
     public virtual ICollection<LocationAttachment> LocationAttachments { get; set; } = new List<LocationAttachment>();
 
-    public virtual ICollection<Waypoint> Waypoints { get; set; } = new List<Waypoint>();
+    public virtual ICollection<TourFlow> Waypoints { get; set; } = new List<TourFlow>();
 }

@@ -1,6 +1,6 @@
 ﻿namespace Data.Entities;
 
-public class Waypoint
+public class TourFlow
 {
     public Guid TourId { get; set; }
 

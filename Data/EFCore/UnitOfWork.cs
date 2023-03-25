@@ -1,5 +1,7 @@
 ﻿using Data.EFCore.Repositories;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
+using Shared.Helpers;
 
 namespace Data.EFCore;
 
@@ -27,11 +29,29 @@ public class UnitOfWork : IUnitOfWork
 
     public async Task<int> SaveChangesAsync()
     {
+        _generateValues();
         return await _context.SaveChangesAsync();
     }
 
     public IDbContextTransaction BeginTransaction()
     {
         return _context.Database.BeginTransaction();
+    }
+
+    
+    // PRIVATE
+    private void _generateValues()
+    {
+        var tracker = _context.ChangeTracker;
+        if (!tracker.HasChanges()) return;
+
+        var entities = tracker.Entries();
+        var addedEntities = entities.Where(e => e.State == EntityState.Added);
+
+        foreach (var entry in addedEntities)
+        {
+            if (entry.Properties.Any(p => p.Metadata.Name == "CreatedAt"))
+                entry.Property("CreatedAt").CurrentValue = DateTimeHelper.VnNow();
+        }
     }
 }

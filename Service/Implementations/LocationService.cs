@@ -1,5 +1,6 @@
 ﻿using Data.EFCore;
 using Data.Entities;
+using Mapster;
 using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -60,27 +61,21 @@ public class LocationService : BaseService, ILocationService
     public async Task<Result<LocationViewModel>> Update(Guid id, LocationUpdateModel model)
     {
         // Get entity
-        var entity = await _unitOfWork.Repo<Location>()
+        var location = await _unitOfWork.Repo<Location>()
             .TrackingQuery()
             .Include(e => e.LocationTags)
             .FirstOrDefaultAsync(e => e.Id == id);
 
         // Update
-        if (entity is null) return Error.NotFound();
+        if (location is null) return Error.NotFound();
 
-        if (model.Name != null) entity.Name = model.Name;
-        if (model.Country != null) entity.Country = model.Country;
-        if (model.City != null) entity.City = model.City;
-        if (model.Address != null) entity.Address = model.Address;
-        if (model.Longitude != null) entity.Longitude = model.Longitude.Value;
-        if (model.Latitude != null) entity.Latitude = model.Latitude.Value;
-        if (model.Description != null) entity.Description = model.Description;
+        location = model.Adapt(location, MapperHelper.IgnoreNullConfig<LocationUpdateModel, Location>());
 
         if (model.Tags != null)
-            entity.LocationTags = model.Tags.Select(t =>
+            location.LocationTags = model.Tags.Select(t =>
                 new LocationTag
                 {
-                    LocationId = entity.Id,
+                    LocationId = location.Id,
                     TagId = t
                 }
             ).ToList();
@@ -94,7 +89,7 @@ public class LocationService : BaseService, ILocationService
             .Select(lt => lt.Tag)
             .ToListAsync();
 
-        var viewModel = _mapper.Map<LocationViewModel>(entity);
+        var viewModel = _mapper.Map<LocationViewModel>(location);
         viewModel.Tags = _mapper.Map<List<TagViewModel>>(tags);
         return viewModel;
     }
@@ -253,29 +248,14 @@ public class LocationService : BaseService, ILocationService
 
     public async Task<Result<PaginationModel<LocationViewModel>>> Filter(LocationFilterModel model)
     {
-        // No Tags
-        if (model.Tags is null || model.Tags.Count == 0)
-        {
-            IQueryable<Location> query = _unitOfWork.Repo<Location>()
-                .Query()
-                .OrderByDescending(e => e.CreatedAt);
-
-            // Name filter
-            if (model.Name != null)
-                query = query.Where(e => e.Name.Contains(model.Name));
-
-            // Finalize
-            var paginationModel = await query.Paging(model.Page, model.Size);
-
-            return paginationModel.Map<LocationViewModel>(x =>
-            {
-                var viewModel = _mapper.Map<LocationViewModel>(x);
-                viewModel.Tags = _mapper.Map<List<TagViewModel>>(x.LocationTags.Select(lt => lt.Tag));
-                return viewModel;
-            });
-        }
-
-        // With Tags
+        IQueryable<Location> query;
+        
+        // NO TAGS
+        if (model.Tags is null || model.Tags.Count == 0) 
+            query = _unitOfWork.Repo<Location>().Query().OrderByDescending(e => e.CreatedAt);
+        
+        // WITH TAGS
+        else
         {
             // Get location ids that have one of those tag
             var validLocations = _unitOfWork.Repo<LocationTag>()
@@ -284,27 +264,28 @@ public class LocationService : BaseService, ILocationService
                 .Select(lt => lt.LocationId);
 
             // Get location entities
-            var query = _unitOfWork.Repo<Location>()
+            query = _unitOfWork.Repo<Location>()
                 .Query()
                 .OrderByDescending(l => l.CreatedAt)
                 .Where(l => validLocations.Contains(l.Id));
-
-            // Name filter
-            if (model.Name != null)
-                query = query.Where(e => e.Name.Contains(model.Name));
-
-            // Finalize
-            var locations = await query
-                .Include(l => l.LocationTags)
-                .ThenInclude(lt => lt.Tag)
-                .Paging(model.Page, model.Size);
-
-            return locations.Map<LocationViewModel>(x =>
-            {
-                var viewModel = _mapper.Map<LocationViewModel>(x);
-                viewModel.Tags = _mapper.Map<List<TagViewModel>>(x.LocationTags.Select(lt => lt.Tag));
-                return viewModel;
-            });
         }
+        
+        // FINALIZE
+        if (!string.IsNullOrEmpty(model.Name))
+            query = query.Where(e => e.Name.Contains(model.Name));
+        
+        var paginationModel = await query
+            .Include(e => e.LocationTags)
+            .ThenInclude(lt => lt.Tag)
+            .Paging(model.Page, model.Size);
+        
+        var mapperConfig = new TypeAdapterConfig()
+            .NewConfig<Location, LocationViewModel>()
+            .Map(
+                dest => dest.Tags, 
+                src => src.LocationTags.Select(lt => lt.Tag).Adapt<List<TagViewModel>>())
+            .Config;
+        
+        return paginationModel.UseMapper(e => e.Adapt<List<LocationViewModel>>(mapperConfig));
     }
 }

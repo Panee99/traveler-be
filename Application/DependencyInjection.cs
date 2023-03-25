@@ -23,6 +23,7 @@ public static class DependencyInjection
         services.AddScoped<ITravelerService, TravelerService>();
         services.AddScoped<ITagService, TagService>();
         services.AddScoped<ICloudStorageService, CloudStorageService>();
+        services.AddScoped<ITourService, TourService>();
 
         return services;
     }

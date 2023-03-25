@@ -5,7 +5,6 @@ namespace Service.Models.Tour;
 public record TourCreateModel
 (
     string Title,
-    string Code,
     double Price,
     double ChildrenPrice,
     double BabyPrice,
