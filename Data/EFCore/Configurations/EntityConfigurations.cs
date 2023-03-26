@@ -72,7 +72,7 @@ public static class EntityConfigurations
         modelBuilder.Entity<Location>(entity =>
         {
             entity.HasKey(e => e.Id);
-            entity.HasIndex(e => e.CreatedAt).IsUnique().IsClustered();
+            entity.HasIndex(e => e.CreatedAt);
 
             entity.Property(e => e.Name).HasMaxLength(256);
             entity.Property(e => e.Address).HasMaxLength(256);
@@ -96,17 +96,18 @@ public static class EntityConfigurations
 
         modelBuilder.Entity<Tag>(entity =>
         {
-            entity.HasKey(e => e.Id);
             entity.HasIndex(e => e.Type);
             entity.HasIndex(e => e.Name).IsUnique();
 
+            entity.HasIndex(e => e.Type);
+            entity.HasIndex(e => e.Name).IsUnique();
             entity.Property(e => e.Type).HasMaxLength(256);
             entity.Property(e => e.Name).HasMaxLength(256);
         });
 
         modelBuilder.Entity<Tour>(entity =>
         {
-            entity.HasKey(e => e.Id);
+            entity.HasKey(e => e.Id).IsClustered(false);
             entity.HasIndex(e => e.Code).IsUnique();
             entity.HasIndex(e => e.CreatedAt).IsUnique().IsClustered();
 
@@ -121,6 +122,8 @@ public static class EntityConfigurations
             entity.Property(e => e.Status).HasMaxLength(256);
             entity.Property(e => e.CreatedAt).HasColumnType("datetime2");
         });
+
+        modelBuilder.Entity<TourGroup>(entity => { entity.HasOne(e => e.Tour).WithMany(x => x.TourGroups); });
 
         // modelBuilder.Entity<TourDiscount>(entity =>
         // {
@@ -171,6 +174,12 @@ public static class EntityConfigurations
             entity.Property(e => e.FirstName).HasMaxLength(256);
             entity.Property(e => e.Gender).HasMaxLength(256);
             entity.Property(e => e.LastName).HasMaxLength(256);
+        });
+
+        modelBuilder.Entity<TravelerInTourGroup>(entity =>
+        {
+            entity.HasKey(e => new { e.TravelerId, e.TourGroupId });
+            entity.ToTable("TravelerInTourGroup");
         });
 
         modelBuilder.Entity<TourFlow>(entity =>

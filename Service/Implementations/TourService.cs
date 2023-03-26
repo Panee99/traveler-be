@@ -163,29 +163,49 @@ public class TourService : BaseService, ITourService
         }
     }
 
-    public async Task<Result<PaginationModel<TourViewModel>>> Filter(TourFilterModel model)
+    public async Task<Result<PaginationModel<TourFilterViewModel>>> Filter(TourFilterModel model)
     {
         var query = _unitOfWork.Repo<Tour>().Query();
 
-        if (!string.IsNullOrEmpty(model.Title)) 
+        if (!string.IsNullOrEmpty(model.Title))
             query = query.Where(e => e.Title.Contains(model.Title));
-        if (model.Type != null) 
+        if (model.Type != null)
             query = query.Where(e => e.Type == model.Type);
-        if (model.StartAfter != null) 
+        if (model.StartAfter != null)
             query = query.Where(e => e.StartTime >= model.StartAfter);
-        if (model.EndBefore != null) 
+        if (model.EndBefore != null)
             query = query.Where(e => e.EndTime <= model.EndBefore);
-        if(model.MinPrice != null)
+        if (model.MinPrice != null)
             query = query.Where(e => e.Price >= model.MinPrice);
-        if(model.MaxPrice != null)
+        if (model.MaxPrice != null)
             query = query.Where(e => e.Price <= model.MaxPrice);
-        
-        var paginationModel = await query.Paging(model.Page, model.Size);
-        return paginationModel.UseMapper(x => x.Adapt<List<TourViewModel>>());
+
+        var paginationModel = await query.Select(e => new
+            {
+                e.Id,
+                e.Title,
+                e.Price,
+                e.Description,
+                e.StartTime,
+                e.EndTime,
+                e.Type,
+                e.ThumbnailId
+            })
+            .Paging(model.Page, model.Size);
+
+        return paginationModel.Map(x =>
+        {
+            var filterViewModel = _mapper.Map<TourFilterViewModel>(x);
+            if (x.ThumbnailId != null)
+                filterViewModel.ThumbnailUrl = _cloudStorageService.GetMediaLink(x.ThumbnailId.Value);
+
+            return filterViewModel;
+        });
     }
 
     // PRIVATE
     private static readonly Random Random = new();
+
     private static string _randomString(int length)
     {
         const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";

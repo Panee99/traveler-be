@@ -63,6 +63,7 @@ public class AuthService : BaseService, IAuthService
 
 
     // PRIVATE
+    private static readonly JwtSecurityTokenHandler TokenHandler = new();
     private string _generateJwtToken(Guid accountId, UserRole role)
     {
         var tokenDescriptor = new SecurityTokenDescriptor
@@ -82,7 +83,7 @@ public class AuthService : BaseService, IAuthService
                     SecurityAlgorithms.HmacSha256Signature)
         };
 
-        var tokenHandler = new JwtSecurityTokenHandler();
-        return tokenHandler.WriteToken(tokenHandler.CreateToken(tokenDescriptor));
+
+        return TokenHandler.WriteToken(TokenHandler.CreateToken(tokenDescriptor));
     }
 }

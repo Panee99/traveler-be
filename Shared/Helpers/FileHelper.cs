@@ -27,16 +27,10 @@ public static class FileHelper
     public static Result ValidateImageFile(IFormFile file)
     {
         if (!_isValidImageFormat(file.ContentType))
-            return Error.Validation(new Dictionary<string, string>
-            {
-                { "contentType", "Invalid ContentType. Supported formats: " + _validContentTypesAsString }
-            });
+            return Error.Validation("Invalid ContentType. Supported formats: " + _validContentTypesAsString);
 
         if (file.Length > AppConstants.FileSizeMax)
-            return Error.Validation(new Dictionary<string, string>
-            {
-                { "fileSize", "File too big, max = 5mb." }
-            });
+            return Error.Validation("File too big, max = 5mb.");
 
         return Result.Success();
     }

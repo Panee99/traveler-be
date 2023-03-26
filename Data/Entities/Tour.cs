@@ -36,6 +36,8 @@ public class Tour
 
     public string? Description { get; set; }
 
+    public virtual ICollection<TourGroup> TourGroups { get; set; } = new List<TourGroup>();
+
     public Guid? ThumbnailId { get; set; }
 
     public Attachment? Thumbnail { get; set; }
