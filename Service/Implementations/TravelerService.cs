@@ -29,10 +29,15 @@ public class TravelerService : BaseService, ITravelerService
         if (!await _verifyIdToken(model.Phone, model.IdToken))
             return DomainErrors.Traveler.IdToken;
 
+        var formattedPhone = _formatPhoneNum(model.Phone);
+
+        if (await _unitOfWork.Repo<Account>().AnyAsync(e => e.Phone == formattedPhone))
+            return Error.Conflict("Account with this phone number already exist");
+
         _unitOfWork.Repo<Traveler>().Add(
             new Traveler
             {
-                Phone = _formatPhoneNum(model.Phone),
+                Phone = formattedPhone,
                 Password = AuthHelper.HashPassword(model.Password),
                 Status = AccountStatus.ACTIVE,
                 FirstName = model.FirstName,
