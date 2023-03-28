@@ -21,7 +21,7 @@ public class TourGroupService : BaseService, ITourGroupService
 
         var group = _unitOfWork.Repo<TourGroup>().Add(new TourGroup()
         {
-            Tour = tour,
+            TourId = tour.Id,
             GroupName = model.GroupName
         });
 
@@ -44,6 +44,8 @@ public class TourGroupService : BaseService, ITourGroupService
             group.TourGuide = tourGuide;
         }
 
+        _unitOfWork.Repo<TourGroup>().Update(group);
+
         await _unitOfWork.SaveChangesAsync();
 
         return group.Adapt<TourGroupViewModel>();
@@ -62,7 +64,12 @@ public class TourGroupService : BaseService, ITourGroupService
     public async Task<Result<List<TourGroupViewModel>>> ListGroupsByTour(Guid tourId)
     {
         if (!await _unitOfWork.Repo<Tour>().AnyAsync(e => e.Id == tourId)) return Error.NotFound();
-        var tourGroups = await _unitOfWork.Repo<TourGroup>().Query().Where(e => e.TourId == tourId).ToListAsync();
+
+        var tourGroups = await _unitOfWork.Repo<TourGroup>()
+            .Query()
+            .Where(e => e.TourId == tourId)
+            .ToListAsync();
+
         return tourGroups.Adapt<List<TourGroupViewModel>>();
     }
 

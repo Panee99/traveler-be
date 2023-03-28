@@ -69,14 +69,14 @@ public class ToursController : ApiController
     }
 
     [ProducesResponseType(typeof(PaginationModel<TourFilterViewModel>), StatusCodes.Status200OK)]
-    [HttpGet("filter")]
+    [HttpPost("filter")]
     public async Task<IActionResult> Filter(TourFilterModel model)
     {
         var result = await _tourService.Filter(model);
         return result.Match(Ok, OnError);
     }
 
-    [HttpGet("{id:guid}")]
+    [HttpGet("{id:guid}/tour-groups")]
     public async Task<IActionResult> ListTourGroups([FromRoute] Guid id)
     {
         var result = await _tourGroupService.ListGroupsByTour(id);

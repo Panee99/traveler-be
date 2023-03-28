@@ -44,7 +44,7 @@ public class TourService : BaseService, ITourService
     {
         var now = DateTimeHelper.VnNow();
         var year = now.Year % 1000;
-        var month = now.Month > 10 ? now.Month : '0' + now.Month;
+        var month = now.Month < 10 ? "0" + now.Month : now.Month.ToString();
 
         string code;
         do
@@ -165,7 +165,7 @@ public class TourService : BaseService, ITourService
 
     public async Task<Result<PaginationModel<TourFilterViewModel>>> Filter(TourFilterModel model)
     {
-        var query = _unitOfWork.Repo<Tour>().Query();
+        IQueryable<Tour> query = _unitOfWork.Repo<Tour>().Query().OrderBy(e => e.CreatedAt);
 
         if (!string.IsNullOrEmpty(model.Title))
             query = query.Where(e => e.Title.Contains(model.Title));

@@ -3,7 +3,7 @@
 public class TourGroupViewModel
 {
     public Guid Id;
-    public Guid TourGuide;
+    public Guid? TourGuideId;
     public string GroupName = null!;
     public DateTime CreatedAt;
 }
