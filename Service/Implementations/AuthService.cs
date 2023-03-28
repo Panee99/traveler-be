@@ -29,7 +29,9 @@ public class AuthService : BaseService, IAuthService
     {
         var traveler = await _unitOfWork.Repo<Traveler>()
             .Query()
-            .FirstOrDefaultAsync(e => e.Phone == model.Phone && e.Status == AccountStatus.ACTIVE);
+            .Where(e => e.Phone == model.Phone && e.Status == AccountStatus.ACTIVE)
+            .Select(e => new { e.Id, e.Password })
+            .FirstOrDefaultAsync();
 
         if (traveler == null || !AuthHelper.VerifyPassword(model.Password, traveler.Password))
             return Error.Authentication();
@@ -41,7 +43,9 @@ public class AuthService : BaseService, IAuthService
     {
         var manager = await _unitOfWork.Repo<Manager>()
             .Query()
-            .FirstOrDefaultAsync(e => e.Email == model.Email && e.Status == AccountStatus.ACTIVE);
+            .Where(e => e.Email == model.Email && e.Status == AccountStatus.ACTIVE)
+            .Select(e => new { e.Id, e.Password })
+            .FirstOrDefaultAsync();
 
         if (manager == null || !AuthHelper.VerifyPassword(model.Password, manager.Password))
             return Error.Authentication();
@@ -53,7 +57,9 @@ public class AuthService : BaseService, IAuthService
     {
         var tourGuide = await _unitOfWork.Repo<TourGuide>()
             .Query()
-            .FirstOrDefaultAsync(e => e.Email == model.Email && e.Status == AccountStatus.ACTIVE);
+            .Where(e => e.Email == model.Email && e.Status == AccountStatus.ACTIVE)
+            .Select(e => new { e.Id, e.Password })
+            .FirstOrDefaultAsync();
 
         if (tourGuide == null || !AuthHelper.VerifyPassword(model.Password, tourGuide.Password))
             return Error.Authentication();
@@ -64,6 +70,7 @@ public class AuthService : BaseService, IAuthService
 
     // PRIVATE
     private static readonly JwtSecurityTokenHandler TokenHandler = new();
+
     private string _generateJwtToken(Guid accountId, UserRole role)
     {
         var tokenDescriptor = new SecurityTokenDescriptor
