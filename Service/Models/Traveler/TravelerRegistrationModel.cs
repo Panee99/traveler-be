@@ -1,18 +1,16 @@
 ﻿using Data.Enums;
 
+// ReSharper disable FieldCanBeMadeReadOnly.Global
+// ReSharper disable UnassignedField.Global
+
 namespace Service.Models.Traveler;
 
-public class TravelerRegistrationModel
+public record TravelerRegistrationModel
 {
-    public string IdToken { get; set; } = null!;
-
-    public string Phone { get; set; } = null!;
-
-    public string Password { get; set; } = null!;
-
-    public string FirstName { get; set; } = null!;
-
-    public string LastName { get; set; } = null!;
-
-    public Gender Gender { get; set; }
+    public string FirstName = null!;
+    public Gender Gender;
+    public string IdToken = null!;
+    public string LastName = null!;
+    public string Password = null!;
+    public string Phone = null!;
 }

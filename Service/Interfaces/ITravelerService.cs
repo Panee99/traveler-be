@@ -1,5 +1,5 @@
 ﻿using Service.Models.Traveler;
-using Service.Results;
+using Shared.ResultExtensions;
 
 namespace Service.Interfaces;
 
@@ -7,5 +7,5 @@ public interface ITravelerService
 {
     Task<Result> Register(TravelerRegistrationModel model);
 
-    Result<TravelerProfileViewModel> GetProfile(Guid id);
+    Task<Result<TravelerProfileViewModel>> GetProfile(Guid id);
 }

@@ -20,7 +20,8 @@ public class TourDiscount
 
     public double? T2discountPercent { get; set; }
 
-    public virtual ICollection<BookingAppliedDiscount> BookingAppliedDiscounts { get; set; } = new List<BookingAppliedDiscount>();
+    public virtual ICollection<BookingAppliedDiscount> BookingAppliedDiscounts { get; set; } =
+        new List<BookingAppliedDiscount>();
 
     public virtual Tour Tour { get; set; } = null!;
 }

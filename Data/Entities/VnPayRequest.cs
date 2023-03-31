@@ -3,9 +3,10 @@
 public class VnPayRequest
 {
     /// <summary>
-    /// Key
+    ///     Key
     /// </summary>
     public Guid TxnRef { get; set; }
+
     public string Version { get; set; } = null!;
     public string Command { get; set; } = null!;
     public string TmnCode { get; set; } = null!;
@@ -22,7 +23,7 @@ public class VnPayRequest
     public string? BankCode { get; set; }
 
     /// <summary>
-    /// Reference
+    ///     Reference
     /// </summary>
     public virtual VnPayResponse? VnPayResponse { get; set; }
 }

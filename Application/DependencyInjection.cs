@@ -1,8 +1,5 @@
-﻿using System.Reflection;
-using Application.Configurations.Auth;
-using Data;
-using Mapster;
-using MapsterMapper;
+﻿using Application.Configurations.Auth;
+using Data.EFCore;
 using Service.Implementations;
 using Service.Interfaces;
 
@@ -12,23 +9,22 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddDependencies(this IServiceCollection services)
     {
-        // Mapper
-        var config = TypeAdapterConfig.GlobalSettings;
-        config.Scan(Assembly.GetExecutingAssembly());
-        services.AddSingleton(config);
-        services.AddScoped<IMapper, ServiceMapper>();
-        
         // Middleware
         services.AddScoped<JwtMiddleware>();
-        
+
         // Services
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddScoped<IAccountService, AccountService>();
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<ILocationService, LocationService>();
         services.AddScoped<IVnPayRequestService, VnPayRequestService>();
         services.AddScoped<IVnPayResponseService, VnPayResponseService>();
         services.AddScoped<ICloudMessagingService, CloudMessagingService>();
         services.AddScoped<ITravelerService, TravelerService>();
+        services.AddScoped<ITagService, TagService>();
+        services.AddScoped<ICloudStorageService, CloudStorageService>();
+        services.AddScoped<ITourService, TourService>();
+        services.AddScoped<ITourGroupService, TourGroupService>();
 
         return services;
     }

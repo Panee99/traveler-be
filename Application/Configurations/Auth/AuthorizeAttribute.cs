@@ -1,10 +1,12 @@
 ﻿using System.Net;
 using Application.Commons;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Service.Results;
 using Shared;
 using Shared.Enums;
+using Shared.Helpers;
+using Shared.ResultExtensions;
 
 namespace Application.Configurations.Auth;
 
@@ -18,18 +20,18 @@ public sealed class AuthorizeAttribute : Attribute, IAuthorizationFilter
         _roles = Array.Empty<UserRole>();
     }
 
-    public AuthorizeAttribute(UserRole role)
+    public AuthorizeAttribute(params UserRole[] roles)
     {
-        _roles = new[] { role };
-    }
-
-    public AuthorizeAttribute(UserRole[] Roles)
-    {
-        _roles = Roles;
+        _checkDuplicate(roles);
+        _roles = roles;
     }
 
     public void OnAuthorization(AuthorizationFilterContext context)
     {
+        // [AllowAnonymous]
+        if (context.ActionDescriptor.EndpointMetadata
+            .OfType<AllowAnonymousAttribute>().Any()) return;
+
         var user = (AuthUser?)context.HttpContext.Items[AppConstants.UserContextKey];
 
         // Unauthorized
@@ -50,7 +52,7 @@ public sealed class AuthorizeAttribute : Attribute, IAuthorizationFilter
     // PRIVATE
     private ObjectResult _generateErrorResponse(Error error, int StatusCode)
     {
-        return new ObjectResult(new ErrorResponsePayload()
+        return new ObjectResult(new ErrorResponsePayload
         {
             Timestamp = DateTimeHelper.VnNow(),
             Code = error.Code,
@@ -58,7 +60,14 @@ public sealed class AuthorizeAttribute : Attribute, IAuthorizationFilter
             Details = error.ErrorDetails
         })
         {
-            StatusCode = StatusCode,
+            StatusCode = StatusCode
         };
+    }
+
+    private void _checkDuplicate(UserRole[] roles)
+    {
+        var hasDuplicates = roles.Length != roles.Distinct().Count();
+        if (hasDuplicates)
+            throw new ArgumentException("\"Authorize\" attribute parameter \"roles\" can not have duplicates");
     }
 }

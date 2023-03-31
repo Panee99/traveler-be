@@ -1,4 +1,4 @@
-﻿using Service.Results;
+﻿using Shared.ResultExtensions;
 
 namespace Service.Errors;
 

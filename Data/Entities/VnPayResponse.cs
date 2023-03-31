@@ -1,5 +1,4 @@
-﻿
-namespace Data.Entities;
+﻿namespace Data.Entities;
 
 public class VnPayResponse
 {
@@ -16,10 +15,11 @@ public class VnPayResponse
     public string? CardType { get; set; }
     public string? PayDate { get; set; }
     public string? SecureHashType { get; set; }
-    
+
     /// <summary>
-    /// Reference and Key
+    ///     Reference and Key
     /// </summary>
     public Guid TxnRef { get; set; }
+
     public virtual VnPayRequest? VnPayRequest { get; set; }
 }

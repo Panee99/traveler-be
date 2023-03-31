@@ -1,4 +1,4 @@
-﻿using Data;
+﻿using Data.EFCore;
 using FirebaseAdmin.Messaging;
 using Microsoft.Extensions.Logging;
 using Service.Interfaces;

@@ -1,21 +1,22 @@
-﻿using Data;
+﻿using Data.EFCore;
 using Data.Entities;
 using Data.Enums;
 using FirebaseAdmin.Auth;
 using MapsterMapper;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Service.Errors;
 using Service.Interfaces;
 using Service.Models.Traveler;
-using Service.Results;
-using Shared.Auth;
+using Shared.Helpers;
+using Shared.ResultExtensions;
 
 namespace Service.Implementations;
 
 public class TravelerService : BaseService, ITravelerService
 {
-    private readonly IMapper _mapper;
     private readonly ILogger<TravelerService> _logger;
+    private readonly IMapper _mapper;
 
     public TravelerService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<TravelerService> logger) : base(unitOfWork)
     {
@@ -28,15 +29,20 @@ public class TravelerService : BaseService, ITravelerService
         if (!await _verifyIdToken(model.Phone, model.IdToken))
             return DomainErrors.Traveler.IdToken;
 
+        var formattedPhone = _formatPhoneNum(model.Phone);
+
+        if (await _unitOfWork.Repo<Account>().AnyAsync(e => e.Phone == formattedPhone))
+            return Error.Conflict("Account with this phone number already exist");
+
         _unitOfWork.Repo<Traveler>().Add(
-            new Traveler()
+            new Traveler
             {
-                Phone = _formatPhoneNum(model.Phone),
-                Password = AuthUtils.HashPassword(model.Password),
+                Phone = formattedPhone,
+                Password = AuthHelper.HashPassword(model.Password),
                 Status = AccountStatus.ACTIVE,
                 FirstName = model.FirstName,
                 LastName = model.LastName,
-                Gender = model.Gender,
+                Gender = model.Gender
             }
         );
 
@@ -44,15 +50,16 @@ public class TravelerService : BaseService, ITravelerService
         return Result.Success();
     }
 
-    public Result<TravelerProfileViewModel> GetProfile(Guid id)
+    public async Task<Result<TravelerProfileViewModel>> GetProfile(Guid id)
     {
-        var entity = _unitOfWork.Repo<Traveler>()
+        var entity = await _unitOfWork.Repo<Traveler>()
             .Query()
-            .FirstOrDefault(e => e.Id == id && e.Status == AccountStatus.ACTIVE);
+            .FirstOrDefaultAsync(e => e.Id == id && e.Status == AccountStatus.ACTIVE);
 
-        if (entity is null) return Error.Unexpected();
+        if (entity is null) return Error.NotFound();
         return _mapper.Map<TravelerProfileViewModel>(entity);
     }
+
 
     // PRIVATE
 
@@ -74,7 +81,7 @@ public class TravelerService : BaseService, ITravelerService
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "{Message}", typeof(TravelerService).ToString());
+            _logger.LogDebug(e, "{Message}", typeof(TravelerService).ToString());
         }
 
         return false;

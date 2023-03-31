@@ -1,6 +1,9 @@
-﻿namespace Service.Models.Tag;
+﻿using Data.Enums;
 
-public class TagCreateModel
-{
-    public string Name { get; set; } = "";
-}
+namespace Service.Models.Tag;
+
+public record TagCreateModel
+(
+    string Name,
+    TagType Type
+);

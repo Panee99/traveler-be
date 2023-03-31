@@ -3,5 +3,5 @@
 public enum UserStatus
 {
     Active,
-    Blocked,
+    Blocked
 }

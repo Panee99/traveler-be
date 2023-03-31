@@ -1,6 +1,6 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Text;
-using Data;
+using Data.EFCore;
 using Data.Entities;
 using Data.Enums;
 using Microsoft.Extensions.Options;
@@ -14,8 +14,8 @@ namespace Application.Configurations.Auth;
 public class JwtMiddleware : IMiddleware
 {
     private readonly AppSettings _appSettings;
-    private readonly IUnitOfWork _unitOfWork;
     private readonly ILogger<JwtMiddleware> _logger;
+    private readonly IUnitOfWork _unitOfWork;
 
     public JwtMiddleware(
         IOptions<AppSettings> appSettings,
@@ -32,13 +32,13 @@ public class JwtMiddleware : IMiddleware
         if (context.Request.Headers.TryGetValue("Authorization", out var values))
         {
             var token = values.FirstOrDefault();
-            if (token != null) _verifyToken(context, token);
+            if (token != null) await _verifyToken(context, token);
         }
 
         await next(context);
     }
 
-    private void _verifyToken(HttpContext context, string token)
+    private async Task _verifyToken(HttpContext context, string token)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
         try
@@ -52,7 +52,7 @@ public class JwtMiddleware : IMiddleware
                 ValidateLifetime = true,
                 ClockSkew = TimeSpan.Zero,
                 ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_appSettings.JwtSecret)),
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_appSettings.JwtSecret))
             }, out var securityToken);
 
             var jwtToken = (JwtSecurityToken)securityToken;
@@ -60,7 +60,7 @@ public class JwtMiddleware : IMiddleware
             var id = Guid.Parse(jwtToken.Claims.First(x => x.Type == "id").Value);
             var role = Enum.Parse<UserRole>(jwtToken.Claims.First(x => x.Type == "role").Value);
 
-            if (!_checkUserClaims(id, role)) return;
+            if (!await _checkUserClaims(id, role)) return;
             context.Items[AppConstants.UserContextKey] = new AuthUser(id, role);
         }
 
@@ -70,13 +70,16 @@ public class JwtMiddleware : IMiddleware
         }
     }
 
-    private bool _checkUserClaims(Guid id, UserRole role)
+    private async Task<bool> _checkUserClaims(Guid id, UserRole role)
     {
         return role switch
         {
-            UserRole.Manager => _unitOfWork.Repo<Manager>().Any(e => e.Id == id && e.Status == AccountStatus.ACTIVE),
-            UserRole.Traveler => _unitOfWork.Repo<Traveler>().Any(e => e.Id == id && e.Status == AccountStatus.ACTIVE),
-            UserRole.TourGuide => _unitOfWork.Repo<TourGuide>().Any(e => e.Id == id && e.Status == AccountStatus.ACTIVE),
+            UserRole.Manager => await _unitOfWork.Repo<Manager>()
+                .AnyAsync(e => e.Id == id && e.Status == AccountStatus.ACTIVE),
+            UserRole.Traveler => await _unitOfWork.Repo<Traveler>()
+                .AnyAsync(e => e.Id == id && e.Status == AccountStatus.ACTIVE),
+            UserRole.TourGuide => await _unitOfWork.Repo<TourGuide>()
+                .AnyAsync(e => e.Id == id && e.Status == AccountStatus.ACTIVE),
             _ => throw new ArgumentOutOfRangeException(typeof(JwtMiddleware).ToString())
         };
     }

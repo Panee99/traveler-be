@@ -1,8 +1,10 @@
-﻿namespace Service.Models.Tag;
+﻿using Data.Enums;
 
-public class TagViewModel
-{
-    public Guid Id { get; set; }
+namespace Service.Models.Tag;
 
-    public string Name { get; set; } = null!;
-}
+public record TagViewModel
+(
+    Guid Id,
+    string Name,
+    TagType Type
+);

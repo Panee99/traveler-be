@@ -1,4 +1,6 @@
-﻿namespace Data.Entities;
+﻿using Data.Enums;
+
+namespace Data.Entities;
 
 public class Tag
 {
@@ -6,5 +8,5 @@ public class Tag
 
     public string Name { get; set; } = null!;
 
-    public virtual ICollection<LocationTag> LocationTags { get; set; } = new List<LocationTag>();
+    public TagType Type { get; set; }
 }

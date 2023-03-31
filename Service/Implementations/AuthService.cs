@@ -1,16 +1,17 @@
-﻿using Data;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using Data.EFCore;
+using Data.Entities;
+using Data.Enums;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Service.Interfaces;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using Data.Entities;
-using Data.Enums;
 using Service.Models.Auth;
-using Service.Results;
-using Shared.Auth;
 using Shared.Enums;
+using Shared.Helpers;
+using Shared.ResultExtensions;
 using Shared.Settings;
 
 namespace Service.Implementations;
@@ -24,52 +25,60 @@ public class AuthService : BaseService, IAuthService
         _appSettings = appSettings.Value;
     }
 
-    public Result<AuthenticateResponseModel> AuthenticateTraveler(PhoneLoginModel model)
+    public async Task<Result<AuthenticateResponseModel>> AuthenticateTraveler(PhoneLoginModel model)
     {
-        var traveler = _unitOfWork.Repo<Traveler>()
+        var traveler = await _unitOfWork.Repo<Traveler>()
             .Query()
-            .FirstOrDefault(e => e.Phone == model.Phone && e.Status == AccountStatus.ACTIVE);
+            .Where(e => e.Phone == model.Phone && e.Status == AccountStatus.ACTIVE)
+            .Select(e => new { e.Id, e.Password })
+            .FirstOrDefaultAsync();
 
-        if (traveler == null || !AuthUtils.VerifyPassword(model.Password, traveler.Password))
+        if (traveler == null || !AuthHelper.VerifyPassword(model.Password, traveler.Password))
             return Error.Authentication();
 
-        return new AuthenticateResponseModel(Token: _generateJwtToken(traveler.Id, UserRole.Traveler));
+        return new AuthenticateResponseModel(_generateJwtToken(traveler.Id, UserRole.Traveler));
     }
 
-    public Result<AuthenticateResponseModel> AuthenticateManager(EmailLoginModel model)
+    public async Task<Result<AuthenticateResponseModel>> AuthenticateManager(EmailLoginModel model)
     {
-        var manager = _unitOfWork.Repo<Manager>()
+        var manager = await _unitOfWork.Repo<Manager>()
             .Query()
-            .FirstOrDefault(e => e.Email == model.Email && e.Status == AccountStatus.ACTIVE);
+            .Where(e => e.Email == model.Email && e.Status == AccountStatus.ACTIVE)
+            .Select(e => new { e.Id, e.Password })
+            .FirstOrDefaultAsync();
 
-        if (manager == null || !AuthUtils.VerifyPassword(model.Password, manager.Password))
+        if (manager == null || !AuthHelper.VerifyPassword(model.Password, manager.Password))
             return Error.Authentication();
 
-        return new AuthenticateResponseModel(Token: _generateJwtToken(manager.Id, UserRole.Manager));
+        return new AuthenticateResponseModel(_generateJwtToken(manager.Id, UserRole.Manager));
     }
 
-    public Result<AuthenticateResponseModel> AuthenticateTourGuide(EmailLoginModel model)
+    public async Task<Result<AuthenticateResponseModel>> AuthenticateTourGuide(EmailLoginModel model)
     {
-        var tourGuide = _unitOfWork.Repo<TourGuide>()
+        var tourGuide = await _unitOfWork.Repo<TourGuide>()
             .Query()
-            .FirstOrDefault(e => e.Email == model.Email && e.Status == AccountStatus.ACTIVE);
+            .Where(e => e.Email == model.Email && e.Status == AccountStatus.ACTIVE)
+            .Select(e => new { e.Id, e.Password })
+            .FirstOrDefaultAsync();
 
-        if (tourGuide == null || !AuthUtils.VerifyPassword(model.Password, tourGuide.Password))
+        if (tourGuide == null || !AuthHelper.VerifyPassword(model.Password, tourGuide.Password))
             return Error.Authentication();
 
-        return new AuthenticateResponseModel(Token: _generateJwtToken(tourGuide.Id, UserRole.TourGuide));
+        return new AuthenticateResponseModel(_generateJwtToken(tourGuide.Id, UserRole.TourGuide));
     }
 
 
     // PRIVATE
+    private static readonly JwtSecurityTokenHandler TokenHandler = new();
+
     private string _generateJwtToken(Guid accountId, UserRole role)
     {
-        var tokenDescriptor = new SecurityTokenDescriptor()
+        var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(new[]
                 {
                     new Claim("id", accountId.ToString()),
-                    new Claim("role", role.ToString()),
+                    new Claim("role", role.ToString())
                 }
             ),
             Issuer = _appSettings.JwtIssuer,
@@ -81,7 +90,7 @@ public class AuthService : BaseService, IAuthService
                     SecurityAlgorithms.HmacSha256Signature)
         };
 
-        var tokenHandler = new JwtSecurityTokenHandler();
-        return tokenHandler.WriteToken(tokenHandler.CreateToken(tokenDescriptor));
+
+        return TokenHandler.WriteToken(TokenHandler.CreateToken(tokenDescriptor));
     }
 }
