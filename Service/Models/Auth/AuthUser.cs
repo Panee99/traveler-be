@@ -1,7 +1,6 @@
 ﻿using Data.Enums;
-using Shared.Enums;
 
-namespace Application.Configurations.Auth;
+namespace Service.Models.Auth;
 
 public record AuthUser(
     Guid Id,

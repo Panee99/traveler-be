@@ -3,6 +3,7 @@ using Data.Entities;
 using Data.Enums;
 using FirebaseAdmin.Auth;
 using MapsterMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Service.Errors;
@@ -18,7 +19,9 @@ public class TravelerService : BaseService, ITravelerService
     private readonly ILogger<TravelerService> _logger;
     private readonly IMapper _mapper;
 
-    public TravelerService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<TravelerService> logger) : base(unitOfWork)
+    public TravelerService(IUnitOfWork unitOfWork, IMapper mapper,
+        ILogger<TravelerService> logger, IHttpContextAccessor httpContextAccessor)
+        : base(unitOfWork, httpContextAccessor)
     {
         _mapper = mapper;
         _logger = logger;
@@ -26,8 +29,15 @@ public class TravelerService : BaseService, ITravelerService
 
     public async Task<Result> Register(TravelerRegistrationModel model)
     {
-        if (!await _verifyIdToken(model.Phone, model.IdToken))
-            return DomainErrors.Traveler.IdToken;
+        if (!model.Phone.StartsWith('+')) model.Phone = '+' + model.Phone;
+
+        if (!model.Phone.StartsWith("+84")) return Error.Validation();
+
+        if (AuthUser is not { Role: AccountRole.Manager })
+        {
+            if (model.IdToken is null || !await _verifyIdToken(model.Phone, model.IdToken))
+                return DomainErrors.Traveler.IdToken;
+        }
 
         var formattedPhone = _formatPhoneNum(model.Phone);
 

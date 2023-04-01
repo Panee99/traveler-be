@@ -4,6 +4,7 @@ using Data.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Service.Models.Auth;
 using Shared;
 using Shared.Enums;
 using Shared.Helpers;
