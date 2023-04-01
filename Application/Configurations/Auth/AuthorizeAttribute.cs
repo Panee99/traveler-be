@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using Application.Commons;
+using Data.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -13,14 +14,14 @@ namespace Application.Configurations.Auth;
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
 public sealed class AuthorizeAttribute : Attribute, IAuthorizationFilter
 {
-    private readonly UserRole[] _roles;
+    private readonly AccountRole[] _roles;
 
     public AuthorizeAttribute()
     {
-        _roles = Array.Empty<UserRole>();
+        _roles = Array.Empty<AccountRole>();
     }
 
-    public AuthorizeAttribute(params UserRole[] roles)
+    public AuthorizeAttribute(params AccountRole[] roles)
     {
         _checkDuplicate(roles);
         _roles = roles;
@@ -64,7 +65,7 @@ public sealed class AuthorizeAttribute : Attribute, IAuthorizationFilter
         };
     }
 
-    private void _checkDuplicate(UserRole[] roles)
+    private void _checkDuplicate(AccountRole[] roles)
     {
         var hasDuplicates = roles.Length != roles.Distinct().Count();
         if (hasDuplicates)

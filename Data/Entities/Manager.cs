@@ -4,8 +4,6 @@ namespace Data.Entities;
 
 public class Manager : Account
 {
-    public string Email { get; set; } = null!;
-
     public string FirstName { get; set; } = null!;
 
     public string LastName { get; set; } = null!;

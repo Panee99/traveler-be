@@ -19,8 +19,8 @@ public class VnPayRequestService : BaseService, IVnPayRequestService
     public async Task<Result> Add(VnPayRequestModel model)
     {
         var entity = _mapper.Map<VnPayRequest>(model);
-        _unitOfWork.Repo<VnPayRequest>().Add(entity);
-        await _unitOfWork.SaveChangesAsync();
+        UnitOfWork.Repo<VnPayRequest>().Add(entity);
+        await UnitOfWork.SaveChangesAsync();
         return Result.Success();
     }
 }

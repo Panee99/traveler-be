@@ -1,5 +1,6 @@
 ﻿using Application.Commons;
 using Application.Configurations.Auth;
+using Data.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Service.Interfaces;
 using Service.Models.Tag;
@@ -18,7 +19,7 @@ public class TagsController : ApiController
     }
 
     [ProducesResponseType(typeof(TagViewModel), StatusCodes.Status201Created)]
-    [Authorize(UserRole.Manager)]
+    [Authorize(AccountRole.Manager)]
     [HttpPost("")]
     public async Task<IActionResult> Create(TagCreateModel model)
     {
@@ -28,7 +29,7 @@ public class TagsController : ApiController
 
     [ProducesResponseType(typeof(TagViewModel), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponsePayload), StatusCodes.Status404NotFound)]
-    [Authorize(UserRole.Manager)]
+    [Authorize(AccountRole.Manager)]
     [HttpPatch("{id:guid}")]
     public async Task<IActionResult> Update(Guid id, TagUpdateModel model)
     {
@@ -38,7 +39,7 @@ public class TagsController : ApiController
 
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponsePayload), StatusCodes.Status404NotFound)]
-    [Authorize(UserRole.Manager)]
+    [Authorize(AccountRole.Manager)]
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete(Guid id)
     {

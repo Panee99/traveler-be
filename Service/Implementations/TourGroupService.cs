@@ -16,56 +16,56 @@ public class TourGroupService : BaseService, ITourGroupService
 
     public async Task<Result<TourGroupViewModel>> Create(TourGroupCreateModel model)
     {
-        var tour = await _unitOfWork.Repo<Tour>().FirstOrDefaultAsync(e => e.Id == model.TourId);
+        var tour = await UnitOfWork.Repo<Tour>().FirstOrDefaultAsync(e => e.Id == model.TourId);
         if (tour is null) return Error.NotFound();
 
-        var group = _unitOfWork.Repo<TourGroup>().Add(new TourGroup()
+        var group = UnitOfWork.Repo<TourGroup>().Add(new TourGroup()
         {
             TourId = tour.Id,
             GroupName = model.GroupName
         });
 
-        await _unitOfWork.SaveChangesAsync();
+        await UnitOfWork.SaveChangesAsync();
 
         return group.Adapt<TourGroupViewModel>();
     }
 
     public async Task<Result<TourGroupViewModel>> Update(Guid groupId, TourGroupUpdateModel model)
     {
-        var group = await _unitOfWork.Repo<TourGroup>().FirstOrDefaultAsync(e => e.Id == groupId);
+        var group = await UnitOfWork.Repo<TourGroup>().FirstOrDefaultAsync(e => e.Id == groupId);
         if (group is null) return Error.NotFound("Tour group not found.");
 
         if (model.GroupName != null) group.GroupName = model.GroupName;
 
         if (model.TourGuide != null)
         {
-            var tourGuide = await _unitOfWork.Repo<TourGuide>().FirstOrDefaultAsync(e => e.Id == model.TourGuide);
+            var tourGuide = await UnitOfWork.Repo<TourGuide>().FirstOrDefaultAsync(e => e.Id == model.TourGuide);
             if (tourGuide is null) return Error.NotFound("Tour guide not found.");
             group.TourGuide = tourGuide;
         }
 
-        _unitOfWork.Repo<TourGroup>().Update(group);
+        UnitOfWork.Repo<TourGroup>().Update(group);
 
-        await _unitOfWork.SaveChangesAsync();
+        await UnitOfWork.SaveChangesAsync();
 
         return group.Adapt<TourGroupViewModel>();
     }
 
     public async Task<Result> Delete(Guid groupId)
     {
-        var group = await _unitOfWork.Repo<TourGroup>().FirstOrDefaultAsync(e => e.Id == groupId);
+        var group = await UnitOfWork.Repo<TourGroup>().FirstOrDefaultAsync(e => e.Id == groupId);
         if (group is null) return Error.NotFound();
 
-        _unitOfWork.Repo<TourGroup>().Remove(group);
-        await _unitOfWork.SaveChangesAsync();
+        UnitOfWork.Repo<TourGroup>().Remove(group);
+        await UnitOfWork.SaveChangesAsync();
         return Result.Success();
     }
 
     public async Task<Result<List<TourGroupViewModel>>> ListGroupsByTour(Guid tourId)
     {
-        if (!await _unitOfWork.Repo<Tour>().AnyAsync(e => e.Id == tourId)) return Error.NotFound();
+        if (!await UnitOfWork.Repo<Tour>().AnyAsync(e => e.Id == tourId)) return Error.NotFound();
 
-        var tourGroups = await _unitOfWork.Repo<TourGroup>()
+        var tourGroups = await UnitOfWork.Repo<TourGroup>()
             .Query()
             .Where(e => e.TourId == tourId)
             .ToListAsync();
@@ -75,7 +75,7 @@ public class TourGroupService : BaseService, ITourGroupService
 
     public async Task<Result> AddTravelers(Guid tourGroupId, ICollection<Guid> travelerIds)
     {
-        if (!await _unitOfWork.Repo<TourGroup>().AnyAsync(e => e.Id == tourGroupId))
+        if (!await UnitOfWork.Repo<TourGroup>().AnyAsync(e => e.Id == tourGroupId))
             return Error.NotFound();
 
         var records = travelerIds.Select(travelerId => new TravelerInTourGroup()
@@ -85,7 +85,7 @@ public class TourGroupService : BaseService, ITourGroupService
         });
 
         // Check all traveler ids
-        var existTravelers = await _unitOfWork.Repo<Traveler>()
+        var existTravelers = await UnitOfWork.Repo<Traveler>()
             .Query()
             .Where(e => travelerIds.Contains(e.Id))
             .Select(e => e.Id).ToListAsync();
@@ -95,34 +95,34 @@ public class TourGroupService : BaseService, ITourGroupService
         if (nonExistTravelers.Count != 0)
             return Error.NotFound(nonExistTravelers.Select(id => id.ToString()).ToArray());
 
-        _unitOfWork.Repo<TravelerInTourGroup>().AddRange(records);
+        UnitOfWork.Repo<TravelerInTourGroup>().AddRange(records);
 
-        await _unitOfWork.SaveChangesAsync();
+        await UnitOfWork.SaveChangesAsync();
         return Result.Success();
     }
 
     public async Task<Result> RemoveTravelers(Guid tourGroupId, List<Guid> travelerIds)
     {
-        if (!await _unitOfWork.Repo<TourGroup>().AnyAsync(e => e.Id == tourGroupId))
+        if (!await UnitOfWork.Repo<TourGroup>().AnyAsync(e => e.Id == tourGroupId))
             return Error.NotFound();
 
-        var records = await _unitOfWork.Repo<TravelerInTourGroup>()
+        var records = await UnitOfWork.Repo<TravelerInTourGroup>()
             .Query()
             .Where(e => e.TourGroupId == tourGroupId && travelerIds.Contains(e.TravelerId))
             .ToListAsync();
 
-        _unitOfWork.Repo<TravelerInTourGroup>().RemoveRange(records);
-        await _unitOfWork.SaveChangesAsync();
+        UnitOfWork.Repo<TravelerInTourGroup>().RemoveRange(records);
+        await UnitOfWork.SaveChangesAsync();
 
         return Result.Success();
     }
 
     public async Task<Result<List<Guid>>> ListTravelers(Guid tourGroupId)
     {
-        if (!await _unitOfWork.Repo<TourGroup>().AnyAsync(e => e.Id == tourGroupId))
+        if (!await UnitOfWork.Repo<TourGroup>().AnyAsync(e => e.Id == tourGroupId))
             return Error.NotFound();
 
-        var travelerIds = await _unitOfWork.Repo<TravelerInTourGroup>()
+        var travelerIds = await UnitOfWork.Repo<TravelerInTourGroup>()
             .Query()
             .Where(e => e.TourGroupId == tourGroupId)
             .Select(e => e.TravelerId)

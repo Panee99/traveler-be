@@ -2,7 +2,7 @@
 
 public enum TourStatus
 {
-    NEW,
-    ACTIVE,
-    CLOSED
+    New,
+    Active,
+    Closed
 }

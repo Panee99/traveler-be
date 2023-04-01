@@ -1,5 +1,6 @@
 ﻿using Application.Commons;
 using Application.Configurations.Auth;
+using Data.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Service.Interfaces;
 using Service.Models.Account;
@@ -23,7 +24,7 @@ public class AccountsController : ApiController
     [SwaggerOperation(description: "File size < 5MB")]
     [ProducesResponseType(typeof(AttachmentViewModel), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponsePayload), StatusCodes.Status400BadRequest)]
-    [Authorize(UserRole.Manager, UserRole.Traveler, UserRole.TourGuide)]
+    [Authorize(AccountRole.Manager, AccountRole.Traveler, AccountRole.TourGuide)]
     [HttpPut("avatar")]
     public async Task<IActionResult> UpdateAvatar(IFormFile file)
     {

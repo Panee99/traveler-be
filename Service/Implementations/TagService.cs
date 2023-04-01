@@ -19,45 +19,45 @@ public class TagService : BaseService, ITagService
 
     public async Task<Result<TagViewModel>> Create(TagCreateModel model)
     {
-        var entity = _unitOfWork.Repo<Tag>().Add(_mapper.Map<Tag>(model));
-        await _unitOfWork.SaveChangesAsync();
+        var entity = UnitOfWork.Repo<Tag>().Add(_mapper.Map<Tag>(model));
+        await UnitOfWork.SaveChangesAsync();
         return _mapper.Map<TagViewModel>(entity);
     }
 
     public async Task<Result<TagViewModel>> Update(Guid id, TagUpdateModel model)
     {
-        var entity = await _unitOfWork.Repo<Tag>().FirstOrDefaultAsync(e => e.Id == id);
+        var entity = await UnitOfWork.Repo<Tag>().FirstOrDefaultAsync(e => e.Id == id);
 
         if (entity is null) return Error.NotFound();
 
         if (model.Name != null) entity.Name = model.Name;
         if (model.Type != null) entity.Type = model.Type.Value;
 
-        entity = _unitOfWork.Repo<Tag>().Update(entity);
-        await _unitOfWork.SaveChangesAsync();
+        entity = UnitOfWork.Repo<Tag>().Update(entity);
+        await UnitOfWork.SaveChangesAsync();
         return _mapper.Map<TagViewModel>(entity);
     }
 
     public async Task<Result> Delete(Guid id)
     {
-        var entity = await _unitOfWork.Repo<Tag>().FirstOrDefaultAsync(e => e.Id == id);
+        var entity = await UnitOfWork.Repo<Tag>().FirstOrDefaultAsync(e => e.Id == id);
         if (entity is null) return Error.NotFound();
-        _unitOfWork.Repo<Tag>().Remove(entity);
+        UnitOfWork.Repo<Tag>().Remove(entity);
 
-        await _unitOfWork.SaveChangesAsync();
+        await UnitOfWork.SaveChangesAsync();
         return Result.Success();
     }
 
     public async Task<Result<TagViewModel>> Find(Guid id)
     {
-        var entity = await _unitOfWork.Repo<Tag>().FirstOrDefaultAsync(e => e.Id == id);
+        var entity = await UnitOfWork.Repo<Tag>().FirstOrDefaultAsync(e => e.Id == id);
         if (entity is null) return Error.NotFound();
         return _mapper.Map<TagViewModel>(entity);
     }
 
     public async Task<Result<ICollection<TagViewModel>>> Filter(TagFilterModel model)
     {
-        var query = _unitOfWork.Repo<Tag>().Query();
+        var query = UnitOfWork.Repo<Tag>().Query();
 
         if (model.Type != null) query = query.Where(e => e.Type == model.Type);
         if (model.Name != null) query = query.Where(e => e.Name.Contains(model.Name));

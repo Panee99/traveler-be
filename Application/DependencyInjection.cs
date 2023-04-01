@@ -25,6 +25,8 @@ public static class DependencyInjection
         services.AddScoped<ICloudStorageService, CloudStorageService>();
         services.AddScoped<ITourService, TourService>();
         services.AddScoped<ITourGroupService, TourGroupService>();
+        services.AddScoped<ITicketService, TicketService>();
+        services.AddScoped<IAttachmentService, AttachmentService>();
 
         return services;
     }

@@ -4,10 +4,10 @@ namespace Service.Implementations;
 
 public class BaseService
 {
-    protected readonly IUnitOfWork _unitOfWork;
+    protected readonly IUnitOfWork UnitOfWork;
 
     protected BaseService(IUnitOfWork unitOfWork)
     {
-        _unitOfWork = unitOfWork;
+        UnitOfWork = unitOfWork;
     }
 }

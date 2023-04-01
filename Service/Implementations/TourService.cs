@@ -34,8 +34,8 @@ public class TourService : BaseService, ITourService
         tour.Code = await _generateTourCode();
         tour.CreatedAt = DateTimeHelper.VnNow();
 
-        tour = _unitOfWork.Repo<Tour>().Add(tour);
-        await _unitOfWork.SaveChangesAsync();
+        tour = UnitOfWork.Repo<Tour>().Add(tour);
+        await UnitOfWork.SaveChangesAsync();
 
         return _mapper.Map<TourViewModel>(tour);
     }
@@ -51,7 +51,7 @@ public class TourService : BaseService, ITourService
         {
             var random = _randomString(5);
             code = $"{random}-{year}{month}";
-        } while (await _unitOfWork.Repo<Tour>().AnyAsync(e => e.Code == code));
+        } while (await UnitOfWork.Repo<Tour>().AnyAsync(e => e.Code == code));
 
         return code;
     }
@@ -60,14 +60,14 @@ public class TourService : BaseService, ITourService
     public async Task<Result<TourViewModel>> Update(Guid id, TourUpdateModel model)
     {
         // Get Tour
-        var tour = await _unitOfWork.Repo<Tour>().FirstOrDefaultAsync(e => e.Id == id);
+        var tour = await UnitOfWork.Repo<Tour>().FirstOrDefaultAsync(e => e.Id == id);
         if (tour is null) return Error.NotFound();
 
         // Update
         tour = model.Adapt(tour, MapperHelper.IgnoreNullConfig<TourUpdateModel, Tour>());
 
-        _unitOfWork.Repo<Tour>().Update(tour);
-        await _unitOfWork.SaveChangesAsync();
+        UnitOfWork.Repo<Tour>().Update(tour);
+        await UnitOfWork.SaveChangesAsync();
 
         // Result
         return _mapper.Map<TourViewModel>(tour);
@@ -75,18 +75,18 @@ public class TourService : BaseService, ITourService
 
     public async Task<Result> Delete(Guid id)
     {
-        var entity = await _unitOfWork.Repo<Tour>().FirstOrDefaultAsync(e => e.Id == id);
+        var entity = await UnitOfWork.Repo<Tour>().FirstOrDefaultAsync(e => e.Id == id);
         if (entity is null) return Error.NotFound();
 
-        _unitOfWork.Repo<Tour>().Remove(entity);
-        await _unitOfWork.SaveChangesAsync();
+        UnitOfWork.Repo<Tour>().Remove(entity);
+        await UnitOfWork.SaveChangesAsync();
 
         return Result.Success();
     }
 
     public async Task<Result<TourViewModel>> Find(Guid id)
     {
-        var entity = await _unitOfWork.Repo<Tour>().FirstOrDefaultAsync(e => e.Id == id);
+        var entity = await UnitOfWork.Repo<Tour>().FirstOrDefaultAsync(e => e.Id == id);
         if (entity is null) return Error.NotFound();
 
         var viewModel = _mapper.Map<TourViewModel>(entity);
@@ -99,12 +99,12 @@ public class TourService : BaseService, ITourService
 
     public async Task<Result<AttachmentViewModel>> UpdateThumbnail(Guid id, string contentType, Stream stream)
     {
-        await using var transaction = _unitOfWork.BeginTransaction();
+        await using var transaction = UnitOfWork.BeginTransaction();
 
         try
         {
             // Find tour
-            var tour = await _unitOfWork.Repo<Tour>()
+            var tour = await UnitOfWork.Repo<Tour>()
                 .TrackingQuery()
                 .Include(e => e.Thumbnail)
                 .FirstOrDefaultAsync(e => e.Id == id);
@@ -114,7 +114,7 @@ public class TourService : BaseService, ITourService
             var oldThumbnail = tour.Thumbnail;
 
             // Add new thumbnail
-            var newThumbnail = _unitOfWork.Repo<Attachment>().Add(
+            var newThumbnail = UnitOfWork.Repo<Attachment>().Add(
                 new Attachment()
                 {
                     ContentType = contentType,
@@ -126,7 +126,7 @@ public class TourService : BaseService, ITourService
             // Remove old thumbnail
             if (oldThumbnail != null)
             {
-                _unitOfWork.Repo<Attachment>().Remove(oldThumbnail);
+                UnitOfWork.Repo<Attachment>().Remove(oldThumbnail);
                 var deleteResult = await _cloudStorageService.Delete(oldThumbnail.Id);
                 if (!deleteResult.IsSuccess)
                 {
@@ -135,7 +135,7 @@ public class TourService : BaseService, ITourService
                 }
             }
 
-            await _unitOfWork.SaveChangesAsync();
+            await UnitOfWork.SaveChangesAsync();
 
             // Upload new thumbnail to Cloud
             var uploadResult = await _cloudStorageService.Upload(newThumbnail.Id, newThumbnail.ContentType, stream);
@@ -165,7 +165,7 @@ public class TourService : BaseService, ITourService
 
     public async Task<Result<PaginationModel<TourFilterViewModel>>> Filter(TourFilterModel model)
     {
-        IQueryable<Tour> query = _unitOfWork.Repo<Tour>().Query().OrderBy(e => e.CreatedAt);
+        IQueryable<Tour> query = UnitOfWork.Repo<Tour>().Query().OrderBy(e => e.CreatedAt);
 
         if (!string.IsNullOrEmpty(model.Title))
             query = query.Where(e => e.Title.Contains(model.Title));

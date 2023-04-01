@@ -31,30 +31,31 @@ public class TravelerService : BaseService, ITravelerService
 
         var formattedPhone = _formatPhoneNum(model.Phone);
 
-        if (await _unitOfWork.Repo<Account>().AnyAsync(e => e.Phone == formattedPhone))
+        if (await UnitOfWork.Repo<Account>().AnyAsync(e => e.Phone == formattedPhone))
             return Error.Conflict("Account with this phone number already exist");
 
-        _unitOfWork.Repo<Traveler>().Add(
+        UnitOfWork.Repo<Traveler>().Add(
             new Traveler
             {
                 Phone = formattedPhone,
                 Password = AuthHelper.HashPassword(model.Password),
-                Status = AccountStatus.ACTIVE,
+                Status = AccountStatus.Active,
                 FirstName = model.FirstName,
                 LastName = model.LastName,
-                Gender = model.Gender
+                Gender = model.Gender,
+                Role = AccountRole.Traveler
             }
         );
 
-        await _unitOfWork.SaveChangesAsync();
+        await UnitOfWork.SaveChangesAsync();
         return Result.Success();
     }
 
     public async Task<Result<TravelerProfileViewModel>> GetProfile(Guid id)
     {
-        var entity = await _unitOfWork.Repo<Traveler>()
+        var entity = await UnitOfWork.Repo<Traveler>()
             .Query()
-            .FirstOrDefaultAsync(e => e.Id == id && e.Status == AccountStatus.ACTIVE);
+            .FirstOrDefaultAsync(e => e.Id == id && e.Status == AccountStatus.Active);
 
         if (entity is null) return Error.NotFound();
         return _mapper.Map<TravelerProfileViewModel>(entity);

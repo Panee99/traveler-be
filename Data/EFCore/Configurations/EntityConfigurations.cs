@@ -10,9 +10,10 @@ public static class EntityConfigurations
         modelBuilder.Entity<Account>(entity =>
         {
             entity.ToTable("Account");
-            entity.HasKey(e => e.Id);
+            entity.HasIndex(e => e.Role);
             entity.HasIndex(e => e.Status);
             entity.HasIndex(e => e.Phone).IsUnique();
+            entity.HasIndex(e => e.Email).IsUnique();
 
             entity.Property(e => e.Password).HasMaxLength(256);
             entity.Property(e => e.BankAccountNumber).HasMaxLength(256);
@@ -23,16 +24,14 @@ public static class EntityConfigurations
 
         modelBuilder.Entity<Attachment>(entity =>
         {
-            entity.HasKey(e => e.Id);
-
             entity.Property(e => e.ContentType).HasMaxLength(256);
             entity.Property(e => e.CreatedAt).HasColumnType("datetime");
         });
 
+        modelBuilder.Entity<Ticket>();
+
         // modelBuilder.Entity<Booking>(entity =>
         // {
-        //     entity.HasKey(e => e.Id);
-        //     
         //     entity.Property(e => e.PaymentStatus).HasMaxLength(256);
         //     entity.Property(e => e.CreatedAt).HasColumnType("datetime");
         //     entity.Property(e => e.UpdatedAt).HasColumnType("datetime");
@@ -48,8 +47,6 @@ public static class EntityConfigurations
 
         // modelBuilder.Entity<BookingAppliedDiscount>(entity =>
         // {
-        //     entity.HasKey(e => e.Id);
-        //     
         //     entity.HasOne(d => d.Booking).WithMany(p => p.BookingAppliedDiscounts)
         //         .HasForeignKey(d => d.BookingId)
         //         .OnDelete(DeleteBehavior.ClientSetNull);
@@ -61,8 +58,6 @@ public static class EntityConfigurations
 
         // modelBuilder.Entity<IncurredCost>(entity =>
         // {
-        //     entity.HasKey(e => e.Id);
-        //     
         //     entity.Property(e => e.CreatedAt).HasColumnType("datetime");
         //     entity.HasOne(d => d.TourGuide).WithMany(p => p.IncurredCosts)
         //         .HasForeignKey(d => d.TourGuideId)
@@ -71,7 +66,6 @@ public static class EntityConfigurations
 
         modelBuilder.Entity<Location>(entity =>
         {
-            entity.HasKey(e => e.Id);
             entity.HasIndex(e => e.CreatedAt);
 
             entity.Property(e => e.Name).HasMaxLength(256);
@@ -107,9 +101,8 @@ public static class EntityConfigurations
 
         modelBuilder.Entity<Tour>(entity =>
         {
-            entity.HasKey(e => e.Id).IsClustered(false);
             entity.HasIndex(e => e.Code).IsUnique();
-            entity.HasIndex(e => e.CreatedAt).IsUnique().IsClustered();
+            entity.HasIndex(e => e.CreatedAt);
 
             entity.Property(e => e.Code).HasMaxLength(256);
             entity.Property(e => e.Title).HasMaxLength(256);
@@ -127,7 +120,6 @@ public static class EntityConfigurations
 
         // modelBuilder.Entity<TourDiscount>(entity =>
         // {
-        //     entity.HasKey(e => e.Id);
         //     entity.Property(e => e.T1discount).HasColumnName("T1Discount");
         //     entity.Property(e => e.T1discountPercent).HasColumnName("T1DiscountPercent");
         //     entity.Property(e => e.T1numberOfFirstTickets).HasColumnName("T1NumberOfFirstTickets");
@@ -152,7 +144,6 @@ public static class EntityConfigurations
 
         // modelBuilder.Entity<Transaction>(entity =>
         // {
-        //     entity.HasKey(e => e.Id);
         //     entity.Property(e => e.CreatedAt).HasColumnType("datetime");
         //     entity.Property(e => e.Description).IsUnicode(false);
         //     entity.Property(e => e.Status).HasMaxLength(256);
@@ -176,11 +167,7 @@ public static class EntityConfigurations
             entity.Property(e => e.LastName).HasMaxLength(256);
         });
 
-        modelBuilder.Entity<TravelerInTourGroup>(entity =>
-        {
-            entity.HasKey(e => new { e.TravelerId, e.TourGroupId });
-            entity.ToTable("TravelerInTourGroup");
-        });
+        modelBuilder.Entity<TravelerInTourGroup>(entity => { entity.ToTable("TravelerInTourGroup"); });
 
         modelBuilder.Entity<TourFlow>(entity =>
         {

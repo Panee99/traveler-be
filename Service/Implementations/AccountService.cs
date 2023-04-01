@@ -1,5 +1,6 @@
 ﻿using Data.EFCore;
 using Data.Entities;
+using Data.Enums;
 using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -28,7 +29,7 @@ public class AccountService : BaseService, IAccountService
 
     public async Task<Result<AvatarViewModel>> GetAvatar(Guid id)
     {
-        var attachmentId = await _unitOfWork.Repo<Account>()
+        var attachmentId = await UnitOfWork.Repo<Account>()
             .Query()
             .Where(e => e.Id == id)
             .Select(e => e.AttachmentId)
@@ -42,23 +43,23 @@ public class AccountService : BaseService, IAccountService
         );
     }
 
-    public async Task<Result<ProfileViewModel>> GetProfile(Guid id, UserRole role)
+    public async Task<Result<ProfileViewModel>> GetProfile(Guid id, AccountRole role)
     {
         ProfileViewModel viewModel;
         switch (role)
         {
-            case UserRole.Traveler:
-                var traveler = await _unitOfWork.Repo<Traveler>().FirstOrDefaultAsync(e => e.Id == id);
+            case AccountRole.Traveler:
+                var traveler = await UnitOfWork.Repo<Traveler>().FirstOrDefaultAsync(e => e.Id == id);
                 if (traveler is null) return Error.Unexpected();
                 viewModel = _mapper.Map<ProfileViewModel>(traveler);
                 break;
-            case UserRole.TourGuide:
-                var tourGuide = await _unitOfWork.Repo<TourGuide>().FirstOrDefaultAsync(e => e.Id == id);
+            case AccountRole.TourGuide:
+                var tourGuide = await UnitOfWork.Repo<TourGuide>().FirstOrDefaultAsync(e => e.Id == id);
                 if (tourGuide is null) return Error.Unexpected();
                 viewModel = _mapper.Map<ProfileViewModel>(tourGuide);
                 break;
-            case UserRole.Manager:
-                var manager = await _unitOfWork.Repo<Manager>().FirstOrDefaultAsync(e => e.Id == id);
+            case AccountRole.Manager:
+                var manager = await UnitOfWork.Repo<Manager>().FirstOrDefaultAsync(e => e.Id == id);
                 if (manager is null) return Error.Unexpected();
                 viewModel = _mapper.Map<ProfileViewModel>(manager);
                 break;
@@ -71,12 +72,12 @@ public class AccountService : BaseService, IAccountService
 
     public async Task<Result<AttachmentViewModel>> UpdateAvatar(Guid id, string contentType, Stream stream)
     {
-        await using var transaction = _unitOfWork.BeginTransaction();
+        await using var transaction = UnitOfWork.BeginTransaction();
 
         try
         {
             // Check if user exist
-            var account = await _unitOfWork.Repo<Account>()
+            var account = await UnitOfWork.Repo<Account>()
                 .TrackingQuery()
                 .Include(e => e.Attachment)
                 .FirstOrDefaultAsync(e => e.Id == id);
@@ -86,20 +87,20 @@ public class AccountService : BaseService, IAccountService
             var oldAttachment = account.Attachment;
 
             // Create new attachment in DB
-            var newAttachment = _unitOfWork.Repo<Attachment>().Add(new Attachment
+            var newAttachment = UnitOfWork.Repo<Attachment>().Add(new Attachment
             {
                 ContentType = contentType,
                 CreatedAt = DateTimeHelper.VnNow()
             });
 
             account.Attachment = newAttachment;
-            await _unitOfWork.SaveChangesAsync();
+            await UnitOfWork.SaveChangesAsync();
 
             // Delete old attachment from DB and Cloud
             if (oldAttachment is not null)
             {
-                _unitOfWork.Repo<Attachment>().Remove(oldAttachment);
-                await _unitOfWork.SaveChangesAsync();
+                UnitOfWork.Repo<Attachment>().Remove(oldAttachment);
+                await UnitOfWork.SaveChangesAsync();
                 var result = await _cloudStorageService.Delete(oldAttachment.Id);
                 if (!result.IsSuccess)
                 {

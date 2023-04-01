@@ -23,7 +23,7 @@ public class VnPayResponseService : BaseService, IVnPayResponseService
 
     public async Task<Result> Add(VnPayResponseModel model)
     {
-        if (!await _unitOfWork.Repo<VnPayRequest>().AnyAsync(e => e.TxnRef == model.TxnRef))
+        if (!await UnitOfWork.Repo<VnPayRequest>().AnyAsync(e => e.TxnRef == model.TxnRef))
         {
             _logger.LogError("Invalid response. Can not find VnPay TxnRef: {TxnRef}", model.TxnRef);
             return Error.Unexpected();
@@ -32,8 +32,8 @@ public class VnPayResponseService : BaseService, IVnPayResponseService
         var entity = _mapper.Map<VnPayResponse>(model);
         entity.Timestamp = DateTimeHelper.VnNow();
 
-        _unitOfWork.Repo<VnPayResponse>().Add(entity);
-        await _unitOfWork.SaveChangesAsync();
+        UnitOfWork.Repo<VnPayResponse>().Add(entity);
+        await UnitOfWork.SaveChangesAsync();
         return Result.Success();
     }
 }
