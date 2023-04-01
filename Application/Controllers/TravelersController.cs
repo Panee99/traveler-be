@@ -19,7 +19,9 @@ public class TravelersController : ApiController
         _logger = logger;
     }
 
-    [SwaggerOperation(Description = "Phone format: '84' or '+84'.")]
+    [SwaggerOperation(
+        Summary = "No need idToken for manager",
+        Description = "Phone format: '84' or '+84'.")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [HttpPost("register")]
     public async Task<IActionResult> Register(TravelerRegistrationModel model)
