@@ -17,7 +17,8 @@ public class AuthController : ApiController
         _authService = authService;
     }
 
-    // [SwaggerOperation(Description = "Phone format: '84' or '+84'. Test: 84389376290/123123")]
+    [SwaggerOperation(Description =
+        "Traveler:84389376290 - Manager:manager@gmail.com - TourGuide:guide@gmail.com - Pass:123123")]
     [HttpPost("")]
     [ProducesResponseType(typeof(ChatTokenResponseModel), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
