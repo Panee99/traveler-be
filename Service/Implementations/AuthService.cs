@@ -43,7 +43,7 @@ public class AuthService : BaseService, IAuthService
         // By Email
         else if (EmailRegex.Match(model.Username).Success) query = query.Where(e => e.Email == model.Username);
         // Error
-        else return Error.Validation();
+        else return Error.Validation("Login by Phone or Email");
 
         var account = await query.Select(e => new AuthResult(e.Id, e.Password, e.Role)).FirstOrDefaultAsync();
 
