@@ -1,5 +1,4 @@
-﻿using Service.Models.Tag;
-
+﻿
 namespace Service.Models.Location;
 
 public record LocationViewModel
@@ -12,5 +11,4 @@ public record LocationViewModel
     public double Latitude;
     public double Longitude;
     public string Name = null!;
-    public ICollection<TagViewModel> Tags = new List<TagViewModel>();
 }

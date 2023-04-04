@@ -1,12 +1,10 @@
 ﻿using System.Net;
 using Application.Commons;
 using Data.Enums;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Service.Models.Auth;
 using Shared;
-using Shared.Enums;
 using Shared.Helpers;
 using Shared.ResultExtensions;
 
@@ -28,31 +26,33 @@ public sealed class AuthorizeAttribute : Attribute, IAuthorizationFilter
         _roles = roles;
     }
 
-    public void OnAuthorization(AuthorizationFilterContext context)
+    public void OnAuthorization(AuthorizationFilterContext filterContext)
     {
         // [AllowAnonymous]
-        if (context.ActionDescriptor.EndpointMetadata
+        if (filterContext.ActionDescriptor.EndpointMetadata
             .OfType<AllowAnonymousAttribute>().Any()) return;
 
-        var user = (AuthUser?)context.HttpContext.Items[AppConstants.UserContextKey];
 
-        // Unauthorized
-        if (user is null)
+        var user = (AuthUser?)filterContext.HttpContext.Items[AppConstants.UserContextKey];
         {
-            context.Result = _generateErrorResponse(Error.Authentication(), (int)HttpStatusCode.Unauthorized);
-            return;
+            // Unauthorized
+            if (user is null)
+            {
+                filterContext.Result = _generateErrorResponse(Error.Authentication(), (int)HttpStatusCode.Unauthorized);
+                return;
+            }
+
+            // Allow
+            if (_roles.Length == 0) return;
+            if (_roles.Contains(user.Role)) return;
         }
 
-        // Allow
-        if (_roles.Length == 0) return;
-        if (_roles.Contains(user.Role)) return;
-
         // Forbidden
-        context.Result = _generateErrorResponse(Error.Authorization(), (int)HttpStatusCode.Forbidden);
+        filterContext.Result = _generateErrorResponse(Error.Authorization(), (int)HttpStatusCode.Forbidden);
     }
 
     // PRIVATE
-    private ObjectResult _generateErrorResponse(Error error, int StatusCode)
+    private ObjectResult _generateErrorResponse(Error error, int statusCode)
     {
         return new ObjectResult(new ErrorResponsePayload
         {
@@ -62,7 +62,7 @@ public sealed class AuthorizeAttribute : Attribute, IAuthorizationFilter
             Details = error.ErrorDetails
         })
         {
-            StatusCode = StatusCode
+            StatusCode = statusCode
         };
     }
 

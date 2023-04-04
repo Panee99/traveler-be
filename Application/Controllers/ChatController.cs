@@ -5,6 +5,7 @@ using Service.Models.Chat;
 
 namespace Application.Controllers;
 
+[ApiExplorerSettings(IgnoreApi = true)]
 [Route("chat")]
 public class ChatController : ApiController
 {

@@ -73,7 +73,6 @@ public class TravelerService : BaseService, ITravelerService
 
 
     // PRIVATE
-
     #region PRIVATE
 
     private string _formatPhoneNum(string phone)

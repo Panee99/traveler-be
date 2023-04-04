@@ -3,7 +3,6 @@ using Data.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Service.Interfaces;
 using Service.Models.Ticket;
-using Shared.Enums;
 using Shared.Helpers;
 
 namespace Application.Controllers;

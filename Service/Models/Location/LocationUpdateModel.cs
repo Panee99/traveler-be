@@ -8,6 +8,5 @@ public record LocationUpdateModel
     string? City,
     long? Longitude,
     long? Latitude,
-    string? Description,
-    ICollection<Guid>? Tags
+    string? Description
 );

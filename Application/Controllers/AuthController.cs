@@ -2,7 +2,6 @@
 using Service.Interfaces;
 using Service.Models.Auth;
 using Service.Models.Chat;
-using Shared.Helpers;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace Application.Controllers;
@@ -17,11 +16,9 @@ public class AuthController : ApiController
         _authService = authService;
     }
 
-    [SwaggerOperation(Description =
-        "Traveler:84389376290 - Manager:manager@gmail.com - TourGuide:guide@gmail.com - Pass:123123")]
-    [HttpPost("")]
+    [SwaggerOperation(Description = "traveler:84389376290 - manager@gmail.com - guide@gmail.com - Pass:123123")]
     [ProducesResponseType(typeof(ChatTokenResponseModel), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [HttpPost("")]
     public async Task<IActionResult> Authenticate(LoginModel model)
     {
         var result = await _authService.Authenticate(model);

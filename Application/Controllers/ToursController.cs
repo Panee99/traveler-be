@@ -10,6 +10,7 @@ using Shared.Helpers;
 
 namespace Application.Controllers;
 
+[Authorize(AccountRole.Manager)]
 [Route("tours")]
 public class ToursController : ApiController
 {
@@ -21,7 +22,6 @@ public class ToursController : ApiController
     }
 
     [ProducesResponseType(typeof(TourViewModel), StatusCodes.Status200OK)]
-    [Authorize(AccountRole.Manager)]
     [HttpPost("")]
     public async Task<IActionResult> Create(TourCreateModel model)
     {
@@ -30,7 +30,6 @@ public class ToursController : ApiController
     }
 
     [ProducesResponseType(typeof(TourViewModel), StatusCodes.Status200OK)]
-    [Authorize(AccountRole.Manager)]
     [HttpPatch("{id:guid}")]
     public async Task<IActionResult> Update(Guid id, TourUpdateModel model)
     {
@@ -39,7 +38,6 @@ public class ToursController : ApiController
     }
 
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [Authorize(AccountRole.Manager)]
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete(Guid id)
     {
@@ -48,6 +46,7 @@ public class ToursController : ApiController
     }
 
     [ProducesResponseType(typeof(TourViewModel), StatusCodes.Status200OK)]
+    [AllowAnonymous]
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> Find(Guid id)
     {
@@ -56,7 +55,6 @@ public class ToursController : ApiController
     }
 
     [ProducesResponseType(typeof(AttachmentViewModel), StatusCodes.Status200OK)]
-    [Authorize(AccountRole.Manager)]
     [HttpPut("{id:guid}/thumbnail")]
     public async Task<IActionResult> UpdateThumbnail(Guid id, IFormFile file)
     {
@@ -68,6 +66,7 @@ public class ToursController : ApiController
     }
 
     [ProducesResponseType(typeof(PaginationModel<TourFilterViewModel>), StatusCodes.Status200OK)]
+    [AllowAnonymous]
     [HttpPost("filter")]
     public async Task<IActionResult> Filter(TourFilterModel model)
     {

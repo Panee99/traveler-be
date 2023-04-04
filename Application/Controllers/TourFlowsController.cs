@@ -3,10 +3,10 @@ using Data.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Service.Interfaces;
 using Service.Models.TourFlow;
-using Shared.Enums;
 
 namespace Application.Controllers;
 
+[Authorize(AccountRole.Manager)]
 [Route("tour-flows")]
 public class TourFlowsController : ApiController
 {
@@ -17,7 +17,6 @@ public class TourFlowsController : ApiController
         _tourFlowService = tourFlowService;
     }
 
-    [Authorize(AccountRole.Manager)]
     [HttpPost("")]
     public async Task<IActionResult> Create(TourFlowCreateModel model)
     {
@@ -25,7 +24,6 @@ public class TourFlowsController : ApiController
         return result.Match(Ok, OnError);
     }
 
-    [Authorize(AccountRole.Manager)]
     [HttpPatch("")]
     public async Task<IActionResult> Update(
         [FromQuery] Guid tourId,
@@ -36,7 +34,6 @@ public class TourFlowsController : ApiController
         return result.Match(Ok, OnError);
     }
 
-    [Authorize(AccountRole.Manager)]
     [HttpDelete("")]
     public async Task<IActionResult> Delete([FromQuery] Guid tourId, [FromQuery] Guid locationId)
     {
@@ -44,6 +41,7 @@ public class TourFlowsController : ApiController
         return result.Match(Ok, OnError);
     }
 
+    [AllowAnonymous]
     [HttpGet("tours/{tourId:guid}/tour-flows")]
     public async Task<IActionResult> ListByTour(Guid tourId)
     {

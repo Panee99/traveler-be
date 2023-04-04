@@ -1,5 +1,4 @@
 ﻿using System.Net;
-using Application.Commons;
 using Application.Configurations.Auth;
 using Data.Enums;
 using Microsoft.AspNetCore.Mvc;
@@ -7,12 +6,11 @@ using Service.Interfaces;
 using Service.Models.Attachment;
 using Service.Models.Location;
 using Service.Pagination;
-using Shared.Enums;
 using Shared.Helpers;
-using Swashbuckle.AspNetCore.Annotations;
 
 namespace Application.Controllers;
 
+[Authorize(AccountRole.Manager)]
 [Route("locations")]
 public class LocationsController : ApiController
 {
@@ -24,7 +22,6 @@ public class LocationsController : ApiController
     }
 
     [ProducesResponseType(typeof(LocationViewModel), StatusCodes.Status201Created)]
-    [Authorize(AccountRole.Manager)]
     [HttpPost("")]
     public async Task<IActionResult> Create(LocationCreateModel model)
     {
@@ -35,8 +32,6 @@ public class LocationsController : ApiController
     }
 
     [ProducesResponseType(typeof(LocationViewModel), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ErrorResponsePayload), StatusCodes.Status404NotFound)]
-    [Authorize(AccountRole.Manager)]
     [HttpPatch("{id:guid}")]
     public async Task<IActionResult> Update(Guid id, LocationUpdateModel model)
     {
@@ -45,8 +40,6 @@ public class LocationsController : ApiController
     }
 
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ErrorResponsePayload), StatusCodes.Status404NotFound)]
-    [Authorize(AccountRole.Manager)]
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete(Guid id)
     {
@@ -54,19 +47,7 @@ public class LocationsController : ApiController
         return result.Match(Ok, OnError);
     }
 
-    [ProducesResponseType(typeof(LocationViewModel), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ErrorResponsePayload), StatusCodes.Status404NotFound)]
-    [HttpGet("{id:guid}")]
-    public async Task<IActionResult> Find(Guid id)
-    {
-        var result = await _locationService.Find(id);
-        return result.Match(Ok, OnError);
-    }
-
-    [SwaggerOperation(description: "File size < 5MB")]
-    [Authorize(AccountRole.Manager)]
     [ProducesResponseType(typeof(AttachmentViewModel), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ErrorResponsePayload), StatusCodes.Status404NotFound)]
     [HttpPost("{locationId:guid}/attachments")]
     public async Task<IActionResult> AddAttachment([FromRoute] Guid locationId, IFormFile file)
     {
@@ -79,9 +60,8 @@ public class LocationsController : ApiController
         return result.Match(Ok, OnError);
     }
 
-    [Authorize(AccountRole.Manager)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     [HttpDelete("{locationId:guid}/attachments/{attachmentId:guid}")]
-    [ProducesResponseType(typeof(ErrorResponsePayload), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> DeleteAttachment(Guid locationId, Guid attachmentId)
     {
         var result = await _locationService.DeleteAttachment(locationId, attachmentId);
@@ -89,7 +69,7 @@ public class LocationsController : ApiController
     }
 
     [ProducesResponseType(typeof(List<AttachmentViewModel>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ErrorResponsePayload), StatusCodes.Status404NotFound)]
+    [AllowAnonymous]
     [HttpGet("{id:guid}/attachments")]
     public async Task<IActionResult> ListAttachments(Guid id)
     {
@@ -97,7 +77,17 @@ public class LocationsController : ApiController
         return result.Match(Ok, OnError);
     }
 
+    [ProducesResponseType(typeof(LocationViewModel), StatusCodes.Status200OK)]
+    [AllowAnonymous]
+    [HttpGet("{id:guid}")]
+    public async Task<IActionResult> Find(Guid id)
+    {
+        var result = await _locationService.Find(id);
+        return result.Match(Ok, OnError);
+    }
+
     [ProducesResponseType(typeof(PaginationModel<LocationViewModel>), StatusCodes.Status200OK)]
+    [AllowAnonymous]
     [HttpPost("filter")]
     public async Task<IActionResult> Filter(LocationFilterModel model)
     {

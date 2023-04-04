@@ -20,8 +20,6 @@ public class Location
 
     public DateTime CreatedAt { get; set; }
 
-    public virtual ICollection<LocationTag> LocationTags { get; set; } = new List<LocationTag>();
-
     public virtual ICollection<LocationAttachment> LocationAttachments { get; set; } = new List<LocationAttachment>();
 
     public virtual ICollection<TourFlow> Waypoints { get; set; } = new List<TourFlow>();

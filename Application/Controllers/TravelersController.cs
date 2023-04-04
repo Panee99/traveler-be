@@ -1,5 +1,4 @@
-﻿using Application.Commons;
-using Application.Configurations.Auth;
+﻿using Application.Configurations.Auth;
 using Microsoft.AspNetCore.Mvc;
 using Service.Interfaces;
 using Service.Models.Traveler;
@@ -10,13 +9,11 @@ namespace Application.Controllers;
 [Route("travelers")]
 public class TravelersController : ApiController
 {
-    private readonly ILogger<TravelersController> _logger;
     private readonly ITravelerService _travelerService;
 
-    public TravelersController(ITravelerService travelerService, ILogger<TravelersController> logger)
+    public TravelersController(ITravelerService travelerService)
     {
         _travelerService = travelerService;
-        _logger = logger;
     }
 
     [SwaggerOperation(
@@ -30,9 +27,7 @@ public class TravelersController : ApiController
         return result.Match(Ok, OnError);
     }
 
-    [SwaggerOperation(Description = "All travelers profile")]
     [ProducesResponseType(typeof(TravelerProfileViewModel), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ErrorResponsePayload), StatusCodes.Status404NotFound)]
     [Authorize]
     [HttpGet("{id:guid}/profile")]
     public async Task<IActionResult> GetProfile(Guid id)

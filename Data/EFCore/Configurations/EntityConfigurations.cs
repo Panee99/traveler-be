@@ -75,7 +75,6 @@ public static class EntityConfigurations
             entity.Property(e => e.CreatedAt).HasColumnType("datetime2");
         });
 
-        modelBuilder.Entity<LocationTag>().HasKey(e => new { e.LocationId, e.TagId });
         modelBuilder.Entity<LocationAttachment>().HasKey(e => new { e.LocationId, e.AttachmentId });
 
         modelBuilder.Entity<Manager>(entity =>
@@ -86,17 +85,6 @@ public static class EntityConfigurations
             entity.Property(e => e.FirstName).HasMaxLength(256);
             entity.Property(e => e.Gender).HasMaxLength(256);
             entity.Property(e => e.LastName).HasMaxLength(256);
-        });
-
-        modelBuilder.Entity<Tag>(entity =>
-        {
-            entity.HasIndex(e => e.Type);
-            entity.HasIndex(e => e.Name).IsUnique();
-
-            entity.HasIndex(e => e.Type);
-            entity.HasIndex(e => e.Name).IsUnique();
-            entity.Property(e => e.Type).HasMaxLength(256);
-            entity.Property(e => e.Name).HasMaxLength(256);
         });
 
         modelBuilder.Entity<Tour>(entity =>
