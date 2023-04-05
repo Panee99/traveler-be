@@ -42,7 +42,7 @@ public class TourFlowsController : ApiController
     }
 
     [AllowAnonymous]
-    [HttpGet("tours/{tourId:guid}/tour-flows")]
+    [HttpGet("/tours/{tourId:guid}/tour-flows")]
     public async Task<IActionResult> ListByTour(Guid tourId)
     {
         var result = await _tourFlowService.ListByTour(tourId);

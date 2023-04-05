@@ -61,7 +61,7 @@ public class TourGroupsController : ApiController
         return result.Match(Ok, OnError);
     }
 
-    [HttpGet("tours/{tourId:guid}/tour-groups")]
+    [HttpGet("/tours/{tourId:guid}/tour-groups")]
     public async Task<IActionResult> ListTourGroups([FromRoute] Guid tourId)
     {
         var result = await _tourGroupService.ListGroupsByTour(tourId);
