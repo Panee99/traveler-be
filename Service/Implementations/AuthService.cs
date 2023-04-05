@@ -18,21 +18,18 @@ namespace Service.Implementations;
 
 public class AuthService : BaseService, IAuthService
 {
-    private readonly AppSettings _appSettings;
     private static readonly Regex PhoneRegex = new(@"^\+?\d{7,15}$");
     private static readonly Regex EmailRegex = new(@"^\S+@\S+\.\S+$");
+
+
+    // PRIVATE
+    private static readonly JwtSecurityTokenHandler TokenHandler = new();
+    private readonly AppSettings _appSettings;
 
     public AuthService(IUnitOfWork unitOfWork, IOptions<AppSettings> appSettings) : base(unitOfWork)
     {
         _appSettings = appSettings.Value;
     }
-
-    private record AuthResult
-    (
-        Guid Id,
-        string Password,
-        AccountRole Role
-    );
 
     public async Task<Result<AuthenticateResponseModel>> Authenticate(LoginModel model)
     {
@@ -52,10 +49,6 @@ public class AuthService : BaseService, IAuthService
 
         return new AuthenticateResponseModel(_generateJwtToken(account.Id, account.Role));
     }
-
-
-    // PRIVATE
-    private static readonly JwtSecurityTokenHandler TokenHandler = new();
 
     private string _generateJwtToken(Guid accountId, AccountRole role)
     {
@@ -78,4 +71,11 @@ public class AuthService : BaseService, IAuthService
 
         return TokenHandler.WriteToken(TokenHandler.CreateToken(tokenDescriptor));
     }
+
+    private record AuthResult
+    (
+        Guid Id,
+        string Password,
+        AccountRole Role
+    );
 }

@@ -5,7 +5,6 @@ using Service.Interfaces;
 using Service.Models.Attachment;
 using Service.Models.Tour;
 using Service.Pagination;
-using Shared.Enums;
 using Shared.Helpers;
 
 namespace Application.Controllers;

@@ -4,9 +4,9 @@ namespace Service.Models.TourFlow;
 
 public record TourFlowViewModel
 {
-    public Guid TourId;
-    public LocationViewModel Location = null!;
     public DateTime ArrivalAt;
-    public bool IsPrimary;
     public string? Description;
+    public bool IsPrimary;
+    public LocationViewModel Location = null!;
+    public Guid TourId;
 }

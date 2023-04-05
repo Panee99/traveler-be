@@ -33,7 +33,7 @@ public class TicketService : BaseService, ITicketService
 
     public async Task<Result> Delete(Guid id)
     {
-        UnitOfWork.Repo<Ticket>().Remove(new Ticket() { Id = id });
+        UnitOfWork.Repo<Ticket>().Remove(new Ticket { Id = id });
 
         await UnitOfWork.SaveChangesAsync();
 
@@ -76,7 +76,7 @@ public class TicketService : BaseService, ITicketService
     {
         // Get Ticket and old ImageId
         var ticket = await UnitOfWork.Repo<Ticket>().Query().Where(e => e.Id == ticketId)
-            .Select(e => new Ticket() { Id = ticketId, ImageId = e.ImageId }).FirstOrDefaultAsync();
+            .Select(e => new Ticket { Id = ticketId, ImageId = e.ImageId }).FirstOrDefaultAsync();
 
         var oldImage = ticket?.ImageId;
 
@@ -87,7 +87,7 @@ public class TicketService : BaseService, ITicketService
         try
         {
             // Create new Attachment
-            ticket.Image = new Attachment()
+            ticket.Image = new Attachment
             {
                 ContentType = contentType
             };
@@ -108,7 +108,7 @@ public class TicketService : BaseService, ITicketService
             // Remove old Image
             if (oldImage != null)
             {
-                UnitOfWork.Repo<Attachment>().Remove(new Attachment() { Id = oldImage.Value });
+                UnitOfWork.Repo<Attachment>().Remove(new Attachment { Id = oldImage.Value });
                 await UnitOfWork.SaveChangesAsync();
 
                 var deleteResult = await _cloudStorageService.Delete(oldImage.Value);

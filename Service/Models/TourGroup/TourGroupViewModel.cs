@@ -2,8 +2,8 @@
 
 public class TourGroupViewModel
 {
+    public DateTime CreatedAt;
+    public string GroupName = null!;
     public Guid Id;
     public Guid? TourGuideId;
-    public string GroupName = null!;
-    public DateTime CreatedAt;
 }

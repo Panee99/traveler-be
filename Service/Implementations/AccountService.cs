@@ -7,7 +7,6 @@ using Microsoft.Extensions.Logging;
 using Service.Interfaces;
 using Service.Models.Account;
 using Service.Models.Attachment;
-using Shared.Enums;
 using Shared.Helpers;
 using Shared.ResultExtensions;
 

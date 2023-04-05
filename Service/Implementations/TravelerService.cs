@@ -34,10 +34,8 @@ public class TravelerService : BaseService, ITravelerService
         if (!model.Phone.StartsWith("+84")) return Error.Validation();
 
         if (AuthUser is not { Role: AccountRole.Manager })
-        {
             if (model.IdToken is null || !await _verifyIdToken(model.Phone, model.IdToken))
                 return DomainErrors.Traveler.IdToken;
-        }
 
         var formattedPhone = _formatPhoneNum(model.Phone);
 
@@ -73,6 +71,7 @@ public class TravelerService : BaseService, ITravelerService
 
 
     // PRIVATE
+
     #region PRIVATE
 
     private string _formatPhoneNum(string phone)

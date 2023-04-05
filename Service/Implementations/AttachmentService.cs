@@ -22,7 +22,7 @@ public class AttachmentService : BaseService, IAttachmentService
     {
         try
         {
-            UnitOfWork.Repo<Attachment>().Remove(new Attachment() { Id = id });
+            UnitOfWork.Repo<Attachment>().Remove(new Attachment { Id = id });
             await UnitOfWork.SaveChangesAsync();
         }
         catch (Exception e)

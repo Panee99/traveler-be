@@ -7,7 +7,6 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Service.Models.Auth;
 using Shared;
-using Shared.Enums;
 using Shared.Settings;
 
 namespace Application.Configurations.Auth;

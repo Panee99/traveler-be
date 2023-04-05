@@ -1,7 +1,6 @@
 ﻿using Data.Enums;
 using Service.Models.Account;
 using Service.Models.Attachment;
-using Shared.Enums;
 using Shared.ResultExtensions;
 
 namespace Service.Interfaces;

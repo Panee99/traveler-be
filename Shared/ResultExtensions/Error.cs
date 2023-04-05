@@ -22,36 +22,36 @@ public class Error
     public static Error Custom(ErrorType errorType, string code, string message,
         params string[] errorDetails)
     {
-        return new(errorType, code, message, errorDetails);
+        return new Error(errorType, code, message, errorDetails);
     }
 
     public static Error Validation(params string[] errorDetails)
     {
-        return new(ErrorType.Validation, "General.Validation", "A validation error has occurred.", errorDetails);
+        return new Error(ErrorType.Validation, "General.Validation", "A validation error has occurred.", errorDetails);
     }
 
     public static Error Conflict(params string[] errorDetails)
     {
-        return new(ErrorType.Conflict, "General.Conflict", "A conflict error has occurred.", errorDetails);
+        return new Error(ErrorType.Conflict, "General.Conflict", "A conflict error has occurred.", errorDetails);
     }
 
     public static Error NotFound(params string[] errorDetails)
     {
-        return new(ErrorType.NotFound, "General.NotFound", "A 'Not Found' error has occurred.", errorDetails);
+        return new Error(ErrorType.NotFound, "General.NotFound", "A 'Not Found' error has occurred.", errorDetails);
     }
 
     public static Error Unexpected(params string[] errorDetails)
     {
-        return new(ErrorType.Unexpected, "General.Unexpected", "A unexpected error has occurred.", errorDetails);
+        return new Error(ErrorType.Unexpected, "General.Unexpected", "A unexpected error has occurred.", errorDetails);
     }
 
     public static Error Authentication(params string[] errorDetails)
     {
-        return new(ErrorType.Authentication, "General.Authentication", "Unauthorized", errorDetails);
+        return new Error(ErrorType.Authentication, "General.Authentication", "Unauthorized", errorDetails);
     }
 
     public static Error Authorization(params string[] errorDetails)
     {
-        return new(ErrorType.Authorization, "General.Authorization", "Forbidden", errorDetails);
+        return new Error(ErrorType.Authorization, "General.Authorization", "Forbidden", errorDetails);
     }
 }

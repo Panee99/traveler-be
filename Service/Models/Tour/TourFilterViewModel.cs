@@ -4,12 +4,12 @@ namespace Service.Models.Tour;
 
 public class TourFilterViewModel
 {
-    public Guid Id;
-    public string Title = null!;
-    public double Price;
     public string Destination = null!;
-    public DateTime StartTime;
     public DateTime EndTime;
-    public TourType Type;
+    public Guid Id;
+    public double Price;
+    public DateTime StartTime;
     public string? ThumbnailUrl;
+    public string Title = null!;
+    public TourType Type;
 }

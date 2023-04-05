@@ -1,5 +1,4 @@
-﻿
-namespace Service.Models.Location;
+﻿namespace Service.Models.Location;
 
 public record LocationViewModel
 {

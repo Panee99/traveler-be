@@ -86,7 +86,7 @@ public class LocationService : BaseService, ILocationService
                 e.Address,
                 e.Longitude,
                 e.Latitude,
-                e.Description,
+                e.Description
             })
             .FirstOrDefaultAsync(e => e.Id == id);
 

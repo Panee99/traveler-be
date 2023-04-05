@@ -57,7 +57,7 @@ public class TourFlowService : BaseService, ITourFlowService
 
         if (!isExist) return Error.NotFound();
 
-        UnitOfWork.Repo<TourFlow>().Remove(new TourFlow()
+        UnitOfWork.Repo<TourFlow>().Remove(new TourFlow
         {
             TourId = tourId,
             LocationId = locationId

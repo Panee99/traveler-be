@@ -14,7 +14,7 @@ public static class AppConfiguration
         IConfiguration configuration)
     {
         services.AddHttpContextAccessor();
-        
+
         // Mapper
         var config = TypeAdapterConfig.GlobalSettings;
         config.Scan(Assembly.GetExecutingAssembly());

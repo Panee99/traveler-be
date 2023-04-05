@@ -15,9 +15,11 @@ namespace Service.Implementations;
 
 public class TourService : BaseService, ITourService
 {
+    // PRIVATE
+    private static readonly Random Random = new();
     private readonly ICloudStorageService _cloudStorageService;
-    private readonly IMapper _mapper;
     private readonly ILogger<TourService> _logger;
+    private readonly IMapper _mapper;
 
     public TourService(IUnitOfWork unitOfWork, ICloudStorageService cloudStorageService, IMapper mapper,
         ILogger<TourService> logger) :
@@ -38,22 +40,6 @@ public class TourService : BaseService, ITourService
         await UnitOfWork.SaveChangesAsync();
 
         return _mapper.Map<TourViewModel>(tour);
-    }
-
-    private async Task<string> _generateTourCode()
-    {
-        var now = DateTimeHelper.VnNow();
-        var year = now.Year % 1000;
-        var month = now.Month < 10 ? "0" + now.Month : now.Month.ToString();
-
-        string code;
-        do
-        {
-            var random = _randomString(5);
-            code = $"{random}-{year}{month}";
-        } while (await UnitOfWork.Repo<Tour>().AnyAsync(e => e.Code == code));
-
-        return code;
     }
 
 
@@ -115,7 +101,7 @@ public class TourService : BaseService, ITourService
 
             // Add new thumbnail
             var newThumbnail = UnitOfWork.Repo<Attachment>().Add(
-                new Attachment()
+                new Attachment
                 {
                     ContentType = contentType,
                     CreatedAt = DateTimeHelper.VnNow()
@@ -148,7 +134,7 @@ public class TourService : BaseService, ITourService
             await transaction.CommitAsync();
 
             // Result
-            return new AttachmentViewModel()
+            return new AttachmentViewModel
             {
                 Id = newThumbnail.Id,
                 ContentType = newThumbnail.ContentType,
@@ -203,8 +189,21 @@ public class TourService : BaseService, ITourService
         });
     }
 
-    // PRIVATE
-    private static readonly Random Random = new();
+    private async Task<string> _generateTourCode()
+    {
+        var now = DateTimeHelper.VnNow();
+        var year = now.Year % 1000;
+        var month = now.Month < 10 ? "0" + now.Month : now.Month.ToString();
+
+        string code;
+        do
+        {
+            var random = _randomString(5);
+            code = $"{random}-{year}{month}";
+        } while (await UnitOfWork.Repo<Tour>().AnyAsync(e => e.Code == code));
+
+        return code;
+    }
 
     private static string _randomString(int length)
     {

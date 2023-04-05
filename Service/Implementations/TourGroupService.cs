@@ -19,7 +19,7 @@ public class TourGroupService : BaseService, ITourGroupService
         var tour = await UnitOfWork.Repo<Tour>().FirstOrDefaultAsync(e => e.Id == model.TourId);
         if (tour is null) return Error.NotFound();
 
-        var group = UnitOfWork.Repo<TourGroup>().Add(new TourGroup()
+        var group = UnitOfWork.Repo<TourGroup>().Add(new TourGroup
         {
             TourId = tour.Id,
             GroupName = model.GroupName
@@ -78,7 +78,7 @@ public class TourGroupService : BaseService, ITourGroupService
         if (!await UnitOfWork.Repo<TourGroup>().AnyAsync(e => e.Id == tourGroupId))
             return Error.NotFound();
 
-        var records = travelerIds.Select(travelerId => new TravelerInTourGroup()
+        var records = travelerIds.Select(travelerId => new TravelerInTourGroup
         {
             TravelerId = travelerId,
             TourGroupId = tourGroupId

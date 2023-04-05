@@ -59,9 +59,7 @@ public class UnitOfWork : IUnitOfWork
         var addedEntities = entities.Where(e => e.State == EntityState.Added);
 
         foreach (var entry in addedEntities)
-        {
             if (entry.Properties.Any(p => p.Metadata.Name == "CreatedAt"))
                 entry.Property("CreatedAt").CurrentValue = DateTimeHelper.VnNow();
-        }
     }
 }
