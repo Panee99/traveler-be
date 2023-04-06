@@ -19,4 +19,5 @@ public record TourViewModel
     public string Title = null!;
     public TourType Type;
     public string Vehicle = null!;
+    public TourStatus Status;
 }
