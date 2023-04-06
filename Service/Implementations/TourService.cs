@@ -149,7 +149,7 @@ public class TourService : BaseService, ITourService
         }
     }
 
-    public async Task<Result<PaginationModel<TourFilterViewModel>>> Filter(TourFilterModel model)
+    public async Task<Result<PaginationModel<TourViewModel>>> Filter(TourFilterModel model)
     {
         IQueryable<Tour> query = UnitOfWork.Repo<Tour>().Query().OrderBy(e => e.CreatedAt);
 
@@ -166,22 +166,11 @@ public class TourService : BaseService, ITourService
         if (model.MaxPrice != null)
             query = query.Where(e => e.Price <= model.MaxPrice);
 
-        var paginationModel = await query.Select(e => new
-            {
-                e.Id,
-                e.Title,
-                e.Price,
-                e.Description,
-                e.StartTime,
-                e.EndTime,
-                e.Type,
-                e.ThumbnailId
-            })
-            .Paging(model.Page, model.Size);
+        var paginationModel = await query.Paging(model.Page, model.Size);
 
         return paginationModel.Map(x =>
         {
-            var filterViewModel = _mapper.Map<TourFilterViewModel>(x);
+            var filterViewModel = _mapper.Map<TourViewModel>(x);
             if (x.ThumbnailId != null)
                 filterViewModel.ThumbnailUrl = _cloudStorageService.GetMediaLink(x.ThumbnailId.Value);
 
