@@ -41,7 +41,7 @@ public class TicketsController : ApiController
         return result.Match(Ok, OnError);
     }
 
-    [Authorize(AccountRole.Manager, AccountRole.TourGuide)]
+    [Authorize]
     [HttpPost("filter")]
     public async Task<IActionResult> Filter(TicketFilterModel model)
     {
