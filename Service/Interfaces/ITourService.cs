@@ -17,5 +17,5 @@ public interface ITourService
 
     Task<Result<AttachmentViewModel>> UpdateThumbnail(Guid id, string contentType, Stream stream);
 
-    Task<Result<PaginationModel<TourFilterViewModel>>> Filter(TourFilterModel model);
+    Task<Result<PaginationModel<TourViewModel>>> Filter(TourFilterModel model);
 }
