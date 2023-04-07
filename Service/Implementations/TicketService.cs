@@ -27,6 +27,12 @@ public class TicketService : BaseService, ITicketService
 
     public async Task<Result<TicketViewModel>> Create(TicketCreateModel model)
     {
+        if (!await UnitOfWork.Repo<Tour>().AnyAsync(e => e.Id == model.TourId))
+            return Error.NotFound("Tour not found.");
+
+        if (!await UnitOfWork.Repo<Traveler>().AnyAsync(e => e.Id == model.TravelerId))
+            return Error.NotFound("Traveler not found.");
+
         var entity = UnitOfWork.Repo<Ticket>().Add(model.Adapt<Ticket>());
 
         await UnitOfWork.SaveChangesAsync();
