@@ -16,15 +16,17 @@ namespace Service.Implementations;
 public class LocationService : BaseService, ILocationService
 {
     private readonly ICloudStorageService _cloudStorageService;
+    private readonly IAttachmentService _attachmentService;
     private readonly ILogger<LocationService> _logger;
     private readonly IMapper _mapper;
 
     public LocationService(IUnitOfWork unitOfWork, IMapper mapper, ICloudStorageService cloudStorageService,
-        ILogger<LocationService> logger) : base(unitOfWork)
+        ILogger<LocationService> logger, IAttachmentService attachmentService) : base(unitOfWork)
     {
         _mapper = mapper;
         _cloudStorageService = cloudStorageService;
         _logger = logger;
+        _attachmentService = attachmentService;
     }
 
     public async Task<Result<LocationViewModel>> Create(LocationCreateModel model)
@@ -97,49 +99,35 @@ public class LocationService : BaseService, ILocationService
         return viewModel;
     }
 
-    public async Task<Result<AttachmentViewModel>> CreateAttachment(Guid locationId, AttachmentCreateModel model)
+    public async Task<Result<AttachmentViewModel>> CreateAttachment(Guid locationId, string contentType, Stream stream)
     {
+        if (!await UnitOfWork.Repo<Location>().AnyAsync(e => e.Id == locationId))
+            return Error.NotFound();
+
         await using var transaction = UnitOfWork.BeginTransaction();
 
         try
         {
-            // Validate
-            if (!await UnitOfWork.Repo<Location>().AnyAsync(e => e.Id == locationId))
-                return Error.NotFound();
+            // Create new Attachment then add to Location
+            var createAttachmentResult = await _attachmentService.Create(contentType, stream);
 
-            // Create new attachment then add to location
-            var attachment = UnitOfWork.Repo<Attachment>().Add(new Attachment
-            {
-                ContentType = model.ContentType,
-                CreatedAt = DateTimeHelper.VnNow()
-            });
-
-            UnitOfWork.Repo<LocationAttachment>().Add(new LocationAttachment
-            {
-                LocationId = locationId,
-                AttachmentId = attachment.Id
-            });
-
-            await UnitOfWork.SaveChangesAsync();
-
-            // Upload to cloud storage
-            var uploadResult = await _cloudStorageService.Upload(attachment.Id, attachment.ContentType, model.Stream);
-
-            if (!uploadResult.IsSuccess)
+            if (!createAttachmentResult.IsSuccess)
             {
                 await transaction.RollbackAsync();
                 return Error.Unexpected();
             }
 
-            await transaction.CommitAsync();
+            UnitOfWork.Repo<LocationAttachment>().Add(new LocationAttachment
+            {
+                LocationId = locationId,
+                AttachmentId = createAttachmentResult.Value.Id
+            });
+
+            await UnitOfWork.SaveChangesAsync();
 
             // Success result
-            return new AttachmentViewModel
-            {
-                Id = attachment.Id,
-                ContentType = attachment.ContentType,
-                Url = uploadResult.Value
-            };
+            await transaction.CommitAsync();
+            return createAttachmentResult.Value;
         }
         catch (Exception e)
         {
@@ -151,27 +139,22 @@ public class LocationService : BaseService, ILocationService
 
     public async Task<Result> DeleteAttachment(Guid locationId, Guid attachmentId)
     {
+        var locationAttachment = await UnitOfWork.Repo<LocationAttachment>()
+            .FirstOrDefaultAsync(e => e.LocationId == locationId && e.AttachmentId == attachmentId);
+
+        if (locationAttachment is null) return Error.NotFound();
+
         await using var transaction = UnitOfWork.BeginTransaction();
 
         try
         {
-            // Validate
-            var attachment = await UnitOfWork.Repo<Attachment>().FirstOrDefaultAsync(a => a.Id == attachmentId);
-            if (attachment is null) return Error.NotFound();
-
-            var locationAttachment = await UnitOfWork.Repo<LocationAttachment>()
-                .FirstOrDefaultAsync(e => e.LocationId == locationId && e.AttachmentId == attachmentId);
-            if (locationAttachment is null) return Error.NotFound();
-
-            // Remove old attachment in DB
+            // Remove Attachment - Location
             UnitOfWork.Repo<LocationAttachment>().Remove(locationAttachment);
-            UnitOfWork.Repo<Attachment>().Remove(attachment);
 
-            await UnitOfWork.SaveChangesAsync();
+            // Remove Attachment
+            var deleteAttachmentResult = await _attachmentService.Delete(attachmentId);
 
-            // Delete old attachment in cloud storage
-            var storageResult = await _cloudStorageService.Delete(attachment.Id);
-            if (!storageResult.IsSuccess)
+            if (!deleteAttachmentResult.IsSuccess)
             {
                 await transaction.RollbackAsync();
                 return Error.Unexpected();

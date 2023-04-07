@@ -7,17 +7,17 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Folder Include="Entities\"/>
+        <Folder Include="Entities\" />
     </ItemGroup>
 
     <ItemGroup>
         <!--    <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="5.0.17" />-->
         <!--    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />-->
-        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.14"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.14" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Shared\Shared.csproj"/>
+        <ProjectReference Include="..\Shared\Shared.csproj" />
     </ItemGroup>
 
     <ItemGroup>

@@ -7,8 +7,8 @@ namespace Shared.ExternalServices.CloudStorage;
 // Create Cloud Storage needed instances
 public static class CloudStorageHelper
 {
-    private static readonly StorageClient _storage;
-    private static readonly UrlSigner _urlSigner;
+    private static readonly StorageClient Storage;
+    private static readonly UrlSigner UrlSigner;
 
     static CloudStorageHelper()
     {
@@ -17,15 +17,15 @@ public static class CloudStorageHelper
         var credential = GoogleCredential.FromFile(credentialPath);
 
         // Storage
-        _storage = StorageClient.Create(credential);
+        Storage = StorageClient.Create(credential);
 
         // Url Signer
-        _urlSigner = UrlSigner.FromCredential(credential);
+        UrlSigner = UrlSigner.FromCredential(credential);
     }
 
     public static StorageClient GetStorage()
     {
-        return _storage;
+        return Storage;
     }
 
     // Generate signed cloud storage object url 
@@ -38,6 +38,6 @@ public static class CloudStorageHelper
             .WithObjectName(objectName)
             .WithHttpMethod(HttpMethod.Get);
 
-        return _urlSigner.Sign(template, options);
+        return UrlSigner.Sign(template, options);
     }
 }

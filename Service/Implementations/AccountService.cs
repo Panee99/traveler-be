@@ -7,7 +7,6 @@ using Microsoft.Extensions.Logging;
 using Service.Interfaces;
 using Service.Models.Account;
 using Service.Models.Attachment;
-using Shared.Helpers;
 using Shared.ResultExtensions;
 
 namespace Service.Implementations;
@@ -15,15 +14,19 @@ namespace Service.Implementations;
 public class AccountService : BaseService, IAccountService
 {
     private readonly ICloudStorageService _cloudStorageService;
+    private readonly IAttachmentService _attachmentService;
+
     private readonly ILogger<AccountService> _logger;
     private readonly IMapper _mapper;
 
     public AccountService(IUnitOfWork unitOfWork, ILogger<AccountService> logger,
-        ICloudStorageService cloudStorageService, IMapper mapper) : base(unitOfWork)
+        ICloudStorageService cloudStorageService, IMapper mapper, IAttachmentService attachmentService) : base(
+        unitOfWork)
     {
         _logger = logger;
         _cloudStorageService = cloudStorageService;
         _mapper = mapper;
+        _attachmentService = attachmentService;
     }
 
     public async Task<Result<AvatarViewModel>> GetAvatar(Guid id)
@@ -75,61 +78,50 @@ public class AccountService : BaseService, IAccountService
 
         try
         {
-            // Check if user exist
+            // Get Account
             var account = await UnitOfWork.Repo<Account>()
-                .TrackingQuery()
-                .Include(e => e.Attachment)
-                .FirstOrDefaultAsync(e => e.Id == id);
+                .Query()
+                .Where(e => e.Id == id)
+                .Select(e => new Account()
+                {
+                    Id = id,
+                    AttachmentId = e.AttachmentId
+                })
+                .FirstOrDefaultAsync();
 
             if (account is null) return Error.Unexpected();
 
-            var oldAttachment = account.Attachment;
+            var oldAttachmentId = account.AttachmentId;
 
-            // Create new attachment in DB
-            var newAttachment = UnitOfWork.Repo<Attachment>().Add(new Attachment
-            {
-                ContentType = contentType,
-                CreatedAt = DateTimeHelper.VnNow()
-            });
-
-            account.Attachment = newAttachment;
-            await UnitOfWork.SaveChangesAsync();
-
-            // Delete old attachment from DB and Cloud
-            if (oldAttachment is not null)
-            {
-                UnitOfWork.Repo<Attachment>().Remove(oldAttachment);
-                await UnitOfWork.SaveChangesAsync();
-                var result = await _cloudStorageService.Delete(oldAttachment.Id);
-                if (!result.IsSuccess)
-                {
-                    await transaction.RollbackAsync();
-                    return Error.Unexpected();
-                }
-            }
-
-            // Upload new attachment to Cloud
-            var uploadResult = await _cloudStorageService.Upload(newAttachment.Id, contentType, stream);
-            if (!uploadResult.IsSuccess)
+            // Create new Attachment
+            var createAttachmentResult = await _attachmentService.Create(contentType, stream);
+            if (!createAttachmentResult.IsSuccess)
             {
                 await transaction.RollbackAsync();
                 return Error.Unexpected();
             }
 
-            await transaction.CommitAsync();
+            UnitOfWork.Attach(account);
 
-            return new AttachmentViewModel
+            account.AttachmentId = createAttachmentResult.Value.Id;
+            await UnitOfWork.SaveChangesAsync();
+
+            // Delete old attachment
+            if (oldAttachmentId is not null)
             {
-                Id = newAttachment.Id,
-                ContentType = newAttachment.ContentType,
-                Url = uploadResult.Value
-            };
+                var deleteAttachmentResult = await _attachmentService.Delete(oldAttachmentId.Value);
+                if (!deleteAttachmentResult.IsSuccess)
+                    _logger.LogError("Delete attachment failed: {Id}", oldAttachmentId.Value);
+            }
+
+            await transaction.CommitAsync();
+            return createAttachmentResult.Value;
         }
         catch (Exception e)
         {
             _logger.LogWarning(e, "{Message}", e.Message);
             await transaction.RollbackAsync();
-            return Error.Unexpected();
+            return Error.Unexpected(e.Message);
         }
     }
 }

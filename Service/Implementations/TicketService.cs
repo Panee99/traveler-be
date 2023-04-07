@@ -4,6 +4,7 @@ using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Service.Interfaces;
+using Service.Models.Attachment;
 using Service.Models.Ticket;
 using Service.Pagination;
 using Shared.ResultExtensions;
@@ -13,12 +14,14 @@ namespace Service.Implementations;
 public class TicketService : BaseService, ITicketService
 {
     private readonly ICloudStorageService _cloudStorageService;
+    private readonly IAttachmentService _attachmentService;
     private readonly ILogger<TicketService> _logger;
 
     public TicketService(IUnitOfWork unitOfWork, ICloudStorageService cloudStorageService,
-        ILogger<TicketService> logger) : base(unitOfWork)
+        ILogger<TicketService> logger, IAttachmentService attachmentService) : base(unitOfWork)
     {
         _cloudStorageService = cloudStorageService;
+        _attachmentService = attachmentService;
         _logger = logger;
     }
 
@@ -72,61 +75,53 @@ public class TicketService : BaseService, ITicketService
         });
     }
 
-    public async Task<Result> UpdateImage(Guid ticketId, string contentType, Stream stream)
+    public async Task<Result<AttachmentViewModel>> UpdateImage(Guid ticketId, string contentType, Stream stream)
     {
         // Get Ticket and old ImageId
-        var ticket = await UnitOfWork.Repo<Ticket>().Query().Where(e => e.Id == ticketId)
-            .Select(e => new Ticket { Id = ticketId, ImageId = e.ImageId }).FirstOrDefaultAsync();
-
-        var oldImage = ticket?.ImageId;
+        var ticket = await UnitOfWork.Repo<Ticket>()
+            .Query()
+            .Where(e => e.Id == ticketId)
+            .Select(e => new Ticket { Id = ticketId, ImageId = e.ImageId })
+            .FirstOrDefaultAsync();
 
         if (ticket is null) return Error.NotFound();
+
+        var oldImageId = ticket.ImageId;
 
         await using var transaction = UnitOfWork.BeginTransaction();
 
         try
         {
             // Create new Attachment
-            ticket.Image = new Attachment
-            {
-                ContentType = contentType
-            };
+            var createAttachmentResult = await _attachmentService.Create(contentType, stream);
 
-            UnitOfWork.Attach(ticket);
-            UnitOfWork.Entry(ticket.Image).State = EntityState.Added;
-
-            await UnitOfWork.SaveChangesAsync();
-
-            // Upload to Cloud
-            var uploadResult = await _cloudStorageService.Upload(ticket.Image.Id, contentType, stream);
-            if (!uploadResult.IsSuccess)
+            if (!createAttachmentResult.IsSuccess)
             {
                 await transaction.RollbackAsync();
                 return Error.Unexpected();
             }
 
-            // Remove old Image
-            if (oldImage != null)
-            {
-                UnitOfWork.Repo<Attachment>().Remove(new Attachment { Id = oldImage.Value });
-                await UnitOfWork.SaveChangesAsync();
+            UnitOfWork.Attach(ticket);
+            ticket.ImageId = createAttachmentResult.Value.Id;
 
-                var deleteResult = await _cloudStorageService.Delete(oldImage.Value);
-                if (!deleteResult.IsSuccess)
-                {
-                    await transaction.RollbackAsync();
-                    return Error.Unexpected();
-                }
+            await UnitOfWork.SaveChangesAsync();
+
+            // Delete old Image
+            if (oldImageId != null)
+            {
+                var deleteAttachmentResult = await _attachmentService.Delete(oldImageId.Value);
+                if (!deleteAttachmentResult.IsSuccess)
+                    _logger.LogError("Delete attachment failed: {Id}", oldImageId.Value);
             }
+
+            await transaction.CommitAsync();
+            return createAttachmentResult.Value;
         }
         catch (Exception e)
         {
             _logger.LogWarning(e, "{Message}", e.Message);
             await transaction.RollbackAsync();
-            return Error.Unexpected();
+            return Error.Unexpected(e.Message);
         }
-
-        await transaction.CommitAsync();
-        return Result.Success();
     }
 }

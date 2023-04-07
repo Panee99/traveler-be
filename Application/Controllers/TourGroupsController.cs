@@ -47,6 +47,7 @@ public class TourGroupsController : ApiController
         return result.Match(Ok, OnError);
     }
 
+
     [HttpDelete("{id:guid}/travelers")]
     public async Task<IActionResult> RemoveTravelers([FromRoute] Guid id, [FromBody] List<Guid> travelerIds)
     {

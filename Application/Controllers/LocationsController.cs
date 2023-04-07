@@ -54,8 +54,7 @@ public class LocationsController : ApiController
         var validateResult = FileHelper.ValidateImageFile(file);
         if (!validateResult.IsSuccess) return OnError(validateResult.Error);
 
-        var result = await _locationService.CreateAttachment(locationId,
-            new AttachmentCreateModel(file.ContentType, file.OpenReadStream()));
+        var result = await _locationService.CreateAttachment(locationId, file.ContentType, file.OpenReadStream());
 
         return result.Match(Ok, OnError);
     }

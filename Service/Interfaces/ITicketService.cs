@@ -1,4 +1,5 @@
-﻿using Service.Models.Ticket;
+﻿using Service.Models.Attachment;
+using Service.Models.Ticket;
 using Service.Pagination;
 using Shared.ResultExtensions;
 
@@ -14,5 +15,5 @@ public interface ITicketService
 
     Task<Result<PaginationModel<TicketViewModel>>> Filter(TicketFilterModel model);
 
-    Task<Result> UpdateImage(Guid ticketId, string contentType, Stream stream);
+    Task<Result<AttachmentViewModel>> UpdateImage(Guid ticketId, string contentType, Stream stream);
 }

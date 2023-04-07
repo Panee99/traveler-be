@@ -15,7 +15,7 @@ public interface ILocationService
 
     Task<Result<LocationViewModel>> Find(Guid id);
 
-    Task<Result<AttachmentViewModel>> CreateAttachment(Guid locationId, AttachmentCreateModel model);
+    Task<Result<AttachmentViewModel>> CreateAttachment(Guid locationId, string contentType, Stream stream);
 
     Task<Result> DeleteAttachment(Guid locationId, Guid attachmentId);
 

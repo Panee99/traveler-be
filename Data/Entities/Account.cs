@@ -2,7 +2,7 @@
 
 namespace Data.Entities;
 
-public abstract class Account
+public class Account
 {
     public Guid Id { get; set; }
 
