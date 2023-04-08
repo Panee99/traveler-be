@@ -29,6 +29,11 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<TourGuide>().HasData(_fromSeed<TourGuide>("tour-guides.json"));
         modelBuilder.Entity<Manager>().HasData(_fromSeed<Manager>("managers.json"));
         modelBuilder.Entity<Location>().HasData(_fromSeed<Location>("locations.json"));
+
+        modelBuilder.Entity<TourGroup>().HasData(_fromSeed<TourGroup>("tour-groups.json"));
+        modelBuilder.Entity<Tour>().HasData(_fromSeed<Tour>("tours.json"));
+        modelBuilder.Entity<TravelerInTourGroup>()
+            .HasData(_fromSeed<TravelerInTourGroup>("traveler-in-tour-group.json"));
     }
 
 
