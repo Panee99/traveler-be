@@ -1,4 +1,5 @@
 ﻿using Data.Enums;
+using Service.Models.Location;
 
 namespace Service.Models.Tour;
 
@@ -15,5 +16,6 @@ public record TourCreateModel
     string Vehicle,
     int MaxOccupancy,
     TourType Type,
+    List<LocationCreateModel> Locations,
     string? Description
 );

@@ -67,15 +67,11 @@ public static class EntityConfigurations
         modelBuilder.Entity<Location>(entity =>
         {
             entity.HasIndex(e => e.CreatedAt);
-
-            entity.Property(e => e.Name).HasMaxLength(256);
-            entity.Property(e => e.Address).HasMaxLength(256);
-            entity.Property(e => e.Country).HasMaxLength(256);
-            entity.Property(e => e.City).HasMaxLength(256);
-            entity.Property(e => e.CreatedAt).HasColumnType("datetime2");
+            entity.Property(e => e.CreatedAt).HasColumnType("datetime");
+            entity.Property(e => e.ArrivalTime).HasColumnType("datetime");
         });
 
-        modelBuilder.Entity<LocationAttachment>().HasKey(e => new { e.LocationId, e.AttachmentId });
+        modelBuilder.Entity<TourAttachment>().HasKey(e => new { e.TourId, e.AttachmentId });
 
         modelBuilder.Entity<Manager>(entity =>
         {
@@ -101,7 +97,7 @@ public static class EntityConfigurations
             entity.Property(e => e.Vehicle).HasMaxLength(256);
             entity.Property(e => e.Type).HasMaxLength(256);
             entity.Property(e => e.Status).HasMaxLength(256);
-            entity.Property(e => e.CreatedAt).HasColumnType("datetime2");
+            entity.Property(e => e.CreatedAt).HasColumnType("datetime");
         });
 
         modelBuilder.Entity<TourGroup>(entity => { entity.HasOne(e => e.Tour).WithMany(x => x.TourGroups); });
@@ -156,12 +152,6 @@ public static class EntityConfigurations
         });
 
         modelBuilder.Entity<TravelerInTourGroup>(entity => { entity.ToTable("TravelerInTourGroup"); });
-
-        modelBuilder.Entity<TourFlow>(entity =>
-        {
-            entity.HasKey(e => new { e.LocationId, e.TourId });
-            entity.Property(e => e.ArrivalAt).HasColumnType("datetime");
-        });
 
         modelBuilder.Entity<VnPayRequest>(entity => { entity.HasKey(e => e.TxnRef); });
 

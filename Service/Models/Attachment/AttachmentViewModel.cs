@@ -2,7 +2,7 @@
 
 public record AttachmentViewModel
 {
-    public string ContentType = null!;
     public Guid Id;
+    public string ContentType = null!;
     public string? Url = null!;
 }

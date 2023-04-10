@@ -36,13 +36,13 @@ public class Tour
 
     public string? Description { get; set; }
 
-    public virtual ICollection<TourGroup> TourGroups { get; set; } = new List<TourGroup>();
-
     public Guid? ThumbnailId { get; set; }
 
     public Attachment? Thumbnail { get; set; }
 
-    public virtual ICollection<TourFlow> Waypoints { get; set; } = new List<TourFlow>();
+    public virtual ICollection<TourGroup> TourGroups { get; set; } = new List<TourGroup>();
+
+    public virtual ICollection<Location> TourLocations { get; set; } = new List<Location>();
 
     // public virtual ICollection<TourDiscount> TourDiscounts { get; set; } = new List<TourDiscount>();
 }

@@ -1,12 +1,12 @@
 ﻿namespace Data.Entities;
 
-public class LocationAttachment
+public class TourAttachment
 {
-    public Guid LocationId { get; set; }
+    public Guid TourId { get; set; }
 
     public Guid AttachmentId { get; set; }
 
-    public virtual Location Location { get; set; } = null!;
+    public virtual Tour Tour { get; set; } = null!;
 
     public virtual Attachment Attachment { get; set; } = null!;
 }

@@ -3,6 +3,7 @@ using Data.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Service.Interfaces;
 using Service.Models.Attachment;
+using Service.Models.Location;
 using Service.Models.Tour;
 using Service.Pagination;
 using Shared.Helpers;
@@ -53,6 +54,18 @@ public class ToursController : ApiController
         return result.Match(Ok, OnError);
     }
 
+    [ProducesResponseType(typeof(PaginationModel<TourFilterViewModel>), StatusCodes.Status200OK)]
+    [AllowAnonymous]
+    [HttpPost("filter")]
+    public async Task<IActionResult> Filter(TourFilterModel model)
+    {
+        var result = await _tourService.Filter(model);
+        return result.Match(Ok, OnError);
+    }
+
+    /// <summary>
+    /// ATTACHMENTS
+    /// </summary>
     [ProducesResponseType(typeof(AttachmentViewModel), StatusCodes.Status200OK)]
     [HttpPut("{id:guid}/thumbnail")]
     public async Task<IActionResult> UpdateThumbnail(Guid id, IFormFile file)
@@ -64,12 +77,59 @@ public class ToursController : ApiController
         return result.Match(Ok, OnError);
     }
 
-    [ProducesResponseType(typeof(PaginationModel<TourFilterViewModel>), StatusCodes.Status200OK)]
-    [AllowAnonymous]
-    [HttpPost("filter")]
-    public async Task<IActionResult> Filter(TourFilterModel model)
+    [ProducesResponseType(typeof(AttachmentViewModel), StatusCodes.Status200OK)]
+    [HttpPost("{id:guid}/attachments")]
+    public async Task<IActionResult> AddAttachment(Guid id, IFormFile file)
     {
-        var result = await _tourService.Filter(model);
+        var validateResult = FileHelper.ValidateImageFile(file);
+        if (!validateResult.IsSuccess) return OnError(validateResult.Error);
+
+        var result = await _tourService.AddAttachment(id, file.ContentType, file.OpenReadStream());
+        return result.Match(Ok, OnError);
+    }
+
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [HttpDelete("{tourId:guid}/attachments/{attachmentId}")]
+    public async Task<IActionResult> DeleteAttachment(Guid tourId, Guid attachmentId)
+    {
+        var result = await _tourService.DeleteAttachment(tourId, attachmentId);
+        return result.Match(Ok, OnError);
+    }
+
+    [ProducesResponseType(typeof(List<AttachmentViewModel>), StatusCodes.Status200OK)]
+    [HttpGet("{tourId:guid}/attachments")]
+    [AllowAnonymous]
+    public async Task<IActionResult> ListAttachments(Guid tourId)
+    {
+        var result = await _tourService.ListAttachments(tourId);
+        return result.Match(Ok, OnError);
+    }
+
+    /// <summary>
+    /// LOCATIONS
+    /// </summary>
+    [ProducesResponseType(typeof(LocationViewModel), StatusCodes.Status200OK)]
+    [HttpPost("{id:guid}/locations")]
+    public async Task<IActionResult> AddLocation(Guid id, LocationCreateModel model)
+    {
+        var result = await _tourService.AddLocation(id, model);
+        return result.Match(Ok, OnError);
+    }
+
+    [ProducesResponseType(typeof(LocationViewModel), StatusCodes.Status200OK)]
+    [HttpDelete("/locations/{locationId:guid}")]
+    public async Task<IActionResult> DeleteLocation(Guid locationId)
+    {
+        var result = await _tourService.DeleteLocation(locationId);
+        return result.Match(Ok, OnError);
+    }
+
+    [ProducesResponseType(typeof(LocationViewModel), StatusCodes.Status200OK)]
+    [HttpGet("{id:guid}/locations")]
+    [AllowAnonymous]
+    public async Task<IActionResult> ListLocations(Guid id)
+    {
+        var result = await _tourService.ListLocations(id);
         return result.Match(Ok, OnError);
     }
 }

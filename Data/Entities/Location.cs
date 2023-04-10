@@ -4,23 +4,14 @@ public class Location
 {
     public Guid Id { get; set; }
 
-    public string Name { get; set; } = null!;
-
-    public string Address { get; set; } = null!;
-
-    public string? Country { get; set; } = null!;
-
-    public string? City { get; set; } = null!;
+    public Guid TourId { get; set; }
 
     public double Longitude { get; set; }
 
     public double Latitude { get; set; }
 
-    public string? Description { get; set; }
-
+    public virtual Tour Tour { get; set; } = null!;
+    
+    public DateTime ArrivalTime { get; set; }
     public DateTime CreatedAt { get; set; }
-
-    public virtual ICollection<LocationAttachment> LocationAttachments { get; set; } = new List<LocationAttachment>();
-
-    public virtual ICollection<TourFlow> Waypoints { get; set; } = new List<TourFlow>();
 }

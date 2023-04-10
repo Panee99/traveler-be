@@ -16,7 +16,6 @@ public static class DependencyInjection
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IAccountService, AccountService>();
         services.AddScoped<IAuthService, AuthService>();
-        services.AddScoped<ILocationService, LocationService>();
         services.AddScoped<IVnPayRequestService, VnPayRequestService>();
         services.AddScoped<IVnPayResponseService, VnPayResponseService>();
         services.AddScoped<ICloudMessagingService, CloudMessagingService>();
