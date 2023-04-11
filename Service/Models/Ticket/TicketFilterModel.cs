@@ -1,6 +1,6 @@
 ﻿namespace Service.Models.Ticket;
 
-public record TicketFilterModel : PagingFilterModel
+public record TicketFilterModel
 {
     public Guid? TourId;
     public Guid? TravelerId;

@@ -6,7 +6,6 @@ using Microsoft.Extensions.Logging;
 using Service.Interfaces;
 using Service.Models.Attachment;
 using Service.Models.Ticket;
-using Service.Pagination;
 using Shared.ResultExtensions;
 
 namespace Service.Implementations;
@@ -63,22 +62,21 @@ public class TicketService : BaseService, ITicketService
         return view;
     }
 
-    public async Task<Result<PaginationModel<TicketViewModel>>> Filter(TicketFilterModel model)
+    public async Task<Result<List<TicketViewModel>>> Filter(TicketFilterModel model)
     {
         var query = UnitOfWork.Repo<Ticket>().Query();
 
         if (model.TourId != null) query = query.Where(e => e.TourId == model.TourId);
-
         if (model.TravelerId != null) query = query.Where(e => e.TravelerId == model.TravelerId);
 
-        var paginationModel = await query.Paging(model.Page, model.Size);
+        var tickets = await query.ToListAsync();
 
-        return paginationModel.Map(e =>
+        return tickets.Select(e =>
         {
             var view = e.Adapt<TicketViewModel>();
             if (e.ImageId != null) view.ImageUrl = _cloudStorageService.GetMediaLink(e.ImageId.Value);
             return view;
-        });
+        }).ToList();
     }
 
     public async Task<Result<AttachmentViewModel>> UpdateImage(Guid ticketId, string contentType, Stream stream)

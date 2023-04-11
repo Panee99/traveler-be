@@ -1,6 +1,5 @@
 ﻿using Service.Models.Attachment;
 using Service.Models.Ticket;
-using Service.Pagination;
 using Shared.ResultExtensions;
 
 namespace Service.Interfaces;
@@ -13,7 +12,7 @@ public interface ITicketService
 
     Task<Result<TicketViewModel>> Find(Guid id);
 
-    Task<Result<PaginationModel<TicketViewModel>>> Filter(TicketFilterModel model);
+    Task<Result<List<TicketViewModel>>> Filter(TicketFilterModel model);
 
     Task<Result<AttachmentViewModel>> UpdateImage(Guid ticketId, string contentType, Stream stream);
 }
