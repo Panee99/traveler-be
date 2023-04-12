@@ -17,12 +17,12 @@ public class Result
 
     public static Result Success()
     {
-        return new(true, NoError);
+        return new Result(true, NoError);
     }
 
     public static implicit operator Result(Error error)
     {
-        return new(false, error);
+        return new Result(false, error);
     }
 
     public TResult Match<TResult>(Func<TResult> onSuccess, Func<Error, TResult> onError)

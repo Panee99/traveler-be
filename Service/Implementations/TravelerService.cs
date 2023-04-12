@@ -3,6 +3,7 @@ using Data.Entities;
 using Data.Enums;
 using FirebaseAdmin.Auth;
 using MapsterMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Service.Errors;
@@ -18,7 +19,9 @@ public class TravelerService : BaseService, ITravelerService
     private readonly ILogger<TravelerService> _logger;
     private readonly IMapper _mapper;
 
-    public TravelerService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<TravelerService> logger) : base(unitOfWork)
+    public TravelerService(IUnitOfWork unitOfWork, IMapper mapper,
+        ILogger<TravelerService> logger, IHttpContextAccessor httpContextAccessor)
+        : base(unitOfWork, httpContextAccessor)
     {
         _mapper = mapper;
         _logger = logger;
@@ -26,35 +29,41 @@ public class TravelerService : BaseService, ITravelerService
 
     public async Task<Result> Register(TravelerRegistrationModel model)
     {
-        if (!await _verifyIdToken(model.Phone, model.IdToken))
-            return DomainErrors.Traveler.IdToken;
+        if (!model.Phone.StartsWith('+')) model.Phone = '+' + model.Phone;
+
+        if (!model.Phone.StartsWith("+84")) return Error.Validation();
+
+        if (AuthUser is not { Role: AccountRole.Manager })
+            if (model.IdToken is null || !await _verifyIdToken(model.Phone, model.IdToken))
+                return DomainErrors.Traveler.IdToken;
 
         var formattedPhone = _formatPhoneNum(model.Phone);
 
-        if (await _unitOfWork.Repo<Account>().AnyAsync(e => e.Phone == formattedPhone))
+        if (await UnitOfWork.Repo<Account>().AnyAsync(e => e.Phone == formattedPhone))
             return Error.Conflict("Account with this phone number already exist");
 
-        _unitOfWork.Repo<Traveler>().Add(
+        UnitOfWork.Repo<Traveler>().Add(
             new Traveler
             {
                 Phone = formattedPhone,
                 Password = AuthHelper.HashPassword(model.Password),
-                Status = AccountStatus.ACTIVE,
+                Status = AccountStatus.Active,
                 FirstName = model.FirstName,
                 LastName = model.LastName,
-                Gender = model.Gender
+                Gender = model.Gender,
+                Role = AccountRole.Traveler
             }
         );
 
-        await _unitOfWork.SaveChangesAsync();
+        await UnitOfWork.SaveChangesAsync();
         return Result.Success();
     }
 
     public async Task<Result<TravelerProfileViewModel>> GetProfile(Guid id)
     {
-        var entity = await _unitOfWork.Repo<Traveler>()
+        var entity = await UnitOfWork.Repo<Traveler>()
             .Query()
-            .FirstOrDefaultAsync(e => e.Id == id && e.Status == AccountStatus.ACTIVE);
+            .FirstOrDefaultAsync(e => e.Id == id && e.Status == AccountStatus.Active);
 
         if (entity is null) return Error.NotFound();
         return _mapper.Map<TravelerProfileViewModel>(entity);

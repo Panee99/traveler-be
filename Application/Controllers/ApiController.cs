@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using Application.Commons;
-using Application.Configurations.Auth;
 using Microsoft.AspNetCore.Mvc;
+using Service.Models.Auth;
 using Shared;
 using Shared.Helpers;
 using Shared.ResultExtensions;

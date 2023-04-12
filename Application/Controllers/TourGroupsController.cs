@@ -1,8 +1,8 @@
 ﻿using Application.Configurations.Auth;
+using Data.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Service.Interfaces;
 using Service.Models.TourGroup;
-using Shared.Enums;
 
 namespace Application.Controllers;
 
@@ -16,7 +16,7 @@ public class TourGroupsController : ApiController
         _tourGroupService = tourGroupService;
     }
 
-    [Authorize(UserRole.Manager)]
+    [Authorize(AccountRole.Manager)]
     [HttpPost("")]
     public async Task<IActionResult> Create(TourGroupCreateModel model)
     {
@@ -24,7 +24,7 @@ public class TourGroupsController : ApiController
         return result.Match(Ok, OnError);
     }
 
-    [Authorize(UserRole.Manager)]
+    [Authorize(AccountRole.Manager)]
     [HttpPatch("{id:guid}")]
     public async Task<IActionResult> Update([FromRoute] Guid id, TourGroupUpdateModel model)
     {
@@ -32,7 +32,7 @@ public class TourGroupsController : ApiController
         return result.Match(Ok, OnError);
     }
 
-    [Authorize(UserRole.Manager)]
+    [Authorize(AccountRole.Manager)]
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete([FromRoute] Guid id)
     {
@@ -47,6 +47,7 @@ public class TourGroupsController : ApiController
         return result.Match(Ok, OnError);
     }
 
+
     [HttpDelete("{id:guid}/travelers")]
     public async Task<IActionResult> RemoveTravelers([FromRoute] Guid id, [FromBody] List<Guid> travelerIds)
     {
@@ -58,6 +59,13 @@ public class TourGroupsController : ApiController
     public async Task<IActionResult> ListTravelers([FromRoute] Guid id)
     {
         var result = await _tourGroupService.ListTravelers(id);
+        return result.Match(Ok, OnError);
+    }
+
+    [HttpGet("/tours/{tourId:guid}/tour-groups")]
+    public async Task<IActionResult> ListTourGroups([FromRoute] Guid tourId)
+    {
+        var result = await _tourGroupService.ListGroupsByTour(tourId);
         return result.Match(Ok, OnError);
     }
 }

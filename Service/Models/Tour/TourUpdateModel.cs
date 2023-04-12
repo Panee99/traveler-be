@@ -16,5 +16,6 @@ public record TourUpdateModel
     string? Vehicle,
     int? MaxOccupancy,
     TourType? Type,
-    string? Description
+    string? Description,
+    TourStatus? Status
 );

@@ -12,13 +12,13 @@ namespace Service.Implementations;
 
 public class CloudStorageService : ICloudStorageService
 {
-    private static readonly StorageClient _storage;
+    private static readonly StorageClient Storage;
     private readonly ILogger<CloudStorageService> _logger;
     private readonly CloudStorageSettings _settings;
 
     static CloudStorageService()
     {
-        _storage = CloudStorageHelper.GetStorage();
+        Storage = CloudStorageHelper.GetStorage();
     }
 
     public CloudStorageService(IOptions<CloudStorageSettings> settings, ILogger<CloudStorageService> logger)
@@ -29,9 +29,10 @@ public class CloudStorageService : ICloudStorageService
 
     public async Task<Result<string>> Upload(Guid id, string contentType, Stream stream)
     {
+        Console.WriteLine("Cloud");
         try
         {
-            await _storage.UploadObjectAsync(
+            await Storage.UploadObjectAsync(
                 _settings.Bucket,
                 $"{_settings.Folder}/{id}",
                 contentType,
@@ -53,9 +54,10 @@ public class CloudStorageService : ICloudStorageService
     // Delete an object, IsSuccess if deleted successfully or not found
     public async Task<Result> Delete(Guid id)
     {
+        Console.WriteLine("Cloud");
         try
         {
-            await _storage.DeleteObjectAsync(
+            await Storage.DeleteObjectAsync(
                 _settings.Bucket,
                 $"{_settings.Folder}/{id}",
                 null,

@@ -2,6 +2,7 @@
 
 public class TravelerInTourGroup
 {
+    public Guid Id { get; set; }
     public Guid TravelerId { get; set; }
 
     public Guid TourGroupId { get; set; }

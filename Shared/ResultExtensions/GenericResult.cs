@@ -19,12 +19,12 @@ public class Result<TValue> : Result
 
     public static implicit operator Result<TValue>(TValue value)
     {
-        return new(value, true, NoError);
+        return new Result<TValue>(value, true, NoError);
     }
 
     public static implicit operator Result<TValue>(Error error)
     {
-        return new(false, error);
+        return new Result<TValue>(false, error);
     }
 
     public TResult Match<TResult>(Func<TValue, TResult> onValue, Func<Error, TResult> onError)

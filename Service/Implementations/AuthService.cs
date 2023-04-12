@@ -1,6 +1,7 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Text.RegularExpressions;
 using Data.EFCore;
 using Data.Entities;
 using Data.Enums;
@@ -9,7 +10,6 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Service.Interfaces;
 using Service.Models.Auth;
-using Shared.Enums;
 using Shared.Helpers;
 using Shared.ResultExtensions;
 using Shared.Settings;
@@ -18,6 +18,12 @@ namespace Service.Implementations;
 
 public class AuthService : BaseService, IAuthService
 {
+    private static readonly Regex PhoneRegex = new(@"^\+?\d{7,15}$");
+    private static readonly Regex EmailRegex = new(@"^\S+@\S+\.\S+$");
+
+
+    // PRIVATE
+    private static readonly JwtSecurityTokenHandler TokenHandler = new();
     private readonly AppSettings _appSettings;
 
     public AuthService(IUnitOfWork unitOfWork, IOptions<AppSettings> appSettings) : base(unitOfWork)
@@ -25,53 +31,26 @@ public class AuthService : BaseService, IAuthService
         _appSettings = appSettings.Value;
     }
 
-    public async Task<Result<AuthenticateResponseModel>> AuthenticateTraveler(PhoneLoginModel model)
+    public async Task<Result<AuthenticateResponseModel>> Authenticate(LoginModel model)
     {
-        var traveler = await _unitOfWork.Repo<Traveler>()
-            .Query()
-            .Where(e => e.Phone == model.Phone && e.Status == AccountStatus.ACTIVE)
-            .Select(e => new { e.Id, e.Password })
-            .FirstOrDefaultAsync();
+        var query = UnitOfWork.Repo<Account>().Query();
 
-        if (traveler == null || !AuthHelper.VerifyPassword(model.Password, traveler.Password))
+        // By Phone
+        if (PhoneRegex.Match(model.Username).Success) query = query.Where(e => e.Phone == model.Username);
+        // By Email
+        else if (EmailRegex.Match(model.Username).Success) query = query.Where(e => e.Email == model.Username);
+        // Error
+        else return Error.Validation("Login by Phone or Email");
+
+        var account = await query.Select(e => new AuthResult(e.Id, e.Password, e.Role)).FirstOrDefaultAsync();
+
+        if (account == null || !AuthHelper.VerifyPassword(model.Password, account.Password))
             return Error.Authentication();
 
-        return new AuthenticateResponseModel(_generateJwtToken(traveler.Id, UserRole.Traveler));
+        return new AuthenticateResponseModel(_generateJwtToken(account.Id, account.Role));
     }
 
-    public async Task<Result<AuthenticateResponseModel>> AuthenticateManager(EmailLoginModel model)
-    {
-        var manager = await _unitOfWork.Repo<Manager>()
-            .Query()
-            .Where(e => e.Email == model.Email && e.Status == AccountStatus.ACTIVE)
-            .Select(e => new { e.Id, e.Password })
-            .FirstOrDefaultAsync();
-
-        if (manager == null || !AuthHelper.VerifyPassword(model.Password, manager.Password))
-            return Error.Authentication();
-
-        return new AuthenticateResponseModel(_generateJwtToken(manager.Id, UserRole.Manager));
-    }
-
-    public async Task<Result<AuthenticateResponseModel>> AuthenticateTourGuide(EmailLoginModel model)
-    {
-        var tourGuide = await _unitOfWork.Repo<TourGuide>()
-            .Query()
-            .Where(e => e.Email == model.Email && e.Status == AccountStatus.ACTIVE)
-            .Select(e => new { e.Id, e.Password })
-            .FirstOrDefaultAsync();
-
-        if (tourGuide == null || !AuthHelper.VerifyPassword(model.Password, tourGuide.Password))
-            return Error.Authentication();
-
-        return new AuthenticateResponseModel(_generateJwtToken(tourGuide.Id, UserRole.TourGuide));
-    }
-
-
-    // PRIVATE
-    private static readonly JwtSecurityTokenHandler TokenHandler = new();
-
-    private string _generateJwtToken(Guid accountId, UserRole role)
+    private string _generateJwtToken(Guid accountId, AccountRole role)
     {
         var tokenDescriptor = new SecurityTokenDescriptor
         {
@@ -90,7 +69,13 @@ public class AuthService : BaseService, IAuthService
                     SecurityAlgorithms.HmacSha256Signature)
         };
 
-
         return TokenHandler.WriteToken(TokenHandler.CreateToken(tokenDescriptor));
     }
+
+    private record AuthResult
+    (
+        Guid Id,
+        string Password,
+        AccountRole Role
+    );
 }

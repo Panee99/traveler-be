@@ -1,5 +1,6 @@
 ﻿using Data.EFCore.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Storage;
 using Shared.Helpers;
 
@@ -38,7 +39,16 @@ public class UnitOfWork : IUnitOfWork
         return _context.Database.BeginTransaction();
     }
 
-    
+    public EntityEntry<T> Attach<T>(T entity) where T : class
+    {
+        return _context.Attach(entity);
+    }
+
+    public EntityEntry Entry(object entity)
+    {
+        return _context.Entry(entity);
+    }
+
     // PRIVATE
     private void _generateValues()
     {
@@ -49,9 +59,7 @@ public class UnitOfWork : IUnitOfWork
         var addedEntities = entities.Where(e => e.State == EntityState.Added);
 
         foreach (var entry in addedEntities)
-        {
             if (entry.Properties.Any(p => p.Metadata.Name == "CreatedAt"))
                 entry.Property("CreatedAt").CurrentValue = DateTimeHelper.VnNow();
-        }
     }
 }

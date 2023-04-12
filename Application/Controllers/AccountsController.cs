@@ -1,15 +1,13 @@
-﻿using Application.Commons;
-using Application.Configurations.Auth;
+﻿using Application.Configurations.Auth;
 using Microsoft.AspNetCore.Mvc;
 using Service.Interfaces;
 using Service.Models.Account;
 using Service.Models.Attachment;
-using Shared.Enums;
 using Shared.Helpers;
-using Swashbuckle.AspNetCore.Annotations;
 
 namespace Application.Controllers;
 
+[Authorize]
 [Route("accounts")]
 public class AccountsController : ApiController
 {
@@ -20,10 +18,7 @@ public class AccountsController : ApiController
         _accountService = accountService;
     }
 
-    [SwaggerOperation(description: "File size < 5MB")]
     [ProducesResponseType(typeof(AttachmentViewModel), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ErrorResponsePayload), StatusCodes.Status400BadRequest)]
-    [Authorize(UserRole.Manager, UserRole.Traveler, UserRole.TourGuide)]
     [HttpPut("avatar")]
     public async Task<IActionResult> UpdateAvatar(IFormFile file)
     {
@@ -35,8 +30,6 @@ public class AccountsController : ApiController
     }
 
     [ProducesResponseType(typeof(AvatarViewModel), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ErrorResponsePayload), StatusCodes.Status404NotFound)]
-    [Authorize]
     [HttpGet("avatar")]
     public async Task<IActionResult> GetAvatar()
     {
@@ -45,7 +38,6 @@ public class AccountsController : ApiController
     }
 
     [ProducesResponseType(typeof(ProfileViewModel), StatusCodes.Status200OK)]
-    [Authorize]
     [HttpGet("profile")]
     public async Task<IActionResult> GetProfile()
     {

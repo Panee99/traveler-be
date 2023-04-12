@@ -1,4 +1,5 @@
 ﻿using Service.Models.Attachment;
+using Service.Models.Location;
 using Service.Models.Tour;
 using Service.Pagination;
 using Shared.ResultExtensions;
@@ -15,7 +16,21 @@ public interface ITourService
 
     Task<Result<TourViewModel>> Find(Guid id);
 
-    Task<Result<AttachmentViewModel>> UpdateThumbnail(Guid id, string contentType, Stream stream);
+    Task<Result<PaginationModel<TourViewModel>>> Filter(TourFilterModel model);
 
-    Task<Result<PaginationModel<TourFilterViewModel>>> Filter(TourFilterModel model);
+    // Locations
+    Task<Result<LocationViewModel>> AddLocation(Guid tourId, LocationCreateModel model);
+
+    Task<Result> DeleteLocation(Guid id);
+
+    Task<Result<List<LocationViewModel>>> ListLocations(Guid tourId);
+
+    // Attachments
+    Task<Result<AttachmentViewModel>> UpdateThumbnail(Guid tourId, string contentType, Stream stream);
+
+    Task<Result<AttachmentViewModel>> AddAttachment(Guid tourId, string contentType, Stream stream);
+
+    Task<Result> DeleteAttachment(Guid tourId, Guid attachmentId);
+
+    Task<Result<List<AttachmentViewModel>>> ListAttachments(Guid tourId);
 }

@@ -1,0 +1,21 @@
+﻿[
+  {
+    "Id": "fd9e9810-4a0a-4cc0-afa5-08db3824da62",
+    "Code": "FTO3Y-2304",
+    "Title": "Tour ThaiLand",
+    "Price": 100,
+    "ChildrenPrice": 50,
+    "BabyPrice": 25,
+    "Departure": "Ho Chi Minh",
+    "Destination": "Phuket",
+    "StartTime": "2023-04-08 11:30:24.410",
+    "EndTime": "2023-04-08 11:30:24.410",
+    "Vehicle": "plane",
+    "MaxOccupancy": 50,
+    "Type": "International",
+    "Status": "New",
+    "CreatedAt": "2023-04-08 18:31:53.8203073",
+    "Description": "",
+    "ThumbnailId": null
+  }
+]

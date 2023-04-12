@@ -1,6 +1,5 @@
 using Application.Configurations;
 using Application.Configurations.Auth;
-using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
@@ -41,17 +40,6 @@ var builder = WebApplication.CreateBuilder(args);
                 // options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
             }
         );
-
-    builder.WebHost.ConfigureKestrel(options =>
-    {
-        options.ListenAnyIP(443, listenOptions =>
-        {
-            listenOptions.Protocols = HttpProtocols.Http1AndHttp2;
-            listenOptions.UseHttps();
-        });
-        options.Limits.MaxConcurrentConnections = 5000;
-        options.Limits.KeepAliveTimeout = TimeSpan.FromMinutes(10);
-    });
 }
 
 // APPLICATION

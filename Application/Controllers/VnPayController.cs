@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Service.Interfaces;
 using Service.Models.VnPay;
@@ -10,12 +11,14 @@ using Shared.Settings;
 
 namespace Application.Controllers;
 
+[ApiExplorerSettings(IgnoreApi = true)]
 [Route("pay")]
 public class VnPayController : ApiController
 {
     private readonly IVnPayRequestService _vnPayRequestService;
     private readonly IVnPayResponseService _vnPayResponseService;
     private readonly VnPaySettings _vnPaySettings;
+
 
     public VnPayController(IOptions<VnPaySettings> vnPaySettings,
         IVnPayRequestService vnPayRequestService, IVnPayResponseService vnPayResponseService)
@@ -54,7 +57,6 @@ public class VnPayController : ApiController
         }, OnError);
     }
 
-    [ApiExplorerSettings(IgnoreApi = true)]
     [HttpGet("ipn")]
     public async Task<IActionResult> VnPayIpnEntry([FromQuery] Dictionary<string, string> queryParams)
     {
@@ -67,7 +69,6 @@ public class VnPayController : ApiController
         return result.Match(Ok, OnError);
     }
 
-    [ApiExplorerSettings(IgnoreApi = true)]
     [HttpGet("result")]
     public IActionResult PaymentResult([FromQuery] Dictionary<string, string> queryParams)
     {

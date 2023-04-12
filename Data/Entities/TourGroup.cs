@@ -7,7 +7,7 @@ public class TourGroup
     public Guid TourId { get; set; }
 
     public Guid? TourGuideId { get; set; }
-    
+
     public string GroupName { get; set; } = null!;
 
     public DateTime CreatedAt { get; set; }

@@ -5,8 +5,8 @@ using Data.Entities;
 using Data.Enums;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Service.Models.Auth;
 using Shared;
-using Shared.Enums;
 using Shared.Settings;
 
 namespace Application.Configurations.Auth;
@@ -58,7 +58,7 @@ public class JwtMiddleware : IMiddleware
             var jwtToken = (JwtSecurityToken)securityToken;
 
             var id = Guid.Parse(jwtToken.Claims.First(x => x.Type == "id").Value);
-            var role = Enum.Parse<UserRole>(jwtToken.Claims.First(x => x.Type == "role").Value);
+            var role = Enum.Parse<AccountRole>(jwtToken.Claims.First(x => x.Type == "role").Value);
 
             if (!await _checkUserClaims(id, role)) return;
             context.Items[AppConstants.UserContextKey] = new AuthUser(id, role);
@@ -70,16 +70,16 @@ public class JwtMiddleware : IMiddleware
         }
     }
 
-    private async Task<bool> _checkUserClaims(Guid id, UserRole role)
+    private async Task<bool> _checkUserClaims(Guid id, AccountRole role)
     {
         return role switch
         {
-            UserRole.Manager => await _unitOfWork.Repo<Manager>()
-                .AnyAsync(e => e.Id == id && e.Status == AccountStatus.ACTIVE),
-            UserRole.Traveler => await _unitOfWork.Repo<Traveler>()
-                .AnyAsync(e => e.Id == id && e.Status == AccountStatus.ACTIVE),
-            UserRole.TourGuide => await _unitOfWork.Repo<TourGuide>()
-                .AnyAsync(e => e.Id == id && e.Status == AccountStatus.ACTIVE),
+            AccountRole.Manager => await _unitOfWork.Repo<Manager>()
+                .AnyAsync(e => e.Id == id && e.Status == AccountStatus.Active),
+            AccountRole.Traveler => await _unitOfWork.Repo<Traveler>()
+                .AnyAsync(e => e.Id == id && e.Status == AccountStatus.Active),
+            AccountRole.TourGuide => await _unitOfWork.Repo<TourGuide>()
+                .AnyAsync(e => e.Id == id && e.Status == AccountStatus.Active),
             _ => throw new ArgumentOutOfRangeException(typeof(JwtMiddleware).ToString())
         };
     }
