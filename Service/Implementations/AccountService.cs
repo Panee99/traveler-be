@@ -1,4 +1,5 @@
 ﻿using Data.EFCore;
+using Data.EFCore.Repositories;
 using Data.Entities;
 using Data.Enums;
 using MapsterMapper;
@@ -15,9 +16,14 @@ public class AccountService : BaseService, IAccountService
 {
     private readonly ICloudStorageService _cloudStorageService;
     private readonly IAttachmentService _attachmentService;
-
     private readonly ILogger<AccountService> _logger;
     private readonly IMapper _mapper;
+
+    //
+    private readonly IRepository<Account> _accountRepo;
+    private readonly IRepository<Traveler> _travelerRepo;
+    private readonly IRepository<TourGuide> _tourGuideRepo;
+    private readonly IRepository<Manager> _managerRepo;
 
     public AccountService(IUnitOfWork unitOfWork, ILogger<AccountService> logger,
         ICloudStorageService cloudStorageService, IMapper mapper, IAttachmentService attachmentService) : base(
@@ -27,11 +33,16 @@ public class AccountService : BaseService, IAccountService
         _cloudStorageService = cloudStorageService;
         _mapper = mapper;
         _attachmentService = attachmentService;
+        //
+        _accountRepo = unitOfWork.Repo<Account>();
+        _travelerRepo = unitOfWork.Repo<Traveler>();
+        _tourGuideRepo = unitOfWork.Repo<TourGuide>();
+        _managerRepo = unitOfWork.Repo<Manager>();
     }
 
     public async Task<Result<AvatarViewModel>> GetAvatar(Guid id)
     {
-        var attachmentId = await UnitOfWork.Repo<Account>()
+        var attachmentId = await _accountRepo
             .Query()
             .Where(e => e.Id == id)
             .Select(e => e.AttachmentId)
@@ -51,17 +62,17 @@ public class AccountService : BaseService, IAccountService
         switch (role)
         {
             case AccountRole.Traveler:
-                var traveler = await UnitOfWork.Repo<Traveler>().FirstOrDefaultAsync(e => e.Id == id);
+                var traveler = await _travelerRepo.FindAsync(id);
                 if (traveler is null) return Error.Unexpected();
                 viewModel = _mapper.Map<ProfileViewModel>(traveler);
                 break;
             case AccountRole.TourGuide:
-                var tourGuide = await UnitOfWork.Repo<TourGuide>().FirstOrDefaultAsync(e => e.Id == id);
+                var tourGuide = await _tourGuideRepo.FindAsync(id);
                 if (tourGuide is null) return Error.Unexpected();
                 viewModel = _mapper.Map<ProfileViewModel>(tourGuide);
                 break;
             case AccountRole.Manager:
-                var manager = await UnitOfWork.Repo<Manager>().FirstOrDefaultAsync(e => e.Id == id);
+                var manager = await _managerRepo.FindAsync(id);
                 if (manager is null) return Error.Unexpected();
                 viewModel = _mapper.Map<ProfileViewModel>(manager);
                 break;
@@ -79,7 +90,7 @@ public class AccountService : BaseService, IAccountService
         try
         {
             // Get Account
-            var account = await UnitOfWork.Repo<Account>()
+            var account = await _accountRepo
                 .Query()
                 .Where(e => e.Id == id)
                 .Select(e => new Account()

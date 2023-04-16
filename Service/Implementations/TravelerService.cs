@@ -1,4 +1,5 @@
 ﻿using Data.EFCore;
+using Data.EFCore.Repositories;
 using Data.Entities;
 using Data.Enums;
 using FirebaseAdmin.Auth;
@@ -19,12 +20,19 @@ public class TravelerService : BaseService, ITravelerService
     private readonly ILogger<TravelerService> _logger;
     private readonly IMapper _mapper;
 
+    //
+    private readonly IRepository<Account> _accountRepo;
+    private readonly IRepository<Traveler> _travelerRepo;
+
     public TravelerService(IUnitOfWork unitOfWork, IMapper mapper,
         ILogger<TravelerService> logger, IHttpContextAccessor httpContextAccessor)
         : base(unitOfWork, httpContextAccessor)
     {
         _mapper = mapper;
         _logger = logger;
+        //
+        _accountRepo = unitOfWork.Repo<Account>();
+        _travelerRepo = unitOfWork.Repo<Traveler>();
     }
 
     public async Task<Result> Register(TravelerRegistrationModel model)
@@ -39,10 +47,10 @@ public class TravelerService : BaseService, ITravelerService
 
         var formattedPhone = _formatPhoneNum(model.Phone);
 
-        if (await UnitOfWork.Repo<Account>().AnyAsync(e => e.Phone == formattedPhone))
+        if (await _accountRepo.AnyAsync(e => e.Phone == formattedPhone))
             return Error.Conflict("Account with this phone number already exist");
 
-        UnitOfWork.Repo<Traveler>().Add(
+        _travelerRepo.Add(
             new Traveler
             {
                 Phone = formattedPhone,
@@ -61,7 +69,7 @@ public class TravelerService : BaseService, ITravelerService
 
     public async Task<Result<TravelerProfileViewModel>> GetProfile(Guid id)
     {
-        var entity = await UnitOfWork.Repo<Traveler>()
+        var entity = await _travelerRepo
             .Query()
             .FirstOrDefaultAsync(e => e.Id == id && e.Status == AccountStatus.Active);
 

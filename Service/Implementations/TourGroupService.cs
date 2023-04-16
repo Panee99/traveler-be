@@ -1,4 +1,5 @@
 ﻿using Data.EFCore;
+using Data.EFCore.Repositories;
 using Data.Entities;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
@@ -10,16 +11,27 @@ namespace Service.Implementations;
 
 public class TourGroupService : BaseService, ITourGroupService
 {
+    private readonly IRepository<Tour> _tourRepo;
+    private readonly IRepository<Traveler> _travelerRepo;
+    private readonly IRepository<TourGroup> _tourGroupRepo;
+    private readonly IRepository<TourGuide> _tourGuideRepo;
+    private readonly IRepository<TravelerInTourGroup> _travelerInTourGroupRepo;
+
     public TourGroupService(IUnitOfWork unitOfWork) : base(unitOfWork)
     {
+        _tourRepo = unitOfWork.Repo<Tour>();
+        _travelerRepo = unitOfWork.Repo<Traveler>();
+        _tourGroupRepo = unitOfWork.Repo<TourGroup>();
+        _tourGuideRepo = unitOfWork.Repo<TourGuide>();
+        _travelerInTourGroupRepo = unitOfWork.Repo<TravelerInTourGroup>();
     }
 
     public async Task<Result<TourGroupViewModel>> Create(TourGroupCreateModel model)
     {
-        var tour = await UnitOfWork.Repo<Tour>().FirstOrDefaultAsync(e => e.Id == model.TourId);
+        var tour = await _tourRepo.FindAsync(model.TourId);
         if (tour is null) return Error.NotFound();
 
-        var group = UnitOfWork.Repo<TourGroup>().Add(new TourGroup
+        var group = _tourGroupRepo.Add(new TourGroup
         {
             TourId = tour.Id,
             GroupName = model.GroupName
@@ -32,19 +44,19 @@ public class TourGroupService : BaseService, ITourGroupService
 
     public async Task<Result<TourGroupViewModel>> Update(Guid groupId, TourGroupUpdateModel model)
     {
-        var group = await UnitOfWork.Repo<TourGroup>().FirstOrDefaultAsync(e => e.Id == groupId);
+        var group = await _tourGroupRepo.FindAsync(groupId);
         if (group is null) return Error.NotFound("Tour group not found.");
 
         if (model.GroupName != null) group.GroupName = model.GroupName;
 
-        if (model.TourGuide != null)
+        if (model.TourGuideId != null)
         {
-            var tourGuide = await UnitOfWork.Repo<TourGuide>().FirstOrDefaultAsync(e => e.Id == model.TourGuide);
+            var tourGuide = await _tourGuideRepo.FindAsync(model.TourGuideId);
             if (tourGuide is null) return Error.NotFound("Tour guide not found.");
             group.TourGuide = tourGuide;
         }
 
-        UnitOfWork.Repo<TourGroup>().Update(group);
+        _tourGroupRepo.Update(group);
 
         await UnitOfWork.SaveChangesAsync();
 
@@ -53,19 +65,19 @@ public class TourGroupService : BaseService, ITourGroupService
 
     public async Task<Result> Delete(Guid groupId)
     {
-        var group = await UnitOfWork.Repo<TourGroup>().FirstOrDefaultAsync(e => e.Id == groupId);
+        var group = await _tourGroupRepo.FindAsync(groupId);
         if (group is null) return Error.NotFound();
 
-        UnitOfWork.Repo<TourGroup>().Remove(group);
+        _tourGroupRepo.Remove(group);
         await UnitOfWork.SaveChangesAsync();
         return Result.Success();
     }
 
     public async Task<Result<List<TourGroupViewModel>>> ListGroupsByTour(Guid tourId)
     {
-        if (!await UnitOfWork.Repo<Tour>().AnyAsync(e => e.Id == tourId)) return Error.NotFound();
+        if (!await _tourRepo.AnyAsync(e => e.Id == tourId)) return Error.NotFound();
 
-        var tourGroups = await UnitOfWork.Repo<TourGroup>()
+        var tourGroups = await _tourGroupRepo
             .Query()
             .Where(e => e.TourId == tourId)
             .ToListAsync();
@@ -75,7 +87,7 @@ public class TourGroupService : BaseService, ITourGroupService
 
     public async Task<Result> AddTravelers(Guid tourGroupId, ICollection<Guid> travelerIds)
     {
-        if (!await UnitOfWork.Repo<TourGroup>().AnyAsync(e => e.Id == tourGroupId))
+        if (!await _tourGroupRepo.AnyAsync(e => e.Id == tourGroupId))
             return Error.NotFound();
 
         var records = travelerIds.Select(travelerId => new TravelerInTourGroup
@@ -85,7 +97,7 @@ public class TourGroupService : BaseService, ITourGroupService
         });
 
         // Check all traveler ids
-        var existTravelers = await UnitOfWork.Repo<Traveler>()
+        var existTravelers = await _travelerRepo
             .Query()
             .Where(e => travelerIds.Contains(e.Id))
             .Select(e => e.Id).ToListAsync();
@@ -95,7 +107,7 @@ public class TourGroupService : BaseService, ITourGroupService
         if (nonExistTravelers.Count != 0)
             return Error.NotFound(nonExistTravelers.Select(id => id.ToString()).ToArray());
 
-        UnitOfWork.Repo<TravelerInTourGroup>().AddRange(records);
+        _travelerInTourGroupRepo.AddRange(records);
 
         await UnitOfWork.SaveChangesAsync();
         return Result.Success();
@@ -103,15 +115,15 @@ public class TourGroupService : BaseService, ITourGroupService
 
     public async Task<Result> RemoveTravelers(Guid tourGroupId, List<Guid> travelerIds)
     {
-        if (!await UnitOfWork.Repo<TourGroup>().AnyAsync(e => e.Id == tourGroupId))
+        if (!await _tourGroupRepo.AnyAsync(e => e.Id == tourGroupId))
             return Error.NotFound();
 
-        var records = await UnitOfWork.Repo<TravelerInTourGroup>()
+        var records = await _travelerInTourGroupRepo
             .Query()
             .Where(e => e.TourGroupId == tourGroupId && travelerIds.Contains(e.TravelerId))
             .ToListAsync();
 
-        UnitOfWork.Repo<TravelerInTourGroup>().RemoveRange(records);
+        _travelerInTourGroupRepo.RemoveRange(records);
         await UnitOfWork.SaveChangesAsync();
 
         return Result.Success();
@@ -119,10 +131,10 @@ public class TourGroupService : BaseService, ITourGroupService
 
     public async Task<Result<List<Guid>>> ListTravelers(Guid tourGroupId)
     {
-        if (!await UnitOfWork.Repo<TourGroup>().AnyAsync(e => e.Id == tourGroupId))
+        if (!await _tourGroupRepo.AnyAsync(e => e.Id == tourGroupId))
             return Error.NotFound();
 
-        var travelerIds = await UnitOfWork.Repo<TravelerInTourGroup>()
+        var travelerIds = await _travelerInTourGroupRepo
             .Query()
             .Where(e => e.TourGroupId == tourGroupId)
             .Select(e => e.TravelerId)

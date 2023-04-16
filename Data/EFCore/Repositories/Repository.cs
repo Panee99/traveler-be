@@ -52,6 +52,11 @@ public class Repository<T> : IRepository<T> where T : class
         return _entities.AsQueryable();
     }
 
+    public ValueTask<T?> FindAsync(params object[] keyValues)
+    {
+        return _entities.FindAsync(keyValues);
+    }
+
     public Task<T?> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate)
     {
         return _entities.AsNoTracking().FirstOrDefaultAsync(predicate);

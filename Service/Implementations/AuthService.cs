@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Text.RegularExpressions;
 using Data.EFCore;
+using Data.EFCore.Repositories;
 using Data.Entities;
 using Data.Enums;
 using Microsoft.EntityFrameworkCore;
@@ -20,20 +21,21 @@ public class AuthService : BaseService, IAuthService
 {
     private static readonly Regex PhoneRegex = new(@"^\+?\d{7,15}$");
     private static readonly Regex EmailRegex = new(@"^\S+@\S+\.\S+$");
-
-
-    // PRIVATE
     private static readonly JwtSecurityTokenHandler TokenHandler = new();
     private readonly AppSettings _appSettings;
+
+    //
+    private readonly IRepository<Account> _accountRepo;
 
     public AuthService(IUnitOfWork unitOfWork, IOptions<AppSettings> appSettings) : base(unitOfWork)
     {
         _appSettings = appSettings.Value;
+        _accountRepo = unitOfWork.Repo<Account>();
     }
 
     public async Task<Result<AuthenticateResponseModel>> Authenticate(LoginModel model)
     {
-        var query = UnitOfWork.Repo<Account>().Query();
+        var query = _accountRepo.Query();
 
         // By Phone
         if (PhoneRegex.Match(model.Username).Success) query = query.Where(e => e.Phone == model.Username);

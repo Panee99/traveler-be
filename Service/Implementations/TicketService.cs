@@ -1,4 +1,5 @@
 ﻿using Data.EFCore;
+using Data.EFCore.Repositories;
 using Data.Entities;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
@@ -16,23 +17,32 @@ public class TicketService : BaseService, ITicketService
     private readonly IAttachmentService _attachmentService;
     private readonly ILogger<TicketService> _logger;
 
+    //
+    private readonly IRepository<Ticket> _ticketRepo;
+    private readonly IRepository<Ticket> _tourRepo;
+    private readonly IRepository<Ticket> _travelerRepo;
+
     public TicketService(IUnitOfWork unitOfWork, ICloudStorageService cloudStorageService,
         ILogger<TicketService> logger, IAttachmentService attachmentService) : base(unitOfWork)
     {
         _cloudStorageService = cloudStorageService;
         _attachmentService = attachmentService;
         _logger = logger;
+        //
+        _ticketRepo = unitOfWork.Repo<Ticket>();
+        _tourRepo = unitOfWork.Repo<Ticket>();
+        _travelerRepo = unitOfWork.Repo<Ticket>();
     }
 
     public async Task<Result<TicketViewModel>> Create(TicketCreateModel model)
     {
-        if (!await UnitOfWork.Repo<Tour>().AnyAsync(e => e.Id == model.TourId))
+        if (!await _tourRepo.AnyAsync(e => e.Id == model.TourId))
             return Error.NotFound("Tour not found.");
 
-        if (!await UnitOfWork.Repo<Traveler>().AnyAsync(e => e.Id == model.TravelerId))
+        if (!await _travelerRepo.AnyAsync(e => e.Id == model.TravelerId))
             return Error.NotFound("Traveler not found.");
 
-        var entity = UnitOfWork.Repo<Ticket>().Add(model.Adapt<Ticket>());
+        var entity = _ticketRepo.Add(model.Adapt<Ticket>());
 
         await UnitOfWork.SaveChangesAsync();
 
@@ -41,7 +51,7 @@ public class TicketService : BaseService, ITicketService
 
     public async Task<Result> Delete(Guid id)
     {
-        UnitOfWork.Repo<Ticket>().Remove(new Ticket { Id = id });
+        _ticketRepo.Remove(new Ticket { Id = id });
 
         await UnitOfWork.SaveChangesAsync();
 
@@ -50,7 +60,7 @@ public class TicketService : BaseService, ITicketService
 
     public async Task<Result<TicketViewModel>> Find(Guid id)
     {
-        var ticket = await UnitOfWork.Repo<Ticket>().FirstOrDefaultAsync(e => e.Id == id);
+        var ticket = await _ticketRepo.FindAsync(id);
 
         if (ticket is null) return Error.NotFound();
 
@@ -64,7 +74,7 @@ public class TicketService : BaseService, ITicketService
 
     public async Task<Result<List<TicketViewModel>>> Filter(TicketFilterModel model)
     {
-        var query = UnitOfWork.Repo<Ticket>().Query();
+        var query = _ticketRepo.Query();
 
         if (model.TourId != null) query = query.Where(e => e.TourId == model.TourId);
         if (model.TravelerId != null) query = query.Where(e => e.TravelerId == model.TravelerId);
@@ -82,7 +92,7 @@ public class TicketService : BaseService, ITicketService
     public async Task<Result<AttachmentViewModel>> UpdateImage(Guid ticketId, string contentType, Stream stream)
     {
         // Get Ticket and old ImageId
-        var ticket = await UnitOfWork.Repo<Ticket>()
+        var ticket = await _ticketRepo
             .Query()
             .Where(e => e.Id == ticketId)
             .Select(e => new Ticket { Id = ticketId, ImageId = e.ImageId })
