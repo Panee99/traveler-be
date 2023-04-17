@@ -10,11 +10,11 @@ public class Tour
 
     public string Title { get; set; } = null!;
 
-    public double Price { get; set; }
+    public int AdultPrice { get; set; }
 
-    public double ChildrenPrice { get; set; }
+    public int ChildrenPrice { get; set; }
 
-    public double BabyPrice { get; set; }
+    public int InfantPrice { get; set; }
 
     public string Departure { get; set; } = null!;
 
@@ -43,6 +43,10 @@ public class Tour
     public virtual ICollection<TourGroup> TourGroups { get; set; } = new List<TourGroup>();
 
     public virtual ICollection<Location> TourLocations { get; set; } = new List<Location>();
+
+    public virtual ICollection<Booking> Bookings { get; set; } = new List<Booking>();
+
+    public virtual ICollection<TravelerInTour> TravelerInTours { get; set; } = new List<TravelerInTour>();
 
     // public virtual ICollection<TourDiscount> TourDiscounts { get; set; } = new List<TourDiscount>();
 }

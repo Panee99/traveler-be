@@ -18,4 +18,6 @@ public class VnPayRequestModel
 
     public string? OrderType { get; set; }
     public string? BankCode { get; set; }
+
+    public Guid TransactionId { get; set; }
 }

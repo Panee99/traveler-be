@@ -13,5 +13,8 @@ public class TourGroup
     public DateTime CreatedAt { get; set; }
 
     public Tour Tour { get; set; } = null!;
+
     public TourGuide? TourGuide { get; set; } = null!;
+
+    public virtual ICollection<TravelerInTour> TravelerInTours { get; set; } = new List<TravelerInTour>();
 }

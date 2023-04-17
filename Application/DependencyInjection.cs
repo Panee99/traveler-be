@@ -16,16 +16,17 @@ public static class DependencyInjection
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IAccountService, AccountService>();
         services.AddScoped<IAuthService, AuthService>();
-        services.AddScoped<IVnPayRequestService, VnPayRequestService>();
-        services.AddScoped<IVnPayResponseService, VnPayResponseService>();
+        services.AddScoped<IVnPayService, VnPayService>();
         services.AddScoped<ICloudMessagingService, CloudMessagingService>();
         services.AddScoped<ITravelerService, TravelerService>();
         services.AddScoped<ICloudStorageService, CloudStorageService>();
         services.AddScoped<ITourService, TourService>();
-        services.AddScoped<ITourGroupService, TourGroupService>();
+        // services.AddScoped<ITourGroupService, TourGroupService>();
         services.AddScoped<ITicketService, TicketService>();
         services.AddScoped<IAttachmentService, AttachmentService>();
-
+        services.AddScoped<IBookingService, BookingService>();
+        services.AddScoped<ITransactionService, TransactionService>();
+        
         return services;
     }
 }

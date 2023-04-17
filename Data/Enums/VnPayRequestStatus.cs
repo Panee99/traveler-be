@@ -3,6 +3,6 @@
 public enum VnPayRequestStatus
 {
     Pending,
-    Paid,
-    Expired
+    Success,
+    Failed,
 }

@@ -121,9 +121,9 @@ public class TourService : BaseService, ITourService
         if (model.EndBefore != null)
             query = query.Where(e => e.EndTime <= model.EndBefore);
         if (model.MinPrice != null)
-            query = query.Where(e => e.Price >= model.MinPrice);
+            query = query.Where(e => e.AdultPrice >= model.MinPrice);
         if (model.MaxPrice != null)
-            query = query.Where(e => e.Price <= model.MaxPrice);
+            query = query.Where(e => e.AdultPrice <= model.MaxPrice);
 
         var paginationModel = await query.Paging(model.Page, model.Size);
 

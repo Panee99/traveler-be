@@ -14,5 +14,7 @@ public class Traveler : Account
 
     public string? Address { get; set; }
 
-    // public virtual ICollection<Booking> Bookings { get; set; } = new List<Booking>();
+    public virtual ICollection<Booking> Bookings { get; set; } = new List<Booking>();
+    
+    public virtual ICollection<TravelerInTour> TravelerInTours { get; set; } = new List<TravelerInTour>();
 }
