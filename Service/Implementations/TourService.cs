@@ -6,6 +6,7 @@ using Mapster;
 using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Service.Commons;
 using Service.Interfaces;
 using Service.Models.Attachment;
 using Service.Models.Location;
@@ -75,7 +76,7 @@ public class TourService : BaseService, ITourService
         if (tour is null) return Error.NotFound();
 
         // Update
-        tour = model.Adapt(tour, MapperHelper.IgnoreNullConfig<TourUpdateModel, Tour>());
+        model.AdaptIgnoreNull(tour);
 
         _tourRepo.Update(tour);
         await UnitOfWork.SaveChangesAsync();
@@ -155,6 +156,20 @@ public class TourService : BaseService, ITourService
         _locationRepo.Add(location);
 
         await UnitOfWork.SaveChangesAsync();
+        return location.Adapt<LocationViewModel>();
+    }
+
+    public async Task<Result<LocationViewModel>> UpdateLocation(Guid locationId, LocationUpdateModel model)
+    {
+        var location = await _locationRepo.FindAsync(locationId);
+        if (location is null) return Error.NotFound();
+
+        model.AdaptIgnoreNull(location);
+
+        _locationRepo.Update(location);
+
+        await UnitOfWork.SaveChangesAsync();
+
         return location.Adapt<LocationViewModel>();
     }
 

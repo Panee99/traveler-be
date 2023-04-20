@@ -117,6 +117,14 @@ public class ToursController : ApiController
     }
 
     [ProducesResponseType(typeof(LocationViewModel), StatusCodes.Status200OK)]
+    [HttpPatch("/locations/{locationId:guid}")]
+    public async Task<IActionResult> UpdateLocation(Guid locationId, LocationUpdateModel model)
+    {
+        var result = await _tourService.UpdateLocation(locationId, model);
+        return result.Match(Ok, OnError);
+    }
+
+    [ProducesResponseType(typeof(LocationViewModel), StatusCodes.Status200OK)]
     [HttpDelete("/locations/{locationId:guid}")]
     public async Task<IActionResult> DeleteLocation(Guid locationId)
     {

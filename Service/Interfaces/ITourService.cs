@@ -21,6 +21,8 @@ public interface ITourService
     // Locations
     Task<Result<LocationViewModel>> AddLocation(Guid tourId, LocationCreateModel model);
 
+    Task<Result<LocationViewModel>> UpdateLocation(Guid locationId, LocationUpdateModel model);
+    
     Task<Result> DeleteLocation(Guid id);
 
     Task<Result<List<LocationViewModel>>> ListLocations(Guid tourId);

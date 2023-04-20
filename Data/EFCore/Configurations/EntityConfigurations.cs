@@ -53,9 +53,8 @@ public static class EntityConfigurations
 
         modelBuilder.Entity<Location>(entity =>
         {
-            entity.HasIndex(e => e.CreatedAt);
-            entity.Property(e => e.CreatedAt).HasColumnType("datetime");
             entity.Property(e => e.ArrivalTime).HasColumnType("datetime");
+            entity.Property(e => e.Vehicle).HasMaxLength(256);
         });
 
         modelBuilder.Entity<TourAttachment>().HasKey(e => new { e.TourId, e.AttachmentId });

@@ -5,6 +5,7 @@ using Data.Enums;
 using Mapster;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Service.Commons;
 using Service.Interfaces;
 using Service.Models.Booking;
 using Shared.Helpers;
@@ -54,7 +55,8 @@ public class BookingService : BaseService, IBookingService
     {
         var booking = await _bookingRepo.FindAsync(model.Id);
         if (booking is null) return Error.NotFound();
-        model.Adapt(booking, MapperHelper.IgnoreNullConfig<BookingUpdateModel, Booking>());
+
+        model.AdaptIgnoreNull(booking);
 
         _bookingRepo.Update(booking);
         await UnitOfWork.SaveChangesAsync();
@@ -67,7 +69,7 @@ public class BookingService : BaseService, IBookingService
         if (AuthUser!.Role == AccountRole.Traveler)
             if (AuthUser.Id != model.TravelerId)
                 return Error.Authorization();
-        
+
         var bookings = await _bookingRepo.Query().Where(e => e.TravelerId == model.TravelerId).ToListAsync();
 
         return bookings.Adapt<List<BookingViewModel>>();

@@ -1,4 +1,6 @@
-﻿namespace Data.Entities;
+﻿using Data.Enums;
+
+namespace Data.Entities;
 
 public class Location
 {
@@ -10,8 +12,9 @@ public class Location
 
     public double Latitude { get; set; }
 
+    public Vehicle Vehicle { get; set; }
+
     public virtual Tour Tour { get; set; } = null!;
-    
+
     public DateTime ArrivalTime { get; set; }
-    public DateTime CreatedAt { get; set; }
 }
