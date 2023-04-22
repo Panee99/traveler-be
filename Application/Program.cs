@@ -47,7 +47,7 @@ var app = builder.Build();
 {
     Console.WriteLine(app.Environment.EnvironmentName);
     app
-        .UseHttpsRedirection()
+        // .UseHttpsRedirection()
         .UseCors(x => x
             .AllowAnyHeader()
             .AllowAnyMethod()
