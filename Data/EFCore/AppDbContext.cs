@@ -33,6 +33,7 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<TourGroup>().HasSeedData("tour-groups.json");
         modelBuilder.Entity<Tour>().HasSeedData("tours.json");
         modelBuilder.Entity<Ticket>().HasSeedData("tickets.json");
+        modelBuilder.Entity<Attachment>().HasSeedData("attachments.json");
         // modelBuilder.Entity<TravelerInTourGroup>().HasSeedData("traveler-in-tour-group.json");
     }
 }

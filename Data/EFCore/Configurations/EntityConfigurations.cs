@@ -80,7 +80,6 @@ public static class EntityConfigurations
             entity.Property(e => e.StartTime).HasColumnType("datetime");
             entity.Property(e => e.Departure).HasMaxLength(256);
             entity.Property(e => e.Destination).HasMaxLength(256);
-            entity.Property(e => e.Vehicle).HasMaxLength(256);
             entity.Property(e => e.Type).HasMaxLength(256);
             entity.Property(e => e.Status).HasMaxLength(256);
             entity.Property(e => e.CreatedAt).HasColumnType("datetime");

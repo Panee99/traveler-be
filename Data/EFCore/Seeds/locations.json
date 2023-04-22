@@ -3,24 +3,24 @@
     "Id": "EB46CA8B-5331-4D03-B2FF-1652CC8D0508",
     "Longitude": 100.647812,
     "Latitude": 13.8038957,
-    "TourId": "fd9e9810-4a0a-4cc0-afa5-08db3824da62",
-    "ArrivalTime": "2022-08-31 00:00:00.0000000",
-    "CreatedAt": "2022-08-31 00:00:00.0000000"
+    "TourId": "d1936e4c-9c32-49ae-aa51-0f23089a78d4",
+    "Vehicle": "Car",
+    "ArrivalTime": "2022-08-31 00:00:00.0000000"
   },
   {
     "Id": "7F3364A3-6B6D-4E7E-8116-EBA8443E64D1",
     "Longitude": -9.2788217,
     "Latitude": 38.8774735,
-    "TourId": "fd9e9810-4a0a-4cc0-afa5-08db3824da62",
-    "ArrivalTime": "2022-12-09 00:00:00.0000000",
-    "CreatedAt": "2022-08-31 00:00:00.0000000"
+    "TourId": "d1936e4c-9c32-49ae-aa51-0f23089a78d4",
+    "Vehicle": "Car",
+    "ArrivalTime": "2022-12-09 00:00:00.0000000"
   },
   {
     "Id": "C9F54C4F-BC61-4547-ADA1-7FE5556A73B8",
     "Longitude": 121.3009798,
     "Latitude": 24.9936281,
-    "TourId": "fd9e9810-4a0a-4cc0-afa5-08db3824da62",
-    "ArrivalTime": "2023-03-14 00:00:00.0000000",
-    "CreatedAt": "2022-08-31 00:00:00.0000000"
+    "TourId": "d1936e4c-9c32-49ae-aa51-0f23089a78d4",
+    "Vehicle": "Car",
+    "ArrivalTime": "2023-03-14 00:00:00.0000000"
   }
 ]

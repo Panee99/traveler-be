@@ -24,8 +24,6 @@ public class Tour
 
     public DateTime EndTime { get; set; }
 
-    public string Vehicle { get; set; } = null!;
-
     public int MaxOccupancy { get; set; }
 
     public TourType Type { get; set; }
