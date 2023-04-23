@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace Service.Pagination;
+namespace Service.Commons.Pagination;
 
 public static class PaginationExtensions
 {

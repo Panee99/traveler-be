@@ -1,4 +1,4 @@
-﻿namespace Service.Pagination;
+﻿namespace Service.Commons.Pagination;
 
 public class PaginationModel<T>
 {

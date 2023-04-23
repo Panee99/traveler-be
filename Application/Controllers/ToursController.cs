@@ -1,11 +1,11 @@
 ﻿using Application.Configurations.Auth;
 using Data.Enums;
 using Microsoft.AspNetCore.Mvc;
+using Service.Commons.Pagination;
 using Service.Interfaces;
 using Service.Models.Attachment;
 using Service.Models.Location;
 using Service.Models.Tour;
-using Service.Pagination;
 using Shared.Helpers;
 
 namespace Application.Controllers;

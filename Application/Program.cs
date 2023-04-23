@@ -6,6 +6,8 @@ using Newtonsoft.Json.Serialization;
 using Serilog;
 using Shared.ExternalServices.Firebase;
 
+FirebaseAppHelper.Init();
+
 // Serilog for file logging
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Warning()
@@ -13,8 +15,6 @@ Log.Logger = new LoggerConfiguration()
         outputTemplate:
         "[{Level:w3}] {Timestamp:dd-MM-yyyy HH:mm:ss.fff zzz}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}")
     .CreateLogger();
-
-FirebaseAppHelper.Init();
 
 // BUILDER
 var builder = WebApplication.CreateBuilder(args);

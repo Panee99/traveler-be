@@ -5,7 +5,7 @@ using Shared;
 
 namespace Service.Implementations;
 
-public class BaseService
+public abstract class BaseService
 {
     protected readonly IUnitOfWork UnitOfWork;
     protected AuthUser? AuthUser;

@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using Data.EFCore;
 using Google;
 using Google.Cloud.Storage.V1;
 using Microsoft.Extensions.Logging;
@@ -10,7 +11,7 @@ using Shared.Settings;
 
 namespace Service.Implementations;
 
-public class CloudStorageService : ICloudStorageService
+public class CloudStorageService : BaseService, ICloudStorageService
 {
     private static readonly StorageClient Storage;
     private readonly ILogger<CloudStorageService> _logger;
@@ -21,7 +22,8 @@ public class CloudStorageService : ICloudStorageService
         Storage = CloudStorageHelper.GetStorage();
     }
 
-    public CloudStorageService(IOptions<CloudStorageSettings> settings, ILogger<CloudStorageService> logger)
+    public CloudStorageService(IUnitOfWork unitOfWork, IOptions<CloudStorageSettings> settings,
+        ILogger<CloudStorageService> logger) : base(unitOfWork)
     {
         _settings = settings.Value;
         _logger = logger;

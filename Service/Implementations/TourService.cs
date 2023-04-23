@@ -7,11 +7,11 @@ using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Service.Commons;
+using Service.Commons.Pagination;
 using Service.Interfaces;
 using Service.Models.Attachment;
 using Service.Models.Location;
 using Service.Models.Tour;
-using Service.Pagination;
 using Shared.Helpers;
 using Shared.ResultExtensions;
 

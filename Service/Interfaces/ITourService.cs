@@ -1,7 +1,7 @@
-﻿using Service.Models.Attachment;
+﻿using Service.Commons.Pagination;
+using Service.Models.Attachment;
 using Service.Models.Location;
 using Service.Models.Tour;
-using Service.Pagination;
 using Shared.ResultExtensions;
 
 namespace Service.Interfaces;

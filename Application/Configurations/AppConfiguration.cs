@@ -1,9 +1,11 @@
 ﻿using System.Reflection;
+using Application.Configurations.Auth;
 using Data.EFCore;
 using Mapster;
 using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using Service.Implementations;
 using Shared.Settings;
 
 namespace Application.Configurations;
@@ -33,6 +35,21 @@ public static class AppConfiguration
         return services.AddDependencies();
     }
 
+    public static IServiceCollection AddDependencies(this IServiceCollection services)
+    {
+        services.AddScoped<JwtMiddleware>();
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+        // Inject Services
+        services.Scan(scan => scan
+            .FromAssemblyOf<BaseService>()
+            .AddClasses(classes => classes.AssignableTo<BaseService>())
+            .AsImplementedInterfaces()
+            .WithScopedLifetime());
+        
+        return services;
+    }
+    
     public static IServiceCollection AddSwagger(this IServiceCollection services)
     {
         services.AddSwaggerGen(c =>
