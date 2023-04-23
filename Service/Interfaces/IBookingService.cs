@@ -6,5 +6,6 @@ namespace Service.Interfaces;
 public interface IBookingService
 {
     Task<Result<BookingViewModel>> Create(Guid travelerId, BookingCreateModel model);
-    
+
+    Task<Result<List<BookingViewModel>>> ListTravelerBooked(Guid travelerId);
 }

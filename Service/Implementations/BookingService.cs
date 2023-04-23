@@ -17,12 +17,14 @@ public class BookingService : BaseService, IBookingService
 {
     private readonly IRepository<Booking> _bookingRepo;
     private readonly IRepository<Tour> _tourRepo;
+    private readonly IRepository<Traveler> _travelerRepo;
 
     public BookingService(IUnitOfWork unitOfWork, IHttpContextAccessor httpContextAccessor)
         : base(unitOfWork, httpContextAccessor)
     {
         _bookingRepo = unitOfWork.Repo<Booking>();
         _tourRepo = unitOfWork.Repo<Tour>();
+        _travelerRepo = unitOfWork.Repo<Traveler>();
     }
 
     public async Task<Result<BookingViewModel>> Create(Guid travelerId, BookingCreateModel model)
@@ -71,6 +73,19 @@ public class BookingService : BaseService, IBookingService
                 return Error.Authorization();
 
         var bookings = await _bookingRepo.Query().Where(e => e.TravelerId == model.TravelerId).ToListAsync();
+
+        return bookings.Adapt<List<BookingViewModel>>();
+    }
+
+    public async Task<Result<List<BookingViewModel>>> ListTravelerBooked(Guid travelerId)
+    {
+        if (!await _travelerRepo.AnyAsync(e => e.Id == travelerId)) 
+            return Error.NotFound("Traveler not exist.");
+
+        var bookings = await _bookingRepo
+            .Query()
+            .Where(e => e.TravelerId == travelerId)
+            .ToListAsync();
 
         return bookings.Adapt<List<BookingViewModel>>();
     }

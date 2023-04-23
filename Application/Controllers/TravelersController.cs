@@ -10,10 +10,12 @@ namespace Application.Controllers;
 public class TravelersController : ApiController
 {
     private readonly ITravelerService _travelerService;
-
-    public TravelersController(ITravelerService travelerService)
+    private readonly IBookingService _bookingService;
+    
+    public TravelersController(ITravelerService travelerService, IBookingService bookingService)
     {
         _travelerService = travelerService;
+        _bookingService = bookingService;
     }
 
     [SwaggerOperation(
@@ -41,6 +43,14 @@ public class TravelersController : ApiController
     public async Task<IActionResult> ListByTour(Guid tourId)
     {
         var result = await _travelerService.ListByTour(tourId);
+        return result.Match(Ok, OnError);
+    }
+
+    [Authorize]
+    [HttpGet("{travelerId:guid}/booked")]
+    public async Task<IActionResult> ListBooked(Guid travelerId)
+    {
+        var result = await _bookingService.ListTravelerBooked(travelerId);
         return result.Match(Ok, OnError);
     }
 }

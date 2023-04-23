@@ -47,7 +47,7 @@ public class ToursController : ApiController
 
     [ProducesResponseType(typeof(TourViewModel), StatusCodes.Status200OK)]
     [AllowAnonymous]
-    [HttpGet("{id:guid}")]
+    [HttpGet("{id:guid}/details")]
     public async Task<IActionResult> Find(Guid id)
     {
         var result = await _tourService.Find(id);
