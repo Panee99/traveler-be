@@ -34,8 +34,8 @@ public static class AppConfiguration
 
         return services.AddDependencies();
     }
-
-    public static IServiceCollection AddDependencies(this IServiceCollection services)
+    
+    private static IServiceCollection AddDependencies(this IServiceCollection services)
     {
         services.AddScoped<JwtMiddleware>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();

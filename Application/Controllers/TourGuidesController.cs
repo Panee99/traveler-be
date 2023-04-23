@@ -3,7 +3,7 @@ using Service.Interfaces;
 
 namespace Application.Controllers;
 
-[Route("guides")]
+[Route("tour-guides")]
 public class TourGuidesController : ApiController
 {
     private readonly ITourGuideService _tourGuideService;
@@ -13,7 +13,7 @@ public class TourGuidesController : ApiController
         _tourGuideService = tourGuideService;
     }
 
-    [HttpGet("{id:guid}/tours")]
+    [HttpGet("{id:guid}/assigned-tours")]
     public async Task<IActionResult> ListAssignedTours(Guid id)
     {
         var result = await _tourGuideService.ListAssignedTours(id);
