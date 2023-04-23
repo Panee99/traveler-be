@@ -13,7 +13,6 @@ public record TourUpdateModel
     string? Destination,
     DateTime? StartTime,
     DateTime? EndTime,
-    string? Vehicle,
     int? MaxOccupancy,
     TourType? Type,
     string? Description,

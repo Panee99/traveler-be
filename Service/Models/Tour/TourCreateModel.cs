@@ -13,7 +13,6 @@ public record TourCreateModel
     string Destination,
     DateTime StartTime,
     DateTime EndTime,
-    string Vehicle,
     int MaxOccupancy,
     TourType Type,
     List<LocationCreateModel> Locations,
