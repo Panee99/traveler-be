@@ -3,12 +3,14 @@ using Data.EFCore.Repositories;
 using Data.Entities;
 using Data.Enums;
 using FirebaseAdmin.Auth;
+using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Service.Errors;
 using Service.Interfaces;
+using Service.Models.Account;
 using Service.Models.Traveler;
 using Shared.Helpers;
 using Shared.ResultExtensions;
@@ -23,16 +25,23 @@ public class TravelerService : BaseService, ITravelerService
     //
     private readonly IRepository<Account> _accountRepo;
     private readonly IRepository<Traveler> _travelerRepo;
+    private readonly IRepository<TravelerInTour> _travelerInTourRepo;
+    private readonly IRepository<Tour> _tourRepo;
+    private readonly ICloudStorageService _cloudStorageService;
 
     public TravelerService(IUnitOfWork unitOfWork, IMapper mapper,
-        ILogger<TravelerService> logger, IHttpContextAccessor httpContextAccessor)
+        ILogger<TravelerService> logger, IHttpContextAccessor httpContextAccessor,
+        ICloudStorageService cloudStorageService)
         : base(unitOfWork, httpContextAccessor)
     {
         _mapper = mapper;
         _logger = logger;
+        _cloudStorageService = cloudStorageService;
         //
         _accountRepo = unitOfWork.Repo<Account>();
         _travelerRepo = unitOfWork.Repo<Traveler>();
+        _travelerInTourRepo = unitOfWork.Repo<TravelerInTour>();
+        _tourRepo = unitOfWork.Repo<Tour>();
     }
 
     public async Task<Result> Register(TravelerRegistrationModel model)
@@ -77,6 +86,26 @@ public class TravelerService : BaseService, ITravelerService
         return _mapper.Map<TravelerProfileViewModel>(entity);
     }
 
+    public async Task<Result<List<ProfileViewModel>>> ListByTour(Guid tourId)
+    {
+        if (!await _tourRepo.AnyAsync(e => e.Id == tourId))
+            return Error.NotFound("Tour not found.");
+
+        var travelers = await _travelerInTourRepo
+            .Query()
+            .Where(e => e.TourId == tourId)
+            .Select(e => e.Traveler)
+            .ToListAsync();
+
+        var views = travelers.Select(e =>
+        {
+            var view = e.Adapt<ProfileViewModel>();
+            if (e.AttachmentId != null) view.Avatar = _cloudStorageService.GetMediaLink(e.AttachmentId.Value);
+            return view;
+        }).ToList();
+
+        return views;
+    }
 
     // PRIVATE
 

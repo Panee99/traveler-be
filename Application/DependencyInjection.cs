@@ -26,6 +26,8 @@ public static class DependencyInjection
         services.AddScoped<IAttachmentService, AttachmentService>();
         services.AddScoped<IBookingService, BookingService>();
         services.AddScoped<ITransactionService, TransactionService>();
+        services.AddScoped<ITourGuideService, TourGuideService>();
+        services.AddScoped<IIncurredCostService, IncurredCostService>();
         
         return services;
     }

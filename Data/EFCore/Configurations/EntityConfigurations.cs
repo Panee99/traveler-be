@@ -120,10 +120,7 @@ public static class EntityConfigurations
                 .HasForeignKey(e => e.TourGroupId).OnDelete(DeleteBehavior.Restrict);
         });
 
-        modelBuilder.Entity<VnPayRequest>(entity =>
-        {
-            entity.HasKey(e => e.TxnRef);
-        });
+        modelBuilder.Entity<VnPayRequest>(entity => { entity.HasKey(e => e.TxnRef); });
 
         modelBuilder.Entity<VnPayResponse>(entity =>
         {
@@ -158,12 +155,6 @@ public static class EntityConfigurations
         //         .OnDelete(DeleteBehavior.ClientSetNull);
         // });
 
-        // modelBuilder.Entity<IncurredCost>(entity =>
-        // {
-        //     entity.Property(e => e.CreatedAt).HasColumnType("datetime");
-        //     entity.HasOne(d => d.TourGuide).WithMany(p => p.IncurredCosts)
-        //         .HasForeignKey(d => d.TourGuideId)
-        //         .OnDelete(DeleteBehavior.ClientSetNull);
-        // });
+        modelBuilder.Entity<IncurredCost>(entity => { entity.Property(e => e.CreatedAt).HasColumnType("datetime"); });
     }
 }

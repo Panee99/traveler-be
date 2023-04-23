@@ -1,0 +1,22 @@
+﻿using Microsoft.AspNetCore.Mvc;
+using Service.Interfaces;
+
+namespace Application.Controllers;
+
+[Route("guides")]
+public class TourGuidesController : ApiController
+{
+    private readonly ITourGuideService _tourGuideService;
+
+    public TourGuidesController(ITourGuideService tourGuideService)
+    {
+        _tourGuideService = tourGuideService;
+    }
+
+    [HttpGet("{id:guid}/tours")]
+    public async Task<IActionResult> ListAssignedTours(Guid id)
+    {
+        var result = await _tourGuideService.ListAssignedTours(id);
+        return result.Match(Ok, OnError);
+    }
+}

@@ -35,4 +35,12 @@ public class TravelersController : ApiController
         var result = await _travelerService.GetProfile(id);
         return result.Match(Ok, OnError);
     }
+
+    [Authorize]
+    [HttpGet("/tours/{tourId:guid}/travelers")]
+    public async Task<IActionResult> ListByTour(Guid tourId)
+    {
+        var result = await _travelerService.ListByTour(tourId);
+        return result.Match(Ok, OnError);
+    }
 }
