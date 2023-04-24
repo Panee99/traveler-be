@@ -1,9 +1,9 @@
+**\.vs
+**\.git
+**\.idea
 **\**\bin
 **\**\obj
 **\**\logs
-**\.idea
-**\.vs
-.get
 
 # Datasource local storage ignored files
 .gitignore
