@@ -10,7 +10,6 @@ using Service.Commons;
 using Service.Commons.Pagination;
 using Service.Interfaces;
 using Service.Models.Attachment;
-using Service.Models.Location;
 using Service.Models.Tour;
 using Shared.Helpers;
 using Shared.ResultExtensions;
@@ -27,8 +26,7 @@ public class TourService : BaseService, ITourService
 
     //
     private readonly IRepository<Tour> _tourRepo;
-    private readonly IRepository<Location> _locationRepo;
-    private readonly IRepository<TourAttachment> _tourAttachmentRepo;
+    private readonly IRepository<TourCarousel> _tourAttachmentRepo;
     private readonly IRepository<Attachment> _attachmentRepo;
 
     public TourService(IUnitOfWork unitOfWork, ICloudStorageService cloudStorageService, IMapper mapper,
@@ -41,9 +39,8 @@ public class TourService : BaseService, ITourService
         _attachmentService = attachmentService;
         //
         _tourRepo = unitOfWork.Repo<Tour>();
-        _locationRepo = unitOfWork.Repo<Location>();
         _attachmentRepo = unitOfWork.Repo<Attachment>();
-        _tourAttachmentRepo = unitOfWork.Repo<TourAttachment>();
+        _tourAttachmentRepo = unitOfWork.Repo<TourCarousel>();
     }
 
     public async Task<Result<TourViewModel>> Create(TourCreateModel model)
@@ -53,16 +50,6 @@ public class TourService : BaseService, ITourService
         tour.Status = TourStatus.New;
 
         tour = _tourRepo.Add(tour);
-
-        var locations = model.Locations.Select(l => new Location()
-        {
-            TourId = tour.Id,
-            Latitude = l.Latitude,
-            Longitude = l.Longitude,
-            ArrivalTime = l.ArrivalTime
-        });
-
-        _locationRepo.AddRange(locations);
 
         await UnitOfWork.SaveChangesAsync();
 
@@ -74,6 +61,7 @@ public class TourService : BaseService, ITourService
         // Get Tour
         var tour = await _tourRepo.FindAsync(id);
         if (tour is null) return Error.NotFound();
+        await UnitOfWork.Attach(tour).Collection(e => e.TourFlow).LoadAsync();
 
         // Update
         model.AdaptIgnoreNull(tour);
@@ -96,12 +84,14 @@ public class TourService : BaseService, ITourService
         return Result.Success();
     }
 
-    public async Task<Result<TourViewModel>> Find(Guid id)
+    public async Task<Result<TourViewModel>> GetDetails(Guid id)
     {
         var entity = await _tourRepo.FindAsync(id);
         if (entity is null) return Error.NotFound();
+        await UnitOfWork.Attach(entity).Collection(e => e.TourFlow).LoadAsync();
 
         var viewModel = _mapper.Map<TourViewModel>(entity);
+        // viewModel.TourFlow = entity.TourFlow.Adapt<List<LocationViewModel>>();
 
         if (entity.ThumbnailId != null)
             viewModel.ThumbnailUrl = _cloudStorageService.GetMediaLink(entity.ThumbnailId.Value);
@@ -109,9 +99,11 @@ public class TourService : BaseService, ITourService
         return viewModel;
     }
 
-    public async Task<Result<PaginationModel<TourViewModel>>> Filter(TourFilterModel model)
+    public async Task<Result<PaginationModel<TourFilterViewModel>>> Filter(TourFilterModel model)
     {
-        IQueryable<Tour> query = _tourRepo.Query().OrderBy(e => e.CreatedAt);
+        IQueryable<Tour> query = _tourRepo.Query()
+            .Include(e => e.TourFlow)
+            .OrderBy(e => e.CreatedAt);
 
         if (!string.IsNullOrEmpty(model.Title))
             query = query.Where(e => e.Title.Contains(model.Title));
@@ -128,72 +120,14 @@ public class TourService : BaseService, ITourService
 
         var paginationModel = await query.Paging(model.Page, model.Size);
 
-        return paginationModel.Map(x =>
+        return paginationModel.Map(tour =>
         {
-            var filterViewModel = _mapper.Map<TourViewModel>(x);
-            if (x.ThumbnailId != null)
-                filterViewModel.ThumbnailUrl = _cloudStorageService.GetMediaLink(x.ThumbnailId.Value);
+            var view = tour.Adapt<TourFilterViewModel>();
+            if (tour.ThumbnailId != null)
+                view.ThumbnailUrl = _cloudStorageService.GetMediaLink(tour.ThumbnailId.Value);
 
-            return filterViewModel;
+            return view;
         });
-    }
-
-    /// <summary>
-    /// TOUR - LOCATIONS
-    /// </summary>
-    public async Task<Result<LocationViewModel>> AddLocation(Guid tourId, LocationCreateModel model)
-    {
-        if (!await _tourRepo.AnyAsync(e => e.Id == tourId)) return Error.NotFound();
-
-        var location = new Location()
-        {
-            TourId = tourId,
-            Longitude = model.Longitude,
-            Latitude = model.Latitude,
-            ArrivalTime = model.ArrivalTime
-        };
-
-        _locationRepo.Add(location);
-
-        await UnitOfWork.SaveChangesAsync();
-        return location.Adapt<LocationViewModel>();
-    }
-
-    public async Task<Result<LocationViewModel>> UpdateLocation(Guid locationId, LocationUpdateModel model)
-    {
-        var location = await _locationRepo.FindAsync(locationId);
-        if (location is null) return Error.NotFound();
-
-        model.AdaptIgnoreNull(location);
-
-        _locationRepo.Update(location);
-
-        await UnitOfWork.SaveChangesAsync();
-
-        return location.Adapt<LocationViewModel>();
-    }
-
-    public async Task<Result> DeleteLocation(Guid id)
-    {
-        if (!await _locationRepo.AnyAsync(e => e.Id == id)) return Error.NotFound();
-
-        _locationRepo.Remove(new Location() { Id = id });
-
-        await UnitOfWork.SaveChangesAsync();
-
-        return Result.Success();
-    }
-
-    public async Task<Result<List<LocationViewModel>>> ListLocations(Guid tourId)
-    {
-        if (!await _tourRepo.AnyAsync(e => e.Id == tourId)) return Error.NotFound();
-
-        var locations = await _locationRepo
-            .Query()
-            .Where(e => e.TourId == tourId)
-            .ToListAsync();
-
-        return locations.Adapt<List<LocationViewModel>>();
     }
 
     /// <summary>
@@ -253,7 +187,7 @@ public class TourService : BaseService, ITourService
         }
     }
 
-    public async Task<Result<AttachmentViewModel>> AddAttachment(Guid tourId, string contentType, Stream stream)
+    public async Task<Result<AttachmentViewModel>> AddToCarousel(Guid tourId, string contentType, Stream stream)
     {
         if (!await _tourRepo.AnyAsync(e => e.Id == tourId))
             return Error.NotFound();
@@ -271,7 +205,7 @@ public class TourService : BaseService, ITourService
 
             var newAttachment = createAttachmentResult.Value;
 
-            _tourAttachmentRepo.Add(new TourAttachment()
+            _tourAttachmentRepo.Add(new TourCarousel()
             {
                 TourId = tourId,
                 AttachmentId = newAttachment.Id
@@ -290,7 +224,7 @@ public class TourService : BaseService, ITourService
         }
     }
 
-    public async Task<Result> DeleteAttachment(Guid tourId, Guid attachmentId)
+    public async Task<Result> DeleteFromCarousel(Guid tourId, Guid attachmentId)
     {
         var tourAttachment = await _tourAttachmentRepo.FindAsync(tourId, attachmentId);
         if (tourAttachment is null) return Error.NotFound();
@@ -310,7 +244,7 @@ public class TourService : BaseService, ITourService
         return Result.Success();
     }
 
-    public async Task<Result<List<AttachmentViewModel>>> ListAttachments(Guid tourId)
+    public async Task<Result<List<AttachmentViewModel>>> GetCarousel(Guid tourId)
     {
         if (!await _tourRepo.AnyAsync(e => e.Id == tourId))
             return Error.NotFound();

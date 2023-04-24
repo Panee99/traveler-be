@@ -57,7 +57,7 @@ public static class EntityConfigurations
             entity.Property(e => e.Vehicle).HasMaxLength(256);
         });
 
-        modelBuilder.Entity<TourAttachment>().HasKey(e => new { e.TourId, e.AttachmentId });
+        modelBuilder.Entity<TourCarousel>().HasKey(e => new { e.TourId, e.AttachmentId });
 
         modelBuilder.Entity<Manager>(entity =>
         {

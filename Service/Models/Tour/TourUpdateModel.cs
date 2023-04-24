@@ -1,14 +1,14 @@
 ﻿using Data.Enums;
+using Service.Models.Location;
 
 namespace Service.Models.Tour;
 
 public record TourUpdateModel
 (
     string? Title,
-    string? Code,
-    double? Price,
+    double? AdultPrice,
     double? ChildrenPrice,
-    double? BabyPrice,
+    double? InfantPrice,
     string? Departure,
     string? Destination,
     DateTime? StartTime,
@@ -16,5 +16,6 @@ public record TourUpdateModel
     int? MaxOccupancy,
     TourType? Type,
     string? Description,
-    TourStatus? Status
+    TourStatus? Status,
+    List<LocationCreateModel>? TourFlow
 );

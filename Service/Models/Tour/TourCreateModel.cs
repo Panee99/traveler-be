@@ -6,15 +6,15 @@ namespace Service.Models.Tour;
 public record TourCreateModel
 (
     string Title,
-    double Price,
+    double AdultPrice,
     double ChildrenPrice,
-    double BabyPrice,
+    double InfantPrice,
     string Departure,
     string Destination,
     DateTime StartTime,
     DateTime EndTime,
     int MaxOccupancy,
     TourType Type,
-    List<LocationCreateModel> Locations,
-    string? Description
+    string? Description,
+    List<LocationCreateModel> TourFlow
 );

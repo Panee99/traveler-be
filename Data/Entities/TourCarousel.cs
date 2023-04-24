@@ -1,6 +1,6 @@
 ﻿namespace Data.Entities;
 
-public class TourAttachment
+public class TourCarousel
 {
     public Guid TourId { get; set; }
 

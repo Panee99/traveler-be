@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using Service.Commons.Pagination;
 using Service.Interfaces;
 using Service.Models.Attachment;
-using Service.Models.Location;
 using Service.Models.Tour;
 using Shared.Helpers;
 
@@ -21,6 +20,9 @@ public class ToursController : ApiController
         _tourService = tourService;
     }
 
+    /// <summary>
+    /// TOUR
+    /// </summary>
     [ProducesResponseType(typeof(TourViewModel), StatusCodes.Status200OK)]
     [HttpPost("")]
     public async Task<IActionResult> Create(TourCreateModel model)
@@ -48,9 +50,9 @@ public class ToursController : ApiController
     [ProducesResponseType(typeof(TourViewModel), StatusCodes.Status200OK)]
     [AllowAnonymous]
     [HttpGet("{id:guid}/details")]
-    public async Task<IActionResult> Find(Guid id)
+    public async Task<IActionResult> GetDetails(Guid id)
     {
-        var result = await _tourService.Find(id);
+        var result = await _tourService.GetDetails(id);
         return result.Match(Ok, OnError);
     }
 
@@ -64,7 +66,7 @@ public class ToursController : ApiController
     }
 
     /// <summary>
-    /// ATTACHMENTS
+    /// THUMBNAIL
     /// </summary>
     [ProducesResponseType(typeof(AttachmentViewModel), StatusCodes.Status200OK)]
     [HttpPut("{id:guid}/thumbnail")]
@@ -77,67 +79,34 @@ public class ToursController : ApiController
         return result.Match(Ok, OnError);
     }
 
+    /// <summary>
+    /// CAROUSEL
+    /// </summary>
     [ProducesResponseType(typeof(AttachmentViewModel), StatusCodes.Status200OK)]
-    [HttpPost("{id:guid}/attachments")]
-    public async Task<IActionResult> AddAttachment(Guid id, IFormFile file)
+    [HttpPost("{id:guid}/carousel")]
+    public async Task<IActionResult> AddToCarousel(Guid id, IFormFile file)
     {
         var validateResult = FileHelper.ValidateImageFile(file);
         if (!validateResult.IsSuccess) return OnError(validateResult.Error);
 
-        var result = await _tourService.AddAttachment(id, file.ContentType, file.OpenReadStream());
+        var result = await _tourService.AddToCarousel(id, file.ContentType, file.OpenReadStream());
         return result.Match(Ok, OnError);
     }
 
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [HttpDelete("{tourId:guid}/attachments/{attachmentId}")]
-    public async Task<IActionResult> DeleteAttachment(Guid tourId, Guid attachmentId)
+    [HttpDelete("{tourId:guid}/carousel/{attachmentId}")]
+    public async Task<IActionResult> DeleteFromCarousel(Guid tourId, Guid attachmentId)
     {
-        var result = await _tourService.DeleteAttachment(tourId, attachmentId);
+        var result = await _tourService.DeleteFromCarousel(tourId, attachmentId);
         return result.Match(Ok, OnError);
     }
 
     [ProducesResponseType(typeof(List<AttachmentViewModel>), StatusCodes.Status200OK)]
-    [HttpGet("{tourId:guid}/attachments")]
+    [HttpGet("{id:guid}/carousel")]
     [AllowAnonymous]
-    public async Task<IActionResult> ListAttachments(Guid tourId)
+    public async Task<IActionResult> GetCarousel(Guid id)
     {
-        var result = await _tourService.ListAttachments(tourId);
-        return result.Match(Ok, OnError);
-    }
-
-    /// <summary>
-    /// LOCATIONS
-    /// </summary>
-    [ProducesResponseType(typeof(LocationViewModel), StatusCodes.Status200OK)]
-    [HttpPost("{id:guid}/locations")]
-    public async Task<IActionResult> AddLocation(Guid id, LocationCreateModel model)
-    {
-        var result = await _tourService.AddLocation(id, model);
-        return result.Match(Ok, OnError);
-    }
-
-    [ProducesResponseType(typeof(LocationViewModel), StatusCodes.Status200OK)]
-    [HttpPatch("/locations/{locationId:guid}")]
-    public async Task<IActionResult> UpdateLocation(Guid locationId, LocationUpdateModel model)
-    {
-        var result = await _tourService.UpdateLocation(locationId, model);
-        return result.Match(Ok, OnError);
-    }
-
-    [ProducesResponseType(typeof(LocationViewModel), StatusCodes.Status200OK)]
-    [HttpDelete("/locations/{locationId:guid}")]
-    public async Task<IActionResult> DeleteLocation(Guid locationId)
-    {
-        var result = await _tourService.DeleteLocation(locationId);
-        return result.Match(Ok, OnError);
-    }
-
-    [ProducesResponseType(typeof(LocationViewModel), StatusCodes.Status200OK)]
-    [HttpGet("{id:guid}/locations")]
-    [AllowAnonymous]
-    public async Task<IActionResult> ListLocations(Guid id)
-    {
-        var result = await _tourService.ListLocations(id);
+        var result = await _tourService.GetCarousel(id);
         return result.Match(Ok, OnError);
     }
 }
