@@ -13,6 +13,4 @@ public interface IUnitOfWork
     IDbContextTransaction BeginTransaction();
 
     EntityEntry<T> Attach<T>(T entity) where T : class;
-
-    EntityEntry Entry(object entity);
 }

@@ -44,11 +44,6 @@ public class UnitOfWork : IUnitOfWork
         return _context.Attach(entity);
     }
 
-    public EntityEntry Entry(object entity)
-    {
-        return _context.Entry(entity);
-    }
-
     // PRIVATE
     private void _generateValues()
     {

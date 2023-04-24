@@ -1,22 +1,12 @@
-# flyctl launch added from .gitignore
-**\﻿**\bin
+**\**\bin
 **\**\obj
 **\**\logs
 **\.idea
 **\.vs
+.get
 
-# flyctl launch added from .idea\.idea.Traveler\.idea\.gitignore
-.idea\.idea.Traveler\.idea\**\﻿# Default ignored files
-.idea\.idea.Traveler\.idea\shelf
-.idea\.idea.Traveler\.idea\workspace.xml
-# Rider ignored files
-.idea\.idea.Traveler\.idea\contentModel.xml
-.idea\.idea.Traveler\.idea\projectSettingsUpdater.xml
-.idea\.idea.Traveler\.idea\modules.xml
-.idea\.idea.Traveler\.idea\.idea.Traveler.iml
-# Editor-based HTTP Client requests
-.idea\.idea.Traveler\.idea\httpRequests
 # Datasource local storage ignored files
-.idea\.idea.Traveler\.idea\dataSources
-.idea\.idea.Traveler\.idea\dataSources.local.xml
+.gitignore
+Dockerfile
+.dockerignore
 fly.toml
