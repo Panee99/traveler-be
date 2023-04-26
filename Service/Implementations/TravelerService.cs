@@ -11,6 +11,7 @@ using Microsoft.Extensions.Logging;
 using Service.Errors;
 using Service.Interfaces;
 using Service.Models.Account;
+using Service.Models.Tour;
 using Service.Models.Traveler;
 using Shared.Helpers;
 using Shared.ResultExtensions;
@@ -101,6 +102,24 @@ public class TravelerService : BaseService, ITravelerService
         {
             var view = e.Adapt<ProfileViewModel>();
             if (e.AttachmentId != null) view.Avatar = _cloudStorageService.GetMediaLink(e.AttachmentId.Value);
+            return view;
+        }).ToList();
+
+        return views;
+    }
+
+    public async Task<Result<List<TourFilterViewModel>>> ListJoinedTours(Guid travelerId)
+    {
+        var tours = await _travelerInTourRepo.Query()
+            .Where(e => e.TravelerId == travelerId)
+            .Select(e => e.Tour)
+            .ToListAsync();
+
+        var views = tours.Select(tour =>
+        {
+            var view = tour.Adapt<TourFilterViewModel>();
+            if (tour.ThumbnailId != null)
+                view.ThumbnailUrl = _cloudStorageService.GetMediaLink(tour.ThumbnailId.Value);
             return view;
         }).ToList();
 

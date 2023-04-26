@@ -14,4 +14,5 @@ public class TourFilterViewModel
     public string? ThumbnailUrl;
     public string? Description;
     public TourType Type;
+    public TourStatus Status;
 }

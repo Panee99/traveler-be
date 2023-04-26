@@ -1,6 +1,7 @@
 ﻿using Application.Configurations.Auth;
 using Microsoft.AspNetCore.Mvc;
 using Service.Interfaces;
+using Service.Models.Tour;
 using Service.Models.Traveler;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -11,7 +12,7 @@ public class TravelersController : ApiController
 {
     private readonly ITravelerService _travelerService;
     private readonly IBookingService _bookingService;
-    
+
     public TravelersController(ITravelerService travelerService, IBookingService bookingService)
     {
         _travelerService = travelerService;
@@ -47,10 +48,19 @@ public class TravelersController : ApiController
     }
 
     [Authorize]
-    [HttpGet("{travelerId:guid}/booked")]
-    public async Task<IActionResult> ListBooked(Guid travelerId)
+    [HttpGet("{id:guid}/booked")]
+    public async Task<IActionResult> ListBooked(Guid id)
     {
-        var result = await _bookingService.ListTravelerBooked(travelerId);
+        var result = await _bookingService.ListTravelerBooked(id);
+        return result.Match(Ok, OnError);
+    }
+
+    [ProducesResponseType(typeof(TourFilterViewModel), StatusCodes.Status200OK)]
+    [Authorize]
+    [HttpGet("{id:guid}/joined-tours")]
+    public async Task<IActionResult> ListJoinedTours(Guid id)
+    {
+        var result = await _travelerService.ListJoinedTours(id);
         return result.Match(Ok, OnError);
     }
 }
