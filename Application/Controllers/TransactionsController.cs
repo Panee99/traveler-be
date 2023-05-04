@@ -16,28 +16,15 @@ namespace Application.Controllers;
 public class TransactionsController : ApiController
 {
     private readonly VnPaySettings _vnPaySettings;
-    private readonly ITransactionService _transactionService;
+
     private readonly IVnPayService _vnPayService;
 
     public TransactionsController(
         IOptions<VnPaySettings> vnPaySettings,
-        ITransactionService transactionService,
         IVnPayService vnPayService)
     {
-        _transactionService = transactionService;
         _vnPayService = vnPayService;
         _vnPaySettings = vnPaySettings.Value;
-    }
-
-    [Authorize(AccountRole.Traveler)]
-    [HttpPost("")]
-    public async Task<IActionResult> Create(TransactionCreateModel model)
-    {
-        var clientIp = HttpContext.Connection.RemoteIpAddress?.MapToIPv4().ToString();
-        if (clientIp is null) return OnError(Error.Unexpected("Client ip unknown"));
-
-        var result = await _transactionService.CreateTransaction(model.BookingId, clientIp);
-        return result.Match(Ok, OnError);
     }
 
     [ApiExplorerSettings(IgnoreApi = true)]

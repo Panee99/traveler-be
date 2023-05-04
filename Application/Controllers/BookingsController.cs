@@ -3,6 +3,7 @@ using Data.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Service.Interfaces;
 using Service.Models.Booking;
+using Shared.ResultExtensions;
 
 namespace Application.Controllers;
 
@@ -10,10 +11,23 @@ namespace Application.Controllers;
 public class BookingsController : ApiController
 {
     private readonly IBookingService _bookingService;
+    private readonly ITransactionService _transactionService;
 
-    public BookingsController(IBookingService bookingService)
+    public BookingsController(IBookingService bookingService, ITransactionService transactionService)
     {
         _bookingService = bookingService;
+        _transactionService = transactionService;
+    }
+
+    [Authorize(AccountRole.Traveler)]
+    [HttpGet("{id}/pay")]
+    public async Task<IActionResult> Create(Guid id)
+    {
+        var clientIp = HttpContext.Connection.RemoteIpAddress?.MapToIPv4().ToString();
+        if (clientIp is null) return OnError(Error.Unexpected("Client ip unknown"));
+
+        var result = await _transactionService.CreateTransaction(id, clientIp);
+        return result.Match(Ok, OnError);
     }
 
     [Authorize(AccountRole.Traveler)]

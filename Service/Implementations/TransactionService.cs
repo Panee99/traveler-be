@@ -3,6 +3,7 @@ using Data.EFCore.Repositories;
 using Data.Entities;
 using Data.Enums;
 using Mapster;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Service.Interfaces;
@@ -25,7 +26,9 @@ public class TransactionService : BaseService, ITransactionService
     private readonly IRepository<Booking> _bookingRepo;
 
     public TransactionService(IUnitOfWork unitOfWork, IOptions<VnPaySettings> vnPaySettings,
-        IVnPayService vnPayService, ILogger<TransactionService> logger) : base(unitOfWork)
+        IVnPayService vnPayService, ILogger<TransactionService> logger,
+        IHttpContextAccessor httpContextAccessor) :
+        base(unitOfWork, httpContextAccessor)
     {
         _vnPayService = vnPayService;
         _logger = logger;
@@ -38,9 +41,13 @@ public class TransactionService : BaseService, ITransactionService
     {
         var booking = await _bookingRepo.FindAsync(bookingId);
         if (booking is null) return Error.NotFound("Booking not found");
-        if (booking.PaymentStatus is PaymentStatus.Paid) return Error.Conflict("Booking already paid");
 
-        var amount = _calcAmount(booking);
+        if (AuthUser!.Id != booking.TravelerId) return Error.Conflict("Can only pay your own booking");
+
+        if (booking.PaymentStatus is PaymentStatus.Paid)
+            return Error.Conflict("Booking already paid");
+
+        var amount = _calculateAmount(booking);
         await using var tx = UnitOfWork.BeginTransaction();
 
         try
@@ -100,7 +107,7 @@ public class TransactionService : BaseService, ITransactionService
         };
     }
 
-    private static int _calcAmount(Booking booking)
+    private static int _calculateAmount(Booking booking)
     {
         return (booking.AdultPrice * booking.AdultQuantity) +
                (booking.ChildrenPrice * booking.ChildrenQuantity) +

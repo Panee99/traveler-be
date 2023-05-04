@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Service.Interfaces;
 using Service.Models.Tour;
+using Service.Models.TourGroup;
 using Service.Models.Traveler;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -55,4 +56,13 @@ public class TravelersController : ApiController
         var result = await _travelerService.ListJoinedTours(id);
         return result.Match(Ok, OnError);
     }
+
+    // [ProducesResponseType(typeof(TourGroupViewModel), StatusCodes.Status200OK)]
+    // [Authorize]
+    // [HttpGet("{id:guid}/joined-groups")]
+    // public async Task<IActionResult> ListJoinedTourGroups(Guid id)
+    // {
+    //     var result = await _travelerService.ListJoinedTours(id);
+    //     return result.Match(Ok, OnError);
+    // }
 }
