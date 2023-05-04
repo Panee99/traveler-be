@@ -67,6 +67,43 @@ public class VnPayService : BaseService, IVnPayService
             request.Status = VnPayRequestStatus.Success;
             request.Transaction.Status = TransactionStatus.Success;
             request.Transaction.Booking.PaymentStatus = PaymentStatus.Paid;
+            
+            // Assign traveler to a group
+            // 1. find available group
+            var booking = request.Transaction.Booking;
+            var occupancy = TotalBookingOccupancy(booking);
+            var availableTourGroup = await _tourGroupRepo
+                .Query()
+                .Where(tourGroup => tourGroup.TourId == booking.TourId)
+                .Where(tourGroup => tourGroup.MaxOccupancy > tourGroup.TravelerInTours.Count + occupancy)
+                .FirstOrDefaultAsync();
+
+            // 2. create new group if all groups full
+            if (availableTourGroup is null)
+            {
+                var tourGroupCount = await _tourRepo
+                    .Query()
+                    .Where(e => e.Id == booking.TourId)
+                    .Select(e => e.TourGroups)
+                    .CountAsync();
+
+                availableTourGroup = new TourGroup()
+                {
+                    GroupName = $"Group {tourGroupCount + 1}",
+                    TourId = booking.TourId,
+                    MaxOccupancy = 50,
+                };
+
+                _tourGroupRepo.Add(availableTourGroup);
+            }
+
+            // 3. add traveler to group
+            _travelerInTourRepo.Add(new TravelerInTour()
+            {
+                TourId = booking.TourId,
+                TravelerId = booking.TravelerId,
+                TourGroupId = availableTourGroup.Id
+            });
         }
         else
         {
@@ -76,43 +113,6 @@ public class VnPayService : BaseService, IVnPayService
 
         _vnPayRequestRepo.Update(request);
 
-        // Assign traveler to a group
-        // 1. find available group
-        var booking = request.Transaction.Booking;
-        var occupancy = TotalBookingOccupancy(booking);
-        var availableTourGroup = await _tourGroupRepo
-            .Query()
-            .Where(tourGroup => tourGroup.TourId == booking.TourId)
-            .Where(tourGroup => tourGroup.MaxOccupancy > tourGroup.TravelerInTours.Count + occupancy)
-            .FirstOrDefaultAsync();
-
-        // 2. create new group if all groups full
-        if (availableTourGroup is null)
-        {
-            var tourGroupCount = await _tourRepo
-                .Query()
-                .Where(e => e.Id == booking.TourId)
-                .Select(e => e.TourGroups)
-                .CountAsync();
-
-            availableTourGroup = new TourGroup()
-            {
-                GroupName = $"Group {tourGroupCount + 1}",
-                TourId = booking.TourId,
-                MaxOccupancy = 50,
-            };
-
-            _tourGroupRepo.Add(availableTourGroup);
-        }
-
-        // 3. add traveler to group
-        _travelerInTourRepo.Add(new TravelerInTour()
-        {
-            TourId = booking.TourId,
-            TravelerId = booking.TravelerId,
-            TourGroupId = availableTourGroup.Id
-        });
-
         // Finalize
         await UnitOfWork.SaveChangesAsync();
         return Result.Success();
@@ -120,7 +120,7 @@ public class VnPayService : BaseService, IVnPayService
 
     private static bool IsSuccessResponse(VnPayResponseModel model)
     {
-        return (model.ResponseCode != "00" || model.TransactionStatus != "00");
+        return model is { ResponseCode: "00", TransactionStatus: "00" };
     }
 
     private static int TotalBookingOccupancy(Booking booking)
