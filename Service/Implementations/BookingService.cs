@@ -32,6 +32,17 @@ public class BookingService : BaseService, IBookingService
         var tour = await _tourRepo.FindAsync(model.TourId);
         if (tour is null) return Error.NotFound("Tour not found");
 
+        // check if traveler in any active tour.
+        var travelerInActiveTour = await _travelerRepo.Query()
+            .Where(traveler => traveler.Id == travelerId)
+            .SelectMany(traveler => traveler.TravelerInTours)
+            .Select(travelerInTour => travelerInTour.Tour)
+            .Where(t => t.Status == TourStatus.Active)
+            .FirstOrDefaultAsync();
+
+        if (travelerInActiveTour != null)
+            return Error.Conflict("Traveler already in an active tour");
+
         var booking = new Booking()
         {
             TourId = model.TourId,
@@ -79,7 +90,7 @@ public class BookingService : BaseService, IBookingService
 
     public async Task<Result<List<BookingViewModel>>> ListTravelerBooked(Guid travelerId)
     {
-        if (!await _travelerRepo.AnyAsync(e => e.Id == travelerId)) 
+        if (!await _travelerRepo.AnyAsync(e => e.Id == travelerId))
             return Error.NotFound("Traveler not exist.");
 
         var bookings = await _bookingRepo

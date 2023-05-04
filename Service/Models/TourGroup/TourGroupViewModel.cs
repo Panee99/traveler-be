@@ -6,4 +6,5 @@ public class TourGroupViewModel
     public string GroupName = null!;
     public Guid Id;
     public Guid? TourGuideId;
+    public int MaxOccupancy;
 }

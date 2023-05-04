@@ -60,11 +60,13 @@ public class TransactionsController : ApiController
         }
     }
 
+    [ApiExplorerSettings(IgnoreApi = true)]
     [HttpGet("result")]
     public IActionResult PaymentResult([FromQuery] Dictionary<string, string> queryParams)
     {
         if (!VnPay.ValidateSignature(_vnPaySettings.HashSecret, queryParams))
             return BadRequest("Invalid Signature.");
+
         var model = VnPay.ParseToResponseModel(queryParams);
 
         DateTime? payDate = model.PayDate is null

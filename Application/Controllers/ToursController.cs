@@ -14,10 +14,12 @@ namespace Application.Controllers;
 public class ToursController : ApiController
 {
     private readonly ITourService _tourService;
+    private readonly ITravelerService _travelerService;
 
-    public ToursController(ITourService tourService)
+    public ToursController(ITourService tourService, ITravelerService travelerService)
     {
         _tourService = tourService;
+        _travelerService = travelerService;
     }
 
     /// <summary>
@@ -62,6 +64,17 @@ public class ToursController : ApiController
     public async Task<IActionResult> Filter(TourFilterModel model)
     {
         var result = await _tourService.Filter(model);
+        return result.Match(Ok, OnError);
+    }
+
+    /// <summary>
+    /// TRAVELER IN TOUR
+    /// </summary>
+    [Authorize]
+    [HttpGet("{tourId:guid}/travelers")]
+    public async Task<IActionResult> ListByTour(Guid tourId)
+    {
+        var result = await _travelerService.ListByTour(tourId);
         return result.Match(Ok, OnError);
     }
 
