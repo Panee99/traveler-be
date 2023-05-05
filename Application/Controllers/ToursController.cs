@@ -15,11 +15,13 @@ public class ToursController : ApiController
 {
     private readonly ITourService _tourService;
     private readonly ITravelerService _travelerService;
-
-    public ToursController(ITourService tourService, ITravelerService travelerService)
+    private readonly ITourGroupService _tourGroupService;
+    
+    public ToursController(ITourService tourService, ITravelerService travelerService, ITourGroupService tourGroupService)
     {
         _tourService = tourService;
         _travelerService = travelerService;
+        _tourGroupService = tourGroupService;
     }
 
     /// <summary>
@@ -71,10 +73,10 @@ public class ToursController : ApiController
     /// TRAVELER IN TOUR
     /// </summary>
     [Authorize]
-    [HttpGet("{tourId:guid}/travelers")]
-    public async Task<IActionResult> ListByTour(Guid tourId)
+    [HttpGet("{id:guid}/travelers")]
+    public async Task<IActionResult> ListByTour(Guid id)
     {
-        var result = await _travelerService.ListByTour(tourId);
+        var result = await _travelerService.ListByTour(id);
         return result.Match(Ok, OnError);
     }
 
@@ -120,6 +122,13 @@ public class ToursController : ApiController
     public async Task<IActionResult> GetCarousel(Guid id)
     {
         var result = await _tourService.GetCarousel(id);
+        return result.Match(Ok, OnError);
+    }
+    
+    [HttpGet("{id:guid}/tour-groups")]
+    public async Task<IActionResult> ListTourGroups(Guid id)
+    {
+        var result = await _tourGroupService.ListGroupsByTour(id);
         return result.Match(Ok, OnError);
     }
 }
