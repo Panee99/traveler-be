@@ -1,5 +1,4 @@
 ﻿using Data.EFCore;
-using Data.EFCore.Repositories;
 using Data.Entities;
 using Data.Enums;
 using Mapster;
@@ -15,21 +14,19 @@ namespace Service.Implementations;
 
 public class TourGuideService : BaseService, ITourGuideService
 {
-    private readonly IRepository<TourGuide> _tourGuideRepo;
     private readonly ICloudStorageService _cloudStorageService;
 
-    public TourGuideService(IUnitOfWork unitOfWork, ICloudStorageService cloudStorageService) : base(unitOfWork)
+    public TourGuideService(UnitOfWork unitOfWork, ICloudStorageService cloudStorageService) : base(unitOfWork)
     {
         _cloudStorageService = cloudStorageService;
-        _tourGuideRepo = unitOfWork.Repo<TourGuide>();
     }
 
     public async Task<Result<TourGuideViewModel>> Create(TourGuideCreateModel model)
     {
-        if (await _tourGuideRepo.AnyAsync(e => e.Phone == model.Phone))
+        if (await UnitOfWork.TourGuides.AnyAsync(e => e.Phone == model.Phone))
             return Error.Conflict("Phone number already exist");
 
-        if (await _tourGuideRepo.AnyAsync(e => e.Email == model.Email))
+        if (await UnitOfWork.TourGuides.AnyAsync(e => e.Email == model.Email))
             return Error.Conflict("Email already exist");
 
         var tourGuide = new TourGuide()
@@ -45,7 +42,7 @@ public class TourGuideService : BaseService, ITourGuideService
             Status = AccountStatus.Active,
         };
 
-        _tourGuideRepo.Add(tourGuide);
+        UnitOfWork.TourGuides.Add(tourGuide);
 
         await UnitOfWork.SaveChangesAsync();
 
@@ -54,10 +51,10 @@ public class TourGuideService : BaseService, ITourGuideService
 
     public async Task<Result<List<TourFilterViewModel>>> ListAssignedTours(Guid tourGuideId)
     {
-        if (!await _tourGuideRepo.AnyAsync(e => e.Id == tourGuideId))
+        if (!await UnitOfWork.TourGuides.AnyAsync(e => e.Id == tourGuideId))
             return Error.NotFound("Tour Guide not found.");
 
-        var assignedTours = await _tourGuideRepo.Query()
+        var assignedTours = await UnitOfWork.TourGuides.Query()
             .SelectMany(guide => guide.TourGroups)
             .Select(group => group.Tour)
             .ToListAsync();
@@ -76,7 +73,7 @@ public class TourGuideService : BaseService, ITourGuideService
 
     public async Task<Result<List<TourGuideViewModel>>> ListAll()
     {
-        var tourGuides = await _tourGuideRepo.Query().ToListAsync();
+        var tourGuides = await UnitOfWork.TourGuides.Query().ToListAsync();
         return tourGuides.Adapt<List<TourGuideViewModel>>();
     }
 }

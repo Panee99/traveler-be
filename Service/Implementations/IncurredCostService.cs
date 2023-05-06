@@ -1,5 +1,4 @@
 ﻿using Data.EFCore;
-using Data.EFCore.Repositories;
 using Data.Entities;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
@@ -11,18 +10,16 @@ namespace Service.Implementations;
 
 public class IncurredCostService : BaseService, IIncurredCostService
 {
-    private readonly IRepository<IncurredCost> _incurredCostRepo;
 
-    public IncurredCostService(IUnitOfWork unitOfWork) : base(unitOfWork)
+    public IncurredCostService(UnitOfWork unitOfWork) : base(unitOfWork)
     {
-        _incurredCostRepo = unitOfWork.Repo<IncurredCost>();
     }
 
     public async Task<Result<InccuredCostViewModel>> Create(IncurredCostCreateModel model)
     {
         var incurredCost = model.Adapt<IncurredCost>();
 
-        _incurredCostRepo.Add(incurredCost);
+        UnitOfWork.IncurredCosts.Add(incurredCost);
 
         await UnitOfWork.SaveChangesAsync();
 
@@ -31,10 +28,10 @@ public class IncurredCostService : BaseService, IIncurredCostService
 
     public async Task<Result> Delete(Guid incurredCostId)
     {
-        var incurredCost = await _incurredCostRepo.FindAsync(incurredCostId);
+        var incurredCost = await UnitOfWork.IncurredCosts.FindAsync(incurredCostId);
         if (incurredCost is null) return Error.NotFound();
 
-        _incurredCostRepo.Remove(incurredCost);
+        UnitOfWork.IncurredCosts.Remove(incurredCost);
 
         await UnitOfWork.SaveChangesAsync();
 
@@ -43,7 +40,7 @@ public class IncurredCostService : BaseService, IIncurredCostService
 
     public async Task<Result<List<InccuredCostViewModel>>> List(Guid tourId, Guid tourGuideId)
     {
-        var incurredCosts = await _incurredCostRepo
+        var incurredCosts = await UnitOfWork.IncurredCosts
             .Query()
             .Where(e => e.TourId == tourId && e.TourGuideId == tourGuideId)
             .ToListAsync();

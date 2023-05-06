@@ -34,11 +34,11 @@ public static class AppConfiguration
 
         return services.AddDependencies();
     }
-    
+
     private static IServiceCollection AddDependencies(this IServiceCollection services)
     {
         services.AddScoped<JwtMiddleware>();
-        services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddScoped<UnitOfWork>();
 
         // Inject Services
         services.Scan(scan => scan
@@ -46,10 +46,10 @@ public static class AppConfiguration
             .AddClasses(classes => classes.AssignableTo<BaseService>())
             .AsImplementedInterfaces()
             .WithScopedLifetime());
-        
+
         return services;
     }
-    
+
     public static IServiceCollection AddSwagger(this IServiceCollection services)
     {
         services.AddSwaggerGen(c =>

@@ -1,5 +1,4 @@
 ﻿using Data.EFCore;
-using Data.EFCore.Repositories;
 using Data.Entities;
 using Data.Enums;
 using MapsterMapper;
@@ -16,34 +15,24 @@ public class VnPayService : BaseService, IVnPayService
 {
     private readonly ILogger<VnPayService> _logger;
     private readonly IMapper _mapper;
-    private readonly IRepository<VnPayRequest> _vnPayRequestRepo;
-    private readonly IRepository<VnPayResponse> _vnPayResponseRepo;
-    private readonly IRepository<TravelerInTour> _travelerInTourRepo;
-    private readonly IRepository<TourGroup> _tourGroupRepo;
-    private readonly IRepository<Tour> _tourRepo;
 
-    public VnPayService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<VnPayService> logger) : base(unitOfWork)
+    public VnPayService(UnitOfWork unitOfWork, IMapper mapper, ILogger<VnPayService> logger) : base(unitOfWork)
     {
         _mapper = mapper;
         _logger = logger;
-        _vnPayRequestRepo = unitOfWork.Repo<VnPayRequest>();
-        _vnPayResponseRepo = unitOfWork.Repo<VnPayResponse>();
-        _travelerInTourRepo = unitOfWork.Repo<TravelerInTour>();
-        _tourGroupRepo = unitOfWork.Repo<TourGroup>();
-        _tourRepo = UnitOfWork.Repo<Tour>();
     }
 
     public async Task<Result<Guid>> CreateRequest(VnPayRequestModel model)
     {
         var entity = _mapper.Map<VnPayRequest>(model);
-        _vnPayRequestRepo.Add(entity);
+        UnitOfWork.VnPayRequests.Add(entity);
         await UnitOfWork.SaveChangesAsync();
         return entity.TxnRef;
     }
 
     public async Task<Result> HandleResponse(VnPayResponseModel model)
     {
-        var request = await _vnPayRequestRepo
+        var request = await UnitOfWork.VnPayRequests
             .Query()
             .Where(e => e.TxnRef == model.TxnRef)
             .Include(e => e.Transaction)
@@ -59,7 +48,7 @@ public class VnPayService : BaseService, IVnPayService
         // Save Response
         var response = _mapper.Map<VnPayResponse>(model);
         response.Timestamp = DateTimeHelper.VnNow();
-        _vnPayResponseRepo.Add(response);
+        UnitOfWork.VnPayResponses.Add(response);
 
         // Update Request and Transaction status
         if (IsSuccessResponse(model))
@@ -72,7 +61,7 @@ public class VnPayService : BaseService, IVnPayService
             // 1. find available group
             var booking = request.Transaction.Booking;
             var occupancy = TotalBookingOccupancy(booking);
-            var availableTourGroup = await _tourGroupRepo
+            var availableTourGroup = await UnitOfWork.TourGroups
                 .Query()
                 .Where(tourGroup => tourGroup.TourId == booking.TourId)
                 .Where(tourGroup => tourGroup.MaxOccupancy > tourGroup.TravelerInTours.Count + occupancy)
@@ -81,7 +70,7 @@ public class VnPayService : BaseService, IVnPayService
             // 2. create new group if all groups full
             if (availableTourGroup is null)
             {
-                var tourGroupCount = await _tourRepo
+                var tourGroupCount = await UnitOfWork.Tours
                     .Query()
                     .Where(e => e.Id == booking.TourId)
                     .Select(e => e.TourGroups)
@@ -94,11 +83,11 @@ public class VnPayService : BaseService, IVnPayService
                     MaxOccupancy = 50,
                 };
 
-                _tourGroupRepo.Add(availableTourGroup);
+                UnitOfWork.TourGroups.Add(availableTourGroup);
             }
 
             // 3. add traveler to group
-            _travelerInTourRepo.Add(new TravelerInTour()
+            UnitOfWork.TravelersInTours.Add(new TravelerInTour()
             {
                 TourId = booking.TourId,
                 TravelerId = booking.TravelerId,
@@ -111,7 +100,7 @@ public class VnPayService : BaseService, IVnPayService
             request.Transaction.Status = TransactionStatus.Failed;
         }
 
-        _vnPayRequestRepo.Update(request);
+        UnitOfWork.VnPayRequests.Update(request);
 
         // Finalize
         await UnitOfWork.SaveChangesAsync();

@@ -15,7 +15,7 @@ public class CloudMessagingService : BaseService, ICloudMessagingService
         Messaging = FirebaseMessaging.DefaultInstance;
     }
 
-    public CloudMessagingService(ILogger<CloudMessagingService> logger, IUnitOfWork unitOfWork) : base(unitOfWork)
+    public CloudMessagingService(ILogger<CloudMessagingService> logger, UnitOfWork unitOfWork) : base(unitOfWork)
     {
         _logger = logger;
     }

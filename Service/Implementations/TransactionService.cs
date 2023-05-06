@@ -1,5 +1,4 @@
 ﻿using Data.EFCore;
-using Data.EFCore.Repositories;
 using Data.Entities;
 using Data.Enums;
 using Mapster;
@@ -22,27 +21,22 @@ public class TransactionService : BaseService, ITransactionService
     private readonly IVnPayService _vnPayService;
     private readonly ILogger<TransactionService> _logger;
 
-    private readonly IRepository<Transaction> _transactionRepo;
-    private readonly IRepository<Booking> _bookingRepo;
-
-    public TransactionService(IUnitOfWork unitOfWork, IOptions<VnPaySettings> vnPaySettings,
+    public TransactionService(UnitOfWork unitOfWork, IOptions<VnPaySettings> vnPaySettings,
         IVnPayService vnPayService, ILogger<TransactionService> logger,
         IHttpContextAccessor httpContextAccessor) :
         base(unitOfWork, httpContextAccessor)
     {
         _vnPayService = vnPayService;
         _logger = logger;
-        _transactionRepo = unitOfWork.Repo<Transaction>();
-        _bookingRepo = unitOfWork.Repo<Booking>();
         _vnPaySettings = vnPaySettings.Value;
     }
 
     public async Task<Result<TransactionViewModel>> CreateTransaction(Guid bookingId, string clientIp)
     {
-        var booking = await _bookingRepo.FindAsync(bookingId);
+        var booking = await UnitOfWork.Bookings.FindAsync(bookingId);
         if (booking is null) return Error.NotFound("Booking not found");
 
-        if (AuthUser!.Id != booking.TravelerId) return Error.Conflict("Can only pay your own booking");
+        if (CurrentUser!.Id != booking.TravelerId) return Error.Conflict("Can only pay your own booking");
 
         if (booking.PaymentStatus is PaymentStatus.Paid)
             return Error.Conflict("Booking already paid");
@@ -52,7 +46,7 @@ public class TransactionService : BaseService, ITransactionService
 
         try
         {
-            var newTransaction = _transactionRepo.Add(new Transaction()
+            var newTransaction = UnitOfWork.Transactions.Add(new Transaction()
             {
                 BookingId = bookingId,
                 Amount = amount,

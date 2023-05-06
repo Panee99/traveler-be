@@ -1,5 +1,4 @@
 ﻿using Data.EFCore;
-using Data.EFCore.Repositories;
 using Data.Entities;
 using Service.Interfaces;
 using Service.Models.Attachment;
@@ -10,18 +9,15 @@ namespace Service.Implementations;
 public class AttachmentService : BaseService, IAttachmentService
 {
     private readonly ICloudStorageService _cloudStorageService;
-    private readonly IRepository<Attachment> _attachmentRepo;
 
-    public AttachmentService(IUnitOfWork unitOfWork, ICloudStorageService cloudStorageService) : base(unitOfWork)
+    public AttachmentService(UnitOfWork unitOfWork, ICloudStorageService cloudStorageService) : base(unitOfWork)
     {
         _cloudStorageService = cloudStorageService;
-        //
-        _attachmentRepo = unitOfWork.Repo<Attachment>();
     }
 
     public async Task<Result<AttachmentViewModel>> Create(string contentType, Stream stream)
     {
-        var attachment = _attachmentRepo.Add(new Attachment()
+        var attachment = UnitOfWork.Attachments.Add(new Attachment()
         {
             ContentType = contentType
         });
@@ -43,7 +39,7 @@ public class AttachmentService : BaseService, IAttachmentService
 
     public async Task<Result> Delete(Guid id)
     {
-        _attachmentRepo.Remove(new Attachment { Id = id });
+        UnitOfWork.Attachments.Remove(new Attachment { Id = id });
 
         await UnitOfWork.SaveChangesAsync();
 

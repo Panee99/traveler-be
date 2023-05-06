@@ -22,7 +22,7 @@ public class CloudStorageService : BaseService, ICloudStorageService
         Storage = CloudStorageHelper.GetStorage();
     }
 
-    public CloudStorageService(IUnitOfWork unitOfWork, IOptions<CloudStorageSettings> settings,
+    public CloudStorageService(UnitOfWork unitOfWork, IOptions<CloudStorageSettings> settings,
         ILogger<CloudStorageService> logger) : base(unitOfWork)
     {
         _settings = settings.Value;

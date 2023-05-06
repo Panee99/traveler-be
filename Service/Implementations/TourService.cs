@@ -1,5 +1,4 @@
 ﻿using Data.EFCore;
-using Data.EFCore.Repositories;
 using Data.Entities;
 using Data.Enums;
 using Mapster;
@@ -24,12 +23,7 @@ public class TourService : BaseService, ITourService
     private readonly ICloudStorageService _cloudStorageService;
     private readonly IAttachmentService _attachmentService;
 
-    //
-    private readonly IRepository<Tour> _tourRepo;
-    private readonly IRepository<TourCarousel> _tourAttachmentRepo;
-    private readonly IRepository<Attachment> _attachmentRepo;
-
-    public TourService(IUnitOfWork unitOfWork, ICloudStorageService cloudStorageService, IMapper mapper,
+    public TourService(UnitOfWork unitOfWork, ICloudStorageService cloudStorageService, IMapper mapper,
         ILogger<TourService> logger, IAttachmentService attachmentService) :
         base(unitOfWork)
     {
@@ -37,10 +31,6 @@ public class TourService : BaseService, ITourService
         _mapper = mapper;
         _logger = logger;
         _attachmentService = attachmentService;
-        //
-        _tourRepo = unitOfWork.Repo<Tour>();
-        _attachmentRepo = unitOfWork.Repo<Attachment>();
-        _tourAttachmentRepo = unitOfWork.Repo<TourCarousel>();
     }
 
     public async Task<Result<TourViewModel>> Create(TourCreateModel model)
@@ -50,7 +40,7 @@ public class TourService : BaseService, ITourService
         tour.Code = await _generateTourCode();
         tour.Status = TourStatus.New;
 
-        tour = _tourRepo.Add(tour);
+        tour = UnitOfWork.Tours.Add(tour);
         await UnitOfWork.SaveChangesAsync();
 
         // Result
@@ -64,14 +54,14 @@ public class TourService : BaseService, ITourService
     public async Task<Result<TourViewModel>> Update(Guid id, TourUpdateModel model)
     {
         // Get Tour
-        var tour = await _tourRepo.FindAsync(id);
+        var tour = await UnitOfWork.Tours.FindAsync(id);
         if (tour is null) return Error.NotFound();
         await UnitOfWork.Attach(tour).Collection(e => e.TourFlow).LoadAsync();
 
         // Update
         model.AdaptIgnoreNull(tour);
 
-        _tourRepo.Update(tour);
+        UnitOfWork.Tours.Update(tour);
         await UnitOfWork.SaveChangesAsync();
 
         // Result
@@ -84,10 +74,10 @@ public class TourService : BaseService, ITourService
 
     public async Task<Result> Delete(Guid id)
     {
-        var entity = await _tourRepo.FindAsync(id);
+        var entity = await UnitOfWork.Tours.FindAsync(id);
         if (entity is null) return Error.NotFound();
 
-        _tourRepo.Remove(entity);
+        UnitOfWork.Tours.Remove(entity);
         await UnitOfWork.SaveChangesAsync();
 
         return Result.Success();
@@ -95,7 +85,7 @@ public class TourService : BaseService, ITourService
 
     public async Task<Result<TourViewModel>> GetDetails(Guid id)
     {
-        var tour = await _tourRepo.FindAsync(id);
+        var tour = await UnitOfWork.Tours.FindAsync(id);
         if (tour is null) return Error.NotFound();
         
         // Load TourFlow
@@ -111,7 +101,7 @@ public class TourService : BaseService, ITourService
 
     public async Task<Result<PaginationModel<TourFilterViewModel>>> Filter(TourFilterModel model)
     {
-        IQueryable<Tour> query = _tourRepo.Query()
+        IQueryable<Tour> query = UnitOfWork.Tours.Query()
             .Include(e => e.TourFlow)
             .OrderBy(e => e.CreatedAt);
 
@@ -142,7 +132,7 @@ public class TourService : BaseService, ITourService
 
     public async Task<Result<AttachmentViewModel>> AddToCarousel(Guid tourId, string contentType, Stream stream)
     {
-        if (!await _tourRepo.AnyAsync(e => e.Id == tourId))
+        if (!await UnitOfWork.Tours.AnyAsync(e => e.Id == tourId))
             return Error.NotFound();
 
         await using var transaction = UnitOfWork.BeginTransaction();
@@ -158,7 +148,7 @@ public class TourService : BaseService, ITourService
 
             var newAttachment = createAttachmentResult.Value;
 
-            _tourAttachmentRepo.Add(new TourCarousel()
+            UnitOfWork.TourCarousels.Add(new TourCarousel()
             {
                 TourId = tourId,
                 AttachmentId = newAttachment.Id
@@ -179,11 +169,11 @@ public class TourService : BaseService, ITourService
 
     public async Task<Result> DeleteFromCarousel(Guid tourId, Guid attachmentId)
     {
-        var tourAttachment = await _tourAttachmentRepo.FindAsync(tourId, attachmentId);
+        var tourAttachment = await UnitOfWork.TourCarousels.FindAsync(tourId, attachmentId);
         if (tourAttachment is null) return Error.NotFound();
 
         var transaction = UnitOfWork.BeginTransaction();
-        _tourAttachmentRepo.Remove(tourAttachment);
+        UnitOfWork.TourCarousels.Remove(tourAttachment);
         await UnitOfWork.SaveChangesAsync();
 
         var deleteResult = await _attachmentService.Delete(attachmentId);
@@ -199,16 +189,16 @@ public class TourService : BaseService, ITourService
 
     public async Task<Result<List<AttachmentViewModel>>> GetCarousel(Guid tourId)
     {
-        if (!await _tourRepo.AnyAsync(e => e.Id == tourId))
+        if (!await UnitOfWork.Tours.AnyAsync(e => e.Id == tourId))
             return Error.NotFound();
 
-        var attachmentIds = await _tourAttachmentRepo
+        var attachmentIds = await UnitOfWork.TourCarousels
             .Query()
             .Where(e => e.TourId == tourId)
             .Select(e => e.AttachmentId)
             .ToListAsync();
 
-        var attachments = await _attachmentRepo
+        var attachments = await UnitOfWork.Attachments
             .Query()
             .Where(e => attachmentIds.Contains(e.Id))
             .ToListAsync();
@@ -235,7 +225,7 @@ public class TourService : BaseService, ITourService
         {
             var random = _randomString(5);
             code = $"{random}-{year}{month}";
-        } while (await _tourRepo.AnyAsync(e => e.Code == code));
+        } while (await UnitOfWork.Tours.AnyAsync(e => e.Code == code));
 
         return code;
     }

@@ -1,5 +1,4 @@
 ﻿using Data.EFCore;
-using Data.EFCore.Repositories;
 using Data.Entities;
 using Data.Enums;
 using FirebaseAdmin.Auth;
@@ -21,15 +20,9 @@ public class TravelerService : BaseService, ITravelerService
 {
     private readonly ILogger<TravelerService> _logger;
     private readonly IMapper _mapper;
-
-    //
-    private readonly IRepository<Account> _accountRepo;
-    private readonly IRepository<Traveler> _travelerRepo;
-    private readonly IRepository<TravelerInTour> _travelerInTourRepo;
-    private readonly IRepository<Tour> _tourRepo;
     private readonly ICloudStorageService _cloudStorageService;
 
-    public TravelerService(IUnitOfWork unitOfWork, IMapper mapper,
+    public TravelerService(UnitOfWork unitOfWork, IMapper mapper,
         ILogger<TravelerService> logger, IHttpContextAccessor httpContextAccessor,
         ICloudStorageService cloudStorageService)
         : base(unitOfWork, httpContextAccessor)
@@ -37,11 +30,6 @@ public class TravelerService : BaseService, ITravelerService
         _mapper = mapper;
         _logger = logger;
         _cloudStorageService = cloudStorageService;
-        //
-        _accountRepo = unitOfWork.Repo<Account>();
-        _travelerRepo = unitOfWork.Repo<Traveler>();
-        _travelerInTourRepo = unitOfWork.Repo<TravelerInTour>();
-        _tourRepo = unitOfWork.Repo<Tour>();
     }
 
     public async Task<Result> Register(TravelerRegistrationModel model)
@@ -50,16 +38,16 @@ public class TravelerService : BaseService, ITravelerService
 
         if (!model.Phone.StartsWith("+84")) return Error.Validation();
 
-        if (AuthUser is not { Role: AccountRole.Manager })
+        if (CurrentUser is not { Role: AccountRole.Manager })
             if (model.IdToken is null || !await _verifyIdToken(model.Phone, model.IdToken))
                 return DomainErrors.Traveler.IdToken;
 
         var formattedPhone = _formatPhoneNum(model.Phone);
 
-        if (await _accountRepo.AnyAsync(e => e.Phone == formattedPhone))
+        if (await UnitOfWork.Accounts.AnyAsync(e => e.Phone == formattedPhone))
             return Error.Conflict("Account with this phone number already exist");
 
-        _travelerRepo.Add(
+        UnitOfWork.Travelers.Add(
             new Traveler
             {
                 Phone = formattedPhone,
@@ -78,7 +66,7 @@ public class TravelerService : BaseService, ITravelerService
 
     public async Task<Result<TravelerViewModel>> GetProfile(Guid id)
     {
-        var entity = await _travelerRepo
+        var entity = await UnitOfWork.Travelers
             .Query()
             .FirstOrDefaultAsync(e => e.Id == id && e.Status == AccountStatus.Active);
 
@@ -88,10 +76,10 @@ public class TravelerService : BaseService, ITravelerService
 
     public async Task<Result<List<TravelerViewModel>>> ListByTour(Guid tourId)
     {
-        if (!await _tourRepo.AnyAsync(e => e.Id == tourId))
+        if (!await UnitOfWork.Tours.AnyAsync(e => e.Id == tourId))
             return Error.NotFound("Tour not found.");
 
-        var travelers = await _travelerInTourRepo
+        var travelers = await UnitOfWork.TravelersInTours
             .Query()
             .Where(e => e.TourId == tourId)
             .Select(e => e.Traveler)
@@ -109,7 +97,7 @@ public class TravelerService : BaseService, ITravelerService
 
     public async Task<Result<List<TourFilterViewModel>>> ListJoinedTours(Guid travelerId)
     {
-        var tours = await _travelerInTourRepo.Query()
+        var tours = await UnitOfWork.TravelersInTours.Query()
             .Where(e => e.TravelerId == travelerId)
             .Select(e => e.Tour)
             .ToListAsync();

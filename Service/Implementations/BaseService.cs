@@ -7,17 +7,26 @@ namespace Service.Implementations;
 
 public abstract class BaseService
 {
-    protected readonly IUnitOfWork UnitOfWork;
-    protected AuthUser? AuthUser;
+    private readonly IHttpContextAccessor? _httpContextAccessor;
+    protected readonly UnitOfWork UnitOfWork;
 
-    protected BaseService(IUnitOfWork unitOfWork)
+    protected AuthUser? CurrentUser
+    {
+        get
+        {
+            if (_httpContextAccessor is null) throw new Exception("HttpContextAccessor not set on BaseService.");
+            return (AuthUser?)_httpContextAccessor.HttpContext?.Items[AppConstants.UserContextKey];
+        }
+    }
+
+    protected BaseService(UnitOfWork unitOfWork)
     {
         UnitOfWork = unitOfWork;
     }
 
-    protected BaseService(IUnitOfWork unitOfWork, IHttpContextAccessor httpContextAccessor)
+    protected BaseService(UnitOfWork unitOfWork, IHttpContextAccessor httpContextAccessor)
     {
         UnitOfWork = unitOfWork;
-        AuthUser = (AuthUser)httpContextAccessor.HttpContext?.Items[AppConstants.UserContextKey]!;
+        _httpContextAccessor = httpContextAccessor;
     }
 }

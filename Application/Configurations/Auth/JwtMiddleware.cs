@@ -1,7 +1,6 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using Data.EFCore;
-using Data.Entities;
 using Data.Enums;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -15,11 +14,11 @@ public class JwtMiddleware : IMiddleware
 {
     private readonly AppSettings _appSettings;
     private readonly ILogger<JwtMiddleware> _logger;
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly UnitOfWork _unitOfWork;
 
     public JwtMiddleware(
         IOptions<AppSettings> appSettings,
-        IUnitOfWork unitOfWork,
+        UnitOfWork unitOfWork,
         ILogger<JwtMiddleware> logger)
     {
         _appSettings = appSettings.Value;
@@ -74,12 +73,12 @@ public class JwtMiddleware : IMiddleware
     {
         return role switch
         {
-            AccountRole.Manager => await _unitOfWork.Repo<Manager>()
-                .AnyAsync(e => e.Id == id && e.Status == AccountStatus.Active),
-            AccountRole.Traveler => await _unitOfWork.Repo<Traveler>()
-                .AnyAsync(e => e.Id == id && e.Status == AccountStatus.Active),
-            AccountRole.TourGuide => await _unitOfWork.Repo<TourGuide>()
-                .AnyAsync(e => e.Id == id && e.Status == AccountStatus.Active),
+            AccountRole.Manager => await _unitOfWork.Managers.AnyAsync(
+                e => e.Id == id && e.Status == AccountStatus.Active),
+            AccountRole.Traveler => await _unitOfWork.Travelers.AnyAsync(
+                e => e.Id == id && e.Status == AccountStatus.Active),
+            AccountRole.TourGuide => await _unitOfWork.TourGuides.AnyAsync(
+                e => e.Id == id && e.Status == AccountStatus.Active),
             _ => throw new ArgumentOutOfRangeException(typeof(JwtMiddleware).ToString())
         };
     }
