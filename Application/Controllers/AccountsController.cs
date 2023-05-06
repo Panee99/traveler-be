@@ -2,8 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Service.Interfaces;
 using Service.Models.Account;
-using Service.Models.Attachment;
-using Shared.Helpers;
 
 namespace Application.Controllers;
 
@@ -18,30 +16,19 @@ public class AccountsController : ApiController
         _accountService = accountService;
     }
 
-    [ProducesResponseType(typeof(AttachmentViewModel), StatusCodes.Status200OK)]
-    [HttpPut("avatar")]
-    public async Task<IActionResult> UpdateAvatar(IFormFile file)
-    {
-        var validateResult = FileHelper.ValidateImageFile(file);
-        if (!validateResult.IsSuccess) return OnError(validateResult.Error);
-
-        var result = await _accountService.UpdateAvatar(CurrentUser.Id, file.ContentType, file.OpenReadStream());
-        return result.Match(Ok, OnError);
-    }
-
-    [ProducesResponseType(typeof(AvatarViewModel), StatusCodes.Status200OK)]
-    [HttpGet("avatar")]
-    public async Task<IActionResult> GetAvatar()
-    {
-        var result = await _accountService.GetAvatar(CurrentUser.Id);
-        return result.Match(Ok, OnError);
-    }
-
-    [ProducesResponseType(typeof(ProfileViewModel), StatusCodes.Status200OK)]
-    [HttpGet("profile")]
+    [ProducesResponseType(typeof(AccountViewModel), StatusCodes.Status200OK)]
+    [HttpGet("current/profile")]
     public async Task<IActionResult> GetProfile()
     {
         var result = await _accountService.GetProfile(CurrentUser.Id, CurrentUser.Role);
+        return result.Match(Ok, OnError);
+    }
+
+    [ProducesResponseType(typeof(AccountViewModel), StatusCodes.Status200OK)]
+    [HttpPatch("current/profile")]
+    public async Task<IActionResult> UpdateProfile(ProfileUpdateModel model)
+    {
+        var result = await _accountService.UpdateProfile(CurrentUser.Id, model);
         return result.Match(Ok, OnError);
     }
 }

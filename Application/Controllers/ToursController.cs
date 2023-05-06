@@ -81,20 +81,6 @@ public class ToursController : ApiController
     }
 
     /// <summary>
-    /// THUMBNAIL
-    /// </summary>
-    [ProducesResponseType(typeof(AttachmentViewModel), StatusCodes.Status200OK)]
-    [HttpPut("{id:guid}/thumbnail")]
-    public async Task<IActionResult> UpdateThumbnail(Guid id, IFormFile file)
-    {
-        var validateResult = FileHelper.ValidateImageFile(file);
-        if (!validateResult.IsSuccess) return OnError(validateResult.Error);
-
-        var result = await _tourService.UpdateThumbnail(id, file.ContentType, file.OpenReadStream());
-        return result.Match(Ok, OnError);
-    }
-
-    /// <summary>
     /// CAROUSEL
     /// </summary>
     [ProducesResponseType(typeof(AttachmentViewModel), StatusCodes.Status200OK)]

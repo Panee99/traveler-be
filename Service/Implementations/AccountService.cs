@@ -2,12 +2,14 @@
 using Data.EFCore.Repositories;
 using Data.Entities;
 using Data.Enums;
+using Mapster;
 using MapsterMapper;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
+using Service.Commons;
 using Service.Interfaces;
 using Service.Models.Account;
-using Service.Models.Attachment;
+using Service.Models.Manager;
+using Service.Models.TourGuide;
+using Service.Models.Traveler;
 using Shared.ResultExtensions;
 
 namespace Service.Implementations;
@@ -15,8 +17,6 @@ namespace Service.Implementations;
 public class AccountService : BaseService, IAccountService
 {
     private readonly ICloudStorageService _cloudStorageService;
-    private readonly IAttachmentService _attachmentService;
-    private readonly ILogger<AccountService> _logger;
     private readonly IMapper _mapper;
 
     //
@@ -25,14 +25,11 @@ public class AccountService : BaseService, IAccountService
     private readonly IRepository<TourGuide> _tourGuideRepo;
     private readonly IRepository<Manager> _managerRepo;
 
-    public AccountService(IUnitOfWork unitOfWork, ILogger<AccountService> logger,
-        ICloudStorageService cloudStorageService, IMapper mapper, IAttachmentService attachmentService) : base(
+    public AccountService(IUnitOfWork unitOfWork, ICloudStorageService cloudStorageService, IMapper mapper) : base(
         unitOfWork)
     {
-        _logger = logger;
         _cloudStorageService = cloudStorageService;
         _mapper = mapper;
-        _attachmentService = attachmentService;
         //
         _accountRepo = unitOfWork.Repo<Account>();
         _travelerRepo = unitOfWork.Repo<Traveler>();
@@ -40,99 +37,56 @@ public class AccountService : BaseService, IAccountService
         _managerRepo = unitOfWork.Repo<Manager>();
     }
 
-    public async Task<Result<AvatarViewModel>> GetAvatar(Guid id)
+    public async Task<Result<AccountViewModel>> GetProfile(Guid id, AccountRole role)
     {
-        var attachmentId = await _accountRepo
-            .Query()
-            .Where(e => e.Id == id)
-            .Select(e => e.AttachmentId)
-            .FirstOrDefaultAsync();
+        var account = await _accountRepo.FindAsync(id);
+        if (account is null) return Error.NotFound();
 
-        if (attachmentId is null) return Error.NotFound();
+        var view = role switch
+        {
+            AccountRole.Traveler => _mapper.Map<TravelerViewModel>((await _travelerRepo.FindAsync(id))!),
+            AccountRole.TourGuide => _mapper.Map<AccountViewModel>((await _tourGuideRepo.FindAsync(id))!),
+            AccountRole.Manager => _mapper.Map<ManagerViewModel>((await _managerRepo.FindAsync(id))!),
+            _ => throw new ArgumentOutOfRangeException()
+        };
 
-        return new AvatarViewModel(
-            attachmentId.Value,
-            _cloudStorageService.GetMediaLink(attachmentId.Value)
-        );
+        if (account.AvatarId != null)
+            view.AvatarUrl = _cloudStorageService.GetMediaLink(account.AvatarId.Value);
+
+        return view;
     }
 
-    public async Task<Result<ProfileViewModel>> GetProfile(Guid id, AccountRole role)
+    public async Task<Result<AccountViewModel>> UpdateProfile(Guid id, ProfileUpdateModel model)
     {
-        ProfileViewModel viewModel;
-        switch (role)
+        var account = await _accountRepo.FindAsync(id);
+        if (account is null) return Error.NotFound();
+
+        AccountViewModel view;
+        switch (account.Role)
         {
-            case AccountRole.Traveler:
-                var traveler = await _travelerRepo.FindAsync(id);
-                if (traveler is null) return Error.Unexpected();
-                viewModel = _mapper.Map<ProfileViewModel>(traveler);
+            case AccountRole.Manager:
+                var manager = (await _managerRepo.FindAsync(account.Id))!;
+                _managerRepo.Update(model.AdaptIgnoreNull(manager));
+                view = manager.Adapt<ManagerViewModel>();
                 break;
             case AccountRole.TourGuide:
-                var tourGuide = await _tourGuideRepo.FindAsync(id);
-                if (tourGuide is null) return Error.Unexpected();
-                viewModel = _mapper.Map<ProfileViewModel>(tourGuide);
+                var tourGuide = (await _tourGuideRepo.FindAsync(account.Id))!;
+                _tourGuideRepo.Update(model.AdaptIgnoreNull(tourGuide));
+                view = tourGuide.Adapt<TourGuideViewModel>();
                 break;
-            case AccountRole.Manager:
-                var manager = await _managerRepo.FindAsync(id);
-                if (manager is null) return Error.Unexpected();
-                viewModel = _mapper.Map<ProfileViewModel>(manager);
+            case AccountRole.Traveler:
+                var traveler = (await _travelerRepo.FindAsync(account.Id))!;
+                _travelerRepo.Update(model.AdaptIgnoreNull(traveler));
+                view = traveler.Adapt<TravelerViewModel>();
                 break;
             default:
                 throw new ArgumentOutOfRangeException();
         }
 
-        return viewModel;
-    }
+        // Return
+        if (account.AvatarId != null)
+            view.AvatarUrl = _cloudStorageService.GetMediaLink(account.AvatarId.Value);
 
-    public async Task<Result<AttachmentViewModel>> UpdateAvatar(Guid id, string contentType, Stream stream)
-    {
-        await using var transaction = UnitOfWork.BeginTransaction();
-
-        try
-        {
-            // Get Account
-            var account = await _accountRepo
-                .Query()
-                .Where(e => e.Id == id)
-                .Select(e => new Account()
-                {
-                    Id = id,
-                    AttachmentId = e.AttachmentId
-                })
-                .FirstOrDefaultAsync();
-
-            if (account is null) return Error.Unexpected();
-
-            var oldAttachmentId = account.AttachmentId;
-
-            // Create new Attachment
-            var createAttachmentResult = await _attachmentService.Create(contentType, stream);
-            if (!createAttachmentResult.IsSuccess)
-            {
-                await transaction.RollbackAsync();
-                return Error.Unexpected();
-            }
-
-            UnitOfWork.Attach(account);
-
-            account.AttachmentId = createAttachmentResult.Value.Id;
-            await UnitOfWork.SaveChangesAsync();
-
-            // Delete old attachment
-            if (oldAttachmentId is not null)
-            {
-                var deleteAttachmentResult = await _attachmentService.Delete(oldAttachmentId.Value);
-                if (!deleteAttachmentResult.IsSuccess)
-                    _logger.LogError("Delete attachment failed: {Id}", oldAttachmentId.Value);
-            }
-
-            await transaction.CommitAsync();
-            return createAttachmentResult.Value;
-        }
-        catch (Exception e)
-        {
-            _logger.LogWarning(e, "{Message}", e.Message);
-            await transaction.RollbackAsync();
-            return Error.Unexpected(e.Message);
-        }
+        return view;
     }
 }

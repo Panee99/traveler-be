@@ -20,9 +20,9 @@ public class Account
 
     public AccountStatus Status { get; set; }
 
-    public Guid? AttachmentId { get; set; }
+    public Guid? AvatarId { get; set; }
 
-    public Attachment? Attachment { get; set; }
+    public Attachment? Avatar { get; set; }
 
     // public virtual ICollection<Transaction> Transactions { get; set; } = new List<Transaction>();
 }

@@ -45,15 +45,20 @@ public class TourService : BaseService, ITourService
 
     public async Task<Result<TourViewModel>> Create(TourCreateModel model)
     {
+        // Map then Add
         var tour = _mapper.Map<Tour>(model);
         tour.Code = await _generateTourCode();
         tour.Status = TourStatus.New;
 
         tour = _tourRepo.Add(tour);
-
         await UnitOfWork.SaveChangesAsync();
 
-        return _mapper.Map<TourViewModel>(tour);
+        // Result
+        var view = _mapper.Map<TourViewModel>(tour);
+        if (tour.ThumbnailId != null)
+            view.ThumbnailUrl = _cloudStorageService.GetMediaLink(tour.ThumbnailId.Value);
+
+        return view;
     }
 
     public async Task<Result<TourViewModel>> Update(Guid id, TourUpdateModel model)
@@ -70,7 +75,11 @@ public class TourService : BaseService, ITourService
         await UnitOfWork.SaveChangesAsync();
 
         // Result
-        return _mapper.Map<TourViewModel>(tour);
+        var view = _mapper.Map<TourViewModel>(tour);
+        if (tour.ThumbnailId != null)
+            view.ThumbnailUrl = _cloudStorageService.GetMediaLink(tour.ThumbnailId.Value);
+
+        return view;
     }
 
     public async Task<Result> Delete(Guid id)
@@ -86,15 +95,16 @@ public class TourService : BaseService, ITourService
 
     public async Task<Result<TourViewModel>> GetDetails(Guid id)
     {
-        var entity = await _tourRepo.FindAsync(id);
-        if (entity is null) return Error.NotFound();
-        await UnitOfWork.Attach(entity).Collection(e => e.TourFlow).LoadAsync();
+        var tour = await _tourRepo.FindAsync(id);
+        if (tour is null) return Error.NotFound();
+        
+        // Load TourFlow
+        await UnitOfWork.Attach(tour).Collection(e => e.TourFlow).LoadAsync();
 
-        var viewModel = _mapper.Map<TourViewModel>(entity);
-        // viewModel.TourFlow = entity.TourFlow.Adapt<List<LocationViewModel>>();
-
-        if (entity.ThumbnailId != null)
-            viewModel.ThumbnailUrl = _cloudStorageService.GetMediaLink(entity.ThumbnailId.Value);
+        // Result
+        var viewModel = _mapper.Map<TourViewModel>(tour);
+        if (tour.ThumbnailId != null)
+            viewModel.ThumbnailUrl = _cloudStorageService.GetMediaLink(tour.ThumbnailId.Value);
 
         return viewModel;
     }
@@ -128,63 +138,6 @@ public class TourService : BaseService, ITourService
 
             return view;
         });
-    }
-
-    /// <summary>
-    /// ATTACHMENTS
-    /// </summary>
-    public async Task<Result<AttachmentViewModel>> UpdateThumbnail(Guid tourId, string contentType, Stream stream)
-    {
-        var tour = await _tourRepo
-            .Query()
-            .Where(e => e.Id == tourId)
-            .Select(e => new Tour()
-            {
-                Id = tourId,
-                ThumbnailId = e.ThumbnailId
-            })
-            .FirstOrDefaultAsync();
-
-        if (tour is null) return Error.NotFound();
-        var oldThumbnailId = tour.ThumbnailId;
-
-        await using var transaction = UnitOfWork.BeginTransaction();
-        try
-        {
-            // Add new thumbnail
-            var createThumbnailResult = await _attachmentService.Create(contentType, stream);
-            if (!createThumbnailResult.IsSuccess)
-            {
-                await transaction.RollbackAsync();
-                return Error.Unexpected();
-            }
-
-            var newThumbnail = createThumbnailResult.Value;
-
-            UnitOfWork.Attach(tour);
-            tour.ThumbnailId = newThumbnail.Id;
-            await UnitOfWork.SaveChangesAsync();
-
-            // Remove old thumbnail
-            if (oldThumbnailId != null)
-            {
-                var deleteResult = await _attachmentService.Delete(oldThumbnailId.Value);
-                if (!deleteResult.IsSuccess)
-                {
-                    await transaction.RollbackAsync();
-                    return Error.Unexpected();
-                }
-            }
-
-            await transaction.CommitAsync();
-            return newThumbnail;
-        }
-        catch (Exception e)
-        {
-            _logger.LogWarning(e, "{Message}", e);
-            await transaction.RollbackAsync();
-            return Error.Unexpected();
-        }
     }
 
     public async Task<Result<AttachmentViewModel>> AddToCarousel(Guid tourId, string contentType, Stream stream)

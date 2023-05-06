@@ -17,5 +17,6 @@ public record TourUpdateModel
     TourType? Type,
     string? Description,
     TourStatus? Status,
-    List<LocationCreateModel>? TourFlow
+    List<LocationCreateModel>? TourFlow,
+    Guid? ThumbnailId
 );

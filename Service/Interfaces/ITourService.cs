@@ -19,8 +19,6 @@ public interface ITourService
     Task<Result<PaginationModel<TourFilterViewModel>>> Filter(TourFilterModel model);
 
     // Attachments
-    Task<Result<AttachmentViewModel>> UpdateThumbnail(Guid tourId, string contentType, Stream stream);
-
     Task<Result<AttachmentViewModel>> AddToCarousel(Guid tourId, string contentType, Stream stream);
 
     Task<Result> DeleteFromCarousel(Guid tourId, Guid attachmentId);

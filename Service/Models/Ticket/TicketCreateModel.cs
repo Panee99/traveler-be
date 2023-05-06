@@ -6,5 +6,6 @@ public record TicketCreateModel(
     string Content,
     TicketType Type,
     Guid TourId,
-    Guid TravelerId
+    Guid TravelerId,
+    Guid? ImageId
 );

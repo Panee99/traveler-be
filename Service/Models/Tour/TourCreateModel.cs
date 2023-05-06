@@ -16,5 +16,6 @@ public record TourCreateModel
     int MaxOccupancy,
     TourType Type,
     string? Description,
-    List<LocationCreateModel> TourFlow
+    List<LocationCreateModel> TourFlow,
+    Guid? ThumbnailId
 );
