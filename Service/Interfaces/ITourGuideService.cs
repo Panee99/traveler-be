@@ -7,9 +7,9 @@ namespace Service.Interfaces;
 
 public interface ITourGuideService
 {
-    Task<Result<ProfileViewModel>> Create(TourGuideCreateModel model);
+    Task<Result<TourGuideViewModel>> Create(TourGuideCreateModel model);
 
     Task<Result<List<TourFilterViewModel>>> ListAssignedTours(Guid tourGuideId);
     
-    Task<Result<List<ProfileViewModel>>> ListAll();
+    Task<Result<List<TourGuideViewModel>>> ListAll();
 }

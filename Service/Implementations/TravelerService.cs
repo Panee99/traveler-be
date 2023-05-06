@@ -10,7 +10,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Service.Errors;
 using Service.Interfaces;
-using Service.Models.Account;
 using Service.Models.Tour;
 using Service.Models.Traveler;
 using Shared.Helpers;
@@ -77,17 +76,17 @@ public class TravelerService : BaseService, ITravelerService
         return Result.Success();
     }
 
-    public async Task<Result<TravelerProfileViewModel>> GetProfile(Guid id)
+    public async Task<Result<TravelerViewModel>> GetProfile(Guid id)
     {
         var entity = await _travelerRepo
             .Query()
             .FirstOrDefaultAsync(e => e.Id == id && e.Status == AccountStatus.Active);
 
         if (entity is null) return Error.NotFound();
-        return _mapper.Map<TravelerProfileViewModel>(entity);
+        return _mapper.Map<TravelerViewModel>(entity);
     }
 
-    public async Task<Result<List<ProfileViewModel>>> ListByTour(Guid tourId)
+    public async Task<Result<List<TravelerViewModel>>> ListByTour(Guid tourId)
     {
         if (!await _tourRepo.AnyAsync(e => e.Id == tourId))
             return Error.NotFound("Tour not found.");
@@ -100,8 +99,8 @@ public class TravelerService : BaseService, ITravelerService
 
         var views = travelers.Select(e =>
         {
-            var view = e.Adapt<ProfileViewModel>();
-            if (e.AttachmentId != null) view.Avatar = _cloudStorageService.GetMediaLink(e.AttachmentId.Value);
+            var view = e.Adapt<TravelerViewModel>();
+            if (e.AvatarId != null) view.AvatarUrl = _cloudStorageService.GetMediaLink(e.AvatarId.Value);
             return view;
         }).ToList();
 

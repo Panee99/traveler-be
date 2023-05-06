@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Service.Interfaces;
 using Service.Models.Tour;
-using Service.Models.TourGroup;
 using Service.Models.Traveler;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -31,7 +30,7 @@ public class TravelersController : ApiController
         return result.Match(Ok, OnError);
     }
 
-    [ProducesResponseType(typeof(TravelerProfileViewModel), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(TravelerViewModel), StatusCodes.Status200OK)]
     [Authorize]
     [HttpGet("{id:guid}/profile")]
     public async Task<IActionResult> GetProfile(Guid id)

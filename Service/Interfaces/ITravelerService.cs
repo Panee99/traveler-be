@@ -9,9 +9,9 @@ public interface ITravelerService
 {
     Task<Result> Register(TravelerRegistrationModel model);
 
-    Task<Result<TravelerProfileViewModel>> GetProfile(Guid id);
+    Task<Result<TravelerViewModel>> GetProfile(Guid id);
 
-    Task<Result<List<ProfileViewModel>>> ListByTour(Guid tourId);
+    Task<Result<List<TravelerViewModel>>> ListByTour(Guid tourId);
 
     Task<Result<List<TourFilterViewModel>>> ListJoinedTours(Guid travelerId);
 }

@@ -5,11 +5,11 @@ using Data.Enums;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Service.Interfaces;
-using Service.Models.Account;
 using Service.Models.Tour;
 using Service.Models.TourGuide;
 using Shared.Helpers;
 using Shared.ResultExtensions;
+using TourGuideViewModel = Service.Models.TourGuide.TourGuideViewModel;
 
 namespace Service.Implementations;
 
@@ -24,7 +24,7 @@ public class TourGuideService : BaseService, ITourGuideService
         _tourGuideRepo = unitOfWork.Repo<TourGuide>();
     }
 
-    public async Task<Result<ProfileViewModel>> Create(TourGuideCreateModel model)
+    public async Task<Result<TourGuideViewModel>> Create(TourGuideCreateModel model)
     {
         if (await _tourGuideRepo.AnyAsync(e => e.Phone == model.Phone))
             return Error.Conflict("Phone number already exist");
@@ -49,7 +49,7 @@ public class TourGuideService : BaseService, ITourGuideService
 
         await UnitOfWork.SaveChangesAsync();
 
-        return tourGuide.Adapt<ProfileViewModel>();
+        return tourGuide.Adapt<TourGuideViewModel>();
     }
 
     public async Task<Result<List<TourFilterViewModel>>> ListAssignedTours(Guid tourGuideId)
@@ -74,9 +74,9 @@ public class TourGuideService : BaseService, ITourGuideService
         return views;
     }
 
-    public async Task<Result<List<ProfileViewModel>>> ListAll()
+    public async Task<Result<List<TourGuideViewModel>>> ListAll()
     {
         var tourGuides = await _tourGuideRepo.Query().ToListAsync();
-        return tourGuides.Adapt<List<ProfileViewModel>>();
+        return tourGuides.Adapt<List<TourGuideViewModel>>();
     }
 }
