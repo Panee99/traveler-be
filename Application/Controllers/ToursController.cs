@@ -16,8 +16,9 @@ public class ToursController : ApiController
     private readonly ITourService _tourService;
     private readonly ITravelerService _travelerService;
     private readonly ITourGroupService _tourGroupService;
-    
-    public ToursController(ITourService tourService, ITravelerService travelerService, ITourGroupService tourGroupService)
+
+    public ToursController(ITourService tourService, ITravelerService travelerService,
+        ITourGroupService tourGroupService)
     {
         _tourService = tourService;
         _travelerService = travelerService;
@@ -110,7 +111,7 @@ public class ToursController : ApiController
         var result = await _tourService.GetCarousel(id);
         return result.Match(Ok, OnError);
     }
-    
+
     [HttpGet("{id:guid}/tour-groups")]
     public async Task<IActionResult> ListTourGroups(Guid id)
     {

@@ -1,5 +1,5 @@
 ﻿using Data.Enums;
-using Service.Models.Location;
+using Service.Models.TourFlow;
 
 namespace Service.Models.Tour;
 
@@ -17,6 +17,6 @@ public record TourUpdateModel
     TourType? Type,
     string? Description,
     TourStatus? Status,
-    List<LocationCreateModel>? TourFlow,
+    List<TourFlowCreateModel>? TourFlows,
     Guid? ThumbnailId
 );

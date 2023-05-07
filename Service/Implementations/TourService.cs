@@ -56,7 +56,7 @@ public class TourService : BaseService, ITourService
         // Get Tour
         var tour = await UnitOfWork.Tours.FindAsync(id);
         if (tour is null) return Error.NotFound();
-        await UnitOfWork.Attach(tour).Collection(e => e.TourFlow).LoadAsync();
+        await UnitOfWork.Attach(tour).Collection(e => e.TourFlows).LoadAsync();
 
         // Update
         model.AdaptIgnoreNull(tour);
@@ -89,7 +89,7 @@ public class TourService : BaseService, ITourService
         if (tour is null) return Error.NotFound();
         
         // Load TourFlow
-        await UnitOfWork.Attach(tour).Collection(e => e.TourFlow).LoadAsync();
+        await UnitOfWork.Attach(tour).Collection(e => e.TourFlows).LoadAsync();
 
         // Result
         var viewModel = _mapper.Map<TourViewModel>(tour);
@@ -102,7 +102,7 @@ public class TourService : BaseService, ITourService
     public async Task<Result<PaginationModel<TourFilterViewModel>>> Filter(TourFilterModel model)
     {
         IQueryable<Tour> query = UnitOfWork.Tours.Query()
-            .Include(e => e.TourFlow)
+            .Include(e => e.TourFlows)
             .OrderBy(e => e.CreatedAt);
 
         if (!string.IsNullOrEmpty(model.Title))

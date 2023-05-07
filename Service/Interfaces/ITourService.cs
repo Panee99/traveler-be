@@ -1,6 +1,5 @@
 ﻿using Service.Commons.Pagination;
 using Service.Models.Attachment;
-using Service.Models.Location;
 using Service.Models.Tour;
 using Shared.ResultExtensions;
 

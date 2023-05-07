@@ -1,9 +1,6 @@
 [
   {
     "Id": "C9F54C4F-BC61-4547-ADA1-7FE5556A73B8",
-    "Longitude": 8.544463395888624,
-    "Latitude": 47.3751515758245,
-    "Vehicle": "Car",
     "TourId": "d1936e4c-9c32-49ae-aa51-0f23089a78d4",
     "ArrivalTime": "2023-05-25T03:18:52.979Z"
   },

@@ -12,7 +12,7 @@ public class UnitOfWork : UnitOfWorkBase
     public IRepository<Account> Accounts => Repo<Account>();
     public IRepository<Attachment> Attachments => Repo<Attachment>();
     public IRepository<Booking> Bookings => Repo<Booking>();
-    public IRepository<Location> Locations => Repo<Location>();
+    public IRepository<TourFlow> TourFlows => Repo<TourFlow>();
     public IRepository<Manager> Managers => Repo<Manager>();
     public IRepository<Ticket> Tickets => Repo<Ticket>();
     public IRepository<Tour> Tours => Repo<Tour>();

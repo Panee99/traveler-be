@@ -1,5 +1,5 @@
 ﻿using Data.Enums;
-using Service.Models.Location;
+using Service.Models.TourFlow;
 
 namespace Service.Models.Tour;
 
@@ -16,6 +16,6 @@ public record TourCreateModel
     int MaxOccupancy,
     TourType Type,
     string? Description,
-    List<LocationCreateModel> TourFlow,
+    List<TourFlowCreateModel> TourFlows,
     Guid? ThumbnailId
 );

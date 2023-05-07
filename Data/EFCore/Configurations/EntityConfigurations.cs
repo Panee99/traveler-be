@@ -51,11 +51,7 @@ public static class EntityConfigurations
                 .HasForeignKey(d => d.BookingId);
         });
 
-        modelBuilder.Entity<Location>(entity =>
-        {
-            entity.Property(e => e.ArrivalTime).HasColumnType("datetime");
-            entity.Property(e => e.Vehicle).HasMaxLength(256);
-        });
+        modelBuilder.Entity<TourFlow>();
 
         modelBuilder.Entity<TourCarousel>().HasKey(e => new { e.TourId, e.AttachmentId });
 
