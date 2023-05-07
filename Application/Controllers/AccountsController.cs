@@ -17,7 +17,7 @@ public class AccountsController : ApiController
     }
 
     [ProducesResponseType(typeof(AccountViewModel), StatusCodes.Status200OK)]
-    [HttpGet("current/profile")]
+    [HttpGet("self/profile")]
     public async Task<IActionResult> GetProfile()
     {
         var result = await _accountService.GetProfile(CurrentUser.Id, CurrentUser.Role);
@@ -25,7 +25,7 @@ public class AccountsController : ApiController
     }
 
     [ProducesResponseType(typeof(AccountViewModel), StatusCodes.Status200OK)]
-    [HttpPatch("current/profile")]
+    [HttpPatch("self/profile")]
     public async Task<IActionResult> UpdateProfile(ProfileUpdateModel model)
     {
         var result = await _accountService.UpdateProfile(CurrentUser.Id, model);
