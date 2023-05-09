@@ -51,9 +51,9 @@ public static class EntityConfigurations
                 .HasForeignKey(d => d.BookingId);
         });
 
-        modelBuilder.Entity<TourFlow>();
+        modelBuilder.Entity<Schedule>();
 
-        modelBuilder.Entity<TourCarousel>().HasKey(e => new { e.TourId, e.AttachmentId });
+        modelBuilder.Entity<TourImage>().HasKey(e => new { e.TourId, e.AttachmentId });
 
         modelBuilder.Entity<Manager>(entity =>
         {
@@ -126,6 +126,10 @@ public static class EntityConfigurations
                 .HasForeignKey<VnPayResponse>(x => x.TxnRef);
         });
 
+        modelBuilder.Entity<TourFlow>(entity => { entity.ToTable("TourFlow"); });
+
+        modelBuilder.Entity<IncurredCost>(entity => { entity.Property(e => e.CreatedAt).HasColumnType("datetime"); });
+        
         // modelBuilder.Entity<TourDiscount>(entity =>
         // {
         //     entity.Property(e => e.T1discount).HasColumnName("T1Discount");
@@ -150,7 +154,5 @@ public static class EntityConfigurations
         //         .HasForeignKey(d => d.DiscountId)
         //         .OnDelete(DeleteBehavior.ClientSetNull);
         // });
-
-        modelBuilder.Entity<IncurredCost>(entity => { entity.Property(e => e.CreatedAt).HasColumnType("datetime"); });
     }
 }

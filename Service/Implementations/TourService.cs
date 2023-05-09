@@ -35,18 +35,48 @@ public class TourService : BaseService, ITourService
 
     public async Task<Result<TourViewModel>> Create(TourCreateModel model)
     {
-        // Map then Add
-        var tour = _mapper.Map<Tour>(model);
+        // Map
+        var tour = model.AdaptIgnoreNull<TourCreateModel, Tour>();
         tour.Code = await _generateTourCode();
         tour.Status = TourStatus.New;
 
+        // Add
         tour = UnitOfWork.Tours.Add(tour);
         await UnitOfWork.SaveChangesAsync();
 
+        // Add Carousel
+        if (model.Carousel != null)
+        {
+            tour.TourCarousel = model.Carousel.Select(attachmentId => new TourImage()
+            {
+                TourId = tour.Id,
+                AttachmentId = attachmentId
+            }).ToList();
+        }
+
+        UnitOfWork.Tours.Update(tour);
+        await UnitOfWork.SaveChangesAsync();
+
         // Result
-        var view = _mapper.Map<TourViewModel>(tour);
+        var view = tour.Adapt<TourViewModel>();
         if (tour.ThumbnailId != null)
             view.ThumbnailUrl = _cloudStorageService.GetMediaLink(tour.ThumbnailId.Value);
+
+        var tourCarousel = await UnitOfWork.TourCarousel
+            .Query()
+            .Where(e => e.TourId == tour.Id)
+            .Include(e => e.Attachment)
+            .ToListAsync();
+
+        view.Carousel = tourCarousel
+            .Select(i => i.Attachment)
+            .Select(attachment => new AttachmentViewModel()
+            {
+                Id = attachment.Id,
+                ContentType = attachment.ContentType,
+                Url = _cloudStorageService.GetMediaLink(attachment.Id)
+            })
+            .ToList();
 
         return view;
     }
@@ -54,20 +84,50 @@ public class TourService : BaseService, ITourService
     public async Task<Result<TourViewModel>> Update(Guid id, TourUpdateModel model)
     {
         // Get Tour
-        var tour = await UnitOfWork.Tours.FindAsync(id);
+        var tour = await UnitOfWork.Tours.TrackingQuery()
+            .Where(e => e.Id == id)
+            .Include(e => e.Schedules)
+            .Include(e => e.TourFlows)
+            .Include(e => e.TourCarousel)
+            .FirstOrDefaultAsync();
+
         if (tour is null) return Error.NotFound();
-        await UnitOfWork.Attach(tour).Collection(e => e.TourFlows).LoadAsync();
 
         // Update
         model.AdaptIgnoreNull(tour);
 
-        UnitOfWork.Tours.Update(tour);
+        if (model.Carousel != null)
+        {
+            tour.TourCarousel = model.Carousel.Select(attachmentId => new TourImage()
+            {
+                TourId = tour.Id,
+                AttachmentId = attachmentId
+            }).ToList();
+        }
+
         await UnitOfWork.SaveChangesAsync();
 
         // Result
-        var view = _mapper.Map<TourViewModel>(tour);
+        var view = tour.Adapt<TourViewModel>();
+        
         if (tour.ThumbnailId != null)
             view.ThumbnailUrl = _cloudStorageService.GetMediaLink(tour.ThumbnailId.Value);
+
+        var tourCarousel = await UnitOfWork.TourCarousel
+            .Query()
+            .Where(e => e.TourId == tour.Id)
+            .Include(e => e.Attachment)
+            .ToListAsync();
+
+        view.Carousel = tourCarousel
+            .Select(i => i.Attachment)
+            .Select(attachment => new AttachmentViewModel()
+            {
+                Id = attachment.Id,
+                ContentType = attachment.ContentType,
+                Url = _cloudStorageService.GetMediaLink(attachment.Id)
+            })
+            .ToList();
 
         return view;
     }
@@ -85,16 +145,30 @@ public class TourService : BaseService, ITourService
 
     public async Task<Result<TourViewModel>> GetDetails(Guid id)
     {
-        var tour = await UnitOfWork.Tours.FindAsync(id);
+        var tour = await UnitOfWork.Tours.Query()
+            .Where(e => e.Id == id)
+            .Include(e => e.Schedules)
+            .Include(e => e.TourFlows)
+            .Include(e => e.TourCarousel).ThenInclude(i => i.Attachment)
+            .FirstOrDefaultAsync();
+
         if (tour is null) return Error.NotFound();
-        
-        // Load TourFlow
-        await UnitOfWork.Attach(tour).Collection(e => e.TourFlows).LoadAsync();
 
         // Result
         var viewModel = _mapper.Map<TourViewModel>(tour);
+
         if (tour.ThumbnailId != null)
             viewModel.ThumbnailUrl = _cloudStorageService.GetMediaLink(tour.ThumbnailId.Value);
+
+        viewModel.Carousel = tour.TourCarousel
+            .Select(i => i.Attachment)
+            .Select(attachment => new AttachmentViewModel()
+            {
+                Id = attachment.Id,
+                ContentType = attachment.ContentType,
+                Url = _cloudStorageService.GetMediaLink(attachment.Id)
+            })
+            .ToList();
 
         return viewModel;
     }
@@ -102,7 +176,7 @@ public class TourService : BaseService, ITourService
     public async Task<Result<PaginationModel<TourFilterViewModel>>> Filter(TourFilterModel model)
     {
         IQueryable<Tour> query = UnitOfWork.Tours.Query()
-            .Include(e => e.TourFlows)
+            .Include(e => e.Schedules)
             .OrderBy(e => e.CreatedAt);
 
         if (!string.IsNullOrEmpty(model.Title))
@@ -148,7 +222,7 @@ public class TourService : BaseService, ITourService
 
             var newAttachment = createAttachmentResult.Value;
 
-            UnitOfWork.TourCarousels.Add(new TourCarousel()
+            UnitOfWork.TourCarousel.Add(new TourImage()
             {
                 TourId = tourId,
                 AttachmentId = newAttachment.Id
@@ -169,11 +243,11 @@ public class TourService : BaseService, ITourService
 
     public async Task<Result> DeleteFromCarousel(Guid tourId, Guid attachmentId)
     {
-        var tourAttachment = await UnitOfWork.TourCarousels.FindAsync(tourId, attachmentId);
+        var tourAttachment = await UnitOfWork.TourCarousel.FindAsync(tourId, attachmentId);
         if (tourAttachment is null) return Error.NotFound();
 
         var transaction = UnitOfWork.BeginTransaction();
-        UnitOfWork.TourCarousels.Remove(tourAttachment);
+        UnitOfWork.TourCarousel.Remove(tourAttachment);
         await UnitOfWork.SaveChangesAsync();
 
         var deleteResult = await _attachmentService.Delete(attachmentId);
@@ -192,7 +266,7 @@ public class TourService : BaseService, ITourService
         if (!await UnitOfWork.Tours.AnyAsync(e => e.Id == tourId))
             return Error.NotFound();
 
-        var attachmentIds = await UnitOfWork.TourCarousels
+        var attachmentIds = await UnitOfWork.TourCarousel
             .Query()
             .Where(e => e.TourId == tourId)
             .Select(e => e.AttachmentId)

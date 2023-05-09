@@ -1,4 +1,5 @@
 ﻿using Data.Enums;
+using Service.Models.Schedule;
 using Service.Models.TourFlow;
 
 namespace Service.Models.Tour;
@@ -16,6 +17,8 @@ public record TourCreateModel
     int MaxOccupancy,
     TourType Type,
     string? Description,
-    List<TourFlowCreateModel> TourFlows,
+    List<ScheduleCreateModel>? Schedules,
+    List<TourFlowCreateModel>? TourFlows,
+    List<Guid>? Carousel,
     Guid? ThumbnailId
 );

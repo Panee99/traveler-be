@@ -84,33 +84,33 @@ public class ToursController : ApiController
     /// <summary>
     /// CAROUSEL
     /// </summary>
-    [ProducesResponseType(typeof(AttachmentViewModel), StatusCodes.Status200OK)]
-    [HttpPost("{id:guid}/carousel")]
-    public async Task<IActionResult> AddToCarousel(Guid id, IFormFile file)
-    {
-        var validateResult = FileHelper.ValidateImageFile(file);
-        if (!validateResult.IsSuccess) return OnError(validateResult.Error);
-
-        var result = await _tourService.AddToCarousel(id, file.ContentType, file.OpenReadStream());
-        return result.Match(Ok, OnError);
-    }
-
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [HttpDelete("{tourId:guid}/carousel/{attachmentId}")]
-    public async Task<IActionResult> DeleteFromCarousel(Guid tourId, Guid attachmentId)
-    {
-        var result = await _tourService.DeleteFromCarousel(tourId, attachmentId);
-        return result.Match(Ok, OnError);
-    }
-
-    [ProducesResponseType(typeof(List<AttachmentViewModel>), StatusCodes.Status200OK)]
-    [HttpGet("{id:guid}/carousel")]
-    [AllowAnonymous]
-    public async Task<IActionResult> GetCarousel(Guid id)
-    {
-        var result = await _tourService.GetCarousel(id);
-        return result.Match(Ok, OnError);
-    }
+    // [ProducesResponseType(typeof(AttachmentViewModel), StatusCodes.Status200OK)]
+    // [HttpPost("{id:guid}/carousel")]
+    // public async Task<IActionResult> AddToCarousel(Guid id, IFormFile file)
+    // {
+    //     var validateResult = FileHelper.ValidateImageFile(file);
+    //     if (!validateResult.IsSuccess) return OnError(validateResult.Error);
+    //
+    //     var result = await _tourService.AddToCarousel(id, file.ContentType, file.OpenReadStream());
+    //     return result.Match(Ok, OnError);
+    // }
+    //
+    // [ProducesResponseType(StatusCodes.Status200OK)]
+    // [HttpDelete("{tourId:guid}/carousel/{attachmentId}")]
+    // public async Task<IActionResult> DeleteFromCarousel(Guid tourId, Guid attachmentId)
+    // {
+    //     var result = await _tourService.DeleteFromCarousel(tourId, attachmentId);
+    //     return result.Match(Ok, OnError);
+    // }
+    //
+    // [ProducesResponseType(typeof(List<AttachmentViewModel>), StatusCodes.Status200OK)]
+    // [HttpGet("{id:guid}/carousel")]
+    // [AllowAnonymous]
+    // public async Task<IActionResult> GetCarousel(Guid id)
+    // {
+    //     var result = await _tourService.GetCarousel(id);
+    //     return result.Match(Ok, OnError);
+    // }
 
     [HttpGet("{id:guid}/tour-groups")]
     public async Task<IActionResult> ListTourGroups(Guid id)

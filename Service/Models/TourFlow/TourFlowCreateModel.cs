@@ -2,8 +2,8 @@
 
 public record TourFlowCreateModel
 (
-    string Description,
-    int Sequence,
-    DateTime? From,
-    DateTime? To
+    float Longitude,
+    float Latitude,
+    DateTime ArrivalTime,
+    string? Description
 );

@@ -1,10 +1,10 @@
 ﻿namespace Service.Models.TourFlow;
 
-public record TourFlowViewModel
+public class TourFlowViewModel
 {
     public Guid Id;
-    public string Description = null!;
-    public int Sequence;
-    public DateTime? From;
-    public DateTime? To;
+    public float Longitude;
+    public float Latitude;
+    public DateTime ArrivalTime;
+    public string? Description = null!;
 }

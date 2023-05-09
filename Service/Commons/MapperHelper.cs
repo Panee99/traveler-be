@@ -16,4 +16,10 @@ public static class MapperHelper
     {
         return source.Adapt(destination, IgnoreNullConfig<TSource, TDestination>());
     }
+
+    public static TDestination AdaptIgnoreNull<TSource, TDestination>(this TSource source)
+    {
+        if (source is null) throw new Exception("Adapt source can not be null");
+        return source.Adapt<TDestination>(IgnoreNullConfig<TSource, TDestination>());
+    }
 }
