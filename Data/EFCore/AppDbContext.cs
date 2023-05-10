@@ -39,7 +39,7 @@ public class AppDbContext : DbContext
     }
 }
 
-static class DbContextExtensions
+internal static class DbContextExtensions
 {
     public static void HasSeedData<TEntity>(this EntityTypeBuilder<TEntity> builder, string fileName)
         where TEntity : class
