@@ -35,7 +35,7 @@ public class BookingService : BaseService, IBookingService
         if (travelerInOtherTour) return Error.Conflict("Traveler already in a Tour");
 
         // check if this tour already booked
-        if (!await UnitOfWork.Bookings.Query()
+        if (await UnitOfWork.Bookings.Query()
                 .AnyAsync(e => e.TourId == model.TourId && e.TravelerId == travelerId))
         {
             return Error.Conflict("This tour is already booked");
