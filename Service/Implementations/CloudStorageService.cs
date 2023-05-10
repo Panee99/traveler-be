@@ -42,9 +42,7 @@ public class CloudStorageService : BaseService, ICloudStorageService
                 null,
                 CancellationToken.None);
 
-            return CloudStorageHelper.GenerateV4UploadSignedUrl(
-                _settings.Bucket,
-                $"{_settings.Folder}/{id}");
+            return GetMediaLink(id);
         }
         catch (Exception e)
         {
@@ -86,8 +84,11 @@ public class CloudStorageService : BaseService, ICloudStorageService
     // Object url
     public string GetMediaLink(Guid id)
     {
-        return CloudStorageHelper.GenerateV4UploadSignedUrl(
-            _settings.Bucket,
-            _settings.Folder + '/' + id);
+        // return CloudStorageHelper.GenerateV4UploadSignedUrl(
+        //     _settings.Bucket,
+        //     _settings.Folder + '/' + id);
+
+        return $"https://firebasestorage.googleapis.com/v0/b/" +
+               $"{_settings.Bucket}/o/{_settings.Folder}%2F{id}?alt=media";
     }
 }
