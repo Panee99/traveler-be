@@ -6,7 +6,6 @@ public record TransactionViewModel
 {
     public Guid Id;
     public Guid BookingId;
-    public Guid VnPayRequestId;
     public double Amount;
     public TransactionStatus Status;
     public DateTime Timestamp;

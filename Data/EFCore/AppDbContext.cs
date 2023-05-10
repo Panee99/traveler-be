@@ -26,15 +26,15 @@ public class AppDbContext : DbContext
         modelBuilder.ConfigureEntities();
 
         // Seeds
-        modelBuilder.Entity<Traveler>().HasSeedData("travelers.json");
-        modelBuilder.Entity<TourGuide>().HasSeedData("tour-guides.json");
+        modelBuilder.Entity<Attachment>().HasSeedData("attachments.json");
         modelBuilder.Entity<Manager>().HasSeedData("managers.json");
+        modelBuilder.Entity<Ticket>().HasSeedData("tickets.json");
         modelBuilder.Entity<TourFlow>().HasSeedData("tour-flows.json");
         modelBuilder.Entity<TourGroup>().HasSeedData("tour-groups.json");
-        modelBuilder.Entity<Tour>().HasSeedData("tours.json");
-        modelBuilder.Entity<Ticket>().HasSeedData("tickets.json");
-        modelBuilder.Entity<Attachment>().HasSeedData("attachments.json");
+        modelBuilder.Entity<TourGuide>().HasSeedData("tour-guides.json");
         modelBuilder.Entity<TourImage>().HasSeedData("tour-images.json");
+        modelBuilder.Entity<Tour>().HasSeedData("tours.json");
+        modelBuilder.Entity<Traveler>().HasSeedData("travelers.json");
         // modelBuilder.Entity<TravelerInTourGroup>().HasSeedData("traveler-in-tour-group.json");
     }
 }

@@ -26,6 +26,8 @@ public class Booking
 
     public int InfantPrice { get; set; }
 
+    public DateTime ExpireAt { get; set; }
+
     public DateTime Timestamp { get; set; }
 
     public PaymentStatus PaymentStatus { get; set; }

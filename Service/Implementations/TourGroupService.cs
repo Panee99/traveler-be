@@ -78,7 +78,7 @@ public class TourGroupService : BaseService, ITourGroupService
         if (!await UnitOfWork.TourGroups.AnyAsync(e => e.Id == tourGroupId))
             return Error.NotFound();
 
-        var records = travelerIds.Select(travelerId => new TravelerInTour
+        var records = travelerIds.Select(travelerId => new TravelerInTourGroup
         {
             TravelerId = travelerId,
             TourGroupId = tourGroupId
@@ -95,7 +95,7 @@ public class TourGroupService : BaseService, ITourGroupService
         if (nonExistTravelers.Count != 0)
             return Error.NotFound(nonExistTravelers.Select(id => id.ToString()).ToArray());
 
-        UnitOfWork.TravelersInTours.AddRange(records);
+        UnitOfWork.TravelersInTourGroups.AddRange(records);
 
         await UnitOfWork.SaveChangesAsync();
         return Result.Success();
@@ -106,12 +106,12 @@ public class TourGroupService : BaseService, ITourGroupService
         if (!await UnitOfWork.TourGroups.AnyAsync(e => e.Id == tourGroupId))
             return Error.NotFound();
 
-        var records = await UnitOfWork.TravelersInTours
+        var records = await UnitOfWork.TravelersInTourGroups
             .Query()
             .Where(e => e.TourGroupId == tourGroupId && travelerIds.Contains(e.TravelerId))
             .ToListAsync();
 
-        UnitOfWork.TravelersInTours.RemoveRange(records);
+        UnitOfWork.TravelersInTourGroups.RemoveRange(records);
         await UnitOfWork.SaveChangesAsync();
 
         return Result.Success();
@@ -122,7 +122,7 @@ public class TourGroupService : BaseService, ITourGroupService
         if (!await UnitOfWork.TourGroups.AnyAsync(e => e.Id == tourGroupId))
             return Error.NotFound();
 
-        var travelerIds = await UnitOfWork.TravelersInTours
+        var travelerIds = await UnitOfWork.TravelersInTourGroups
             .Query()
             .Where(e => e.TourGroupId == tourGroupId)
             .Select(e => e.TravelerId)

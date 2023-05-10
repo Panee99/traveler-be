@@ -10,6 +10,8 @@ public class Transaction
 
     public TransactionStatus Status { get; set; }
 
+    public string ClientIp { get; set; }
+
     public DateTime Timestamp { get; set; }
 
     /// <summary>
@@ -19,4 +21,3 @@ public class Transaction
 
     public virtual Booking Booking { get; set; } = null!;
 }
-

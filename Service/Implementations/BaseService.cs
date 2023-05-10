@@ -7,7 +7,7 @@ namespace Service.Implementations;
 
 public abstract class BaseService
 {
-    private readonly IHttpContextAccessor? _httpContextAccessor;
+    protected readonly IHttpContextAccessor? _httpContextAccessor;
     protected readonly UnitOfWork UnitOfWork;
 
     protected AuthUser? CurrentUser

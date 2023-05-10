@@ -44,6 +44,9 @@
         <None Update="EFCore\Seeds\tour-images.json">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
+        <None Update="EFCore\Seeds\travelers-in-tour-groups.json">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
     </ItemGroup>
 
 </Project>

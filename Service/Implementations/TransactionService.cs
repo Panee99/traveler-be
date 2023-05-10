@@ -3,101 +3,178 @@ using Data.Entities;
 using Data.Enums;
 using Mapster;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Service.Interfaces;
 using Service.Models.Transaction;
 using Shared.ExternalServices.VnPay;
 using Shared.ExternalServices.VnPay.Models;
 using Shared.Helpers;
 using Shared.ResultExtensions;
-using Shared.Settings;
 
 namespace Service.Implementations;
 
 public class TransactionService : BaseService, ITransactionService
 {
-    private readonly VnPaySettings _vnPaySettings;
-    private readonly IVnPayService _vnPayService;
+    private readonly VnPay _vnPay;
     private readonly ILogger<TransactionService> _logger;
 
-    public TransactionService(UnitOfWork unitOfWork, IOptions<VnPaySettings> vnPaySettings,
-        IVnPayService vnPayService, ILogger<TransactionService> logger,
-        IHttpContextAccessor httpContextAccessor) :
+    public TransactionService(UnitOfWork unitOfWork,
+        IHttpContextAccessor httpContextAccessor, VnPay vnPay, ILogger<TransactionService> logger) :
         base(unitOfWork, httpContextAccessor)
     {
-        _vnPayService = vnPayService;
+        _vnPay = vnPay;
         _logger = logger;
-        _vnPaySettings = vnPaySettings.Value;
     }
 
+    /// <summary>
+    /// Create payment transaction
+    /// </summary>
     public async Task<Result<TransactionViewModel>> CreateTransaction(Guid bookingId, string clientIp)
     {
+        // find booking
         var booking = await UnitOfWork.Bookings.FindAsync(bookingId);
         if (booking is null) return Error.NotFound("Booking not found");
 
+        // check if booking expired
+        if (booking.ExpireAt <= DateTimeHelper.VnNow()) return Error.Conflict("Booking expired");
+
+        // check owning logic
         if (CurrentUser!.Id != booking.TravelerId) return Error.Conflict("Can only pay your own booking");
 
+        // check if booking already paid
         if (booking.PaymentStatus is PaymentStatus.Paid)
             return Error.Conflict("Booking already paid");
 
+        // create new transaction with payment url
         var amount = _calculateAmount(booking);
-        await using var tx = UnitOfWork.BeginTransaction();
 
-        try
+        var transaction = UnitOfWork.Transactions.Add(new Transaction()
         {
-            var newTransaction = UnitOfWork.Transactions.Add(new Transaction()
-            {
-                BookingId = bookingId,
-                Amount = amount,
-                Status = TransactionStatus.Pending,
-                Timestamp = DateTimeHelper.VnNow(),
-            });
-            await UnitOfWork.SaveChangesAsync();
+            BookingId = bookingId,
+            Amount = amount,
+            Status = TransactionStatus.Pending,
+            Timestamp = DateTimeHelper.VnNow(),
+            ClientIp = clientIp
+        });
 
-            var requestModel = _buildVnPayRequestModel(newTransaction.Id, clientIp,
-                amount, bookingId, booking.TravelerId, _vnPaySettings);
+        await UnitOfWork.SaveChangesAsync();
 
-            var createPayRequestResult = await _vnPayService.CreateRequest(requestModel);
-            if (!createPayRequestResult.IsSuccess)
-                return Error.Unexpected("Create pay request failed");
+        var requestModel =
+            _buildVnPayRequestModel(clientIp, amount, bookingId, booking.TravelerId, transaction.Id);
 
-            await tx.CommitAsync();
-
-            // Result
-            var view = newTransaction.Adapt<TransactionViewModel>();
-            view.VnPayRequestId = requestModel.TxnRef;
-            view.PayUrl = VnPay.CreateRequestUrl(requestModel, _vnPaySettings.BaseUrl, _vnPaySettings.HashSecret);
-            return view;
-        }
-        catch (Exception e)
-        {
-            await tx.RollbackAsync();
-            _logger.LogError(e, "{Message}", e.Message);
-            return Error.Unexpected(e.Message);
-        }
+        // Result
+        var view = transaction.Adapt<TransactionViewModel>();
+        view.PayUrl = _vnPay.CreateRequestUrl(requestModel);
+        return view;
     }
 
+    /// <summary>
+    /// Handle payment response from VnPay server
+    /// </summary>
+    public async Task<Result> HandleIpnResponse(VnPayResponseModel model)
+    {
+        // find target transaction of this response
+        var transaction = await UnitOfWork.Transactions
+            .Query()
+            .Where(e => e.Id == model.TxnRef)
+            .Include(e => e.Booking)
+            .FirstOrDefaultAsync();
+
+        if (transaction is null)
+        {
+            _logger.LogError("Invalid response. No Transaction have matching TxnRef: {TxnRef}", model.TxnRef);
+            return Error.Unexpected();
+        }
+
+        // Save Response
+        var response = model.Adapt<VnPayResponse>();
+        response.Timestamp = DateTimeHelper.VnNow();
+        UnitOfWork.VnPayResponses.Add(response);
+
+        // Update Transaction status
+        if (_isSuccessResponse(model))
+        {
+            transaction.Status = TransactionStatus.Success;
+            transaction.Booking.PaymentStatus = PaymentStatus.Paid;
+
+            // Assign traveler to a group
+            // 1. find available group
+            var booking = transaction.Booking;
+            var occupancy = _totalBookingOccupancy(booking);
+            var availableTourGroup = await UnitOfWork.TourGroups
+                .Query()
+                .Where(tourGroup => tourGroup.TourId == booking.TourId)
+                .Where(tourGroup => tourGroup.MaxOccupancy > tourGroup.Travelers.Count + occupancy)
+                .FirstOrDefaultAsync();
+
+            // 2. create new group if all groups full
+            if (availableTourGroup is null)
+            {
+                // get tour group count. Ex: Exist 4 groups -> create "Group 5". 
+                var tourGroupCount = await UnitOfWork.Tours
+                    .Query()
+                    .Where(e => e.Id == booking.TourId)
+                    .Select(e => e.TourGroups)
+                    .CountAsync();
+
+                availableTourGroup = new TourGroup()
+                {
+                    GroupName = $"Group {tourGroupCount + 1}",
+                    TourId = booking.TourId,
+                    MaxOccupancy = 50,
+                };
+
+                UnitOfWork.TourGroups.Add(availableTourGroup);
+            }
+
+            // 3. add traveler to group
+            UnitOfWork.TravelersInTourGroups.Add(new TravelerInTourGroup()
+            {
+                TravelerId = booking.TravelerId,
+                TourGroupId = availableTourGroup.Id,
+                JoinedAt = DateTimeHelper.VnNow()
+            });
+        }
+        else
+        {
+            transaction.Status = TransactionStatus.Failed;
+        }
+
+        UnitOfWork.Transactions.Update(transaction);
+
+        // Finalize
+        await UnitOfWork.SaveChangesAsync();
+        return Result.Success();
+    }
+
+    private static bool _isSuccessResponse(VnPayResponseModel model)
+    {
+        return model is { ResponseCode: "00", TransactionStatus: "00" };
+    }
+
+    private static int _totalBookingOccupancy(Booking booking)
+    {
+        return booking.AdultQuantity + booking.ChildrenQuantity + booking.InfantQuantity;
+    }
+
+
+    /// <summary>
+    /// PRIVATE
+    /// </summary>
     private static VnPayRequestModel _buildVnPayRequestModel(
-        Guid transactionId, string clientIp, int amount, Guid bookingId, Guid travelerId, VnPaySettings settings)
+        string clientIp, int amount, Guid bookingId, Guid travelerId, Guid transactionId)
     {
         var now = DateTimeHelper.VnNow();
 
         return new VnPayRequestModel()
         {
-            TxnRef = Guid.NewGuid(),
-            Command = VnPayConstants.Command,
-            Locale = VnPayConstants.Locale,
-            Version = VnPayConstants.Version,
-            CurrencyCode = VnPayConstants.CurrencyCode,
+            TxnRef = transactionId,
             Amount = amount,
             CreateDate = now,
             ExpireDate = now.AddMinutes(15),
             OrderInfo = $"traveler '{travelerId}' pay tour booking {bookingId}, amount = {amount} vnd",
             IpAddress = clientIp,
-            ReturnUrl = settings.ReturnUrl,
-            TmnCode = settings.TmnCode,
-            TransactionId = transactionId
         };
     }
 

@@ -109,7 +109,7 @@ public class TourService : BaseService, ITourService
 
         // Result
         var view = tour.Adapt<TourViewModel>();
-        
+
         if (tour.ThumbnailId != null)
             view.ThumbnailUrl = _cloudStorageService.GetMediaLink(tour.ThumbnailId.Value);
 

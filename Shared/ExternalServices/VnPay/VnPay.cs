@@ -2,33 +2,45 @@
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
+using Microsoft.Extensions.Options;
 using Shared.ExternalServices.VnPay.Models;
+using Shared.ResultExtensions;
+using Shared.Settings;
 
 namespace Shared.ExternalServices.VnPay;
 
-public static class VnPay
+public class VnPay
 {
+    private const string Version = "2.1.0";
+    private const string CurrencyCode = "VND";
+    private const string Locale = "vn";
+    private const string Command = "pay";
+
+    private readonly VnPaySettings _settings;
+
+    public VnPay(IOptions<VnPaySettings> settings)
+    {
+        _settings = settings.Value;
+    }
+
     /// <summary>
-    ///     Request Processing
+    /// Request Processing
     /// </summary>
-
-    #region Generate Request
-
-    public static string CreateRequestUrl(VnPayRequestModel model, string baseUrl, string vnp_HashSecret)
+    public string CreateRequestUrl(VnPayRequestModel model)
     {
         var requestParams = new SortedList<string, string?>(new VnPayComparer())
         {
-            { "vnp_Version", model.Version },
-            { "vnp_Locale", model.Locale },
-            { "vnp_CurrCode", model.CurrencyCode },
-            { "vnp_Command", model.Command },
-            { "vnp_TmnCode", model.TmnCode },
+            { "vnp_Version", Version },
+            { "vnp_Locale", Locale },
+            { "vnp_CurrCode", CurrencyCode },
+            { "vnp_Command", Command },
+            { "vnp_TmnCode", _settings.TmnCode },
+            { "vnp_ReturnUrl", _settings.ReturnUrl },
             { "vnp_Amount", ((long)model.Amount * 100).ToString() },
             { "vnp_CreateDate", model.CreateDate.ToString("yyyyMMddHHmmss") },
             { "vnp_ExpireDate", model.ExpireDate.ToString("yyyyMMddHHmmss") },
             { "vnp_IpAddr", model.IpAddress },
             { "vnp_OrderInfo", model.OrderInfo },
-            { "vnp_ReturnUrl", model.ReturnUrl },
             { "vnp_TxnRef", model.TxnRef.ToString() },
             { "vnp_OrderType", model.OrderType },
             { "vnp_BankCode", model.BankCode }
@@ -40,18 +52,16 @@ public static class VnPay
 
         var queryString = data.ToString();
 
-        var url = baseUrl + "?" + queryString;
+        var url = _settings.BaseUrl + "?" + queryString;
         var signData = queryString;
         if (signData.Length > 0)
             signData = signData.Remove(data.Length - 1, 1);
 
-        var vnp_SecureHash = _hmacSHA512(vnp_HashSecret, signData);
-        url += "vnp_SecureHash=" + vnp_SecureHash;
+        var vnpSecureHash = _hmacSHA512(_settings.HashSecret, signData);
+        url += "vnp_SecureHash=" + vnpSecureHash;
 
         return url;
     }
-
-    #endregion
 
     private static string _hmacSHA512(string key, string inputData)
     {
@@ -68,13 +78,12 @@ public static class VnPay
     }
 
     /// <summary>
-    ///     Response Processing
+    /// Response Processing
     /// </summary>
-
-    #region Response process
-
-    public static VnPayResponseModel ParseToResponseModel(IDictionary<string, string> queryParams)
+    public Result<VnPayResponseModel> ParseToResponseModel(IDictionary<string, string> queryParams)
     {
+        if (!_validateSignature(queryParams)) return Error.Validation("Signature validation failed");
+
         var model = new VnPayResponseModel
         {
             TransactionNo = _tryGetRequiredParam("vnp_TransactionNo", queryParams),
@@ -94,15 +103,15 @@ public static class VnPay
         return model;
     }
 
-    public static bool ValidateSignature(string secretKey, IDictionary<string, string> queryParams)
+    private bool _validateSignature(IDictionary<string, string> queryParams)
     {
         var inputHash = _tryGetRequiredParam("vnp_SecureHash", queryParams);
-        var rspRaw = _getResponseData(queryParams);
-        var myChecksum = _hmacSHA512(secretKey, rspRaw);
+        var rspRaw = _getResponseRawUrl(queryParams);
+        var myChecksum = _hmacSHA512(_settings.HashSecret, rspRaw);
         return myChecksum.Equals(inputHash, StringComparison.InvariantCultureIgnoreCase);
     }
 
-    private static string _getResponseData(IDictionary<string, string> queryParams)
+    private static string _getResponseRawUrl(IDictionary<string, string> queryParams)
     {
         queryParams = queryParams.OrderBy(x => x.Key, new VnPayComparer()).ToDictionary(x => x.Key, x => x.Value);
 
@@ -133,8 +142,6 @@ public static class VnPay
         queryParams.TryGetValue(key, out var value);
         return value;
     }
-
-    #endregion
 }
 
 public class VnPayComparer : IComparer<string>

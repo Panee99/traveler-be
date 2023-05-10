@@ -1,30 +1,22 @@
 ﻿using System.Globalization;
-using Application.Configurations.Auth;
-using Data.Enums;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 using Service.Interfaces;
-using Service.Models.Transaction;
 using Service.Models.VnPay;
 using Shared.ExternalServices.VnPay;
 using Shared.ResultExtensions;
-using Shared.Settings;
 
 namespace Application.Controllers;
 
 [Route("transactions")]
 public class TransactionsController : ApiController
 {
-    private readonly VnPaySettings _vnPaySettings;
-
     private readonly IVnPayService _vnPayService;
+    private readonly VnPay _vnPay;
 
-    public TransactionsController(
-        IOptions<VnPaySettings> vnPaySettings,
-        IVnPayService vnPayService)
+    public TransactionsController(IVnPayService vnPayService, VnPay vnPay)
     {
         _vnPayService = vnPayService;
-        _vnPaySettings = vnPaySettings.Value;
+        _vnPay = vnPay;
     }
 
     [ApiExplorerSettings(IgnoreApi = true)]
@@ -34,11 +26,10 @@ public class TransactionsController : ApiController
         try
         {
             // TODO: return RspCode, Message 
-            if (!VnPay.ValidateSignature(_vnPaySettings.HashSecret, queryParams))
-                return BadRequest("Invalid Signature.");
+            var parseResult = _vnPay.ParseToResponseModel(queryParams);
+            if (!parseResult.IsSuccess) return BadRequest();
 
-            var model = VnPay.ParseToResponseModel(queryParams);
-            var result = await _vnPayService.HandleResponse(model);
+            var result = await _vnPayService.HandleResponse(parseResult.Value);
             return result.Match(Ok, OnError);
         }
         catch (Exception e)
@@ -51,11 +42,10 @@ public class TransactionsController : ApiController
     [HttpGet("result")]
     public IActionResult PaymentResult([FromQuery] Dictionary<string, string> queryParams)
     {
-        if (!VnPay.ValidateSignature(_vnPaySettings.HashSecret, queryParams))
-            return BadRequest("Invalid Signature.");
+        var parseResult = _vnPay.ParseToResponseModel(queryParams);
+        if (!parseResult.IsSuccess) return BadRequest();
 
-        var model = VnPay.ParseToResponseModel(queryParams);
-
+        var model = parseResult.Value;
         DateTime? payDate = model.PayDate is null
             ? null
             : DateTime.ParseExact(model.PayDate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture);

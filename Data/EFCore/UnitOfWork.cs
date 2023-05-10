@@ -1,9 +1,5 @@
 ﻿using Data.EFCore.Repositories;
 using Data.Entities;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Microsoft.EntityFrameworkCore.Storage;
-using Shared.Helpers;
 
 namespace Data.EFCore;
 
@@ -22,8 +18,7 @@ public class UnitOfWork : UnitOfWorkBase
     public IRepository<TourGuide> TourGuides => Repo<TourGuide>();
     public IRepository<Transaction> Transactions => Repo<Transaction>();
     public IRepository<Traveler> Travelers => Repo<Traveler>();
-    public IRepository<TravelerInTour> TravelersInTours => Repo<TravelerInTour>();
-    public IRepository<VnPayRequest> VnPayRequests => Repo<VnPayRequest>();
+    public IRepository<TravelerInTourGroup> TravelersInTourGroups => Repo<TravelerInTourGroup>();
     public IRepository<VnPayResponse> VnPayResponses => Repo<VnPayResponse>();
     public IRepository<IncurredCost> IncurredCosts => Repo<IncurredCost>();
 

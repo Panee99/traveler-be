@@ -48,7 +48,5 @@ public class Tour
 
     public virtual ICollection<Booking> Bookings { get; set; } = new List<Booking>();
 
-    public virtual ICollection<TravelerInTour> TravelerInTours { get; set; } = new List<TravelerInTour>();
-
     // public virtual ICollection<TourDiscount> TourDiscounts { get; set; } = new List<TourDiscount>();
 }

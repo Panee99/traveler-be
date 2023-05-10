@@ -6,6 +6,7 @@ using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Service.Implementations;
+using Shared.ExternalServices.VnPay;
 using Shared.Settings;
 
 namespace Application.Configurations;
@@ -31,6 +32,9 @@ public static class AppConfiguration
         // DbContext
         services.AddDbContextPool<AppDbContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+
+        // VnPay
+        services.AddSingleton<VnPay>();
 
         return services.AddDependencies();
     }

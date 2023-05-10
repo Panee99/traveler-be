@@ -103,33 +103,53 @@ public static class EntityConfigurations
             entity.Property(e => e.LastName).HasMaxLength(256);
         });
 
-        modelBuilder.Entity<TravelerInTour>(entity =>
-        {
-            entity.ToTable("TravelerInTour");
+        modelBuilder.Entity<Traveler>()
+            .HasMany(traveler => traveler.TourGroups)
+            .WithMany(group => group.Travelers)
+            .UsingEntity<TravelerInTourGroup>(
+                builder => builder
+                    .HasOne(tig => tig.TourGroup)
+                    .WithMany()
+                    .HasForeignKey(tig => tig.TourGroupId),
+                builder => builder
+                    .HasOne(sc => sc.Traveler)
+                    .WithMany()
+                    .HasForeignKey(sc => sc.TravelerId),
+                builder =>
+                {
+                    builder.ToTable("TravelerInTourGroup");
+                    builder.HasKey(sc => new { sc.TravelerId, sc.TourGroupId });
+                }
+            );
 
-            entity.HasOne(e => e.Tour).WithMany(tour => tour.TravelerInTours).HasForeignKey(e => e.TourId);
+        // modelBuilder.Entity<TravelerInTourGroup>(entity =>
+        // {
+        //     entity.ToTable("TravelerInGroupGroup");
+        //
+        //     entity.HasOne(e => e.TourGroup).WithMany(tour => tour.TravelerInTours).HasForeignKey(e => e.TourId);
+        //
+        //     entity.HasOne(e => e.Traveler).WithMany(traveler => traveler.TravelerInTours)
+        //         .HasForeignKey(e => e.TravelerId);
+        //
+        //     entity.HasOne(e => e.TourGroup).WithMany(tourGroup => tourGroup.TravelerInTours)
+        //         .HasForeignKey(e => e.TourGroupId).OnDelete(DeleteBehavior.Restrict);
+        // });
 
-            entity.HasOne(e => e.Traveler).WithMany(traveler => traveler.TravelerInTours)
-                .HasForeignKey(e => e.TravelerId);
-
-            entity.HasOne(e => e.TourGroup).WithMany(tourGroup => tourGroup.TravelerInTours)
-                .HasForeignKey(e => e.TourGroupId).OnDelete(DeleteBehavior.Restrict);
-        });
-
-        modelBuilder.Entity<VnPayRequest>(entity => { entity.HasKey(e => e.TxnRef); });
+        // modelBuilder.Entity<VnPayRequest>(entity => { entity.HasKey(e => e.TxnRef); });
 
         modelBuilder.Entity<VnPayResponse>(entity =>
         {
-            entity.HasKey(e => e.TxnRef);
-            entity.HasOne(response => response.VnPayRequest)
+            entity.HasKey(e => e.TransactionId);
+            entity.HasOne(response => response.Transaction)
                 .WithOne()
-                .HasForeignKey<VnPayResponse>(x => x.TxnRef);
+                .HasForeignKey<VnPayResponse>(x => x.TransactionId);
         });
 
         modelBuilder.Entity<TourFlow>(entity => { entity.ToTable("TourFlow"); });
 
-        modelBuilder.Entity<IncurredCost>(entity => { entity.Property(e => e.CreatedAt).HasColumnType("datetime"); });
-        
+        modelBuilder.Entity<IncurredCost>(
+            entity => { entity.Property(e => e.CreatedAt).HasColumnType("datetime"); });
+
         // modelBuilder.Entity<TourDiscount>(entity =>
         // {
         //     entity.Property(e => e.T1discount).HasColumnName("T1Discount");

@@ -14,7 +14,6 @@ namespace Service.Implementations;
 
 public class BookingService : BaseService, IBookingService
 {
-
     public BookingService(UnitOfWork unitOfWork, IHttpContextAccessor httpContextAccessor)
         : base(unitOfWork, httpContextAccessor)
     {
@@ -25,20 +24,24 @@ public class BookingService : BaseService, IBookingService
         var tour = await UnitOfWork.Tours.FindAsync(model.TourId);
         if (tour is null) return Error.NotFound("Tour not found");
 
-        if (tour.Status != TourStatus.Active)
-            return Error.Conflict("Can only book status Active tours");
+        if (tour.Status != TourStatus.Active) return Error.Conflict("Can only book status Active tours");
 
-        // check if traveler in any active tour.
-        var travelerInActiveTour = await UnitOfWork.Travelers.Query()
+        // check if traveler in any other running tour.
+        var travelerInOtherTour = await UnitOfWork.Travelers.Query()
             .Where(traveler => traveler.Id == travelerId)
-            .SelectMany(traveler => traveler.TravelerInTours)
-            .Select(travelerInTour => travelerInTour.Tour)
-            .Where(t => t.Status != TourStatus.Closed)
-            .FirstOrDefaultAsync();
+            .SelectMany(traveler => traveler.TourGroups)
+            .AnyAsync(tourGroup => tourGroup.Tour.Status != TourStatus.Closed);
 
-        if (travelerInActiveTour != null)
-            return Error.Conflict("Traveler already in an tour");
+        if (travelerInOtherTour) return Error.Conflict("Traveler already in a Tour");
 
+        // check if this tour already booked
+        if (!await UnitOfWork.Bookings.Query()
+                .AnyAsync(e => e.TourId == model.TourId && e.TravelerId == travelerId))
+        {
+            return Error.Conflict("This tour is already booked");
+        }
+
+        var now = DateTimeHelper.VnNow();
         var booking = new Booking()
         {
             TourId = model.TourId,
@@ -47,10 +50,11 @@ public class BookingService : BaseService, IBookingService
             ChildrenQuantity = model.ChildrenQuantity,
             InfantQuantity = model.InfantQuantity,
             PaymentStatus = PaymentStatus.Pending,
-            Timestamp = DateTimeHelper.VnNow(),
+            Timestamp = now,
             AdultPrice = tour.AdultPrice,
             ChildrenPrice = tour.ChildrenPrice,
             InfantPrice = tour.InfantPrice,
+            ExpireAt = now.AddHours(2)
         };
 
         UnitOfWork.Bookings.Add(booking);
@@ -58,30 +62,6 @@ public class BookingService : BaseService, IBookingService
         await UnitOfWork.SaveChangesAsync();
 
         return booking.Adapt<BookingViewModel>();
-    }
-
-    public async Task<Result<BookingViewModel>> Update(BookingUpdateModel model)
-    {
-        var booking = await UnitOfWork.Bookings.FindAsync(model.Id);
-        if (booking is null) return Error.NotFound();
-
-        model.AdaptIgnoreNull(booking);
-
-        UnitOfWork.Bookings.Update(booking);
-        await UnitOfWork.SaveChangesAsync();
-
-        return booking.Adapt<BookingViewModel>();
-    }
-
-    public async Task<Result<List<BookingViewModel>>> Filter(BookingFilterModel model)
-    {
-        if (CurrentUser!.Role == AccountRole.Traveler)
-            if (CurrentUser.Id != model.TravelerId)
-                return Error.Authorization();
-
-        var bookings = await UnitOfWork.Bookings.Query().Where(e => e.TravelerId == model.TravelerId).ToListAsync();
-
-        return bookings.Adapt<List<BookingViewModel>>();
     }
 
     public async Task<Result<List<BookingViewModel>>> ListTravelerBooked(Guid travelerId)
@@ -96,4 +76,17 @@ public class BookingService : BaseService, IBookingService
 
         return bookings.Adapt<List<BookingViewModel>>();
     }
+    
+    // public async Task<Result<BookingViewModel>> Update(BookingUpdateModel model)
+    // {
+    //     var booking = await UnitOfWork.Bookings.FindAsync(model.Id);
+    //     if (booking is null) return Error.NotFound();
+    //
+    //     model.AdaptIgnoreNull(booking);
+    //
+    //     UnitOfWork.Bookings.Update(booking);
+    //     await UnitOfWork.SaveChangesAsync();
+    //
+    //     return booking.Adapt<BookingViewModel>();
+    // }
 }

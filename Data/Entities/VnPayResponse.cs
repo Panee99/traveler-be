@@ -19,7 +19,7 @@ public class VnPayResponse
     /// <summary>
     /// Reference and Key
     /// </summary>
-    public Guid TxnRef { get; set; }
+    public Guid TransactionId { get; set; }
 
-    public virtual VnPayRequest? VnPayRequest { get; set; }
+    public virtual Transaction? Transaction { get; set; }
 }

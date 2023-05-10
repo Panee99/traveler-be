@@ -74,15 +74,16 @@ public class TravelerService : BaseService, ITravelerService
         return _mapper.Map<TravelerViewModel>(entity);
     }
 
+    // TODO: Test
     public async Task<Result<List<TravelerViewModel>>> ListByTour(Guid tourId)
     {
         if (!await UnitOfWork.Tours.AnyAsync(e => e.Id == tourId))
             return Error.NotFound("Tour not found.");
 
-        var travelers = await UnitOfWork.TravelersInTours
-            .Query()
-            .Where(e => e.TourId == tourId)
-            .Select(e => e.Traveler)
+        var travelers = await UnitOfWork.Tours.Query().Where(e => e.Id == tourId)
+            .SelectMany(e => e.TourGroups)
+            .SelectMany(e => e.Travelers)
+            .DistinctBy(e => e.Id)
             .ToListAsync();
 
         var views = travelers.Select(e =>
@@ -95,12 +96,12 @@ public class TravelerService : BaseService, ITravelerService
         return views;
     }
 
+    // TODO: Test
     public async Task<Result<List<TourFilterViewModel>>> ListJoinedTours(Guid travelerId)
     {
-        var tours = await UnitOfWork.TravelersInTours.Query()
-            .Where(e => e.TravelerId == travelerId)
-            .Select(e => e.Tour)
-            .ToListAsync();
+        var tours = await UnitOfWork.Travelers.Query().Where(e => e.Id == travelerId)
+            .SelectMany(e => e.TourGroups)
+            .Select(e => e.Tour).ToListAsync();
 
         var views = tours.Select(tour =>
         {

@@ -18,5 +18,5 @@ public class TourGroup
 
     public TourGuide? TourGuide { get; set; } = null!;
 
-    public virtual ICollection<TravelerInTour> TravelerInTours { get; set; } = new List<TravelerInTour>();
+    public virtual ICollection<Traveler> Travelers { get; set; } = new List<Traveler>();
 }
