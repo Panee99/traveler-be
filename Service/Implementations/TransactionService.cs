@@ -90,6 +90,7 @@ public class TransactionService : BaseService, ITransactionService
         // Save Response
         var response = model.Adapt<VnPayResponse>();
         response.Timestamp = DateTimeHelper.VnNow();
+        response.TransactionId = model.TxnRef;
         UnitOfWork.VnPayResponses.Add(response);
 
         // Update Transaction status
@@ -173,7 +174,7 @@ public class TransactionService : BaseService, ITransactionService
             Amount = amount,
             CreateDate = now,
             ExpireDate = now.AddMinutes(15),
-            OrderInfo = $"traveler '{travelerId}' pay tour booking {bookingId}, amount = {amount} vnd",
+            OrderInfo = $"traveler '{travelerId}' pay tour booking '{bookingId}', amount = {amount} vnd",
             IpAddress = clientIp,
         };
     }
