@@ -10,13 +10,13 @@ namespace Application.Controllers;
 [Route("transactions")]
 public class TransactionsController : ApiController
 {
-    private readonly IVnPayService _vnPayService;
     private readonly VnPay _vnPay;
-
-    public TransactionsController(IVnPayService vnPayService, VnPay vnPay)
+    private readonly ITransactionService _transactionService;
+    
+    public TransactionsController(VnPay vnPay, ITransactionService transactionService)
     {
-        _vnPayService = vnPayService;
         _vnPay = vnPay;
+        _transactionService = transactionService;
     }
 
     [ApiExplorerSettings(IgnoreApi = true)]
@@ -29,7 +29,7 @@ public class TransactionsController : ApiController
             var parseResult = _vnPay.ParseToResponseModel(queryParams);
             if (!parseResult.IsSuccess) return BadRequest();
 
-            var result = await _vnPayService.HandleResponse(parseResult.Value);
+            var result = await _transactionService.HandleIpnResponse(parseResult.Value);
             return result.Match(Ok, OnError);
         }
         catch (Exception e)
