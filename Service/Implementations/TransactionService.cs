@@ -46,17 +46,27 @@ public class TransactionService : BaseService, ITransactionService
         if (booking.PaymentStatus is PaymentStatus.Paid)
             return Error.Conflict("Booking already paid");
 
+        // remove old transactions of this booking
+        var oldTransactions = await UnitOfWork.Transactions
+            .Query()
+            .Where(e => e.BookingId == bookingId)
+            .ToListAsync();
+
+        UnitOfWork.Transactions.RemoveRange(oldTransactions);
+
         // create new transaction with payment url
         var amount = _calculateAmount(booking);
 
-        var transaction = UnitOfWork.Transactions.Add(new Transaction()
+        var transaction = new Transaction()
         {
             BookingId = bookingId,
             Amount = amount,
             Status = TransactionStatus.Pending,
             Timestamp = DateTimeHelper.VnNow(),
             ClientIp = clientIp
-        });
+        };
+
+        UnitOfWork.Transactions.Add(transaction);
 
         await UnitOfWork.SaveChangesAsync();
 
