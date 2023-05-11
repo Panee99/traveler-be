@@ -70,10 +70,12 @@ public class AccountService : BaseService, IAccountService
                 throw new ArgumentOutOfRangeException();
         }
 
+        await UnitOfWork.SaveChangesAsync();
+        
         // Return
         if (account.AvatarId != null)
             view.AvatarUrl = _cloudStorageService.GetMediaLink(account.AvatarId.Value);
-
+        
         return view;
     }
 }
