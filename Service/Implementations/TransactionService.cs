@@ -42,9 +42,9 @@ public class TransactionService : BaseService, ITransactionService
         // check owning logic
         if (CurrentUser!.Id != booking.TravelerId) return Error.Conflict("Can only pay your own booking");
 
-        // check if booking already paid
-        if (booking.PaymentStatus is PaymentStatus.Paid)
-            return Error.Conflict("Booking already paid");
+        // check if booking status
+        if (booking.Status is not BookingStatus.Pending)
+            return Error.Conflict("Booking status must be Pending");
 
         // remove old transactions of this booking
         var oldTransactions = await UnitOfWork.Transactions
@@ -107,7 +107,7 @@ public class TransactionService : BaseService, ITransactionService
         if (_isSuccessResponse(model))
         {
             transaction.Status = TransactionStatus.Success;
-            transaction.Booking.PaymentStatus = PaymentStatus.Paid;
+            transaction.Booking.Status = BookingStatus.Paid;
 
             // Assign traveler to a group
             // 1. find available group

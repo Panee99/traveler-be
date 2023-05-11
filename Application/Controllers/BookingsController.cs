@@ -7,6 +7,7 @@ using Shared.ResultExtensions;
 
 namespace Application.Controllers;
 
+[Authorize(AccountRole.Traveler)]
 [Route("bookings")]
 public class BookingsController : ApiController
 {
@@ -19,17 +20,22 @@ public class BookingsController : ApiController
         _transactionService = transactionService;
     }
 
-    [Authorize(AccountRole.Traveler)]
     [HttpPost("")]
     public async Task<IActionResult> Create(BookingCreateModel model)
     {
         var result = await _bookingService.Create(CurrentUser.Id, model);
         return result.Match(Ok, OnError);
     }
-    
-    [Authorize(AccountRole.Traveler)]
+
+    [HttpPut("{id}/cancel")]
+    public async Task<IActionResult> Cancel(Guid id)
+    {
+        var result = await _bookingService.Cancel(id);
+        return result.Match(Ok, OnError);
+    }
+
     [HttpGet("{id}/pay")]
-    public async Task<IActionResult> Create(Guid id)
+    public async Task<IActionResult> CreatePayTransaction(Guid id)
     {
         var clientIp = HttpContext.Connection.RemoteIpAddress?.MapToIPv4().ToString();
         if (clientIp is null) return OnError(Error.Unexpected("Client IP unknown"));

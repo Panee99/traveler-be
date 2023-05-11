@@ -4,7 +4,6 @@ using Data.Enums;
 using Mapster;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Service.Commons;
 using Service.Interfaces;
 using Service.Models.Booking;
 using Shared.Helpers;
@@ -26,6 +25,9 @@ public class BookingService : BaseService, IBookingService
 
         if (tour.Status != TourStatus.Active) return Error.Conflict("Can only book status Active tours");
 
+        // validate input
+        if (model.AdultQuantity < 1) return Error.Validation("At least 1 Adult");
+
         // check if traveler in any other running tour.
         var travelerInOtherTour = await UnitOfWork.Travelers.Query()
             .Where(traveler => traveler.Id == travelerId)
@@ -36,7 +38,8 @@ public class BookingService : BaseService, IBookingService
 
         // check if this tour already booked
         if (await UnitOfWork.Bookings.Query()
-                .AnyAsync(e => e.TourId == model.TourId && e.TravelerId == travelerId))
+                .AnyAsync(e => e.TourId == model.TourId
+                               && e.TravelerId == travelerId))
         {
             return Error.Conflict("This tour is already booked");
         }
@@ -49,7 +52,7 @@ public class BookingService : BaseService, IBookingService
             AdultQuantity = model.AdultQuantity,
             ChildrenQuantity = model.ChildrenQuantity,
             InfantQuantity = model.InfantQuantity,
-            PaymentStatus = PaymentStatus.Pending,
+            Status = BookingStatus.Pending,
             Timestamp = now,
             AdultPrice = tour.AdultPrice,
             ChildrenPrice = tour.ChildrenPrice,
@@ -76,7 +79,23 @@ public class BookingService : BaseService, IBookingService
 
         return bookings.Adapt<List<BookingViewModel>>();
     }
-    
+
+    public async Task<Result<BookingViewModel>> Cancel(Guid bookingId)
+    {
+        var booking = await UnitOfWork.Bookings.FindAsync(bookingId);
+        if (booking is null) return Error.NotFound("");
+
+        if (booking.Status != BookingStatus.Pending)
+            return Error.Conflict("Can only cancel Pending booking");
+
+        booking.Status = BookingStatus.Canceled;
+
+        UnitOfWork.Bookings.Update(booking);
+        await UnitOfWork.SaveChangesAsync();
+
+        return booking.Adapt<BookingViewModel>();
+    }
+
     // public async Task<Result<BookingViewModel>> Update(BookingUpdateModel model)
     // {
     //     var booking = await UnitOfWork.Bookings.FindAsync(model.Id);

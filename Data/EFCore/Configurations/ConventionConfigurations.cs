@@ -13,7 +13,7 @@ public static class ConventionConfigurations
         configurationBuilder.Properties<TourStatus>().HaveConversion<string>();
         configurationBuilder.Properties<TourType>().HaveConversion<string>();
         configurationBuilder.Properties<TicketType>().HaveConversion<string>();
-        configurationBuilder.Properties<PaymentStatus>().HaveConversion<string>();
+        configurationBuilder.Properties<BookingStatus>().HaveConversion<string>();
         configurationBuilder.Properties<Vehicle>().HaveConversion<string>();
         configurationBuilder.Properties<TransactionStatus>().HaveConversion<string>();
         configurationBuilder.Properties<VnPayRequestStatus>().HaveConversion<string>();

@@ -1,7 +1,8 @@
 ﻿namespace Data.Enums;
 
-public enum PaymentStatus
+public enum BookingStatus
 {
     Pending,
     Paid,
+    Canceled
 }

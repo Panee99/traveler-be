@@ -30,10 +30,11 @@ public class Booking
 
     public DateTime Timestamp { get; set; }
 
-    public PaymentStatus PaymentStatus { get; set; }
+    public BookingStatus Status { get; set; }
 
     public virtual ICollection<Transaction> Transactions { get; set; } = new List<Transaction>();
 
     // public virtual ICollection<BookingAppliedDiscount> BookingAppliedDiscounts { get; set; } =
     //     new List<BookingAppliedDiscount>();
 }
+

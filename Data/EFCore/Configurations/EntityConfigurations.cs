@@ -32,7 +32,7 @@ public static class EntityConfigurations
 
         modelBuilder.Entity<Booking>(entity =>
         {
-            entity.Property(e => e.PaymentStatus).HasMaxLength(256);
+            entity.Property(e => e.Status).HasMaxLength(256);
             entity.Property(e => e.Timestamp).HasColumnType("datetime");
 
             entity.HasOne(d => d.Tour).WithMany(p => p.Bookings)
