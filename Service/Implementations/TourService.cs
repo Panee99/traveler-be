@@ -10,7 +10,6 @@ using Service.Commons.Pagination;
 using Service.Interfaces;
 using Service.Models.Attachment;
 using Service.Models.Tour;
-using Shared.Helpers;
 using Shared.ResultExtensions;
 
 namespace Service.Implementations;
@@ -19,7 +18,6 @@ public class TourService : BaseService, ITourService
 {
     private readonly ILogger<TourService> _logger;
     private readonly IMapper _mapper;
-    private static readonly Random Random = new();
     private readonly ICloudStorageService _cloudStorageService;
     private readonly IAttachmentService _attachmentService;
 
@@ -37,7 +35,7 @@ public class TourService : BaseService, ITourService
     {
         // Map
         var tour = model.AdaptIgnoreNull<TourCreateModel, Tour>();
-        tour.Code = await _generateTourCode();
+        tour.Code = CodeGenerator.NewCode();
         tour.Status = TourStatus.New;
 
         // Add
@@ -283,31 +281,5 @@ public class TourService : BaseService, ITourService
             ContentType = e.ContentType,
             Url = _cloudStorageService.GetMediaLink(e.Id)
         }).ToList();
-    }
-
-    /// <summary>
-    /// PRIVATE
-    /// </summary>
-    private async Task<string> _generateTourCode()
-    {
-        var now = DateTimeHelper.VnNow();
-        var year = now.Year % 1000;
-        var month = now.Month < 10 ? "0" + now.Month : now.Month.ToString();
-
-        string code;
-        do
-        {
-            var random = _randomString(5);
-            code = $"{random}-{year}{month}";
-        } while (await UnitOfWork.Tours.AnyAsync(e => e.Code == code));
-
-        return code;
-    }
-
-    private static string _randomString(int length)
-    {
-        const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-        return new string(Enumerable.Repeat(chars, length)
-            .Select(s => s[Random.Next(s.Length)]).ToArray());
     }
 }
