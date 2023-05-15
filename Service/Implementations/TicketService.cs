@@ -65,19 +65,21 @@ public class TicketService : BaseService, ITicketService
 
     public async Task<Result<List<TicketViewModel>>> Filter(TicketFilterModel model)
     {
-        var query = UnitOfWork.Tickets.Query();
+        // var query = UnitOfWork.Tickets.Query();
+        //
+        // if (model.TourId != null) query = query.Where(e => e.TourId == model.TourId);
+        // if (model.TravelerId != null) query = query.Where(e => e.TravelerId == model.TravelerId);
+        //
+        // var tickets = await query.ToListAsync();
+        //
+        // return tickets.Select(e =>
+        // {
+        //     var view = e.Adapt<TicketViewModel>();
+        //     if (e.ImageId != null) view.ImageUrl = _cloudStorageService.GetMediaLink(e.ImageId.Value);
+        //     return view;
+        // }).ToList();
 
-        if (model.TourId != null) query = query.Where(e => e.TourId == model.TourId);
-        if (model.TravelerId != null) query = query.Where(e => e.TravelerId == model.TravelerId);
-
-        var tickets = await query.ToListAsync();
-
-        return tickets.Select(e =>
-        {
-            var view = e.Adapt<TicketViewModel>();
-            if (e.ImageId != null) view.ImageUrl = _cloudStorageService.GetMediaLink(e.ImageId.Value);
-            return view;
-        }).ToList();
+        throw new NotImplementedException();
     }
 
     public async Task<Result<AttachmentViewModel>> UpdateImage(Guid ticketId, string contentType, Stream stream)

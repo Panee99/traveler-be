@@ -28,8 +28,6 @@ public static class EntityConfigurations
             entity.Property(e => e.CreatedAt).HasColumnType("datetime");
         });
 
-        modelBuilder.Entity<Ticket>();
-
         modelBuilder.Entity<Booking>(entity =>
         {
             entity.Property(e => e.Status).HasMaxLength(256);
@@ -42,18 +40,10 @@ public static class EntityConfigurations
                 .HasForeignKey(d => d.TravelerId);
         });
 
-        modelBuilder.Entity<Transaction>(entity =>
-        {
-            entity.Property(e => e.Timestamp).HasColumnType("datetime");
-            entity.Property(e => e.Status).HasMaxLength(256);
+        modelBuilder.Entity<Feedback>();
 
-            entity.HasOne(d => d.Booking).WithMany(p => p.Transactions)
-                .HasForeignKey(d => d.BookingId);
-        });
-
-        modelBuilder.Entity<Schedule>();
-
-        modelBuilder.Entity<TourImage>().HasKey(e => new { e.TourId, e.AttachmentId });
+        modelBuilder.Entity<IncurredCost>(
+            entity => { entity.Property(e => e.CreatedAt).HasColumnType("datetime"); });
 
         modelBuilder.Entity<Manager>(entity =>
         {
@@ -64,6 +54,12 @@ public static class EntityConfigurations
             entity.Property(e => e.Gender).HasMaxLength(256);
             entity.Property(e => e.LastName).HasMaxLength(256);
         });
+
+        modelBuilder.Entity<Notification>();
+        
+        modelBuilder.Entity<Schedule>();
+
+        modelBuilder.Entity<Ticket>();
 
         modelBuilder.Entity<Tour>(entity =>
         {
@@ -81,6 +77,8 @@ public static class EntityConfigurations
             entity.Property(e => e.CreatedAt).HasColumnType("datetime");
         });
 
+        modelBuilder.Entity<TourFlow>(entity => { entity.ToTable("TourFlow"); });
+
         modelBuilder.Entity<TourGroup>(entity => { entity.HasOne(e => e.Tour).WithMany(x => x.TourGroups); });
 
         modelBuilder.Entity<TourGuide>(entity =>
@@ -91,6 +89,17 @@ public static class EntityConfigurations
             entity.Property(e => e.FirstName).HasMaxLength(256);
             entity.Property(e => e.Gender).HasMaxLength(256);
             entity.Property(e => e.LastName).HasMaxLength(256);
+        });
+
+        modelBuilder.Entity<TourImage>().HasKey(e => new { e.TourId, e.AttachmentId });
+
+        modelBuilder.Entity<Transaction>(entity =>
+        {
+            entity.Property(e => e.Timestamp).HasColumnType("datetime");
+            entity.Property(e => e.Status).HasMaxLength(256);
+
+            entity.HasOne(d => d.Booking).WithMany(p => p.Transactions)
+                .HasForeignKey(d => d.BookingId);
         });
 
         modelBuilder.Entity<Traveler>(entity =>
@@ -122,6 +131,14 @@ public static class EntityConfigurations
                 }
             );
 
+        modelBuilder.Entity<VnPayResponse>(entity =>
+        {
+            entity.HasKey(e => e.TransactionId);
+            entity.HasOne(response => response.Transaction)
+                .WithOne()
+                .HasForeignKey<VnPayResponse>(x => x.TransactionId);
+        });
+
         // modelBuilder.Entity<TravelerInTourGroup>(entity =>
         // {
         //     entity.ToTable("TravelerInGroupGroup");
@@ -137,18 +154,6 @@ public static class EntityConfigurations
 
         // modelBuilder.Entity<VnPayRequest>(entity => { entity.HasKey(e => e.TxnRef); });
 
-        modelBuilder.Entity<VnPayResponse>(entity =>
-        {
-            entity.HasKey(e => e.TransactionId);
-            entity.HasOne(response => response.Transaction)
-                .WithOne()
-                .HasForeignKey<VnPayResponse>(x => x.TransactionId);
-        });
-
-        modelBuilder.Entity<TourFlow>(entity => { entity.ToTable("TourFlow"); });
-
-        modelBuilder.Entity<IncurredCost>(
-            entity => { entity.Property(e => e.CreatedAt).HasColumnType("datetime"); });
 
         // modelBuilder.Entity<TourDiscount>(entity =>
         // {

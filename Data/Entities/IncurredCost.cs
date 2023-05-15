@@ -4,7 +4,7 @@ public class IncurredCost
 {
     public Guid Id { get; set; }
 
-    public Guid TourId { get; set; }
+    public Guid TourGroupId { get; set; }
 
     public double Amount { get; set; }
 
@@ -12,9 +12,5 @@ public class IncurredCost
 
     public string? Description { get; set; }
 
-    public Guid TourGuideId { get; set; }
-
-    public virtual Tour Tour { get; set; } = null!;
-
-    public virtual TourGuide TourGuide { get; set; } = null!;
+    public virtual TourGroup TourGroup { get; set; } = null!;
 }

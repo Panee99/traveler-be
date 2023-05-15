@@ -2,8 +2,8 @@
   {
     "Id": "47877817-db8b-45cf-b198-8631d7421c9e",
     "Content": "abc-xyz",
-    "Type": "BarCode",
-    "TourId": "d1936e4c-9c32-49ae-aa51-0f23089a78d4",
+    "Type": "Airplane",
+    "TourGroupId": "b04570bc-0f67-4d7b-8697-a3a681a97c34",
     "TravelerId": "e6618130-62e9-4053-4047-08db269c26be",
     "ImageId": null
   }
