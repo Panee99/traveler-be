@@ -1,7 +1,7 @@
 ﻿[
   {
     "Id": "d1936e4c-9c32-49ae-aa51-0f23089a78d4",
-    "Code": "MYQ0Q-2304",
+    "Code": "2304-MYQ0Q",
     "Title": "DU LỊCH THỤY SĨ [ZURICH – LUCERNE – ISELTWALD – INTERLAKEN – GRINDELWALD - GRUYÈRES – ZERMATT – MATTERHORN - MONTREUX – LAUSANNE - GENEVA]",
     "AdultPrice": 11499900,
     "ChildrenPrice": 10199900,
@@ -18,8 +18,26 @@
     "ThumbnailId": "b3e881e7-514e-406a-8cd7-08db43075b7b"
   },
   {
+    "Id": "60f45523-bd04-449a-9889-55fb70beb802",
+    "Code": "2304-AD9DSAW",
+    "Title": "Tour 4 đảo Nam Phú Quốc - 1 ngày",
+    "AdultPrice": 700000,
+    "ChildrenPrice": 300000,
+    "InfantPrice": 100000,
+    "Departure": "Hồ Chí Minh",
+    "Destination": "Phú Quốc",
+    "StartTime": "2023-05-15 19:48:28.000",
+    "EndTime": "2023-05-20 19:48:26.000",
+    "MaxOccupancy": 100,
+    "Type": "Domestic",
+    "Status": "Active",
+    "CreatedAt": "2023-05-15 19:34:32.000",
+    "Description": "Với cát trắng nguyên sơ và nước màu ngọc lam, khung cảnh của Phú Quốc thực sự là một bữa tiệc cho các giác quan. Bạn sẽ đến với thiên đường Hòn Móng Tay để phơi nắng trên bãi biển xinh đẹp dưới bóng mát của hàng trăm cây cọ. Sau đó, bạn sẽ được khám phá thế giới dưới nước đầy màu sắc khi lặn tại Hòm Gầm Ghì. Sau bữa trưa ngon miệng được chuẩn bị bởi thuỷ thủ đoàn, bạn sẽ được cảm nhận bãi biển cát ngọc ngút ngàn và lặn ống thở trong làn nước trong vắt tại điểm đến cuối cùng, đó chính là Hòn Mây Rút.\n\nChưa hết đâu nhé, vì hãy sẵn sàng cho hoạt động câu cá thú vị tại Hòn Thơm. Chắc chắc bạn sẽ bị mê hoặc bởi không khí biển và không gian cực \"chill\" tại Nam Phú Quốc đấy!",
+    "ThumbnailId": "dd887040-bd1a-42f0-e93a-08db55428f57"
+  },
+  {
     "Id": "aff4f4f3-6368-4afc-bc98-d82b662cfadb",
-    "Code": "LMR8P-2504",
+    "Code": "2504-LMR8P",
     "Title": "DU LỊCH NHẬT BẢN [NOBORIBETSU - SAPPORO - CHITOSE - THƯỞNG NGOẠN HOA ANH ĐÀO]",
     "AdultPrice": 5799900,
     "ChildrenPrice": 4349900,
@@ -37,7 +55,7 @@
   },
   {
     "Id": "a838917d-13d3-4783-8bcd-dab2ff0f4bca",
-    "Code": "AX7QM-2304",
+    "Code": "2304-AX7QM",
     "Title": "\nDU LỊCH CANADA – HOA KỲ - CUBA [TORONTO – NIAGARA - OTTAWA –QUEBEC – MONTREAL – ORLANDO – MIAMI – HAVANA - CIENFUEGOS – TRINIDAD- VARADERO]",
     "AdultPrice": 27400000,
     "ChildrenPrice": 20900000,
