@@ -29,7 +29,7 @@ public class AuthService : BaseService, IAuthService
 
     public async Task<Result<AuthenticateResponseModel>> Authenticate(LoginModel model)
     {
-        var query = UnitOfWork.Accounts.Query();
+        var query = UnitOfWork.Users.Query();
 
         // By Phone
         if (PhoneRegex.Match(model.Username).Success) query = query.Where(e => e.Phone == model.Username);
@@ -38,21 +38,21 @@ public class AuthService : BaseService, IAuthService
         // Error
         else return Error.Validation("Login by Phone or Email");
 
-        var account = await query.Select(e => new AuthResult(e.Id, e.Password, e.Role)).FirstOrDefaultAsync();
+        var user = await query.Select(e => new AuthResult(e.Id, e.Password, e.Role)).FirstOrDefaultAsync();
 
-        if (account == null || !AuthHelper.VerifyPassword(model.Password, account.Password))
+        if (user == null || !AuthHelper.VerifyPassword(model.Password, user.Password))
             return Error.Authentication();
 
-        return new AuthenticateResponseModel(_generateJwtToken(account.Id, account.Role));
+        return new AuthenticateResponseModel(_generateJwtToken(user.Id, user.Role));
     }
 
-    private string _generateJwtToken(Guid accountId, AccountRole role)
+    private string _generateJwtToken(Guid userId, UserRole role)
     {
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(new[]
                 {
-                    new Claim("id", accountId.ToString()),
+                    new Claim("id", userId.ToString()),
                     new Claim("role", role.ToString())
                 }
             ),
@@ -72,6 +72,6 @@ public class AuthService : BaseService, IAuthService
     (
         Guid Id,
         string Password,
-        AccountRole Role
+        UserRole Role
     );
 }

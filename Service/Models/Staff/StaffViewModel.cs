@@ -1,9 +1,9 @@
 ﻿using Data.Enums;
-using Service.Models.Account;
+using Service.Models.User;
 
-namespace Service.Models.Manager;
+namespace Service.Models.Staff;
 
-public class ManagerViewModel : AccountViewModel
+public class StaffViewModel : UserViewModel
 {
     public string FirstName { get; set; } = null!;
     public string LastName { get; set; } = null!;

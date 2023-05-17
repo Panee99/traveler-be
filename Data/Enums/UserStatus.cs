@@ -1,6 +1,6 @@
 ﻿namespace Data.Enums;
 
-public enum AccountStatus
+public enum UserStatus
 {
     Active,
     Suspended

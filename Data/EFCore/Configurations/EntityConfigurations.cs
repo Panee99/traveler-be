@@ -7,17 +7,13 @@ public static class EntityConfigurations
 {
     public static void ConfigureEntities(this ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Account>(entity =>
+        modelBuilder.Entity<User>(entity =>
         {
-            entity.ToTable("Account");
             entity.HasIndex(e => e.Role);
             entity.HasIndex(e => e.Status);
             entity.HasIndex(e => e.Phone).IsUnique();
             entity.HasIndex(e => e.Email).IsUnique();
-
             entity.Property(e => e.Password).HasMaxLength(256);
-            entity.Property(e => e.BankAccountNumber).HasMaxLength(256);
-            entity.Property(e => e.BankName).HasMaxLength(256);
             entity.Property(e => e.Phone).HasMaxLength(256).IsUnicode(false);
             entity.Property(e => e.Status).HasMaxLength(256);
         });
@@ -45,19 +41,20 @@ public static class EntityConfigurations
         modelBuilder.Entity<IncurredCost>(
             entity => { entity.Property(e => e.CreatedAt).HasColumnType("datetime"); });
 
-        modelBuilder.Entity<Manager>(entity =>
+        modelBuilder.Entity<Admin>(entity =>
         {
-            entity.ToTable("Manager");
+            entity.ToTable("Admin");
             entity.Property(e => e.Email).HasMaxLength(256);
-            entity.Property(e => e.Birthday).HasColumnType("datetime");
             entity.Property(e => e.FirstName).HasMaxLength(256);
             entity.Property(e => e.Gender).HasMaxLength(256);
             entity.Property(e => e.LastName).HasMaxLength(256);
         });
 
         modelBuilder.Entity<Notification>();
-        
+
         modelBuilder.Entity<Schedule>();
+
+        modelBuilder.Entity<Staff>(entity => { entity.ToTable("Staff"); });
 
         modelBuilder.Entity<Ticket>();
 
@@ -105,6 +102,8 @@ public static class EntityConfigurations
         modelBuilder.Entity<Traveler>(entity =>
         {
             entity.ToTable("Traveler");
+            entity.Property(e => e.BankNumber).HasMaxLength(256);
+            entity.Property(e => e.BankName).HasMaxLength(256);
             entity.Property(e => e.Address).HasMaxLength(256);
             entity.Property(e => e.Birthday).HasColumnType("datetime");
             entity.Property(e => e.FirstName).HasMaxLength(256);
@@ -138,22 +137,6 @@ public static class EntityConfigurations
                 .WithOne()
                 .HasForeignKey<VnPayResponse>(x => x.TransactionId);
         });
-
-        // modelBuilder.Entity<TravelerInTourGroup>(entity =>
-        // {
-        //     entity.ToTable("TravelerInGroupGroup");
-        //
-        //     entity.HasOne(e => e.TourGroup).WithMany(tour => tour.TravelerInTours).HasForeignKey(e => e.TourId);
-        //
-        //     entity.HasOne(e => e.Traveler).WithMany(traveler => traveler.TravelerInTours)
-        //         .HasForeignKey(e => e.TravelerId);
-        //
-        //     entity.HasOne(e => e.TourGroup).WithMany(tourGroup => tourGroup.TravelerInTours)
-        //         .HasForeignKey(e => e.TourGroupId).OnDelete(DeleteBehavior.Restrict);
-        // });
-
-        // modelBuilder.Entity<VnPayRequest>(entity => { entity.HasKey(e => e.TxnRef); });
-
 
         // modelBuilder.Entity<TourDiscount>(entity =>
         // {

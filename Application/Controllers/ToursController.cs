@@ -9,7 +9,7 @@ using Shared.Helpers;
 
 namespace Application.Controllers;
 
-[Authorize(AccountRole.Manager)]
+[Authorize(UserRole.Admin)]
 [Route("tours")]
 public class ToursController : ApiController
 {

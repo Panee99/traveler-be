@@ -4,5 +4,5 @@ namespace Service.Models.Auth;
 
 public record AuthUser(
     Guid Id,
-    AccountRole Role
+    UserRole Role
 );

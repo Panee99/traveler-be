@@ -1,9 +1,9 @@
 ﻿using Data.Enums;
-using Service.Models.Account;
+using Service.Models.User;
 
 namespace Service.Models.TourGuide;
 
-public class TourGuideViewModel : AccountViewModel
+public class TourGuideViewModel : UserViewModel
 {
     public string FirstName { get; set; } = null!;
     public string LastName { get; set; } = null!;

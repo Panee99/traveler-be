@@ -6,7 +6,7 @@ using Service.Models.InccuredCost;
 
 namespace Application.Controllers;
 
-[Authorize(AccountRole.Manager, AccountRole.Traveler)]
+[Authorize(UserRole.Admin, UserRole.Traveler)]
 [Route("incurred-costs")]
 public class IncurredCostsController : ApiController
 {

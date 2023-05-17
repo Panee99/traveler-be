@@ -6,7 +6,7 @@ public class Notification
 
     public Guid ReceiverId { get; set; }
 
-    public Account Receiver { get; set; } = null!;
+    public User Receiver { get; set; } = null!;
 
     public string Content { get; set; } = null!;
 

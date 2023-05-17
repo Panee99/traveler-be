@@ -38,25 +38,25 @@ public class TravelerService : BaseService, ITravelerService
 
         if (!model.Phone.StartsWith("+84")) return Error.Validation();
 
-        if (CurrentUser is not { Role: AccountRole.Manager })
+        if (CurrentUser is not { Role: UserRole.Admin })
             if (model.IdToken is null || !await _verifyIdToken(model.Phone, model.IdToken))
                 return DomainErrors.Traveler.IdToken;
 
         var formattedPhone = _formatPhoneNum(model.Phone);
 
-        if (await UnitOfWork.Accounts.AnyAsync(e => e.Phone == formattedPhone))
-            return Error.Conflict("Account with this phone number already exist");
+        if (await UnitOfWork.Users.AnyAsync(e => e.Phone == formattedPhone))
+            return Error.Conflict("UserUser with this phone number already exist");
 
         UnitOfWork.Travelers.Add(
             new Traveler
             {
                 Phone = formattedPhone,
                 Password = AuthHelper.HashPassword(model.Password),
-                Status = AccountStatus.Active,
+                Status = UserStatus.Active,
                 FirstName = model.FirstName,
                 LastName = model.LastName,
                 Gender = model.Gender,
-                Role = AccountRole.Traveler
+                Role = UserRole.Traveler
             }
         );
 
@@ -68,7 +68,7 @@ public class TravelerService : BaseService, ITravelerService
     {
         var entity = await UnitOfWork.Travelers
             .Query()
-            .FirstOrDefaultAsync(e => e.Id == id && e.Status == AccountStatus.Active);
+            .FirstOrDefaultAsync(e => e.Id == id && e.Status == UserStatus.Active);
 
         if (entity is null) return Error.NotFound();
         return _mapper.Map<TravelerViewModel>(entity);

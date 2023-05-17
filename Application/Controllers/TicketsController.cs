@@ -16,7 +16,7 @@ public class TicketsController : ApiController
         _ticketService = ticketService;
     }
 
-    [Authorize(AccountRole.Manager, AccountRole.TourGuide)]
+    [Authorize(UserRole.Admin, UserRole.TourGuide)]
     [ProducesResponseType(typeof(TicketViewModel), StatusCodes.Status200OK)]
     [HttpPost("")]
     public async Task<IActionResult> Create(TicketCreateModel model)
@@ -25,7 +25,7 @@ public class TicketsController : ApiController
         return result.Match(Ok, OnError);
     }
 
-    [Authorize(AccountRole.Manager, AccountRole.TourGuide)]
+    [Authorize(UserRole.Admin, UserRole.TourGuide)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete(Guid id)

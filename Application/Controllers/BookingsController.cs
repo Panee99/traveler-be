@@ -7,7 +7,7 @@ using Shared.ResultExtensions;
 
 namespace Application.Controllers;
 
-[Authorize(AccountRole.Traveler)]
+[Authorize(UserRole.Traveler)]
 [Route("bookings")]
 public class BookingsController : ApiController
 {

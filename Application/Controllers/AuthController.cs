@@ -16,7 +16,7 @@ public class AuthController : ApiController
         _authService = authService;
     }
 
-    [SwaggerOperation(Description = "traveler:84389376290 - manager@gmail.com - guide@gmail.com - Pass:123123")]
+    [SwaggerOperation(Description = "traveler:84389376290 - admin@gmail.com - guide@gmail.com - Pass:123123")]
     [ProducesResponseType(typeof(ChatTokenResponseModel), StatusCodes.Status200OK)]
     [HttpPost("")]
     public async Task<IActionResult> Authenticate(LoginModel model)

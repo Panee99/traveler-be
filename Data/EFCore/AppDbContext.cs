@@ -27,7 +27,7 @@ public class AppDbContext : DbContext
 
         // Seeds
         modelBuilder.Entity<Attachment>().HasSeedData("attachments.json");
-        modelBuilder.Entity<Manager>().HasSeedData("managers.json");
+        modelBuilder.Entity<Admin>().HasSeedData("admins.json");
         modelBuilder.Entity<Schedule>().HasSeedData("schedules.json");
         modelBuilder.Entity<Ticket>().HasSeedData("tickets.json");
         modelBuilder.Entity<TourFlow>().HasSeedData("tour-flows.json");

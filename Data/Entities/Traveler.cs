@@ -2,15 +2,14 @@
 
 namespace Data.Entities;
 
-public class Traveler : Account
+public class Traveler : User
 {
-    public string FirstName { get; set; } = null!;
+    //
+    public string? BankName { get; set; }
 
-    public string LastName { get; set; } = null!;
+    public string? BankNumber { get; set; }
 
     public DateTime? Birthday { get; set; }
-
-    public Gender Gender { get; set; }
 
     public string? Address { get; set; }
 

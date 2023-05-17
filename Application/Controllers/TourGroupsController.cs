@@ -16,7 +16,7 @@ public class TourGroupsController : ApiController
         _tourGroupService = tourGroupService;
     }
 
-    [Authorize(AccountRole.Manager)]
+    [Authorize(UserRole.Admin)]
     [HttpPost("")]
     public async Task<IActionResult> Create(TourGroupCreateModel model)
     {
@@ -24,7 +24,7 @@ public class TourGroupsController : ApiController
         return result.Match(Ok, OnError);
     }
 
-    [Authorize(AccountRole.Manager)]
+    [Authorize(UserRole.Admin)]
     [HttpPatch("{id:guid}")]
     public async Task<IActionResult> Update([FromRoute] Guid id, TourGroupUpdateModel model)
     {
@@ -32,7 +32,7 @@ public class TourGroupsController : ApiController
         return result.Match(Ok, OnError);
     }
 
-    [Authorize(AccountRole.Manager)]
+    [Authorize(UserRole.Admin)]
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete([FromRoute] Guid id)
     {

@@ -5,12 +5,13 @@ namespace Data.EFCore;
 
 public class UnitOfWork : UnitOfWorkBase
 {
-    public IRepository<Account> Accounts => Repo<Account>();
+    public IRepository<User> Users => Repo<User>();
     public IRepository<Attachment> Attachments => Repo<Attachment>();
     public IRepository<Booking> Bookings => Repo<Booking>();
     public IRepository<Schedule> Schedules => Repo<Schedule>();
+    public IRepository<Staff> Staffs => Repo<Staff>();
     public IRepository<TourFlow> TourFlows => Repo<TourFlow>();
-    public IRepository<Manager> Managers => Repo<Manager>();
+    public IRepository<Admin> Admins => Repo<Admin>();
     public IRepository<Ticket> Tickets => Repo<Ticket>();
     public IRepository<Tour> Tours => Repo<Tour>();
     public IRepository<TourImage> TourCarousel => Repo<TourImage>();

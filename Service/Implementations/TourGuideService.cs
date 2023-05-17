@@ -38,8 +38,8 @@ public class TourGuideService : BaseService, ITourGuideService
             LastName = model.LastName,
             Gender = model.Gender,
             Birthday = model.Birthday,
-            Role = AccountRole.TourGuide,
-            Status = AccountStatus.Active,
+            Role = UserRole.TourGuide,
+            Status = UserStatus.Active,
         };
 
         UnitOfWork.TourGuides.Add(tourGuide);

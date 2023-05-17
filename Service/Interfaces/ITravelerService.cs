@@ -1,5 +1,4 @@
-﻿using Service.Models.Account;
-using Service.Models.Tour;
+﻿using Service.Models.Tour;
 using Service.Models.Traveler;
 using Shared.ResultExtensions;
 

@@ -1,9 +1,9 @@
-﻿namespace Service.Models.Account;
+﻿namespace Service.Models.User;
 
 public record ProfileUpdateModel
 (
     string? BankName,
-    string? BankAccountNumber,
+    string? BankNumber,
     //
     string? FirstName,
     string? LastName,

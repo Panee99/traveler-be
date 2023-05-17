@@ -1,9 +1,9 @@
 ﻿using Data.Enums;
-using Service.Models.Account;
+using Service.Models.User;
 
 namespace Service.Models.Traveler;
 
-public class TravelerViewModel : AccountViewModel
+public class TravelerViewModel : UserViewModel
 {
     public string FirstName = null!;
     public string LastName = null!;

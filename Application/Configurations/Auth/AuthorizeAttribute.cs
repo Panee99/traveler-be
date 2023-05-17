@@ -13,14 +13,14 @@ namespace Application.Configurations.Auth;
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
 public sealed class AuthorizeAttribute : Attribute, IAuthorizationFilter
 {
-    private readonly AccountRole[] _roles;
+    private readonly UserRole[] _roles;
 
     public AuthorizeAttribute()
     {
-        _roles = Array.Empty<AccountRole>();
+        _roles = Array.Empty<UserRole>();
     }
 
-    public AuthorizeAttribute(params AccountRole[] roles)
+    public AuthorizeAttribute(params UserRole[] roles)
     {
         _checkDuplicate(roles);
         _roles = roles;
@@ -66,7 +66,7 @@ public sealed class AuthorizeAttribute : Attribute, IAuthorizationFilter
         };
     }
 
-    private void _checkDuplicate(AccountRole[] roles)
+    private void _checkDuplicate(UserRole[] roles)
     {
         var hasDuplicates = roles.Length != roles.Distinct().Count();
         if (hasDuplicates)

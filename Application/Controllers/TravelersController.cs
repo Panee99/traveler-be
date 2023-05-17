@@ -1,4 +1,5 @@
 ﻿using Application.Configurations.Auth;
+using Data.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Service.Interfaces;
 using Service.Models.Tour;
@@ -20,7 +21,7 @@ public class TravelersController : ApiController
     }
 
     [SwaggerOperation(
-        Summary = "No need idToken for manager",
+        Summary = "No need idToken for admin",
         Description = "Phone format: '84' or '+84'.")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [HttpPost("register")]

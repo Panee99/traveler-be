@@ -16,7 +16,7 @@ public class TourGuidesController : ApiController
         _tourGuideService = tourGuideService;
     }
 
-    [Authorize(AccountRole.Manager)]
+    [Authorize(UserRole.Admin)]
     [HttpPost("")]
     public async Task<IActionResult> Create(TourGuideCreateModel model)
     {
@@ -31,7 +31,7 @@ public class TourGuidesController : ApiController
         return result.Match(Ok, OnError);
     }
 
-    [Authorize(AccountRole.Manager)]
+    [Authorize(UserRole.Admin)]
     [HttpGet("")]
     public async Task<IActionResult> ListAll()
     {
