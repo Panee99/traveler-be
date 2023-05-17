@@ -3,14 +3,13 @@
 namespace Service.Models.User;
 
 public record UserCreateModel
-(
-    string Phone,
-    string? Email,
-    string Password,
-    UserRole Role,
-    UserStatus Status,
-    string FirstName,
-    string LastName,
-    Gender Gender,
-    string? AvatarUrl
-);
+{
+    public string Phone = null!;
+    public string? Email;
+    public string Password = null!;
+    public UserRole Role;
+    public UserStatus Status;
+    public string FirstName = null!;
+    public string LastName = null!;
+    public Gender Gender;
+}

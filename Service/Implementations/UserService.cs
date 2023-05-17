@@ -11,6 +11,7 @@ using Service.Models.Staff;
 using Service.Models.TourGuide;
 using Service.Models.Traveler;
 using Service.Models.User;
+using Shared.Helpers;
 using Shared.ResultExtensions;
 
 namespace Service.Implementations;
@@ -29,6 +30,7 @@ public class UserService : BaseService, IUserService
 
     public async Task<Result<UserViewModel>> Create(UserCreateModel model)
     {
+        model.Password = AuthHelper.HashPassword(model.Password);
         User user;
         switch (model.Role)
         {
