@@ -38,10 +38,6 @@ public class TravelerService : BaseService, ITravelerService
 
         if (!model.Phone.StartsWith("+84")) return Error.Validation();
 
-        if (CurrentUser is not { Role: UserRole.Admin })
-            if (model.IdToken is null || !await _verifyIdToken(model.Phone, model.IdToken))
-                return DomainErrors.Traveler.IdToken;
-
         var formattedPhone = _formatPhoneNum(model.Phone);
 
         if (await UnitOfWork.Users.AnyAsync(e => e.Phone == formattedPhone))
@@ -62,16 +58,6 @@ public class TravelerService : BaseService, ITravelerService
 
         await UnitOfWork.SaveChangesAsync();
         return Result.Success();
-    }
-
-    public async Task<Result<TravelerViewModel>> GetProfile(Guid id)
-    {
-        var entity = await UnitOfWork.Travelers
-            .Query()
-            .FirstOrDefaultAsync(e => e.Id == id && e.Status == UserStatus.Active);
-
-        if (entity is null) return Error.NotFound();
-        return _mapper.Map<TravelerViewModel>(entity);
     }
 
     // TODO: Test

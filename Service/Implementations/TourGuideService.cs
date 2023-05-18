@@ -21,34 +21,6 @@ public class TourGuideService : BaseService, ITourGuideService
         _cloudStorageService = cloudStorageService;
     }
 
-    public async Task<Result<TourGuideViewModel>> Create(TourGuideCreateModel model)
-    {
-        if (await UnitOfWork.TourGuides.AnyAsync(e => e.Phone == model.Phone))
-            return Error.Conflict("Phone number already exist");
-
-        if (await UnitOfWork.TourGuides.AnyAsync(e => e.Email == model.Email))
-            return Error.Conflict("Email already exist");
-
-        var tourGuide = new TourGuide()
-        {
-            Phone = model.Phone,
-            Email = model.Email,
-            Password = AuthHelper.HashPassword(model.Password),
-            FirstName = model.FirstName,
-            LastName = model.LastName,
-            Gender = model.Gender,
-            Birthday = model.Birthday,
-            Role = UserRole.TourGuide,
-            Status = UserStatus.Active,
-        };
-
-        UnitOfWork.TourGuides.Add(tourGuide);
-
-        await UnitOfWork.SaveChangesAsync();
-
-        return tourGuide.Adapt<TourGuideViewModel>();
-    }
-
     public async Task<Result<List<TourFilterViewModel>>> ListAssignedTours(Guid tourGuideId)
     {
         if (!await UnitOfWork.TourGuides.AnyAsync(e => e.Id == tourGuideId))
@@ -69,11 +41,5 @@ public class TourGuideService : BaseService, ITourGuideService
         }).ToList();
 
         return views;
-    }
-
-    public async Task<Result<List<TourGuideViewModel>>> ListAll()
-    {
-        var tourGuides = await UnitOfWork.TourGuides.Query().ToListAsync();
-        return tourGuides.Adapt<List<TourGuideViewModel>>();
     }
 }

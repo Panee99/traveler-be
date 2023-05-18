@@ -20,23 +20,12 @@ public class TravelersController : ApiController
         _bookingService = bookingService;
     }
 
-    [SwaggerOperation(
-        Summary = "No need idToken for admin",
-        Description = "Phone format: '84' or '+84'.")]
+    [SwaggerOperation(Description = "Phone format: '84' or '+84'.")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [HttpPost("register")]
     public async Task<IActionResult> Register(TravelerRegistrationModel model)
     {
         var result = await _travelerService.Register(model);
-        return result.Match(Ok, OnError);
-    }
-
-    [ProducesResponseType(typeof(TravelerViewModel), StatusCodes.Status200OK)]
-    [Authorize]
-    [HttpGet("{id:guid}/profile")]
-    public async Task<IActionResult> GetProfile(Guid id)
-    {
-        var result = await _travelerService.GetProfile(id);
         return result.Match(Ok, OnError);
     }
 

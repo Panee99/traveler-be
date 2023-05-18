@@ -5,9 +5,8 @@ namespace Service.Models.Traveler;
 
 public class TravelerViewModel : UserViewModel
 {
-    public string FirstName = null!;
-    public string LastName = null!;
+    public string? BankName;
+    public string? BankNumber;
     public DateTime? BirthDay;
-    public Gender Gender;
     public string? Address;
 }

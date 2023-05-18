@@ -93,10 +93,10 @@ public class UserService : BaseService, IUserService
         var user = await UnitOfWork.Users.FindAsync(id);
         if (user is null) return Error.NotFound();
 
-        var view = user.Role switch
+        UserViewModel view = user.Role switch
         {
             UserRole.Traveler => _mapper.Map<TravelerViewModel>((await UnitOfWork.Travelers.FindAsync(id))!),
-            UserRole.TourGuide => _mapper.Map<UserViewModel>((await UnitOfWork.TourGuides.FindAsync(id))!),
+            UserRole.TourGuide => _mapper.Map<TourGuideViewModel>((await UnitOfWork.TourGuides.FindAsync(id))!),
             UserRole.Admin => _mapper.Map<AdminViewModel>((await UnitOfWork.Admins.FindAsync(id))!),
             UserRole.Staff => _mapper.Map<StaffViewModel>((await UnitOfWork.Staffs.FindAsync(id))!),
             _ => throw new ArgumentOutOfRangeException()
