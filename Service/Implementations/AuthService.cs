@@ -22,6 +22,8 @@ public class AuthService : BaseService, IAuthService
     private static readonly JwtSecurityTokenHandler TokenHandler = new();
     private readonly AppSettings _appSettings;
 
+    private const int ExpirationDay = int.MaxValue;
+    
     public AuthService(UnitOfWork unitOfWork, IOptions<AppSettings> appSettings) : base(unitOfWork)
     {
         _appSettings = appSettings.Value;
@@ -58,7 +60,7 @@ public class AuthService : BaseService, IAuthService
             ),
             Issuer = _appSettings.JwtIssuer,
             Audience = _appSettings.JwtAudience,
-            Expires = DateTime.Now.AddDays(7),
+            Expires = DateTime.Now.AddDays(ExpirationDay),
             SigningCredentials =
                 new SigningCredentials(
                     new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_appSettings.JwtSecret)),
