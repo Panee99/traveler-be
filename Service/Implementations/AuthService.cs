@@ -22,7 +22,7 @@ public class AuthService : BaseService, IAuthService
     private static readonly JwtSecurityTokenHandler TokenHandler = new();
     private readonly AppSettings _appSettings;
 
-    private const int ExpirationDay = int.MaxValue;
+    private const int ExpirationDay = 365;
     
     public AuthService(UnitOfWork unitOfWork, IOptions<AppSettings> appSettings) : base(unitOfWork)
     {
