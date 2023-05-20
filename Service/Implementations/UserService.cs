@@ -3,6 +3,7 @@ using Data.Entities;
 using Data.Enums;
 using Mapster;
 using MapsterMapper;
+using Microsoft.EntityFrameworkCore;
 using Service.Commons;
 using Service.Commons.Pagination;
 using Service.Interfaces;
@@ -147,5 +148,31 @@ public class UserService : BaseService, IUserService
             view.AvatarUrl = _cloudStorageService.GetMediaLink(user.AvatarId.Value);
 
         return view;
+    }
+  
+    public async Task<Result<UserViewModel>> AdminGetUserById(Guid id)
+    {
+        var entity = await UnitOfWork.Users.Query()
+            .Where(e => e.Id == id)
+            .FirstOrDefaultAsync();
+
+        if (entity is null) return Error.NotFound();
+
+        // Result
+        var viewModel = _mapper.Map<UserViewModel>(entity);
+        viewModel.AvatarUrl = entity.AvatarId != null ? _cloudStorageService.GetMediaLink(entity.AvatarId.Value) : null;
+
+        return viewModel;
+    }
+
+    public async Task<Result> AdminDeleteUserById(Guid id)
+    {
+        var entity = await UnitOfWork.Users.FindAsync(id);
+        if (entity is null) return Error.NotFound();
+
+        UnitOfWork.Users.Remove(entity);
+        await UnitOfWork.SaveChangesAsync();
+
+        return Result.Success();
     }
 }
