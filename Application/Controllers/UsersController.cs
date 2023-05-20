@@ -3,9 +3,9 @@ using Data.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Service.Interfaces;
 using Service.Models.User;
+using Shared.ResultExtensions;
 
 namespace Application.Controllers;
-
 
 [Route("users")]
 public class UsersController : ApiController
@@ -40,7 +40,7 @@ public class UsersController : ApiController
         var result = await _userService.Filter(model);
         return result.Match(Ok, OnError);
     }
-    
+
     [Authorize]
     [ProducesResponseType(typeof(UserViewModel), StatusCodes.Status200OK)]
     [HttpGet("self/profile")]
@@ -49,7 +49,7 @@ public class UsersController : ApiController
         var result = await _userService.GetProfile(CurrentUser.Id);
         return result.Match(Ok, OnError);
     }
-    
+
     [Authorize]
     [ProducesResponseType(typeof(UserViewModel), StatusCodes.Status200OK)]
     [HttpPatch("self/profile")]
@@ -58,4 +58,26 @@ public class UsersController : ApiController
         var result = await _userService.UpdateProfile(CurrentUser.Id, model);
         return result.Match(Ok, OnError);
     }
+
+    #region Required Admin Role
+
+    [Authorize(UserRole.Admin)]
+    [ProducesResponseType(typeof(UserViewModel), StatusCodes.Status200OK)]
+    [HttpGet("{id:guid}")]
+    public async Task<IActionResult> AdminGetUserById(Guid id)
+    {
+        var result = await _userService.AdminGetUserById(id);
+        return result.Match(Ok, OnError);
+    }
+
+    [Authorize(UserRole.Admin)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [HttpDelete("{id:guid}")]
+    public async Task<IActionResult> AdminDeleteUserById(Guid id)
+    {
+        var result = await _userService.AdminDeleteUserById(id);
+        return result.Match(Ok, OnError);
+    }
+
+    #endregion
 }
