@@ -11,8 +11,6 @@ public interface ITourGroupService
 
     Task<Result> Delete(Guid groupId);
 
-    Task<Result<List<TourGroupViewModel>>> ListGroupsByTour(Guid tourId);
-
     Task<Result> AddTravelers(Guid tourGroupId, ICollection<Guid> travelerIds);
 
     Task<Result> RemoveTravelers(Guid tourGroupId, List<Guid> travelerIds);

@@ -16,12 +16,12 @@ public class TourGroupService : BaseService, ITourGroupService
 
     public async Task<Result<TourGroupViewModel>> Create(TourGroupCreateModel model)
     {
-        var tour = await UnitOfWork.Tours.FindAsync(model.TourId);
-        if (tour is null) return Error.NotFound();
+        var tourVariant = await UnitOfWork.TourVariants.FindAsync(model.TourVariantId);
+        if (tourVariant is null) return Error.NotFound();
 
         var group = UnitOfWork.TourGroups.Add(new TourGroup
         {
-            TourId = tour.Id,
+            TourVariantId = tourVariant.Id,
             GroupName = model.GroupName
         });
 
@@ -59,18 +59,6 @@ public class TourGroupService : BaseService, ITourGroupService
         UnitOfWork.TourGroups.Remove(group);
         await UnitOfWork.SaveChangesAsync();
         return Result.Success();
-    }
-
-    public async Task<Result<List<TourGroupViewModel>>> ListGroupsByTour(Guid tourId)
-    {
-        if (!await UnitOfWork.Tours.AnyAsync(e => e.Id == tourId)) return Error.NotFound();
-
-        var tourGroups = await UnitOfWork.TourGroups
-            .Query()
-            .Where(e => e.TourId == tourId)
-            .ToListAsync();
-
-        return tourGroups.Adapt<List<TourGroupViewModel>>();
     }
 
     public async Task<Result> AddTravelers(Guid tourGroupId, ICollection<Guid> travelerIds)

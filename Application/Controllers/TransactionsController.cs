@@ -19,6 +19,9 @@ public class TransactionsController : ApiController
         _transactionService = transactionService;
     }
 
+    /// <summary>
+    /// IPN endpoint for VnPay
+    /// </summary>
     [ApiExplorerSettings(IgnoreApi = true)]
     [HttpGet("ipn")]
     public async Task<IActionResult> VnPayIpnEntry([FromQuery] Dictionary<string, string> queryParams)
@@ -38,6 +41,9 @@ public class TransactionsController : ApiController
         }
     }
 
+    /// <summary>
+    /// Payment result for client
+    /// </summary>
     [ApiExplorerSettings(IgnoreApi = true)]
     [HttpGet("result")]
     public IActionResult PaymentResult([FromQuery] Dictionary<string, string> queryParams)

@@ -6,6 +6,7 @@ using Service.Models.InccuredCost;
 
 namespace Application.Controllers;
 
+// TODO: refactor
 [Authorize(UserRole.Admin, UserRole.Traveler)]
 [Route("incurred-costs")]
 public class IncurredCostsController : ApiController

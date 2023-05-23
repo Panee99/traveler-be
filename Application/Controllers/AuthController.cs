@@ -16,6 +16,9 @@ public class AuthController : ApiController
         _authService = authService;
     }
 
+    /// <summary>
+    /// Login
+    /// </summary>
     [SwaggerOperation(Description = "traveler:84389376290 - admin@gmail.com - guide@gmail.com - Pass:123123")]
     [ProducesResponseType(typeof(ChatTokenResponseModel), StatusCodes.Status200OK)]
     [HttpPost("")]

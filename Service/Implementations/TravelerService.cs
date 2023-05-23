@@ -61,15 +61,15 @@ public class TravelerService : BaseService, ITravelerService
     }
 
     // TODO: Test
-    public async Task<Result<List<TravelerViewModel>>> ListByTour(Guid tourId)
+    public async Task<Result<List<TravelerViewModel>>> ListByTourVariant(Guid tourVariantId)
     {
-        if (!await UnitOfWork.Tours.AnyAsync(e => e.Id == tourId))
+        if (!await UnitOfWork.TourVariants.AnyAsync(e => e.Id == tourVariantId))
             return Error.NotFound("Tour not found.");
 
-        var travelers = await UnitOfWork.Tours.Query().Where(e => e.Id == tourId)
-            .SelectMany(e => e.TourGroups)
-            .SelectMany(e => e.Travelers)
-            .DistinctBy(e => e.Id)
+        var travelers = await UnitOfWork.TourVariants.Query()
+            .Where(variant => variant.Id == tourVariantId)
+            .SelectMany(variant => variant.TourGroups)
+            .SelectMany(group => group.Travelers)
             .ToListAsync();
 
         var views = travelers.Select(e =>
@@ -85,9 +85,11 @@ public class TravelerService : BaseService, ITravelerService
     // TODO: Test
     public async Task<Result<List<TourFilterViewModel>>> ListJoinedTours(Guid travelerId)
     {
-        var tours = await UnitOfWork.Travelers.Query().Where(e => e.Id == travelerId)
-            .SelectMany(e => e.TourGroups)
-            .Select(e => e.Tour).ToListAsync();
+        var tours = await UnitOfWork.Travelers.Query()
+            .Where(traveler => traveler.Id == travelerId)
+            .SelectMany(traveler => traveler.TourGroups)
+            .Select(group => group.TourVariant)
+            .Select(variant => variant.Tour).ToListAsync();
 
         var views = tours.Select(tour =>
         {

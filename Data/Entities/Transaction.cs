@@ -10,7 +10,7 @@ public class Transaction
 
     public TransactionStatus Status { get; set; }
 
-    public string ClientIp { get; set; }
+    public string ClientIp { get; set; } = null!;
 
     public DateTime Timestamp { get; set; }
 

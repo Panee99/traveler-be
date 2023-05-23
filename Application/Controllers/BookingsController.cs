@@ -20,6 +20,9 @@ public class BookingsController : ApiController
         _transactionService = transactionService;
     }
 
+    /// <summary>
+    /// Create new tour booking
+    /// </summary>
     [HttpPost("")]
     public async Task<IActionResult> Create(BookingCreateModel model)
     {
@@ -27,6 +30,9 @@ public class BookingsController : ApiController
         return result.Match(Ok, OnError);
     }
 
+    /// <summary>
+    /// Cancel a booking
+    /// </summary>
     [HttpPut("{id}/cancel")]
     public async Task<IActionResult> Cancel(Guid id)
     {
@@ -34,6 +40,9 @@ public class BookingsController : ApiController
         return result.Match(Ok, OnError);
     }
 
+    /// <summary>
+    /// Create pay url for a booking
+    /// </summary>
     [HttpGet("{id}/pay")]
     public async Task<IActionResult> CreatePayTransaction(Guid id)
     {

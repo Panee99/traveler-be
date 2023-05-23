@@ -16,6 +16,11 @@ public class TourGuidesController : ApiController
         _tourGuideService = tourGuideService;
     }
 
+    /// <summary>
+    /// List all tours this tour guide assigned to
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     [HttpGet("{id:guid}/assigned-tours")]
     public async Task<IActionResult> ListAssignedTours(Guid id)
     {

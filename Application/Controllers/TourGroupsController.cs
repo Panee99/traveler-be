@@ -16,6 +16,9 @@ public class TourGroupsController : ApiController
         _tourGroupService = tourGroupService;
     }
 
+    /// <summary>
+    /// Create a new tour group
+    /// </summary>
     [Authorize(UserRole.Admin)]
     [HttpPost("")]
     public async Task<IActionResult> Create(TourGroupCreateModel model)
@@ -24,6 +27,9 @@ public class TourGroupsController : ApiController
         return result.Match(Ok, OnError);
     }
 
+    /// <summary>
+    /// Update a tour group
+    /// </summary>
     [Authorize(UserRole.Admin)]
     [HttpPatch("{id:guid}")]
     public async Task<IActionResult> Update([FromRoute] Guid id, TourGroupUpdateModel model)
@@ -32,6 +38,9 @@ public class TourGroupsController : ApiController
         return result.Match(Ok, OnError);
     }
 
+    /// <summary>
+    /// Delete a tour group
+    /// </summary>
     [Authorize(UserRole.Admin)]
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete([FromRoute] Guid id)
@@ -40,6 +49,9 @@ public class TourGroupsController : ApiController
         return result.Match(Ok, OnError);
     }
 
+    /// <summary>
+    /// Add travelers to group
+    /// </summary>
     [HttpPatch("{id:guid}/travelers")]
     public async Task<IActionResult> AddTravelers([FromRoute] Guid id, [FromBody] List<Guid> travelerIds)
     {
@@ -47,7 +59,9 @@ public class TourGroupsController : ApiController
         return result.Match(Ok, OnError);
     }
 
-
+    /// <summary>
+    /// Remove travelers from group
+    /// </summary>
     [HttpDelete("{id:guid}/travelers")]
     public async Task<IActionResult> RemoveTravelers([FromRoute] Guid id, [FromBody] List<Guid> travelerIds)
     {
@@ -55,6 +69,9 @@ public class TourGroupsController : ApiController
         return result.Match(Ok, OnError);
     }
 
+    /// <summary>
+    /// List all travelers of a group
+    /// </summary>
     [HttpGet("{id:guid}/travelers")]
     public async Task<IActionResult> ListTravelers([FromRoute] Guid id)
     {

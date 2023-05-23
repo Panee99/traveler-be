@@ -17,6 +17,9 @@ public class AttachmentsController : ApiController
         _attachmentService = attachmentService;
     }
 
+    /// <summary>
+    /// Create attachment and return it's Id
+    /// </summary>
     [ProducesResponseType(typeof(AttachmentViewModel), StatusCodes.Status200OK)]
     [HttpPost]
     public async Task<IActionResult> Upload(IFormFile file)

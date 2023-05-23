@@ -29,8 +29,8 @@ public static class EntityConfigurations
             entity.Property(e => e.Status).HasMaxLength(256);
             entity.Property(e => e.Timestamp).HasColumnType("datetime");
 
-            entity.HasOne(d => d.Tour).WithMany(p => p.Bookings)
-                .HasForeignKey(d => d.TourId);
+            entity.HasOne(d => d.TourVariant).WithMany(p => p.Bookings)
+                .HasForeignKey(d => d.TourVariantId);
 
             entity.HasOne(d => d.Traveler).WithMany(p => p.Bookings)
                 .HasForeignKey(d => d.TravelerId);
@@ -60,13 +60,8 @@ public static class EntityConfigurations
 
         modelBuilder.Entity<Tour>(entity =>
         {
-            entity.HasIndex(e => e.Code).IsUnique();
             entity.HasIndex(e => e.CreatedAt);
-
-            entity.Property(e => e.Code).HasMaxLength(256);
             entity.Property(e => e.Title).HasMaxLength(256);
-            entity.Property(e => e.EndTime).HasColumnType("datetime");
-            entity.Property(e => e.StartTime).HasColumnType("datetime");
             entity.Property(e => e.Departure).HasMaxLength(256);
             entity.Property(e => e.Destination).HasMaxLength(256);
             entity.Property(e => e.Type).HasMaxLength(256);
@@ -74,9 +69,18 @@ public static class EntityConfigurations
             entity.Property(e => e.CreatedAt).HasColumnType("datetime");
         });
 
+        modelBuilder.Entity<TourVariant>(entity =>
+        {
+            entity.HasIndex(e => e.Code).IsUnique();
+            entity.Property(e => e.Code).HasMaxLength(256);
+            entity.Property(e => e.EndTime).HasColumnType("datetime");
+            entity.Property(e => e.StartTime).HasColumnType("datetime");
+            entity.Property(e => e.Status).HasMaxLength(256);
+        });
+
         modelBuilder.Entity<TourFlow>(entity => { entity.ToTable("TourFlow"); });
 
-        modelBuilder.Entity<TourGroup>(entity => { entity.HasOne(e => e.Tour).WithMany(x => x.TourGroups); });
+        modelBuilder.Entity<TourGroup>(entity => { entity.HasOne(e => e.TourVariant).WithMany(x => x.TourGroups); });
 
         modelBuilder.Entity<TourGuide>(entity =>
         {

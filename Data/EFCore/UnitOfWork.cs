@@ -14,6 +14,7 @@ public class UnitOfWork : UnitOfWorkBase
     public IRepository<Admin> Admins => Repo<Admin>();
     public IRepository<Ticket> Tickets => Repo<Ticket>();
     public IRepository<Tour> Tours => Repo<Tour>();
+    public IRepository<TourVariant> TourVariants => Repo<TourVariant>();
     public IRepository<TourImage> TourCarousel => Repo<TourImage>();
     public IRepository<TourGroup> TourGroups => Repo<TourGroup>();
     public IRepository<TourGuide> TourGuides => Repo<TourGuide>();

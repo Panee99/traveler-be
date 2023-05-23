@@ -2,7 +2,7 @@
 
 public record BookingCreateModel
 (
-    Guid TourId,
+    Guid TourVariantId,
     int AdultQuantity,
     int ChildrenQuantity,
     int InfantQuantity

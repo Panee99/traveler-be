@@ -11,6 +11,7 @@ public static class ConventionConfigurations
         configurationBuilder.Properties<UserStatus>().HaveConversion<string>();
         configurationBuilder.Properties<Gender>().HaveConversion<string>();
         configurationBuilder.Properties<TourStatus>().HaveConversion<string>();
+        configurationBuilder.Properties<TourVariantStatus>().HaveConversion<string>();
         configurationBuilder.Properties<TourType>().HaveConversion<string>();
         configurationBuilder.Properties<TicketType>().HaveConversion<string>();
         configurationBuilder.Properties<BookingStatus>().HaveConversion<string>();

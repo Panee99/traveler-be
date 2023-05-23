@@ -1,14 +1,9 @@
 ﻿using Data.EFCore;
-using Data.Entities;
-using Data.Enums;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Service.Interfaces;
 using Service.Models.Tour;
-using Service.Models.TourGuide;
-using Shared.Helpers;
 using Shared.ResultExtensions;
-using TourGuideViewModel = Service.Models.TourGuide.TourGuideViewModel;
 
 namespace Service.Implementations;
 
@@ -28,7 +23,8 @@ public class TourGuideService : BaseService, ITourGuideService
 
         var assignedTours = await UnitOfWork.TourGuides.Query()
             .SelectMany(guide => guide.TourGroups)
-            .Select(group => group.Tour)
+            .Select(group => group.TourVariant)
+            .Select(variant => variant.Tour)
             .ToListAsync();
 
         var views = assignedTours.Select(e =>

@@ -6,11 +6,11 @@ public class Booking
 {
     public Guid Id { get; set; }
 
-    public Guid TourId { get; set; }
+    public Guid TourVariantId { get; set; }
 
     public Guid TravelerId { get; set; }
 
-    public virtual Tour Tour { get; set; } = null!;
+    public virtual TourVariant TourVariant { get; set; } = null!;
 
     public virtual Traveler Traveler { get; set; } = null!;
 
@@ -37,4 +37,3 @@ public class Booking
     // public virtual ICollection<BookingAppliedDiscount> BookingAppliedDiscounts { get; set; } =
     //     new List<BookingAppliedDiscount>();
 }
-

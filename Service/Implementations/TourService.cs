@@ -35,7 +35,6 @@ public class TourService : BaseService, ITourService
     {
         // Map
         var tour = model.AdaptIgnoreNull<TourCreateModel, Tour>();
-        tour.Code = CodeGenerator.NewCode();
         tour.Status = TourStatus.New;
 
         // Add
@@ -181,14 +180,6 @@ public class TourService : BaseService, ITourService
             query = query.Where(e => e.Title.Contains(model.Title));
         if (model.Type != null)
             query = query.Where(e => e.Type == model.Type);
-        if (model.StartAfter != null)
-            query = query.Where(e => e.StartTime >= model.StartAfter);
-        if (model.EndBefore != null)
-            query = query.Where(e => e.EndTime <= model.EndBefore);
-        if (model.MinPrice != null)
-            query = query.Where(e => e.AdultPrice >= model.MinPrice);
-        if (model.MaxPrice != null)
-            query = query.Where(e => e.AdultPrice <= model.MaxPrice);
 
         var paginationModel = await query.Paging(model.Page, model.Size);
 

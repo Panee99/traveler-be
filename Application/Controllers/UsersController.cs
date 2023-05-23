@@ -17,6 +17,9 @@ public class UsersController : ApiController
         _userService = userService;
     }
 
+    /// <summary>
+    /// Create new user
+    /// </summary>
     [Authorize(UserRole.Admin)]
     [HttpPost("")]
     public async Task<IActionResult> Create(UserCreateModel model)
@@ -25,6 +28,9 @@ public class UsersController : ApiController
         return result.Match(Ok, OnError);
     }
 
+    /// <summary>
+    /// Update user
+    /// </summary>
     [Authorize(UserRole.Admin)]
     [HttpPatch("{id:guid}")]
     public async Task<IActionResult> Update(Guid id, UserUpdateModel model)
@@ -33,6 +39,9 @@ public class UsersController : ApiController
         return result.Match(Ok, OnError);
     }
 
+    /// <summary>
+    /// Filter users
+    /// </summary>
     [Authorize(UserRole.Admin)]
     [HttpPost("filter")]
     public async Task<IActionResult> Filter(UserFilterModel model)
@@ -41,6 +50,9 @@ public class UsersController : ApiController
         return result.Match(Ok, OnError);
     }
     
+    /// <summary>
+    /// Filter user's profile
+    /// </summary>
     [Authorize]
     [ProducesResponseType(typeof(UserViewModel), StatusCodes.Status200OK)]
     [HttpGet("self/profile")]
@@ -50,6 +62,9 @@ public class UsersController : ApiController
         return result.Match(Ok, OnError);
     }
     
+    /// <summary>
+    /// Update user's profile
+    /// </summary>
     [Authorize]
     [ProducesResponseType(typeof(UserViewModel), StatusCodes.Status200OK)]
     [HttpPatch("self/profile")]

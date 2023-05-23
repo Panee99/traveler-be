@@ -20,6 +20,9 @@ public class TravelersController : ApiController
         _bookingService = bookingService;
     }
 
+    /// <summary>
+    /// Register for new account (mobile)
+    /// </summary>
     [SwaggerOperation(Description = "Phone format: '84' or '+84'.")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [HttpPost("register")]
@@ -29,6 +32,9 @@ public class TravelersController : ApiController
         return result.Match(Ok, OnError);
     }
 
+    /// <summary>
+    /// List all bookings of a traveler
+    /// </summary>
     [Authorize]
     [HttpGet("{id:guid}/booked")]
     public async Task<IActionResult> ListBooked(Guid id)
@@ -37,6 +43,9 @@ public class TravelersController : ApiController
         return result.Match(Ok, OnError);
     }
 
+    /// <summary>
+    /// List all joined tours of a traveler
+    /// </summary>
     [ProducesResponseType(typeof(TourFilterViewModel), StatusCodes.Status200OK)]
     [Authorize]
     [HttpGet("{id:guid}/joined-tours")]
