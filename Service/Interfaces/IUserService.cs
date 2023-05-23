@@ -15,4 +15,8 @@ public interface IUserService
     Task<Result<UserViewModel>> GetProfile(Guid id);
     
     Task<Result<UserViewModel>> UpdateProfile(Guid id, ProfileUpdateModel model);
+    
+    Task<Result<UserViewModel>> AdminGetUserById(Guid id);
+    
+    Task<Result> AdminDeleteUserById(Guid id);
 }

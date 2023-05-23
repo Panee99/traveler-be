@@ -6,7 +6,6 @@ using Service.Models.User;
 
 namespace Application.Controllers;
 
-
 [Route("users")]
 public class UsersController : ApiController
 {
@@ -16,6 +15,32 @@ public class UsersController : ApiController
     {
         _userService = userService;
     }
+
+    /// <summary>
+    /// Get current user's profile
+    /// </summary>
+    [Authorize]
+    [ProducesResponseType(typeof(UserViewModel), StatusCodes.Status200OK)]
+    [HttpGet("self/profile")]
+    public async Task<IActionResult> GetProfile()
+    {
+        var result = await _userService.GetProfile(CurrentUser.Id);
+        return result.Match(Ok, OnError);
+    }
+    
+    /// <summary>
+    /// Update current user's profile
+    /// </summary>
+    [Authorize]
+    [ProducesResponseType(typeof(UserViewModel), StatusCodes.Status200OK)]
+    [HttpPatch("self/profile")]
+    public async Task<IActionResult> UpdateProfile(ProfileUpdateModel model)
+    {
+        var result = await _userService.UpdateProfile(CurrentUser.Id, model);
+        return result.Match(Ok, OnError);
+    }
+
+    #region Required Admin Role
 
     /// <summary>
     /// Create new user
@@ -51,26 +76,28 @@ public class UsersController : ApiController
     }
     
     /// <summary>
-    /// Filter user's profile
+    /// Get user by id
     /// </summary>
-    [Authorize]
+    [Authorize(UserRole.Admin)]
     [ProducesResponseType(typeof(UserViewModel), StatusCodes.Status200OK)]
-    [HttpGet("self/profile")]
-    public async Task<IActionResult> GetProfile()
+    [HttpGet("{id:guid}")]
+    public async Task<IActionResult> AdminGetUserById(Guid id)
     {
-        var result = await _userService.GetProfile(CurrentUser.Id);
+        var result = await _userService.AdminGetUserById(id);
         return result.Match(Ok, OnError);
     }
-    
+
     /// <summary>
-    /// Update user's profile
+    /// Delete a user
     /// </summary>
-    [Authorize]
-    [ProducesResponseType(typeof(UserViewModel), StatusCodes.Status200OK)]
-    [HttpPatch("self/profile")]
-    public async Task<IActionResult> UpdateProfile(ProfileUpdateModel model)
+    [Authorize(UserRole.Admin)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [HttpDelete("{id:guid}")]
+    public async Task<IActionResult> AdminDeleteUserById(Guid id)
     {
-        var result = await _userService.UpdateProfile(CurrentUser.Id, model);
+        var result = await _userService.AdminDeleteUserById(id);
         return result.Match(Ok, OnError);
     }
+
+    #endregion
 }
