@@ -86,6 +86,7 @@ public class BookingService : BaseService, IBookingService
         var bookings = await UnitOfWork.Bookings
             .Query()
             .Where(e => e.TravelerId == travelerId)
+            .Include(e => e.Passengers)
             .ToListAsync();
 
         return bookings.Adapt<List<BookingViewModel>>();

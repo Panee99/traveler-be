@@ -4,6 +4,15 @@ namespace Service.Models.Booking;
 
 public record BookingViewModel
 {
+    // Contact
+    public string ContactName { get; set; } = null!;
+    public string ContactPhone = null!;
+    public string? ContactEmail;
+    public string ContactAddress = null!;
+    public string ContactCity = null!;
+    public string ContactCountry = null!;
+
+    //
     public Guid Id { get; set; }
     public Guid TourVariantId { get; set; }
     public Guid TravelerId { get; set; }
@@ -16,4 +25,15 @@ public record BookingViewModel
     public BookingStatus Status { get; set; }
     public DateTime ExpireAt { get; set; }
     public DateTime Timestamp { get; set; }
+    public ICollection<PassengerViewModel> Passengers { get; set; } = new List<PassengerViewModel>();
+}
+
+public record PassengerViewModel
+{
+    public string Name = null!;
+    public string? Phone;
+    public string? Address;
+    public string? Gender;
+    public string? Country;
+    public string? Passport;
 }
