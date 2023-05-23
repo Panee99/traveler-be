@@ -1,0 +1,24 @@
+﻿[
+  {
+    "Id": "db4b701e-0290-4331-858f-3f7a60558daa",
+    "TourId": "60f45523-bd04-449a-9889-55fb70beb802",
+    "Code": "2304-AD9DEXQ",
+    "AdultPrice": 700000,
+    "ChildrenPrice": 300000,
+    "InfantPrice": 100000,
+    "StartTime": "2023-05-15 19:48:28.000",
+    "EndTime": "2023-05-20 19:48:26.000",
+    "Status": "Accepting"
+  },
+  {
+    "Id": "a71d3d04-2eac-4ebe-999e-dbc60702ce3d",
+    "TourId": "d1936e4c-9c32-49ae-aa51-0f23089a78d4",
+    "Code": "2304-AD9DSAW",
+    "AdultPrice": 11499900,
+    "ChildrenPrice": 10199900,
+    "InfantPrice": 0,
+    "StartTime": "2023-05-08 11:30:24.410",
+    "EndTime": "2023-05-10 11:30:24.410",
+    "Status": "Accepting"
+  }
+]
