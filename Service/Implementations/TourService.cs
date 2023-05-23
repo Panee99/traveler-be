@@ -10,6 +10,7 @@ using Service.Commons.Pagination;
 using Service.Interfaces;
 using Service.Models.Attachment;
 using Service.Models.Tour;
+using Service.Models.TourVariant;
 using Shared.ResultExtensions;
 
 namespace Service.Implementations;
@@ -272,5 +273,19 @@ public class TourService : BaseService, ITourService
             ContentType = e.ContentType,
             Url = _cloudStorageService.GetMediaLink(e.Id)
         }).ToList();
+    }
+
+    public async Task<Result<List<TourVariantViewModel>>> ListTourVariants(Guid tourId)
+    {
+        if (!await UnitOfWork.Tours.AnyAsync(e => e.Id == tourId))
+            return Error.NotFound("Tour not found.");
+
+        var tourVariants = await UnitOfWork.Tours
+            .Query()
+            .Where(e => e.Id == tourId)
+            .SelectMany(e => e.TourVariants)
+            .ToListAsync();
+
+        return tourVariants.Adapt<List<TourVariantViewModel>>();
     }
 }

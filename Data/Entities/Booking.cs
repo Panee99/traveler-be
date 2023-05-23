@@ -4,6 +4,17 @@ namespace Data.Entities;
 
 public class Booking
 {
+    #region Contact Info
+
+    public string ContactName { get; set; } = null!;
+    public string ContactPhone { get; set; } = null!;
+    public string? ContactEmail { get; set; } = null!;
+    public string ContactAddress { get; set; } = null!;
+    public string ContactCity { get; set; } = null!;
+    public string ContactCountry { get; set; } = null!;
+
+    #endregion
+
     public Guid Id { get; set; }
 
     public Guid TourVariantId { get; set; }
@@ -32,6 +43,8 @@ public class Booking
 
     public BookingStatus Status { get; set; }
 
+    public virtual ICollection<Passenger> Passengers { get; set; } = new List<Passenger>(); 
+    
     public virtual ICollection<Transaction> Transactions { get; set; } = new List<Transaction>();
 
     // public virtual ICollection<BookingAppliedDiscount> BookingAppliedDiscounts { get; set; } =

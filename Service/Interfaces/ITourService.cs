@@ -1,6 +1,7 @@
 ﻿using Service.Commons.Pagination;
 using Service.Models.Attachment;
 using Service.Models.Tour;
+using Service.Models.TourVariant;
 using Shared.ResultExtensions;
 
 namespace Service.Interfaces;
@@ -23,4 +24,6 @@ public interface ITourService
     Task<Result> DeleteFromCarousel(Guid tourId, Guid attachmentId);
 
     Task<Result<List<AttachmentViewModel>>> GetCarousel(Guid tourId);
+
+    Task<Result<List<TourVariantViewModel>>> ListTourVariants(Guid tourId);
 }

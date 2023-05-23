@@ -52,6 +52,8 @@ public static class EntityConfigurations
 
         modelBuilder.Entity<Notification>();
 
+        modelBuilder.Entity<Passenger>();
+        
         modelBuilder.Entity<Schedule>();
 
         modelBuilder.Entity<Staff>(entity => { entity.ToTable("Staff"); });

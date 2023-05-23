@@ -77,5 +77,16 @@ public class ToursController : ApiController
         return result.Match(Ok, OnError);
     }
 
-    
+    /// <summary>
+    /// List all variants of a tour
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    [AllowAnonymous]
+    [HttpPost("{id:guid}/tour-variants")]
+    public async Task<IActionResult> ListTourVariants(Guid id)
+    {
+        var result = await _tourService.ListTourVariants(id);
+        return result.Match(Ok, OnError);
+    }
 }

@@ -149,7 +149,7 @@ public class UserService : BaseService, IUserService
 
         return view;
     }
-  
+
     public async Task<Result<UserViewModel>> AdminGetUserById(Guid id)
     {
         var entity = await UnitOfWork.Users.Query()

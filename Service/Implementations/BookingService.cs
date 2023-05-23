@@ -20,10 +20,26 @@ public class BookingService : BaseService, IBookingService
 
     public async Task<Result<BookingViewModel>> Create(Guid travelerId, BookingCreateModel model)
     {
-        var tour = await UnitOfWork.Tours.FindAsync(model.TourId);
-        if (tour is null) return Error.NotFound("Tour not found");
+        // validate input
+        var passengerQty = model.AdultQuantity + model.ChildrenQuantity + model.InfantQuantity;
+        if (passengerQty != model.Passengers.Count)
+            return Error.Conflict($"Passenger count does not match: {passengerQty} vs {model.Passengers.Count}");
 
-        if (tour.Status != TourStatus.Active) return Error.Conflict("Can only book status Active tours");
+        // get tour variant
+        var tourVariant = await UnitOfWork.TourVariants
+            .Query()
+            .Where(e => e.Id == model.TourVariantId)
+            .Include(e => e.Tour)
+            .FirstOrDefaultAsync();
+
+        // validate Status
+        if (tourVariant is null) return Error.NotFound("Tour variant not found");
+
+        if (tourVariant.Status != TourVariantStatus.Accepting)
+            return Error.Conflict("Can only book Accepting tour variants");
+
+        if (tourVariant.Tour.Status != TourStatus.Active)
+            return Error.Conflict("Can only book Active tours");
 
         // validate input
         if (model.AdultQuantity < 1) return Error.Validation("At least 1 Adult");
@@ -32,33 +48,28 @@ public class BookingService : BaseService, IBookingService
         var travelerInOtherTour = await UnitOfWork.Travelers.Query()
             .Where(traveler => traveler.Id == travelerId)
             .SelectMany(traveler => traveler.TourGroups)
-            .AnyAsync(tourGroup => tourGroup.Tour.Status != TourStatus.Closed);
+            .AnyAsync(tourGroup => tourGroup.TourVariant.Status != TourVariantStatus.Ended);
 
-        if (travelerInOtherTour) return Error.Conflict("Traveler already in a Tour");
+        if (travelerInOtherTour) return Error.Conflict("Traveler already in another Tour");
 
         // check if this tour already booked
         if (await UnitOfWork.Bookings.Query()
-                .AnyAsync(e => e.TourId == model.TourId
+                .AnyAsync(e => e.TourVariantId == model.TourVariantId
                                && e.TravelerId == travelerId))
         {
             return Error.Conflict("This tour is already booked");
         }
 
         var now = DateTimeHelper.VnNow();
-        var booking = new Booking()
-        {
-            TourId = model.TourId,
-            TravelerId = travelerId,
-            AdultQuantity = model.AdultQuantity,
-            ChildrenQuantity = model.ChildrenQuantity,
-            InfantQuantity = model.InfantQuantity,
-            Status = BookingStatus.Pending,
-            Timestamp = now,
-            AdultPrice = tour.AdultPrice,
-            ChildrenPrice = tour.ChildrenPrice,
-            InfantPrice = tour.InfantPrice,
-            ExpireAt = now.AddHours(2)
-        };
+
+        var booking = model.Adapt<Booking>();
+        booking.TravelerId = travelerId;
+        booking.Status = BookingStatus.Pending;
+        booking.Timestamp = now;
+        booking.AdultPrice = tourVariant.AdultPrice;
+        booking.ChildrenPrice = tourVariant.ChildrenPrice;
+        booking.InfantPrice = tourVariant.InfantPrice;
+        booking.ExpireAt = now.AddHours(2);
 
         UnitOfWork.Bookings.Add(booking);
 
