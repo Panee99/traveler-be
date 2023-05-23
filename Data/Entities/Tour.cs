@@ -22,6 +22,8 @@ public class Tour
 
     public string? Description { get; set; }
 
+    public string? Policy { get; set; }
+
     public Guid? ThumbnailId { get; set; }
 
     public Attachment? Thumbnail { get; set; }

@@ -12,6 +12,7 @@ public record TourUpdateModel
     int? MaxOccupancy,
     TourType? Type,
     string? Description,
+    string? Policy,
     TourStatus? Status,
     List<ScheduleCreateModel>? Schedules,
     List<TourFlowCreateModel>? TourFlows,

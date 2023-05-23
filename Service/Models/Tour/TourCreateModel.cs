@@ -12,6 +12,7 @@ public record TourCreateModel
     int MaxOccupancy,
     TourType Type,
     string? Description,
+    string? Policy,
     List<ScheduleCreateModel>? Schedules,
     List<TourFlowCreateModel>? TourFlows,
     List<Guid>? Carousel,

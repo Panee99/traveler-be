@@ -13,6 +13,7 @@ public record TourViewModel
     public string Destination = null!;
     public int MaxOccupancy;
     public string? Description;
+    public string? Policy;
     public string? ThumbnailUrl;
     public TourType Type;
     public TourStatus Status;
