@@ -11,4 +11,5 @@ public record UserFilterModel : PagingFilterModel
     public Gender? Gender;
     public UserRole? Role;
     public UserStatus? Status;
+    public OrderByModel? OrderBy;
 }

@@ -1,4 +1,4 @@
-﻿using Service.Commons.Pagination;
+﻿using Service.Commons.QueryExtensions;
 using Service.Models.Attachment;
 using Service.Models.Tour;
 using Service.Models.TourVariant;

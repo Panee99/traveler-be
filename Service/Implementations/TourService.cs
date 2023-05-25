@@ -6,7 +6,7 @@ using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Service.Commons;
-using Service.Commons.Pagination;
+using Service.Commons.QueryExtensions;
 using Service.Interfaces;
 using Service.Models.Attachment;
 using Service.Models.Tour;

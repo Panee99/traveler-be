@@ -5,7 +5,7 @@ using Mapster;
 using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
 using Service.Commons;
-using Service.Commons.Pagination;
+using Service.Commons.QueryExtensions;
 using Service.Interfaces;
 using Service.Models.Admin;
 using Service.Models.Staff;
@@ -80,6 +80,9 @@ public class UserService : BaseService, IUserService
         if (model.Gender != null) query = query.Where(e => e.Gender == model.Gender);
         if (model.Role != null) query = query.Where(e => e.Role == model.Role);
         if (model.Status != null) query = query.Where(e => e.Status == model.Status);
+
+        if (model.OrderBy != null)
+            query = query.ApplyOrderBy(model.OrderBy.Property, model.OrderBy.Order);
 
         var result = await query.Paging(model.Page, model.Size);
 

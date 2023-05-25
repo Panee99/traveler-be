@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace Service.Commons.Pagination;
+namespace Service.Commons.QueryExtensions;
 
-public static class PaginationExtensions
+public static class PaginationExtension
 {
     public static async Task<PaginationModel<T>> Paging<T>(this IQueryable<T> query, int page, int size)
     {

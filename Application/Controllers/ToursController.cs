@@ -1,7 +1,7 @@
 ﻿using Application.Configurations.Auth;
 using Data.Enums;
 using Microsoft.AspNetCore.Mvc;
-using Service.Commons.Pagination;
+using Service.Commons.QueryExtensions;
 using Service.Interfaces;
 using Service.Models.Tour;
 using Service.Models.TourVariant;
