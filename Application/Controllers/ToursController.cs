@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Service.Commons.Pagination;
 using Service.Interfaces;
 using Service.Models.Tour;
+using Service.Models.TourVariant;
 
 namespace Application.Controllers;
 
@@ -80,8 +81,7 @@ public class ToursController : ApiController
     /// <summary>
     /// List all variants of a tour
     /// </summary>
-    /// <param name="id"></param>
-    /// <returns></returns>
+    [ProducesResponseType(typeof(List<TourVariantViewModel>), StatusCodes.Status200OK)]
     [AllowAnonymous]
     [HttpPost("{id:guid}/tour-variants")]
     public async Task<IActionResult> ListTourVariants(Guid id)

@@ -75,6 +75,9 @@ public class UserService : BaseService, IUserService
 
         if (model.Phone != null) query = query.Where(e => e.Phone.Contains(model.Phone));
         if (model.Email != null) query = query.Where(e => e.Email != null && e.Email.Contains(model.Email));
+        if (model.FirstName != null) query = query.Where(e => e.FirstName.Contains(model.FirstName));
+        if (model.LastName != null) query = query.Where(e => e.LastName.Contains(model.LastName));
+        if (model.Gender != null) query = query.Where(e => e.Gender == model.Gender);
         if (model.Role != null) query = query.Where(e => e.Role == model.Role);
         if (model.Status != null) query = query.Where(e => e.Status == model.Status);
 
