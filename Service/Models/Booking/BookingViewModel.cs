@@ -4,15 +4,6 @@ namespace Service.Models.Booking;
 
 public record BookingViewModel
 {
-    // Contact
-    public string ContactName { get; set; } = null!;
-    public string ContactPhone = null!;
-    public string? ContactEmail;
-    public string ContactAddress = null!;
-    public string ContactCity = null!;
-    public string ContactCountry = null!;
-
-    //
     public Guid Id { get; set; }
     public Guid TourVariantId { get; set; }
     public Guid TravelerId { get; set; }
