@@ -7,6 +7,8 @@ public class UnitOfWork : UnitOfWorkBase
 {
     public IRepository<User> Users => Repo<User>();
     public IRepository<Attachment> Attachments => Repo<Attachment>();
+    public IRepository<AttendanceEvent> AttendanceEvents => Repo<AttendanceEvent>();
+    public IRepository<Attendance> Attendances => Repo<Attendance>();
     public IRepository<Booking> Bookings => Repo<Booking>();
     public IRepository<Schedule> Schedules => Repo<Schedule>();
     public IRepository<Staff> Staffs => Repo<Staff>();

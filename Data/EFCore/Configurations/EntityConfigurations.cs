@@ -53,7 +53,7 @@ public static class EntityConfigurations
         modelBuilder.Entity<Notification>();
 
         modelBuilder.Entity<Passenger>();
-        
+
         modelBuilder.Entity<Schedule>();
 
         modelBuilder.Entity<Staff>(entity => { entity.ToTable("Staff"); });
@@ -144,6 +144,20 @@ public static class EntityConfigurations
                 .HasForeignKey<VnPayResponse>(x => x.TransactionId);
         });
 
+        modelBuilder.Entity<AttendanceEvent>(entity =>
+        {
+            entity.HasOne(evt => evt.TourGroup)
+                .WithMany(group => group.AttendanceEvents)
+                .HasForeignKey(evt => evt.TourGroupId);
+        });
+
+        modelBuilder.Entity<Attendance>(entity =>
+        {
+            entity.HasOne(att => att.AttendanceEvent)
+                .WithMany(evt => evt.Attendances)
+                .HasForeignKey(e => e.AttendanceEventId);
+        });
+        
         // modelBuilder.Entity<TourDiscount>(entity =>
         // {
         //     entity.Property(e => e.T1discount).HasColumnName("T1Discount");
