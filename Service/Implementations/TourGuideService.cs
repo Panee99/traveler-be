@@ -3,6 +3,7 @@ using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Service.Interfaces;
 using Service.Models.Tour;
+using Service.Models.TourGroup;
 using Shared.ResultExtensions;
 
 namespace Service.Implementations;
@@ -37,5 +38,17 @@ public class TourGuideService : BaseService, ITourGuideService
         }).ToList();
 
         return views;
+    }
+
+    public async Task<Result<List<TourGroupViewModel>>> ListAssignedGroups(Guid tourGuideId)
+    {
+        if (!await UnitOfWork.TourGuides.AnyAsync(e => e.Id == tourGuideId))
+            return Error.NotFound("Tour Guide not found.");
+        
+        var assignedGroups = await UnitOfWork.TourGuides.Query()
+            .SelectMany(guide => guide.TourGroups)
+            .ToListAsync();
+
+        return assignedGroups.Adapt<List<TourGroupViewModel>>();
     }
 }

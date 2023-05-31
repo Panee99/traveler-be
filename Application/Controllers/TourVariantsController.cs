@@ -49,6 +49,17 @@ public class TourVariantsController : ApiController
     }
 
     /// <summary>
+    /// Get a tour variant
+    /// </summary>
+    [AllowAnonymous]
+    [HttpGet("{id:guid}")]
+    public async Task<IActionResult> Get(Guid id)
+    {
+        var result = await _tourVariantService.Get(id);
+        return result.Match(Ok, OnError);
+    }
+    
+    /// <summary>
     /// List travelers in tour variant
     /// </summary>
     [HttpGet("{id:guid}/travelers")]

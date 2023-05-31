@@ -10,6 +10,8 @@ public interface ITourVariantService
 
     Task<Result<TourVariantViewModel>> Update(Guid id, TourVariantUpdateModel model);
 
+    Task<Result<TourVariantViewModel>> Get(Guid id);
+    
     Task<Result> Delete(Guid id);
 
     Task<Result<List<TourGroupViewModel>>> ListGroupsByTourVariant(Guid tourVariantId);

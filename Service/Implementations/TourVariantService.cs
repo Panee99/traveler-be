@@ -41,6 +41,13 @@ public class TourVariantService : BaseService, ITourVariantService
         return tourVariant.Adapt<TourVariantViewModel>();
     }
 
+    public async Task<Result<TourVariantViewModel>> Get(Guid id)
+    {
+        var tourVariant = await UnitOfWork.TourVariants.FindAsync(id);
+        if (tourVariant is null) return Error.NotFound();
+        return tourVariant.Adapt<TourVariantViewModel>();
+    }
+
     public async Task<Result> Delete(Guid id)
     {
         var tourVariant = await UnitOfWork.TourVariants.FindAsync(id);
