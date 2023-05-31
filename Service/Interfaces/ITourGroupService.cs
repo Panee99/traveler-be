@@ -1,4 +1,5 @@
-﻿using Service.Models.TourGroup;
+﻿using Service.Models.AttendanceEvent;
+using Service.Models.TourGroup;
 using Shared.ResultExtensions;
 
 namespace Service.Interfaces;
@@ -16,4 +17,6 @@ public interface ITourGroupService
     Task<Result> RemoveTravelers(Guid tourGroupId, List<Guid> travelerIds);
 
     Task<Result<List<Guid>>> ListTravelers(Guid tourGroupId);
+    
+    Task<Result<List<AttendanceEventViewModel>>> ListAttendanceEvents(Guid tourGroupId);
 }

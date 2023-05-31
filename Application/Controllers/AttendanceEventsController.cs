@@ -29,17 +29,17 @@ public class AttendanceEventsController : ApiController
         return result.Match(Ok, OnError);
     }
 
-    [HttpPost("{id:guid}/attendances")]
-    public async Task<IActionResult> CreateAttendance(Guid id, AttendanceCreateModel model)
-    {
-        var result = await _attendanceEventService.CreateAttendance(id, model);
-        return result.Match(Ok, OnError);
-    }
-
-    [HttpGet("{id:guid}/attendances")]
-    public async Task<IActionResult> ListAttendances(Guid id)
-    {
-        var result = await _attendanceEventService.ListAttendances(id);
-        return result.Match(Ok, OnError);
-    }
+    // [HttpPost("{id:guid}/attendances")]
+    // public async Task<IActionResult> CreateAttendance(Guid id, AttendanceCreateModel model)
+    // {
+    //     var result = await _attendanceEventService.CreateAttendance(id, model);
+    //     return result.Match(Ok, OnError);
+    // }
+    //
+    // [HttpGet("{id:guid}/attendances")]
+    // public async Task<IActionResult> ListAttendances(Guid id)
+    // {
+    //     var result = await _attendanceEventService.ListAttendances(id);
+    //     return result.Match(Ok, OnError);
+    // }
 }
