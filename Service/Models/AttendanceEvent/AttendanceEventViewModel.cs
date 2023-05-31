@@ -2,6 +2,7 @@
 
 public record AttendanceEventViewModel
 {
+    public Guid Id;
     public string Name = null!;
     public Guid TourGroupId;
     public DateTime CreatedAt;
