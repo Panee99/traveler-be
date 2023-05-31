@@ -1,5 +1,13 @@
 [
   {
+    "Id": "7F3364A3-6B6D-4E7E-8116-EBA8443E64D1",
+    "TourId": "D1936E4C-9C32-49AE-AA51-0F23089A78D4",
+    "Longitude": 8.307707,
+    "Latitude": 47.05399,
+    "ArrivalTime": "2023-05-26 03:18:52.9790000",
+    "Description": null
+  },
+  {
     "Id": "EB46CA8B-5331-4D03-B2FF-1652CC8D0508",
     "TourId": "D1936E4C-9C32-49AE-AA51-0F23089A78D4",
     "Longitude": 8.04789,
@@ -16,11 +24,43 @@
     "Description": null
   },
   {
-    "Id": "7F3364A3-6B6D-4E7E-8116-EBA8443E64D1",
-    "TourId": "D1936E4C-9C32-49AE-AA51-0F23089A78D4",
-    "Longitude": 8.307707,
-    "Latitude": 47.05399,
-    "ArrivalTime": "2023-05-26 03:18:52.9790000",
+    "Id": "62F9F292-C2F2-409D-B22E-F74CFA93E3C7",
+    "TourId": "60F45523-BD04-449A-9889-55FB70BEB802",
+    "Longitude": 10.166229720891868,
+    "Latitude": 103.9977406648279,
+    "ArrivalTime": "2023-05-31 22:06:58.0000000",
+    "Description": null
+  },
+  {
+    "Id": "D7924D27-3980-4AA2-B5B3-9E6D4E89DE5A",
+    "TourId": "60F45523-BD04-449A-9889-55FB70BEB802",
+    "Longitude": 10.28148497108062,
+    "Latitude": 104.07241282005472,
+    "ArrivalTime": "2023-06-01 22:06:58.0000000",
+    "Description": null
+  },
+  {
+    "Id": "01006056-02B3-4745-9EFA-21136E8670E3",
+    "TourId": "60F45523-BD04-449A-9889-55FB70BEB802",
+    "Longitude": 10.249832796164574,
+    "Latitude": 104.02774746052677,
+    "ArrivalTime": "2023-06-02 22:06:58.0000000",
+    "Description": null
+  },
+  {
+    "Id": "C94A4DF8-5D16-4A76-85A5-D878F60E523D",
+    "TourId": "60F45523-BD04-449A-9889-55FB70BEB802",
+    "Longitude": 10.335673462588597,
+    "Latitude": 104.03046613233519,
+    "ArrivalTime": "2023-06-03 22:06:58.0000000",
+    "Description": null
+  },
+  {
+    "Id": "8118AC1D-52E9-42E6-9FDA-E4B2178225A0",
+    "TourId": "60F45523-BD04-449A-9889-55FB70BEB802",
+    "Longitude": 10.34137131375123,
+    "Latitude": 103.84928949698912,
+    "ArrivalTime": "2023-06-04 22:06:58.0000000",
     "Description": null
   }
 ]

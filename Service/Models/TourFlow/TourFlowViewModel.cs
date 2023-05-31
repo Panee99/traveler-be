@@ -3,8 +3,8 @@
 public class TourFlowViewModel
 {
     public Guid Id;
-    public float Longitude;
-    public float Latitude;
+    public double Longitude;
+    public double Latitude;
     public DateTime ArrivalTime;
     public string? Description = null!;
 }
