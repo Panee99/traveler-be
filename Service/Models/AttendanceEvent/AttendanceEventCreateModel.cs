@@ -3,6 +3,5 @@
 public record AttendanceEventCreateModel
 (
     string Name,
-    Guid TourGroupId,
-    DateTime CreatedAt
+    Guid TourGroupId
 );

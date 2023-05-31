@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Service.Interfaces;
 using Service.Models.Attendance;
 using Service.Models.AttendanceEvent;
+using Shared.Helpers;
 using Shared.ResultExtensions;
 
 namespace Service.Implementations;
@@ -18,6 +19,7 @@ public class AttendanceEventService : BaseService, IAttendanceEventService
     public async Task<Result<AttendanceEventViewModel>> Create(AttendanceEventCreateModel model)
     {
         var attendanceEvent = model.Adapt<AttendanceEvent>();
+        attendanceEvent.CreatedAt = DateTimeHelper.VnNow();
         UnitOfWork.AttendanceEvents.Add(attendanceEvent);
 
         await UnitOfWork.SaveChangesAsync();
