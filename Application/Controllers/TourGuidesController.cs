@@ -2,6 +2,7 @@
 using Data.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Service.Interfaces;
+using Service.Models.TourGroup;
 using Service.Models.TourGuide;
 
 namespace Application.Controllers;
@@ -21,6 +22,7 @@ public class TourGuidesController : ApiController
     /// List all tour groups this tour guide assigned to
     /// </summary>
     [Authorize(UserRole.Admin, UserRole.TourGuide)]
+    [ProducesResponseType(typeof(TourGroupViewModel), StatusCodes.Status200OK)]
     [HttpGet("{id:guid}/assigned-groups")]
     public async Task<IActionResult> ListAssignedTourGroups(Guid id)
     {
