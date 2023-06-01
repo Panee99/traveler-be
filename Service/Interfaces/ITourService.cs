@@ -8,15 +8,15 @@ namespace Service.Interfaces;
 
 public interface ITourService
 {
-    Task<Result<TourViewModel>> Create(TourCreateModel model);
+    Task<Result<TourDetailsViewModel>> Create(TourCreateModel model);
 
-    Task<Result<TourViewModel>> Update(Guid id, TourUpdateModel model);
+    Task<Result<TourDetailsViewModel>> Update(Guid id, TourUpdateModel model);
 
     Task<Result> Delete(Guid id);
 
-    Task<Result<TourViewModel>> GetDetails(Guid id);
+    Task<Result<TourDetailsViewModel>> GetDetails(Guid id);
 
-    Task<Result<PaginationModel<TourFilterViewModel>>> Filter(TourFilterModel model);
+    Task<Result<PaginationModel<TourViewModel>>> Filter(TourFilterModel model);
 
     // Attachments
     Task<Result<AttachmentViewModel>> AddToCarousel(Guid tourId, string contentType, Stream stream);

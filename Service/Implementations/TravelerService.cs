@@ -83,7 +83,7 @@ public class TravelerService : BaseService, ITravelerService
     }
 
     // TODO: Test
-    public async Task<Result<List<TourFilterViewModel>>> ListJoinedTours(Guid travelerId)
+    public async Task<Result<List<TourViewModel>>> ListJoinedTours(Guid travelerId)
     {
         var tours = await UnitOfWork.Travelers.Query()
             .Where(traveler => traveler.Id == travelerId)
@@ -93,7 +93,7 @@ public class TravelerService : BaseService, ITravelerService
 
         var views = tours.Select(tour =>
         {
-            var view = tour.Adapt<TourFilterViewModel>();
+            var view = tour.Adapt<TourViewModel>();
             if (tour.ThumbnailId != null)
                 view.ThumbnailUrl = _cloudStorageService.GetMediaLink(tour.ThumbnailId.Value);
             return view;

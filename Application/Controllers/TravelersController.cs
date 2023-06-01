@@ -46,7 +46,7 @@ public class TravelersController : ApiController
     /// <summary>
     /// List all joined tours of a traveler
     /// </summary>
-    [ProducesResponseType(typeof(TourFilterViewModel), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(TourViewModel), StatusCodes.Status200OK)]
     [Authorize]
     [HttpGet("{id:guid}/joined-tours")]
     public async Task<IActionResult> ListJoinedTours(Guid id)

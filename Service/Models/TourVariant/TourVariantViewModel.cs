@@ -1,4 +1,5 @@
 ﻿using Data.Enums;
+using Service.Models.Tour;
 
 namespace Service.Models.TourVariant;
 
@@ -13,4 +14,5 @@ public record TourVariantViewModel
     public DateTime StartTime;
     public DateTime EndTime;
     public TourVariantStatus Status;
+    public TourViewModel? Tour;
 }

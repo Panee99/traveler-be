@@ -16,19 +16,11 @@ public class TourGuidesController : ApiController
         _tourGuideService = tourGuideService;
     }
 
-    /// <summary>
-    /// List all tours this tour guide assigned to
-    /// </summary>
-    [HttpGet("{id:guid}/assigned-tours")]
-    public async Task<IActionResult> ListAssignedTours(Guid id)
-    {
-        var result = await _tourGuideService.ListAssignedTours(id);
-        return result.Match(Ok, OnError);
-    }
-    
+
     /// <summary>
     /// List all tour groups this tour guide assigned to
     /// </summary>
+    [Authorize(UserRole.Admin, UserRole.TourGuide)]
     [HttpGet("{id:guid}/assigned-groups")]
     public async Task<IActionResult> ListAssignedTourGroups(Guid id)
     {

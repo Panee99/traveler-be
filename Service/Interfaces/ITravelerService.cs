@@ -10,5 +10,5 @@ public interface ITravelerService
 
     Task<Result<List<TravelerViewModel>>> ListByTourVariant(Guid tourVariantId);
 
-    Task<Result<List<TourFilterViewModel>>> ListJoinedTours(Guid travelerId);
+    Task<Result<List<TourViewModel>>> ListJoinedTours(Guid travelerId);
 }

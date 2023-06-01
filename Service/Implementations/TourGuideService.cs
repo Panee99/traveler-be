@@ -17,7 +17,7 @@ public class TourGuideService : BaseService, ITourGuideService
         _cloudStorageService = cloudStorageService;
     }
 
-    public async Task<Result<List<TourFilterViewModel>>> ListAssignedTours(Guid tourGuideId)
+    public async Task<Result<List<TourViewModel>>> ListAssignedTours(Guid tourGuideId)
     {
         if (!await UnitOfWork.TourGuides.AnyAsync(e => e.Id == tourGuideId))
             return Error.NotFound("Tour Guide not found.");
@@ -30,7 +30,7 @@ public class TourGuideService : BaseService, ITourGuideService
 
         var views = assignedTours.Select(e =>
         {
-            var view = e.Adapt<TourFilterViewModel>();
+            var view = e.Adapt<TourViewModel>();
             if (e.ThumbnailId != null)
                 view.ThumbnailUrl = _cloudStorageService.GetMediaLink(e.ThumbnailId.Value);
 
@@ -44,9 +44,13 @@ public class TourGuideService : BaseService, ITourGuideService
     {
         if (!await UnitOfWork.TourGuides.AnyAsync(e => e.Id == tourGuideId))
             return Error.NotFound("Tour Guide not found.");
-        
-        var assignedGroups = await UnitOfWork.TourGuides.Query()
+
+        var assignedGroups = await UnitOfWork.TourGuides
+            .Query()
+            .Where(guide => guide.Id == tourGuideId)
             .SelectMany(guide => guide.TourGroups)
+            .Include(group => group.TourVariant)
+            .ThenInclude(variant => variant.Tour)
             .ToListAsync();
 
         return assignedGroups.Adapt<List<TourGroupViewModel>>();
