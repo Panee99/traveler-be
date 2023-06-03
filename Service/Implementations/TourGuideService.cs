@@ -1,4 +1,5 @@
 ﻿using Data.EFCore;
+using Data.Enums;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Service.Interfaces;
@@ -54,5 +55,25 @@ public class TourGuideService : BaseService, ITourGuideService
             .ToListAsync();
 
         return assignedGroups.Adapt<List<TourGroupViewModel>>();
+    }
+
+    public async Task<Result<TourGroupViewModel>> GetCurrentAssignedTourGroup(Guid tourGuideId)
+    {
+        if (!await UnitOfWork.TourGuides.AnyAsync(e => e.Id == tourGuideId))
+            return Error.NotFound("Tour Guide not found.");
+        
+        var currentGroup = await UnitOfWork.TourGuides
+            .Query()
+            .Where(guide => guide.Id == tourGuideId)
+            .SelectMany(guide => guide.TourGroups)
+            .Include(group => group.TourVariant)
+            .ThenInclude(variant => variant.Tour)
+            .Where(group => group.TourVariant.Status != TourVariantStatus.Ended &&
+                            group.TourVariant.Status != TourVariantStatus.Canceled)
+            .FirstOrDefaultAsync();
+
+        if (currentGroup is null) return Error.NotFound("No current tour group assigned");
+
+        return currentGroup.Adapt<TourGroupViewModel>();
     }
 }
