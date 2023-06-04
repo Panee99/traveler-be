@@ -10,6 +10,7 @@ using Service.Commons.QueryExtensions;
 using Service.Interfaces;
 using Service.Models.Attachment;
 using Service.Models.Tour;
+using Service.Models.TourFlow;
 using Service.Models.TourVariant;
 using Shared.ResultExtensions;
 
@@ -287,5 +288,15 @@ public class TourService : BaseService, ITourService
             .ToListAsync();
 
         return tourVariants.Adapt<List<TourVariantViewModel>>();
+    }
+
+    public async Task<Result<List<TourFlowViewModel>>> GetTourFlow(Guid tourId)
+    {
+        var entities = await UnitOfWork.TourFlows
+            .Query()
+            .Where(e => e.TourId == tourId)
+            .ToListAsync();
+
+        return entities.Adapt<List<TourFlowViewModel>>();
     }
 }

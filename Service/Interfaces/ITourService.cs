@@ -1,6 +1,7 @@
 ﻿using Service.Commons.QueryExtensions;
 using Service.Models.Attachment;
 using Service.Models.Tour;
+using Service.Models.TourFlow;
 using Service.Models.TourVariant;
 using Shared.ResultExtensions;
 
@@ -26,4 +27,6 @@ public interface ITourService
     Task<Result<List<AttachmentViewModel>>> GetCarousel(Guid tourId);
 
     Task<Result<List<TourVariantViewModel>>> ListTourVariants(Guid tourId);
+
+    Task<Result<List<TourFlowViewModel>>> GetTourFlow(Guid tourId);
 }

@@ -61,7 +61,7 @@ public class TourGuideService : BaseService, ITourGuideService
     {
         if (!await UnitOfWork.TourGuides.AnyAsync(e => e.Id == tourGuideId))
             return Error.NotFound("Tour Guide not found.");
-        
+
         var currentGroup = await UnitOfWork.TourGuides
             .Query()
             .Where(guide => guide.Id == tourGuideId)
@@ -74,6 +74,11 @@ public class TourGuideService : BaseService, ITourGuideService
 
         if (currentGroup is null) return Error.NotFound("No current tour group assigned");
 
-        return currentGroup.Adapt<TourGroupViewModel>();
+        var view = currentGroup.Adapt<TourGroupViewModel>();
+
+        view.TourVariant!.Tour!.ThumbnailUrl =
+            _cloudStorageService.GetMediaLink(currentGroup.TourVariant.Tour.ThumbnailId!.Value);
+
+        return view;
     }
 }

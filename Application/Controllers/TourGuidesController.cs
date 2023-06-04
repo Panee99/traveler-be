@@ -3,7 +3,6 @@ using Data.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Service.Interfaces;
 using Service.Models.TourGroup;
-using Service.Models.TourGuide;
 
 namespace Application.Controllers;
 

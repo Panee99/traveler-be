@@ -89,4 +89,16 @@ public class ToursController : ApiController
         var result = await _tourService.ListTourVariants(id);
         return result.Match(Ok, OnError);
     }
+    
+    /// <summary>
+    /// Get tour flow of a tour
+    /// </summary>
+    [ProducesResponseType(typeof(List<TourVariantViewModel>), StatusCodes.Status200OK)]
+    [AllowAnonymous]
+    [HttpPost("{id:guid}/tour-flow")]
+    public async Task<IActionResult> GetTourFlow(Guid id)
+    {
+        var result = await _tourService.GetTourFlow(id);
+        return result.Match(Ok, OnError);
+    }
 }
