@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Service.Commons.QueryExtensions;
 using Service.Interfaces;
 using Service.Models.Tour;
+using Service.Models.TourFlow;
 using Service.Models.TourVariant;
 
 namespace Application.Controllers;
@@ -93,7 +94,7 @@ public class ToursController : ApiController
     /// <summary>
     /// Get tour flow of a tour
     /// </summary>
-    [ProducesResponseType(typeof(List<TourVariantViewModel>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(List<TourFlowViewModel>), StatusCodes.Status200OK)]
     [AllowAnonymous]
     [HttpPost("{id:guid}/tour-flow")]
     public async Task<IActionResult> GetTourFlow(Guid id)

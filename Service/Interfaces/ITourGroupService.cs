@@ -17,6 +17,8 @@ public interface ITourGroupService
     Task<Result> RemoveTravelers(Guid tourGroupId, List<Guid> travelerIds);
 
     Task<Result<List<Guid>>> ListTravelers(Guid tourGroupId);
-    
+
     Task<Result<List<AttendanceEventViewModel>>> ListAttendanceEvents(Guid tourGroupId);
+
+    Task<Result<TourGroupViewModel>> Get(Guid id);
 }
