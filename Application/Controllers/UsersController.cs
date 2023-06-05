@@ -40,6 +40,18 @@ public class UsersController : ApiController
         return result.Match(Ok, OnError);
     }
 
+    /// <summary>
+    /// Get user by id
+    /// </summary>
+    [Authorize(UserRole.Admin)]
+    [ProducesResponseType(typeof(UserViewModel), StatusCodes.Status200OK)]
+    [HttpGet("{id:guid}")]
+    public async Task<IActionResult> AdminGetUserById(Guid id)
+    {
+        var result = await _userService.AdminGetUserById(id);
+        return result.Match(Ok, OnError);
+    }
+    
     #region Required Admin Role
 
     /// <summary>
@@ -72,18 +84,6 @@ public class UsersController : ApiController
     public async Task<IActionResult> Filter(UserFilterModel model)
     {
         var result = await _userService.Filter(model);
-        return result.Match(Ok, OnError);
-    }
-    
-    /// <summary>
-    /// Get user by id
-    /// </summary>
-    [Authorize(UserRole.Admin)]
-    [ProducesResponseType(typeof(UserViewModel), StatusCodes.Status200OK)]
-    [HttpGet("{id:guid}")]
-    public async Task<IActionResult> AdminGetUserById(Guid id)
-    {
-        var result = await _userService.AdminGetUserById(id);
         return result.Match(Ok, OnError);
     }
 
