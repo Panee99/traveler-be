@@ -29,7 +29,7 @@ var builder = WebApplication.CreateBuilder(args);
         .AddSwagger()
         .AddEndpointsApiExplorer()
         .AddSwaggerGenNewtonsoftSupport()
-        .AddDependencyInjection(builder.Configuration)
+        .AddDependencies(builder.Configuration)
         .AddControllers()
         .AddMvcOptions(options => { options.SuppressAsyncSuffixInActionNames = true; })
         .AddNewtonsoftJson(options =>
