@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Service.Interfaces;
 using Service.Models.Attachment;
-using Shared.Helpers;
 
 namespace Application.Controllers;
 
@@ -24,9 +23,6 @@ public class AttachmentsController : ApiController
     [HttpPost]
     public async Task<IActionResult> Upload(IFormFile file)
     {
-        var validateResult = FileHelper.ValidateImageFile(file);
-        if (!validateResult.IsSuccess) return OnError(validateResult.Error);
-
         var result = await _attachmentService.Create(file.ContentType, file.OpenReadStream());
         return result.Match(Ok, OnError);
     }
