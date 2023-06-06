@@ -13,7 +13,7 @@ namespace Application.Configurations;
 
 public static class AppConfiguration
 {
-    public static IServiceCollection AddDependencyInjection(this IServiceCollection services,
+    public static IServiceCollection AddDependencies(this IServiceCollection services,
         IConfiguration configuration)
     {
         services.AddHttpContextAccessor();
