@@ -2,7 +2,7 @@
 using Data.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Service.Interfaces;
-using Service.Models.TourGuide;
+using Service.Models.TourGroup;
 
 namespace Application.Controllers;
 
@@ -17,22 +17,26 @@ public class TourGuidesController : ApiController
     }
 
     /// <summary>
-    /// List all tours this tour guide assigned to
-    /// </summary>
-    [HttpGet("{id:guid}/assigned-tours")]
-    public async Task<IActionResult> ListAssignedTours(Guid id)
-    {
-        var result = await _tourGuideService.ListAssignedTours(id);
-        return result.Match(Ok, OnError);
-    }
-    
-    /// <summary>
     /// List all tour groups this tour guide assigned to
     /// </summary>
+    [Authorize(UserRole.Admin, UserRole.TourGuide)]
+    [ProducesResponseType(typeof(List<TourGroupViewModel>), StatusCodes.Status200OK)]
     [HttpGet("{id:guid}/assigned-groups")]
     public async Task<IActionResult> ListAssignedTourGroups(Guid id)
     {
         var result = await _tourGuideService.ListAssignedGroups(id);
+        return result.Match(Ok, OnError);
+    }
+
+    /// <summary>
+    /// List all tour groups this tour guide assigned to
+    /// </summary>
+    [Authorize(UserRole.Admin, UserRole.TourGuide)]
+    [ProducesResponseType(typeof(TourGroupViewModel), StatusCodes.Status200OK)]
+    [HttpGet("{id:guid}/current-group")]
+    public async Task<IActionResult> GetCurrentAssignedTourGroup(Guid id)
+    {
+        var result = await _tourGuideService.GetCurrentAssignedTourGroup(id);
         return result.Match(Ok, OnError);
     }
 }

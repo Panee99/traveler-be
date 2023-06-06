@@ -2,8 +2,8 @@
 
 public record TourFlowCreateModel
 (
-    float Longitude,
-    float Latitude,
+    double Longitude,
+    double Latitude,
     DateTime ArrivalTime,
     string? Description
 );

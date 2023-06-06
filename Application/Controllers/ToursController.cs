@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Service.Commons.QueryExtensions;
 using Service.Interfaces;
 using Service.Models.Tour;
+using Service.Models.TourFlow;
 using Service.Models.TourVariant;
 
 namespace Application.Controllers;
@@ -24,7 +25,7 @@ public class ToursController : ApiController
     /// <summary>
     /// Create a new tour
     /// </summary>
-    [ProducesResponseType(typeof(TourViewModel), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(TourDetailsViewModel), StatusCodes.Status200OK)]
     [HttpPost("")]
     public async Task<IActionResult> Create(TourCreateModel model)
     {
@@ -35,7 +36,7 @@ public class ToursController : ApiController
     /// <summary>
     /// Update a tour
     /// </summary>
-    [ProducesResponseType(typeof(TourViewModel), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(TourDetailsViewModel), StatusCodes.Status200OK)]
     [HttpPatch("{id:guid}")]
     public async Task<IActionResult> Update(Guid id, TourUpdateModel model)
     {
@@ -57,7 +58,7 @@ public class ToursController : ApiController
     /// <summary>
     /// Get details of a tour
     /// </summary>
-    [ProducesResponseType(typeof(TourViewModel), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(TourDetailsViewModel), StatusCodes.Status200OK)]
     [AllowAnonymous]
     [HttpGet("{id:guid}/details")]
     public async Task<IActionResult> GetDetails(Guid id)
@@ -69,7 +70,7 @@ public class ToursController : ApiController
     /// <summary>
     /// Filter tours
     /// </summary>
-    [ProducesResponseType(typeof(PaginationModel<TourFilterViewModel>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(PaginationModel<TourViewModel>), StatusCodes.Status200OK)]
     [AllowAnonymous]
     [HttpPost("filter")]
     public async Task<IActionResult> Filter(TourFilterModel model)
@@ -87,6 +88,18 @@ public class ToursController : ApiController
     public async Task<IActionResult> ListTourVariants(Guid id)
     {
         var result = await _tourService.ListTourVariants(id);
+        return result.Match(Ok, OnError);
+    }
+    
+    /// <summary>
+    /// Get tour flow of a tour
+    /// </summary>
+    [ProducesResponseType(typeof(List<TourFlowViewModel>), StatusCodes.Status200OK)]
+    [AllowAnonymous]
+    [HttpPost("{id:guid}/tour-flow")]
+    public async Task<IActionResult> GetTourFlow(Guid id)
+    {
+        var result = await _tourService.GetTourFlow(id);
         return result.Match(Ok, OnError);
     }
 }

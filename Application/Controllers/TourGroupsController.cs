@@ -17,6 +17,16 @@ public class TourGroupsController : ApiController
     }
 
     /// <summary>
+    /// Get a tour group
+    /// </summary>
+    [HttpGet("{id:guid}")]
+    public async Task<IActionResult> Get(Guid id)
+    {
+        var result = await _tourGroupService.Get(id);
+        return result.Match(Ok, OnError);
+    }
+
+    /// <summary>
     /// Create a new tour group
     /// </summary>
     [Authorize(UserRole.Admin)]

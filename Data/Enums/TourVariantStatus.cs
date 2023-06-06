@@ -5,5 +5,6 @@ public enum TourVariantStatus
     Accepting,
     Prepare,
     Ongoing,
-    Ended
+    Ended,
+    Canceled
 }

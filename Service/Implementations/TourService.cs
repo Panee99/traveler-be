@@ -10,6 +10,7 @@ using Service.Commons.QueryExtensions;
 using Service.Interfaces;
 using Service.Models.Attachment;
 using Service.Models.Tour;
+using Service.Models.TourFlow;
 using Service.Models.TourVariant;
 using Shared.ResultExtensions;
 
@@ -32,7 +33,7 @@ public class TourService : BaseService, ITourService
         _attachmentService = attachmentService;
     }
 
-    public async Task<Result<TourViewModel>> Create(TourCreateModel model)
+    public async Task<Result<TourDetailsViewModel>> Create(TourCreateModel model)
     {
         // Map
         var tour = model.AdaptIgnoreNull<TourCreateModel, Tour>();
@@ -56,7 +57,7 @@ public class TourService : BaseService, ITourService
         await UnitOfWork.SaveChangesAsync();
 
         // Result
-        var view = tour.Adapt<TourViewModel>();
+        var view = tour.Adapt<TourDetailsViewModel>();
         if (tour.ThumbnailId != null)
             view.ThumbnailUrl = _cloudStorageService.GetMediaLink(tour.ThumbnailId.Value);
 
@@ -79,7 +80,7 @@ public class TourService : BaseService, ITourService
         return view;
     }
 
-    public async Task<Result<TourViewModel>> Update(Guid id, TourUpdateModel model)
+    public async Task<Result<TourDetailsViewModel>> Update(Guid id, TourUpdateModel model)
     {
         // Get Tour
         var tour = await UnitOfWork.Tours.TrackingQuery()
@@ -106,7 +107,7 @@ public class TourService : BaseService, ITourService
         await UnitOfWork.SaveChangesAsync();
 
         // Result
-        var view = tour.Adapt<TourViewModel>();
+        var view = tour.Adapt<TourDetailsViewModel>();
 
         if (tour.ThumbnailId != null)
             view.ThumbnailUrl = _cloudStorageService.GetMediaLink(tour.ThumbnailId.Value);
@@ -141,7 +142,7 @@ public class TourService : BaseService, ITourService
         return Result.Success();
     }
 
-    public async Task<Result<TourViewModel>> GetDetails(Guid id)
+    public async Task<Result<TourDetailsViewModel>> GetDetails(Guid id)
     {
         var tour = await UnitOfWork.Tours.Query()
             .Where(e => e.Id == id)
@@ -153,7 +154,7 @@ public class TourService : BaseService, ITourService
         if (tour is null) return Error.NotFound();
 
         // Result
-        var viewModel = _mapper.Map<TourViewModel>(tour);
+        var viewModel = _mapper.Map<TourDetailsViewModel>(tour);
 
         if (tour.ThumbnailId != null)
             viewModel.ThumbnailUrl = _cloudStorageService.GetMediaLink(tour.ThumbnailId.Value);
@@ -171,7 +172,7 @@ public class TourService : BaseService, ITourService
         return viewModel;
     }
 
-    public async Task<Result<PaginationModel<TourFilterViewModel>>> Filter(TourFilterModel model)
+    public async Task<Result<PaginationModel<TourViewModel>>> Filter(TourFilterModel model)
     {
         IQueryable<Tour> query = UnitOfWork.Tours.Query()
             .Include(e => e.Schedules)
@@ -186,7 +187,7 @@ public class TourService : BaseService, ITourService
 
         return paginationModel.Map(tour =>
         {
-            var view = tour.Adapt<TourFilterViewModel>();
+            var view = tour.Adapt<TourViewModel>();
             if (tour.ThumbnailId != null)
                 view.ThumbnailUrl = _cloudStorageService.GetMediaLink(tour.ThumbnailId.Value);
 
@@ -287,5 +288,15 @@ public class TourService : BaseService, ITourService
             .ToListAsync();
 
         return tourVariants.Adapt<List<TourVariantViewModel>>();
+    }
+
+    public async Task<Result<List<TourFlowViewModel>>> GetTourFlow(Guid tourId)
+    {
+        var entities = await UnitOfWork.TourFlows
+            .Query()
+            .Where(e => e.TourId == tourId)
+            .ToListAsync();
+
+        return entities.Adapt<List<TourFlowViewModel>>();
     }
 }
