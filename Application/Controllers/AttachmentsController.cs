@@ -9,6 +9,7 @@ namespace Application.Controllers;
 [Route("attachments")]
 public class AttachmentsController : ApiController
 {
+    private const long FileSizeMax = 104_857_600; // 100 MB
     private readonly IAttachmentService _attachmentService;
 
     public AttachmentsController(IAttachmentService attachmentService)
@@ -17,9 +18,11 @@ public class AttachmentsController : ApiController
     }
 
     /// <summary>
-    /// Create attachment and return it's Id
+    /// Create attachment and return it's id and link
     /// </summary>
     [ProducesResponseType(typeof(AttachmentViewModel), StatusCodes.Status200OK)]
+    [RequestFormLimits(MultipartBodyLengthLimit = FileSizeMax, ValueCountLimit = 1)]
+    [RequestSizeLimit(long.MaxValue)]
     [HttpPost]
     public async Task<IActionResult> Upload(IFormFile file)
     {
