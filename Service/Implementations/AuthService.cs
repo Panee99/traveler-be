@@ -23,7 +23,7 @@ public class AuthService : BaseService, IAuthService
     private readonly AppSettings _appSettings;
 
     private const int ExpirationDay = 365;
-    
+
     public AuthService(UnitOfWork unitOfWork, IOptions<AppSettings> appSettings) : base(unitOfWork)
     {
         _appSettings = appSettings.Value;
@@ -31,12 +31,16 @@ public class AuthService : BaseService, IAuthService
 
     public async Task<Result<AuthenticateResponseModel>> Authenticate(LoginModel model)
     {
-        var query = UnitOfWork.Users.Query();
+        var query = UnitOfWork.Users
+            .Query()
+            .Where(e => e.Status != UserStatus.Suspended);
 
         // By Phone
-        if (PhoneRegex.Match(model.Username).Success) query = query.Where(e => e.Phone == model.Username);
+        if (PhoneRegex.Match(model.Username).Success)
+            query = query.Where(e => e.Phone == model.Username);
         // By Email
-        else if (EmailRegex.Match(model.Username).Success) query = query.Where(e => e.Email == model.Username);
+        else if (EmailRegex.Match(model.Username).Success)
+            query = query.Where(e => e.Email == model.Username);
         // Error
         else return Error.Validation("Login by Phone or Email");
 
