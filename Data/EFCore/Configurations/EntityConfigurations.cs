@@ -121,14 +121,8 @@ public static class EntityConfigurations
             .HasMany(traveler => traveler.TourGroups)
             .WithMany(group => group.Travelers)
             .UsingEntity<TravelerInTourGroup>(
-                builder => builder
-                    .HasOne(tig => tig.TourGroup)
-                    .WithMany()
-                    .HasForeignKey(tig => tig.TourGroupId),
-                builder => builder
-                    .HasOne(sc => sc.Traveler)
-                    .WithMany()
-                    .HasForeignKey(sc => sc.TravelerId),
+                builder => builder.HasOne(tig => tig.TourGroup).WithMany().HasForeignKey(tig => tig.TourGroupId),
+                builder => builder.HasOne(tig => tig.Traveler).WithMany().HasForeignKey(sc => sc.TravelerId),
                 builder =>
                 {
                     builder.ToTable("TravelerInTourGroup");
@@ -157,7 +151,7 @@ public static class EntityConfigurations
                 .WithMany(evt => evt.Attendances)
                 .HasForeignKey(e => e.AttendanceEventId);
         });
-        
+
         // modelBuilder.Entity<TourDiscount>(entity =>
         // {
         //     entity.Property(e => e.T1discount).HasColumnName("T1Discount");
