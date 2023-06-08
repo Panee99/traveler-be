@@ -1,13 +1,9 @@
 ﻿using Data.EFCore;
 using Data.Entities;
 using Data.Enums;
-using FirebaseAdmin.Auth;
 using Mapster;
-using MapsterMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using Service.Errors;
 using Service.Interfaces;
 using Service.Models.Tour;
 using Service.Models.Traveler;
@@ -18,17 +14,13 @@ namespace Service.Implementations;
 
 public class TravelerService : BaseService, ITravelerService
 {
-    private readonly ILogger<TravelerService> _logger;
-    private readonly IMapper _mapper;
     private readonly ICloudStorageService _cloudStorageService;
 
-    public TravelerService(UnitOfWork unitOfWork, IMapper mapper,
-        ILogger<TravelerService> logger, IHttpContextAccessor httpContextAccessor,
+    public TravelerService(UnitOfWork unitOfWork,
+        IHttpContextAccessor httpContextAccessor,
         ICloudStorageService cloudStorageService)
         : base(unitOfWork, httpContextAccessor)
     {
-        _mapper = mapper;
-        _logger = logger;
         _cloudStorageService = cloudStorageService;
     }
 
@@ -112,21 +104,21 @@ public class TravelerService : BaseService, ITravelerService
         return phone;
     }
 
-    private async Task<bool> _verifyIdToken(string phone, string idToken)
-    {
-        try
-        {
-            var firebaseToken = await FirebaseAuth.DefaultInstance.VerifyIdTokenAsync(idToken);
-            var tokenPhone = firebaseToken.Claims["phone_number"];
-            if (phone.Equals(tokenPhone)) return true;
-        }
-        catch (Exception e)
-        {
-            _logger.LogDebug(e, "{Message}", typeof(TravelerService).ToString());
-        }
-
-        return false;
-    }
+    // private async Task<bool> _verifyIdToken(string phone, string idToken)
+    // {
+    //     try
+    //     {
+    //         var firebaseToken = await FirebaseAuth.DefaultInstance.VerifyIdTokenAsync(idToken);
+    //         var tokenPhone = firebaseToken.Claims["phone_number"];
+    //         if (phone.Equals(tokenPhone)) return true;
+    //     }
+    //     catch (Exception e)
+    //     {
+    //         _logger.LogDebug(e, "{Message}", typeof(TravelerService).ToString());
+    //     }
+    //
+    //     return false;
+    // }
 
     #endregion
 }

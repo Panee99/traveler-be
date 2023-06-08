@@ -2,10 +2,9 @@
 using Data.Entities;
 using Data.Enums;
 using Mapster;
-using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Service.Commons;
+using Service.Commons.Mapping;
 using Service.Commons.QueryExtensions;
 using Service.Interfaces;
 using Service.Models.Attachment;
@@ -19,16 +18,14 @@ namespace Service.Implementations;
 public class TourService : BaseService, ITourService
 {
     private readonly ILogger<TourService> _logger;
-    private readonly IMapper _mapper;
     private readonly ICloudStorageService _cloudStorageService;
     private readonly IAttachmentService _attachmentService;
 
-    public TourService(UnitOfWork unitOfWork, ICloudStorageService cloudStorageService, IMapper mapper,
+    public TourService(UnitOfWork unitOfWork, ICloudStorageService cloudStorageService,
         ILogger<TourService> logger, IAttachmentService attachmentService) :
         base(unitOfWork)
     {
         _cloudStorageService = cloudStorageService;
-        _mapper = mapper;
         _logger = logger;
         _attachmentService = attachmentService;
     }
@@ -154,7 +151,7 @@ public class TourService : BaseService, ITourService
         if (tour is null) return Error.NotFound();
 
         // Result
-        var viewModel = _mapper.Map<TourDetailsViewModel>(tour);
+        var viewModel = tour.Adapt<TourDetailsViewModel>();
 
         if (tour.ThumbnailId != null)
             viewModel.ThumbnailUrl = _cloudStorageService.GetMediaLink(tour.ThumbnailId.Value);

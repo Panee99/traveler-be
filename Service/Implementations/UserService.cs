@@ -2,9 +2,8 @@
 using Data.Entities;
 using Data.Enums;
 using Mapster;
-using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
-using Service.Commons;
+using Service.Commons.Mapping;
 using Service.Commons.QueryExtensions;
 using Service.Interfaces;
 using Service.Models.Admin;
@@ -20,13 +19,11 @@ namespace Service.Implementations;
 public class UserService : BaseService, IUserService
 {
     private readonly ICloudStorageService _cloudStorageService;
-    private readonly IMapper _mapper;
 
-    public UserService(UnitOfWork unitOfWork, ICloudStorageService cloudStorageService, IMapper mapper)
+    public UserService(UnitOfWork unitOfWork, ICloudStorageService cloudStorageService)
         : base(unitOfWork)
     {
         _cloudStorageService = cloudStorageService;
-        _mapper = mapper;
     }
 
     public async Task<Result<UserViewModel>> Create(UserCreateModel model)
@@ -102,15 +99,15 @@ public class UserService : BaseService, IUserService
 
         UserViewModel view = user.Role switch
         {
-            UserRole.Traveler => _mapper.Map<TravelerViewModel>((await UnitOfWork.Travelers.FindAsync(id))!),
-            UserRole.TourGuide => _mapper.Map<TourGuideViewModel>((await UnitOfWork.TourGuides.FindAsync(id))!),
-            UserRole.Admin => _mapper.Map<AdminViewModel>((await UnitOfWork.Admins.FindAsync(id))!),
-            UserRole.Staff => _mapper.Map<StaffViewModel>((await UnitOfWork.Staffs.FindAsync(id))!),
+            UserRole.Traveler => (await UnitOfWork.Travelers.FindAsync(id))!.Adapt<TravelerViewModel>(),
+            UserRole.TourGuide => (await UnitOfWork.TourGuides.FindAsync(id))!.Adapt<TourGuideViewModel>(),
+            UserRole.Admin => (await UnitOfWork.Admins.FindAsync(id))!.Adapt<AdminViewModel>(),
+            UserRole.Staff => (await UnitOfWork.Staffs.FindAsync(id))!.Adapt<StaffViewModel>(),
             _ => throw new ArgumentOutOfRangeException()
         };
 
-        if (user.AvatarId != null)
-            view.AvatarUrl = _cloudStorageService.GetMediaLink(user.AvatarId.Value);
+        // if (user.AvatarId != null)
+        //     view.AvatarUrl = _cloudStorageService.GetMediaLink(user.AvatarId.Value);
 
         return view;
     }
@@ -165,7 +162,7 @@ public class UserService : BaseService, IUserService
         if (entity is null) return Error.NotFound();
 
         // Result
-        var viewModel = _mapper.Map<UserViewModel>(entity);
+        var viewModel = entity.Adapt<UserViewModel>();
         viewModel.AvatarUrl = entity.AvatarId != null ? _cloudStorageService.GetMediaLink(entity.AvatarId.Value) : null;
 
         return viewModel;

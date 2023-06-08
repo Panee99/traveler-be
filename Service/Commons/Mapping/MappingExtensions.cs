@@ -1,8 +1,8 @@
 ﻿using Mapster;
 
-namespace Service.Commons;
+namespace Service.Commons.Mapping;
 
-public static class MapperHelper
+public static class MappingExtensions
 {
     private static TypeAdapterConfig IgnoreNullConfig<TSource, TDestination>()
     {

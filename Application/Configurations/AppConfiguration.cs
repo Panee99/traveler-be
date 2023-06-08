@@ -1,8 +1,5 @@
-﻿using System.Reflection;
-using Application.Configurations.Auth;
+﻿using Application.Configurations.Auth;
 using Data.EFCore;
-using Mapster;
-using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Service.Implementations;
@@ -19,10 +16,7 @@ public static class AppConfiguration
         services.AddHttpContextAccessor();
 
         // Mapper
-        var config = TypeAdapterConfig.GlobalSettings;
-        config.Scan(Assembly.GetExecutingAssembly());
-        services.AddSingleton(config);
-        services.AddScoped<IMapper, ServiceMapper>();
+        // services.AddScoped<IMapper, ServiceMapper>();
 
         // Settings
         services.Configure<AppSettings>(configuration.GetSection("AppSettings"));

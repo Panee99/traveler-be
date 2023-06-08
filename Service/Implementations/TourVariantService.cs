@@ -4,6 +4,7 @@ using Data.Enums;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Service.Commons;
+using Service.Commons.Mapping;
 using Service.Interfaces;
 using Service.Models.TourGroup;
 using Service.Models.TourVariant;
