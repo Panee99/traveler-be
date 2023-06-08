@@ -82,10 +82,10 @@ public class TourGroupsController : ApiController
     /// <summary>
     /// List all travelers of a group
     /// </summary>
-    [HttpGet("{id:guid}/travelers")]
-    public async Task<IActionResult> ListTravelers([FromRoute] Guid id)
+    [HttpGet("{id:guid}/members")]
+    public async Task<IActionResult> ListMembers([FromRoute] Guid id)
     {
-        var result = await _tourGroupService.ListTravelers(id);
+        var result = await _tourGroupService.ListMembers(id);
         return result.Match(Ok, OnError);
     }
 

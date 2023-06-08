@@ -5,14 +5,18 @@ using Microsoft.EntityFrameworkCore;
 using Service.Interfaces;
 using Service.Models.AttendanceEvent;
 using Service.Models.TourGroup;
+using Service.Models.User;
 using Shared.ResultExtensions;
 
 namespace Service.Implementations;
 
 public class TourGroupService : BaseService, ITourGroupService
 {
-    public TourGroupService(UnitOfWork unitOfWork) : base(unitOfWork)
+    private readonly ICloudStorageService _cloudStorageService;
+
+    public TourGroupService(UnitOfWork unitOfWork, ICloudStorageService cloudStorageService) : base(unitOfWork)
     {
+        _cloudStorageService = cloudStorageService;
     }
 
     public async Task<Result<TourGroupViewModel>> Get(Guid id)
@@ -114,18 +118,38 @@ public class TourGroupService : BaseService, ITourGroupService
         return Result.Success();
     }
 
-    public async Task<Result<List<Guid>>> ListTravelers(Guid tourGroupId)
+    public async Task<Result<List<UserViewModel>>> ListMembers(Guid tourGroupId)
     {
-        if (!await UnitOfWork.TourGroups.AnyAsync(e => e.Id == tourGroupId))
-            return Error.NotFound();
-
-        var travelerIds = await UnitOfWork.TravelersInTourGroups
+        var tourGroup = await UnitOfWork.TourGroups
             .Query()
-            .Where(e => e.TourGroupId == tourGroupId)
-            .Select(e => e.TravelerId)
-            .ToListAsync();
+            .Where(e => e.Id == tourGroupId)
+            .Include(e => e.TourGuide)
+            .Include(e => e.Travelers)
+            .SingleOrDefaultAsync();
 
-        return travelerIds;
+        if (tourGroup is null) return Error.NotFound("Tour Group not found.");
+
+        var members = tourGroup.Travelers.Select(traveler =>
+        {
+            var member = traveler.Adapt<UserViewModel>();
+            member.AvatarUrl = traveler.AvatarId is null
+                ? null
+                : _cloudStorageService.GetMediaLink(traveler.AvatarId.Value);
+            return member;
+        }).ToList();
+
+        var tourGuide = tourGroup.TourGuide;
+        if (tourGuide != null)
+        {
+            var tourGuideMember = tourGuide.Adapt<UserViewModel>();
+            tourGuideMember.AvatarUrl = tourGuide.AvatarId is null
+                ? null
+                : _cloudStorageService.GetMediaLink(tourGuide.AvatarId.Value);
+
+            members.Add(tourGuideMember);
+        }
+
+        return members;
     }
 
     public async Task<Result<List<AttendanceEventViewModel>>> ListAttendanceEvents(Guid tourGroupId)
