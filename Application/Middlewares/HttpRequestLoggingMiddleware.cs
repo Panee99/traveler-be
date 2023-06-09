@@ -21,7 +21,21 @@ public class HttpRequestLoggingMiddleware : IMiddleware
 
     public async Task InvokeAsync(HttpContext context, RequestDelegate next)
     {
-        _logger.LogInformation("Method: {Method}, Path: {Path}", context.Request.Method, context.Request.Path);
+        var path = context.Request.Path.Value;
+
+        if (path != null)
+        {
+            if (_isApiPath(path))
+                _logger.LogInformation(
+                    "Method: {Method}, Path: {Path}",
+                    context.Request.Method, context.Request.Path);
+        }
+
         await next(context);
+    }
+
+    private static bool _isApiPath(string path)
+    {
+        return !path.StartsWith("/swagger") && !path.StartsWith("/favicon.ico");
     }
 }
