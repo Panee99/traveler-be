@@ -1,5 +1,6 @@
 using Application.Configurations;
 using Application.Configurations.Auth;
+using Application.Middlewares;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
@@ -52,6 +53,7 @@ var app = builder.Build();
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowAnyOrigin())
+        .UseMiddleware<HttpRequestLoggingMiddleware>()
         .UseMiddleware<JwtMiddleware>()
         .UseSwagger()
         .UseSwaggerUI();

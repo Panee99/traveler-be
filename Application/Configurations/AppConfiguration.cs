@@ -1,4 +1,4 @@
-﻿using Application.Configurations.Auth;
+﻿using Application.Middlewares;
 using Data.EFCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -35,6 +35,7 @@ public static class AppConfiguration
 
     private static IServiceCollection AddDependencies(this IServiceCollection services)
     {
+        services.AddScoped<HttpRequestLoggingMiddleware>();
         services.AddScoped<JwtMiddleware>();
         services.AddScoped<UnitOfWork>();
 

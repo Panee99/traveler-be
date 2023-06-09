@@ -2,7 +2,9 @@
 using Data.EFCore.Configurations;
 using Data.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace Data.EFCore;
@@ -12,6 +14,12 @@ public class AppDbContext : DbContext
     public AppDbContext(DbContextOptions<AppDbContext> options)
         : base(options)
     {
+    }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        base.OnConfiguring(optionsBuilder);
+        // optionsBuilder.ConfigureWarnings(c => c.Log((RelationalEventId.CommandExecuting, LogLevel.Warning)));
     }
 
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)

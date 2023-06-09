@@ -8,12 +8,13 @@ using Service.Models.Auth;
 using Shared;
 using Shared.Settings;
 
-namespace Application.Configurations.Auth;
+namespace Application.Middlewares;
 
 public class JwtMiddleware : IMiddleware
 {
-    private readonly AppSettings _appSettings;
+
     private readonly ILogger<JwtMiddleware> _logger;
+    private readonly AppSettings _appSettings;
     private readonly UnitOfWork _unitOfWork;
 
     public JwtMiddleware(
@@ -60,7 +61,7 @@ public class JwtMiddleware : IMiddleware
             var role = Enum.Parse<UserRole>(jwtToken.Claims.First(x => x.Type == "role").Value);
 
             if (!await _checkUserClaims(id, role)) return;
-            
+
             context.Items[AppConstants.UserContextKey] = new AuthUser(id, role);
         }
 
