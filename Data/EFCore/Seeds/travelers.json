@@ -9,5 +9,16 @@
     "Status": "ACTIVE",
     "Role": "Traveler",
     "AvatarId": "8bafd674-e193-49a0-d77d-08db61d06544"
+  },
+  {
+    "Id": "ed3ebf19-3225-4f93-93a6-2ca03d43529b",
+    "FirstName": "Trinh",
+    "LastName": "Do Khai",
+    "Gender": "Male",
+    "Phone": "84768049528",
+    "Password": "96cae35ce8a9b0244178bf28e4966c2ce1b8385723a96a6b838858cdd6ca0a1e",
+    "Status": "ACTIVE",
+    "Role": "Traveler",
+    "AvatarId": null
   }
 ]
