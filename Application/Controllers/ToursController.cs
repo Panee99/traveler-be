@@ -84,7 +84,7 @@ public class ToursController : ApiController
     /// </summary>
     [ProducesResponseType(typeof(List<TourVariantViewModel>), StatusCodes.Status200OK)]
     [AllowAnonymous]
-    [HttpPost("{id:guid}/tour-variants")]
+    [HttpGet("{id:guid}/tour-variants")]
     public async Task<IActionResult> ListTourVariants(Guid id)
     {
         var result = await _tourService.ListTourVariants(id);
@@ -96,7 +96,7 @@ public class ToursController : ApiController
     /// </summary>
     [ProducesResponseType(typeof(List<TourFlowViewModel>), StatusCodes.Status200OK)]
     [AllowAnonymous]
-    [HttpPost("{id:guid}/tour-flow")]
+    [HttpGet("{id:guid}/tour-flow")]
     public async Task<IActionResult> GetTourFlow(Guid id)
     {
         var result = await _tourService.GetTourFlow(id);
