@@ -122,6 +122,7 @@ public class TourGroupService : BaseService, ITourGroupService
     {
         var tourGroup = await UnitOfWork.TourGroups
             .Query()
+            .AsSplitQuery()
             .Where(e => e.Id == tourGroupId)
             .Include(e => e.TourGuide)
             .Include(e => e.Travelers)

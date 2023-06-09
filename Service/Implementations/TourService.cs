@@ -80,7 +80,9 @@ public class TourService : BaseService, ITourService
     public async Task<Result<TourDetailsViewModel>> Update(Guid id, TourUpdateModel model)
     {
         // Get Tour
-        var tour = await UnitOfWork.Tours.TrackingQuery()
+        var tour = await UnitOfWork.Tours
+            .TrackingQuery()
+            .AsSplitQuery()
             .Where(e => e.Id == id)
             .Include(e => e.Schedules)
             .Include(e => e.TourFlows)
@@ -141,7 +143,9 @@ public class TourService : BaseService, ITourService
 
     public async Task<Result<TourDetailsViewModel>> GetDetails(Guid id)
     {
-        var tour = await UnitOfWork.Tours.Query()
+        var tour = await UnitOfWork.Tours
+            .Query()
+            .AsSplitQuery()
             .Where(e => e.Id == id)
             .Include(e => e.Schedules)
             .Include(e => e.TourFlows)
@@ -171,7 +175,8 @@ public class TourService : BaseService, ITourService
 
     public async Task<Result<PaginationModel<TourViewModel>>> Filter(TourFilterModel model)
     {
-        IQueryable<Tour> query = UnitOfWork.Tours.Query()
+        IQueryable<Tour> query = UnitOfWork.Tours
+            .Query()
             .Include(e => e.Schedules)
             .OrderBy(e => e.CreatedAt);
 

@@ -87,6 +87,7 @@ public class TransactionService : BaseService, ITransactionService
         // find target transaction of this response
         var transaction = await UnitOfWork.Transactions
             .Query()
+            .AsSplitQuery()
             .Where(trans => trans.Id == model.TxnRef)
             .Include(trans => trans.Booking)
             .ThenInclude(booking => booking.TourVariant)

@@ -78,6 +78,7 @@ public class TravelerService : BaseService, ITravelerService
     {
         var groups = await UnitOfWork.Travelers
             .Query()
+            .AsSplitQuery()
             .Where(traveler => traveler.Id == travelerId)
             .SelectMany(traveler => traveler.TourGroups)
             .Include(group => group.TourVariant)
@@ -107,6 +108,7 @@ public class TravelerService : BaseService, ITravelerService
         // Get traveler current joined group
         var currentGroup = await UnitOfWork.Travelers
             .Query()
+            .AsSplitQuery()
             .Where(traveler => traveler.Id == travelerId)
             .SelectMany(guide => guide.TourGroups)
             .Include(group => group.TourVariant)

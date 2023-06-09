@@ -48,6 +48,7 @@ public class TourGuideService : BaseService, ITourGuideService
 
         var assignedGroups = await UnitOfWork.TourGuides
             .Query()
+            .AsSplitQuery()
             .Where(guide => guide.Id == tourGuideId)
             .SelectMany(guide => guide.TourGroups)
             .Include(group => group.TourVariant)
@@ -75,6 +76,7 @@ public class TourGuideService : BaseService, ITourGuideService
 
         var currentGroup = await UnitOfWork.TourGuides
             .Query()
+            .AsSplitQuery()
             .Where(guide => guide.Id == tourGuideId)
             .SelectMany(guide => guide.TourGroups)
             .Include(group => group.TourVariant)
