@@ -5,7 +5,7 @@ using Mapster;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Service.Interfaces;
-using Service.Models.Tour;
+using Service.Models.TourGroup;
 using Service.Models.Traveler;
 using Shared.Helpers;
 using Shared.ResultExtensions;
@@ -74,24 +74,58 @@ public class TravelerService : BaseService, ITravelerService
         return views;
     }
 
-    // TODO: Test
-    public async Task<Result<List<TourViewModel>>> ListJoinedTours(Guid travelerId)
+    public async Task<Result<List<TourGroupViewModel>>> ListJoinedGroups(Guid travelerId)
     {
-        var tours = await UnitOfWork.Travelers.Query()
+        var groups = await UnitOfWork.Travelers
+            .Query()
             .Where(traveler => traveler.Id == travelerId)
             .SelectMany(traveler => traveler.TourGroups)
-            .Select(group => group.TourVariant)
-            .Select(variant => variant.Tour).ToListAsync();
+            .Include(group => group.TourVariant)
+            .ThenInclude(variant => variant.Tour)
+            .ToListAsync();
 
-        var views = tours.Select(tour =>
+        var views = groups.Select(group =>
         {
-            var view = tour.Adapt<TourViewModel>();
-            if (tour.ThumbnailId != null)
-                view.ThumbnailUrl = _cloudStorageService.GetMediaLink(tour.ThumbnailId.Value);
+            var tour = group.TourVariant.Tour;
+            var view = group.Adapt<TourGroupViewModel>();
+            view.TourVariant!.Tour!.ThumbnailUrl = tour.ThumbnailId is null
+                ? null
+                : _cloudStorageService.GetMediaLink(tour.ThumbnailId.Value);
+
             return view;
         }).ToList();
 
         return views;
+    }
+
+    public async Task<Result<TourGroupViewModel>> GetCurrentJoinedGroup(Guid travelerId)
+    {
+        // Check traveler exist
+        if (!await UnitOfWork.Travelers.AnyAsync(e => e.Id == travelerId))
+            return Error.NotFound("Traveler not found.");
+
+        // Get traveler current joined group
+        var currentGroup = await UnitOfWork.Travelers
+            .Query()
+            .Where(traveler => traveler.Id == travelerId)
+            .SelectMany(guide => guide.TourGroups)
+            .Include(group => group.TourVariant)
+            .ThenInclude(variant => variant.Tour)
+            .Where(group => group.TourVariant.Status != TourVariantStatus.Ended &&
+                            group.TourVariant.Status != TourVariantStatus.Canceled)
+            .FirstOrDefaultAsync();
+
+        if (currentGroup is null) return Error.NotFound("No current tour group joined");
+
+        // Map to view model
+        var tour = currentGroup.TourVariant.Tour;
+        var view = currentGroup.Adapt<TourGroupViewModel>();
+        
+        view.TourVariant!.Tour!.ThumbnailUrl = tour.ThumbnailId is null
+            ? null
+            : _cloudStorageService.GetMediaLink(tour.ThumbnailId!.Value);
+
+        return view;
     }
 
     // PRIVATE

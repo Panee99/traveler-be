@@ -54,7 +54,18 @@ public class TourGuideService : BaseService, ITourGuideService
             .ThenInclude(variant => variant.Tour)
             .ToListAsync();
 
-        return assignedGroups.Adapt<List<TourGroupViewModel>>();
+        var views = assignedGroups.Select(group =>
+        {
+            var tour = group.TourVariant.Tour;
+            var view = group.Adapt<TourGroupViewModel>();
+            view.TourVariant!.Tour!.ThumbnailUrl = tour.ThumbnailId is null
+                ? null
+                : _cloudStorageService.GetMediaLink(tour.ThumbnailId.Value);
+
+            return view;
+        }).ToList();
+
+        return views;
     }
 
     public async Task<Result<TourGroupViewModel>> GetCurrentAssignedTourGroup(Guid tourGuideId)
@@ -74,10 +85,11 @@ public class TourGuideService : BaseService, ITourGuideService
 
         if (currentGroup is null) return Error.NotFound("No current tour group assigned");
 
+        var tour = currentGroup.TourVariant.Tour;
         var view = currentGroup.Adapt<TourGroupViewModel>();
-
-        view.TourVariant!.Tour!.ThumbnailUrl =
-            _cloudStorageService.GetMediaLink(currentGroup.TourVariant.Tour.ThumbnailId!.Value);
+        view.TourVariant!.Tour!.ThumbnailUrl = tour.ThumbnailId is null
+            ? null
+            : _cloudStorageService.GetMediaLink(tour.ThumbnailId!.Value);
 
         return view;
     }

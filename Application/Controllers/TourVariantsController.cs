@@ -73,7 +73,7 @@ public class TourVariantsController : ApiController
     /// List groups of this tour variant
     /// </summary>
     [HttpGet("{id:guid}/tour-groups")]
-    public async Task<IActionResult> ListTourGroups(Guid id)
+    public async Task<IActionResult> ListGroupsByTourVariant(Guid id)
     {
         var result = await _tourVariantService.ListGroupsByTourVariant(id);
         return result.Match(Ok, OnError);
