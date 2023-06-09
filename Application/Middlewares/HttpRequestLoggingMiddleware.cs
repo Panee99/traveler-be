@@ -1,14 +1,4 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Text;
-using Data.EFCore;
-using Data.Enums;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
-using Service.Models.Auth;
-using Shared;
-using Shared.Settings;
-
-namespace Application.Middlewares;
+﻿namespace Application.Middlewares;
 
 public class HttpRequestLoggingMiddleware : IMiddleware
 {
