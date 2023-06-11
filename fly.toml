@@ -8,8 +8,8 @@ auto_start_machines = true
 #  auto_stop_machines = true
 
 [services.concurrency]
-hard_limit = 1000
-soft_limit = 750
+hard_limit = 5000
+soft_limit = 500
 type = "connections"
 
 [[services.ports]]
