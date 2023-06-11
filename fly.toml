@@ -2,28 +2,20 @@ app = "dotnet-travelers"
 primary_region = "sin"
 
 [http_service]
-internal_port = 8080
-force_https = true
-auto_start_machines = true
-#  auto_stop_machines = true
-
-[services.concurrency]
-hard_limit = 5000
-soft_limit = 500
-type = "connections"
-
-[[services.ports]]
-force_https = true
-handlers = ["http"]
-port = 80
-
-[[services.ports]]
-handlers = ["tls", "http"]
-port = 443
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 0
+    [http_service.concurrency]
+      type = "connections"
+      hard_limit = 5000
+      soft_limit = 500
 
 [checks]
-[checks.alive]
-type = "tcp"
-interval = "15s"
-timeout = "2s"
-grace_period = "5s"
+  [checks.app_tcp_check]
+    port = 8080
+    type = "tcp"
+    grace_period = "3s"
+    interval = "15s"
+    timeout = "10s"
