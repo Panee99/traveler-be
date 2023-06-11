@@ -26,18 +26,23 @@ public class AppDbContext : DbContext
         modelBuilder.ConfigureEntities();
 
         // Seeds
-        modelBuilder.Entity<Traveler>().HasSeedData("travelers.json");
-        modelBuilder.Entity<TourGuide>().HasSeedData("tour-guides.json");
-        modelBuilder.Entity<Manager>().HasSeedData("managers.json");
-        modelBuilder.Entity<Location>().HasSeedData("locations.json");
-        modelBuilder.Entity<TourGroup>().HasSeedData("tour-groups.json");
-        modelBuilder.Entity<Tour>().HasSeedData("tours.json");
+        modelBuilder.Entity<Attachment>().HasSeedData("attachments.json");
+        modelBuilder.Entity<Admin>().HasSeedData("admins.json");
+        modelBuilder.Entity<Schedule>().HasSeedData("schedules.json");
+        modelBuilder.Entity<Staff>().HasSeedData("staffs.json");
         modelBuilder.Entity<Ticket>().HasSeedData("tickets.json");
-        modelBuilder.Entity<TravelerInTourGroup>().HasSeedData("traveler-in-tour-group.json");
+        modelBuilder.Entity<TourFlow>().HasSeedData("tour-flows.json");
+        modelBuilder.Entity<TourGroup>().HasSeedData("tour-groups.json");
+        modelBuilder.Entity<TourGuide>().HasSeedData("tour-guides.json");
+        modelBuilder.Entity<TourImage>().HasSeedData("tour-images.json");
+        modelBuilder.Entity<TourVariant>().HasSeedData("tour-variants.json");
+        modelBuilder.Entity<Tour>().HasSeedData("tours.json");
+        modelBuilder.Entity<Traveler>().HasSeedData("travelers.json");
+        modelBuilder.Entity<TravelerInTourGroup>().HasSeedData("travelers-in-tour-groups.json");
     }
 }
 
-public static class DbContextExtensions
+internal static class DbContextExtensions
 {
     public static void HasSeedData<TEntity>(this EntityTypeBuilder<TEntity> builder, string fileName)
         where TEntity : class

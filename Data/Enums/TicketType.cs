@@ -2,6 +2,6 @@
 
 public enum TicketType
 {
-    BarCode,
-    QrCode
+    Airplane,
+    Hotel
 }

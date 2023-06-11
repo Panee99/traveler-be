@@ -3,5 +3,6 @@
 public record TourGroupUpdateModel
 {
     public string? GroupName;
-    public Guid? TourGuide;
+    public Guid? TourGuideId;
+    public int? MaxOccupancy;
 }

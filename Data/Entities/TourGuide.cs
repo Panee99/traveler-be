@@ -2,14 +2,8 @@
 
 namespace Data.Entities;
 
-public class TourGuide : Account
+public class TourGuide : User
 {
-    public string FirstName { get; set; } = null!;
-
-    public string LastName { get; set; } = null!;
-
-    public Gender Gender { get; set; }
-
     public DateTime? Birthday { get; set; }
 
     public virtual ICollection<TourGroup> TourGroups { get; set; } = new List<TourGroup>();

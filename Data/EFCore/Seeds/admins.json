@@ -1,0 +1,13 @@
+﻿[
+  {
+    "Id": "69f7719f-be55-42ca-843e-bc46cd1b450d",
+    "Email": "admin@gmail.com",
+    "FirstName": "Mr.",
+    "LastName": "Admin",
+    "Gender": "MALE",
+    "Phone": "84000000000",
+    "Password": "96cae35ce8a9b0244178bf28e4966c2ce1b8385723a96a6b838858cdd6ca0a1e",
+    "Status": "ACTIVE",
+    "Role": "Admin"
+  }
+]

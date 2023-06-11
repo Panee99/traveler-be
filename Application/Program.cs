@@ -1,10 +1,13 @@
 using Application.Configurations;
 using Application.Configurations.Auth;
+using Application.Middlewares;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using Serilog;
 using Shared.ExternalServices.Firebase;
+
+FirebaseAppHelper.Init();
 
 // Serilog for file logging
 Log.Logger = new LoggerConfiguration()
@@ -13,8 +16,6 @@ Log.Logger = new LoggerConfiguration()
         outputTemplate:
         "[{Level:w3}] {Timestamp:dd-MM-yyyy HH:mm:ss.fff zzz}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}")
     .CreateLogger();
-
-FirebaseAppHelper.Init();
 
 // BUILDER
 var builder = WebApplication.CreateBuilder(args);
@@ -29,7 +30,7 @@ var builder = WebApplication.CreateBuilder(args);
         .AddSwagger()
         .AddEndpointsApiExplorer()
         .AddSwaggerGenNewtonsoftSupport()
-        .AddDependencyInjection(builder.Configuration)
+        .AddDependencies(builder.Configuration)
         .AddControllers()
         .AddMvcOptions(options => { options.SuppressAsyncSuffixInActionNames = true; })
         .AddNewtonsoftJson(options =>
@@ -47,11 +48,12 @@ var app = builder.Build();
 {
     Console.WriteLine(app.Environment.EnvironmentName);
     app
-        .UseHttpsRedirection()
+        // .UseHttpsRedirection()
         .UseCors(x => x
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowAnyOrigin())
+        .UseMiddleware<HttpRequestLoggingMiddleware>()
         .UseMiddleware<JwtMiddleware>()
         .UseSwagger()
         .UseSwaggerUI();

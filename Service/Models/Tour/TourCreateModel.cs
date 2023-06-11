@@ -1,21 +1,20 @@
 ﻿using Data.Enums;
-using Service.Models.Location;
+using Service.Models.Schedule;
+using Service.Models.TourFlow;
 
 namespace Service.Models.Tour;
 
 public record TourCreateModel
 (
     string Title,
-    double Price,
-    double ChildrenPrice,
-    double BabyPrice,
     string Departure,
     string Destination,
-    DateTime StartTime,
-    DateTime EndTime,
-    string Vehicle,
     int MaxOccupancy,
     TourType Type,
-    List<LocationCreateModel> Locations,
-    string? Description
+    string? Description,
+    string? Policy,
+    List<ScheduleCreateModel>? Schedules,
+    List<TourFlowCreateModel>? TourFlows,
+    List<Guid>? Carousel,
+    Guid? ThumbnailId
 );

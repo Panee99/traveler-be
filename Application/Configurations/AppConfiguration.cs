@@ -1,25 +1,22 @@
-﻿using System.Reflection;
+﻿using Application.Middlewares;
 using Data.EFCore;
-using Mapster;
-using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using Service.Implementations;
+using Shared.ExternalServices.VnPay;
 using Shared.Settings;
 
 namespace Application.Configurations;
 
 public static class AppConfiguration
 {
-    public static IServiceCollection AddDependencyInjection(this IServiceCollection services,
+    public static IServiceCollection AddDependencies(this IServiceCollection services,
         IConfiguration configuration)
     {
         services.AddHttpContextAccessor();
 
         // Mapper
-        var config = TypeAdapterConfig.GlobalSettings;
-        config.Scan(Assembly.GetExecutingAssembly());
-        services.AddSingleton(config);
-        services.AddScoped<IMapper, ServiceMapper>();
+        // services.AddScoped<IMapper, ServiceMapper>();
 
         // Settings
         services.Configure<AppSettings>(configuration.GetSection("AppSettings"));
@@ -30,7 +27,26 @@ public static class AppConfiguration
         services.AddDbContextPool<AppDbContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
+        // VnPay
+        services.AddSingleton<VnPay>();
+
         return services.AddDependencies();
+    }
+
+    private static IServiceCollection AddDependencies(this IServiceCollection services)
+    {
+        services.AddScoped<HttpRequestLoggingMiddleware>();
+        services.AddScoped<JwtMiddleware>();
+        services.AddScoped<UnitOfWork>();
+
+        // Inject Services
+        services.Scan(scan => scan
+            .FromAssemblyOf<BaseService>()
+            .AddClasses(classes => classes.AssignableTo<BaseService>())
+            .AsImplementedInterfaces()
+            .WithScopedLifetime());
+
+        return services;
     }
 
     public static IServiceCollection AddSwagger(this IServiceCollection services)

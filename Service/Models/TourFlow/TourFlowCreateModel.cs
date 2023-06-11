@@ -2,9 +2,8 @@
 
 public record TourFlowCreateModel
 (
-    Guid TourId,
-    Guid LocationId,
-    DateTime ArrivalAt,
-    bool IsPrimary,
+    double Longitude,
+    double Latitude,
+    DateTime ArrivalTime,
     string? Description
 );

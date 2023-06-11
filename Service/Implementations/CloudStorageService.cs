@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using Data.EFCore;
 using Google;
 using Google.Cloud.Storage.V1;
 using Microsoft.Extensions.Logging;
@@ -10,7 +11,7 @@ using Shared.Settings;
 
 namespace Service.Implementations;
 
-public class CloudStorageService : ICloudStorageService
+public class CloudStorageService : BaseService, ICloudStorageService
 {
     private static readonly StorageClient Storage;
     private readonly ILogger<CloudStorageService> _logger;
@@ -21,7 +22,8 @@ public class CloudStorageService : ICloudStorageService
         Storage = CloudStorageHelper.GetStorage();
     }
 
-    public CloudStorageService(IOptions<CloudStorageSettings> settings, ILogger<CloudStorageService> logger)
+    public CloudStorageService(UnitOfWork unitOfWork, IOptions<CloudStorageSettings> settings,
+        ILogger<CloudStorageService> logger) : base(unitOfWork)
     {
         _settings = settings.Value;
         _logger = logger;
@@ -40,9 +42,7 @@ public class CloudStorageService : ICloudStorageService
                 null,
                 CancellationToken.None);
 
-            return CloudStorageHelper.GenerateV4UploadSignedUrl(
-                _settings.Bucket,
-                $"{_settings.Folder}/{id}");
+            return GetMediaLink(id);
         }
         catch (Exception e)
         {
@@ -84,8 +84,11 @@ public class CloudStorageService : ICloudStorageService
     // Object url
     public string GetMediaLink(Guid id)
     {
-        return CloudStorageHelper.GenerateV4UploadSignedUrl(
-            _settings.Bucket,
-            _settings.Folder + '/' + id);
+        // return CloudStorageHelper.GenerateV4UploadSignedUrl(
+        //     _settings.Bucket,
+        //     _settings.Folder + '/' + id);
+
+        return $"https://firebasestorage.googleapis.com/v0/b/" +
+               $"{_settings.Bucket}/o/{_settings.Folder}%2F{id}?alt=media";
     }
 }

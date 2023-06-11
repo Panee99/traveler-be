@@ -2,6 +2,8 @@
 
 public record TourGroupCreateModel
 (
-    Guid TourId,
-    string GroupName
+    Guid TourVariantId,
+    string GroupName,
+    int MaxOccupancy,
+    Guid? TourGuide
 );

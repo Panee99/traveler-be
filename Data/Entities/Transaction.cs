@@ -1,4 +1,6 @@
-﻿namespace Data.Entities;
+﻿using Data.Enums;
+
+namespace Data.Entities;
 
 public class Transaction
 {
@@ -6,19 +8,16 @@ public class Transaction
 
     public double Amount { get; set; }
 
-    public Guid AccountId { get; set; }
+    public TransactionStatus Status { get; set; }
 
-    public Guid? BookingId { get; set; }
+    public string ClientIp { get; set; } = null!;
 
-    public DateTime CreatedAt { get; set; }
+    public DateTime Timestamp { get; set; }
 
-    public string? Description { get; set; }
+    /// <summary>
+    /// Transaction of which Booking
+    /// </summary>
+    public Guid BookingId { get; set; }
 
-    public string Type { get; set; } = null!;
-
-    public string Status { get; set; } = null!;
-
-    public virtual Account Account { get; set; } = null!;
-
-    public virtual Booking? Booking { get; set; }
+    public virtual Booking Booking { get; set; } = null!;
 }

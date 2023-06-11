@@ -3,7 +3,6 @@ using System.Security.Claims;
 using System.Text;
 using System.Text.RegularExpressions;
 using Data.EFCore;
-using Data.Entities;
 using Data.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -20,49 +19,52 @@ public class AuthService : BaseService, IAuthService
 {
     private static readonly Regex PhoneRegex = new(@"^\+?\d{7,15}$");
     private static readonly Regex EmailRegex = new(@"^\S+@\S+\.\S+$");
-
-
-    // PRIVATE
     private static readonly JwtSecurityTokenHandler TokenHandler = new();
     private readonly AppSettings _appSettings;
 
-    public AuthService(IUnitOfWork unitOfWork, IOptions<AppSettings> appSettings) : base(unitOfWork)
+    private const int ExpirationDay = 365;
+
+    public AuthService(UnitOfWork unitOfWork, IOptions<AppSettings> appSettings) : base(unitOfWork)
     {
         _appSettings = appSettings.Value;
     }
 
     public async Task<Result<AuthenticateResponseModel>> Authenticate(LoginModel model)
     {
-        var query = UnitOfWork.Repo<Account>().Query();
+        var query = UnitOfWork.Users
+            .Query()
+            .Where(e => e.Status != UserStatus.Suspended);
 
         // By Phone
-        if (PhoneRegex.Match(model.Username).Success) query = query.Where(e => e.Phone == model.Username);
+        if (PhoneRegex.Match(model.Username).Success)
+            query = query.Where(e => e.Phone == model.Username);
         // By Email
-        else if (EmailRegex.Match(model.Username).Success) query = query.Where(e => e.Email == model.Username);
+        else if (EmailRegex.Match(model.Username).Success)
+            query = query.Where(e => e.Email == model.Username);
         // Error
         else return Error.Validation("Login by Phone or Email");
 
-        var account = await query.Select(e => new AuthResult(e.Id, e.Password, e.Role)).FirstOrDefaultAsync();
+        var user = await query.Select(e => new AuthResult(e.Id, e.Password, e.Role)).FirstOrDefaultAsync();
 
-        if (account == null || !AuthHelper.VerifyPassword(model.Password, account.Password))
+        if (user == null || !AuthHelper.VerifyPassword(model.Password, user.Password))
             return Error.Authentication();
 
-        return new AuthenticateResponseModel(_generateJwtToken(account.Id, account.Role));
+        return new AuthenticateResponseModel(_generateJwtToken(user.Id, user.Role));
     }
 
-    private string _generateJwtToken(Guid accountId, AccountRole role)
+    private string _generateJwtToken(Guid userId, UserRole role)
     {
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(new[]
                 {
-                    new Claim("id", accountId.ToString()),
+                    new Claim("id", userId.ToString()),
                     new Claim("role", role.ToString())
                 }
             ),
             Issuer = _appSettings.JwtIssuer,
             Audience = _appSettings.JwtAudience,
-            Expires = DateTime.Now.AddDays(7),
+            Expires = DateTime.Now.AddDays(ExpirationDay),
             SigningCredentials =
                 new SigningCredentials(
                     new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_appSettings.JwtSecret)),
@@ -76,6 +78,6 @@ public class AuthService : BaseService, IAuthService
     (
         Guid Id,
         string Password,
-        AccountRole Role
+        UserRole Role
     );
 }

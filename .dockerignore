@@ -1,0 +1,12 @@
+**\.vs
+**\.git
+**\.idea
+**\**\bin
+**\**\obj
+**\**\logs
+
+# Datasource local storage ignored files
+.gitignore
+Dockerfile
+.dockerignore
+fly.toml

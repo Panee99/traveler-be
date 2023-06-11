@@ -1,65 +1,32 @@
 ﻿using Data.EFCore.Repositories;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Microsoft.EntityFrameworkCore.Storage;
-using Shared.Helpers;
+using Data.Entities;
 
 namespace Data.EFCore;
 
-public class UnitOfWork : IUnitOfWork
+public class UnitOfWork : UnitOfWorkBase
 {
-    private readonly AppDbContext _context;
+    public IRepository<User> Users => Repo<User>();
+    public IRepository<Attachment> Attachments => Repo<Attachment>();
+    public IRepository<AttendanceEvent> AttendanceEvents => Repo<AttendanceEvent>();
+    public IRepository<Attendance> Attendances => Repo<Attendance>();
+    public IRepository<Booking> Bookings => Repo<Booking>();
+    public IRepository<Schedule> Schedules => Repo<Schedule>();
+    public IRepository<Staff> Staffs => Repo<Staff>();
+    public IRepository<TourFlow> TourFlows => Repo<TourFlow>();
+    public IRepository<Admin> Admins => Repo<Admin>();
+    public IRepository<Ticket> Tickets => Repo<Ticket>();
+    public IRepository<Tour> Tours => Repo<Tour>();
+    public IRepository<TourVariant> TourVariants => Repo<TourVariant>();
+    public IRepository<TourImage> TourCarousel => Repo<TourImage>();
+    public IRepository<TourGroup> TourGroups => Repo<TourGroup>();
+    public IRepository<TourGuide> TourGuides => Repo<TourGuide>();
+    public IRepository<Transaction> Transactions => Repo<Transaction>();
+    public IRepository<Traveler> Travelers => Repo<Traveler>();
+    public IRepository<TravelerInTourGroup> TravelersInTourGroups => Repo<TravelerInTourGroup>();
+    public IRepository<VnPayResponse> VnPayResponses => Repo<VnPayResponse>();
+    public IRepository<IncurredCost> IncurredCosts => Repo<IncurredCost>();
 
-    // Generic Repository
-    private readonly Dictionary<Type, object> _repoCache = new();
-
-    public UnitOfWork(AppDbContext context)
+    public UnitOfWork(AppDbContext context) : base(context)
     {
-        _context = context;
-    }
-
-    public IRepository<T> Repo<T>() where T : class
-    {
-        if (_repoCache.TryGetValue(typeof(T), out var repo))
-            return (IRepository<T>)repo;
-
-        var newRepo = new Repository<T>(_context);
-        _repoCache.Add(typeof(T), newRepo);
-        return newRepo;
-    }
-
-    public async Task<int> SaveChangesAsync()
-    {
-        _generateValues();
-        return await _context.SaveChangesAsync();
-    }
-
-    public IDbContextTransaction BeginTransaction()
-    {
-        return _context.Database.BeginTransaction();
-    }
-
-    public EntityEntry<T> Attach<T>(T entity) where T : class
-    {
-        return _context.Attach(entity);
-    }
-
-    public EntityEntry Entry(object entity)
-    {
-        return _context.Entry(entity);
-    }
-
-    // PRIVATE
-    private void _generateValues()
-    {
-        var tracker = _context.ChangeTracker;
-        if (!tracker.HasChanges()) return;
-
-        var entities = tracker.Entries();
-        var addedEntities = entities.Where(e => e.State == EntityState.Added);
-
-        foreach (var entry in addedEntities)
-            if (entry.Properties.Any(p => p.Metadata.Name == "CreatedAt"))
-                entry.Property("CreatedAt").CurrentValue = DateTimeHelper.VnNow();
     }
 }

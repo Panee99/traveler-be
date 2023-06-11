@@ -16,7 +16,20 @@ public class TourGroupsController : ApiController
         _tourGroupService = tourGroupService;
     }
 
-    [Authorize(AccountRole.Manager)]
+    /// <summary>
+    /// Get a tour group
+    /// </summary>
+    [HttpGet("{id:guid}")]
+    public async Task<IActionResult> Get(Guid id)
+    {
+        var result = await _tourGroupService.Get(id);
+        return result.Match(Ok, OnError);
+    }
+
+    /// <summary>
+    /// Create a new tour group
+    /// </summary>
+    [Authorize(UserRole.Admin)]
     [HttpPost("")]
     public async Task<IActionResult> Create(TourGroupCreateModel model)
     {
@@ -24,7 +37,10 @@ public class TourGroupsController : ApiController
         return result.Match(Ok, OnError);
     }
 
-    [Authorize(AccountRole.Manager)]
+    /// <summary>
+    /// Update a tour group
+    /// </summary>
+    [Authorize(UserRole.Admin)]
     [HttpPatch("{id:guid}")]
     public async Task<IActionResult> Update([FromRoute] Guid id, TourGroupUpdateModel model)
     {
@@ -32,7 +48,10 @@ public class TourGroupsController : ApiController
         return result.Match(Ok, OnError);
     }
 
-    [Authorize(AccountRole.Manager)]
+    /// <summary>
+    /// Delete a tour group
+    /// </summary>
+    [Authorize(UserRole.Admin)]
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete([FromRoute] Guid id)
     {
@@ -40,6 +59,9 @@ public class TourGroupsController : ApiController
         return result.Match(Ok, OnError);
     }
 
+    /// <summary>
+    /// Add travelers to group
+    /// </summary>
     [HttpPatch("{id:guid}/travelers")]
     public async Task<IActionResult> AddTravelers([FromRoute] Guid id, [FromBody] List<Guid> travelerIds)
     {
@@ -47,7 +69,9 @@ public class TourGroupsController : ApiController
         return result.Match(Ok, OnError);
     }
 
-
+    /// <summary>
+    /// Remove travelers from group
+    /// </summary>
     [HttpDelete("{id:guid}/travelers")]
     public async Task<IActionResult> RemoveTravelers([FromRoute] Guid id, [FromBody] List<Guid> travelerIds)
     {
@@ -55,17 +79,23 @@ public class TourGroupsController : ApiController
         return result.Match(Ok, OnError);
     }
 
-    [HttpGet("{id:guid}/travelers")]
-    public async Task<IActionResult> ListTravelers([FromRoute] Guid id)
+    /// <summary>
+    /// List all travelers of a group
+    /// </summary>
+    [HttpGet("{id:guid}/members")]
+    public async Task<IActionResult> ListMembers([FromRoute] Guid id)
     {
-        var result = await _tourGroupService.ListTravelers(id);
+        var result = await _tourGroupService.ListMembers(id);
         return result.Match(Ok, OnError);
     }
 
-    [HttpGet("/tours/{tourId:guid}/tour-groups")]
-    public async Task<IActionResult> ListTourGroups([FromRoute] Guid tourId)
+    /// <summary>
+    /// List all attendance events of a tour group
+    /// </summary>
+    [HttpGet("{id:guid}/attendance-events")]
+    public async Task<IActionResult> ListAttendanceEvents([FromRoute] Guid id)
     {
-        var result = await _tourGroupService.ListGroupsByTour(tourId);
+        var result = await _tourGroupService.ListAttendanceEvents(id);
         return result.Match(Ok, OnError);
     }
 }

@@ -1,36 +1,32 @@
-﻿using Service.Models.Attachment;
-using Service.Models.Location;
+﻿using Service.Commons.QueryExtensions;
+using Service.Models.Attachment;
 using Service.Models.Tour;
-using Service.Pagination;
+using Service.Models.TourFlow;
+using Service.Models.TourVariant;
 using Shared.ResultExtensions;
 
 namespace Service.Interfaces;
 
 public interface ITourService
 {
-    Task<Result<TourViewModel>> Create(TourCreateModel model);
+    Task<Result<TourDetailsViewModel>> Create(TourCreateModel model);
 
-    Task<Result<TourViewModel>> Update(Guid id, TourUpdateModel model);
+    Task<Result<TourDetailsViewModel>> Update(Guid id, TourUpdateModel model);
 
     Task<Result> Delete(Guid id);
 
-    Task<Result<TourViewModel>> Find(Guid id);
+    Task<Result<TourDetailsViewModel>> GetDetails(Guid id);
 
     Task<Result<PaginationModel<TourViewModel>>> Filter(TourFilterModel model);
 
-    // Locations
-    Task<Result<LocationViewModel>> AddLocation(Guid tourId, LocationCreateModel model);
-
-    Task<Result> DeleteLocation(Guid id);
-
-    Task<Result<List<LocationViewModel>>> ListLocations(Guid tourId);
-
     // Attachments
-    Task<Result<AttachmentViewModel>> UpdateThumbnail(Guid tourId, string contentType, Stream stream);
+    Task<Result<AttachmentViewModel>> AddToCarousel(Guid tourId, string contentType, Stream stream);
 
-    Task<Result<AttachmentViewModel>> AddAttachment(Guid tourId, string contentType, Stream stream);
+    Task<Result> DeleteFromCarousel(Guid tourId, Guid attachmentId);
 
-    Task<Result> DeleteAttachment(Guid tourId, Guid attachmentId);
+    Task<Result<List<AttachmentViewModel>>> GetCarousel(Guid tourId);
 
-    Task<Result<List<AttachmentViewModel>>> ListAttachments(Guid tourId);
+    Task<Result<List<TourVariantViewModel>>> ListTourVariants(Guid tourId);
+
+    Task<Result<List<TourFlowViewModel>>> GetTourFlow(Guid tourId);
 }

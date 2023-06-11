@@ -3,7 +3,6 @@ using Data.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Service.Interfaces;
 using Service.Models.Ticket;
-using Shared.Helpers;
 
 namespace Application.Controllers;
 
@@ -17,7 +16,8 @@ public class TicketsController : ApiController
         _ticketService = ticketService;
     }
 
-    [Authorize(AccountRole.Manager, AccountRole.TourGuide)]
+    [Authorize(UserRole.Admin, UserRole.TourGuide)]
+    [ProducesResponseType(typeof(TicketViewModel), StatusCodes.Status200OK)]
     [HttpPost("")]
     public async Task<IActionResult> Create(TicketCreateModel model)
     {
@@ -25,7 +25,8 @@ public class TicketsController : ApiController
         return result.Match(Ok, OnError);
     }
 
-    [Authorize(AccountRole.Manager, AccountRole.TourGuide)]
+    [Authorize(UserRole.Admin, UserRole.TourGuide)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete(Guid id)
     {
@@ -34,6 +35,7 @@ public class TicketsController : ApiController
     }
 
     [Authorize]
+    [ProducesResponseType(typeof(TicketViewModel), StatusCodes.Status200OK)]
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> Find(Guid id)
     {
@@ -42,21 +44,11 @@ public class TicketsController : ApiController
     }
 
     [Authorize]
+    [ProducesResponseType(typeof(List<TicketViewModel>), StatusCodes.Status200OK)]
     [HttpPost("filter")]
     public async Task<IActionResult> Filter(TicketFilterModel model)
     {
         var result = await _ticketService.Filter(model);
-        return result.Match(Ok, OnError);
-    }
-
-    [Authorize(AccountRole.Manager, AccountRole.TourGuide)]
-    [HttpPut("{id:guid}/image")]
-    public async Task<IActionResult> UpdateImage([FromRoute] Guid id, IFormFile file)
-    {
-        var validateResult = FileHelper.ValidateImageFile(file);
-        if (!validateResult.IsSuccess) return OnError(validateResult.Error);
-
-        var result = await _ticketService.UpdateImage(id, file.ContentType, file.OpenReadStream());
         return result.Match(Ok, OnError);
     }
 }

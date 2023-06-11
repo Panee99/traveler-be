@@ -7,17 +7,13 @@ public static class EntityConfigurations
 {
     public static void ConfigureEntities(this ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Account>(entity =>
+        modelBuilder.Entity<User>(entity =>
         {
-            entity.ToTable("Account");
             entity.HasIndex(e => e.Role);
             entity.HasIndex(e => e.Status);
             entity.HasIndex(e => e.Phone).IsUnique();
             entity.HasIndex(e => e.Email).IsUnique();
-
             entity.Property(e => e.Password).HasMaxLength(256);
-            entity.Property(e => e.BankAccountNumber).HasMaxLength(256);
-            entity.Property(e => e.BankName).HasMaxLength(256);
             entity.Property(e => e.Phone).HasMaxLength(256).IsUnicode(false);
             entity.Property(e => e.Status).HasMaxLength(256);
         });
@@ -28,54 +24,69 @@ public static class EntityConfigurations
             entity.Property(e => e.CreatedAt).HasColumnType("datetime");
         });
 
-        modelBuilder.Entity<Ticket>();
-
-        // modelBuilder.Entity<Booking>(entity =>
-        // {
-        //     entity.Property(e => e.PaymentStatus).HasMaxLength(256);
-        //     entity.Property(e => e.CreatedAt).HasColumnType("datetime");
-        //     entity.Property(e => e.UpdatedAt).HasColumnType("datetime");
-        //
-        //     entity.HasOne(d => d.Tour).WithMany(p => p.Bookings)
-        //         .HasForeignKey(d => d.TourId)
-        //         .OnDelete(DeleteBehavior.ClientSetNull);
-        //
-        //     entity.HasOne(d => d.Traveler).WithMany(p => p.Bookings)
-        //         .HasForeignKey(d => d.TravelerId)
-        //         .OnDelete(DeleteBehavior.ClientSetNull);
-        // });
-
-        // modelBuilder.Entity<BookingAppliedDiscount>(entity =>
-        // {
-        //     entity.HasOne(d => d.Booking).WithMany(p => p.BookingAppliedDiscounts)
-        //         .HasForeignKey(d => d.BookingId)
-        //         .OnDelete(DeleteBehavior.ClientSetNull);
-        //
-        //     entity.HasOne(d => d.DiscountNavigation).WithMany(p => p.BookingAppliedDiscounts)
-        //         .HasForeignKey(d => d.DiscountId)
-        //         .OnDelete(DeleteBehavior.ClientSetNull);
-        // });
-
-        // modelBuilder.Entity<IncurredCost>(entity =>
-        // {
-        //     entity.Property(e => e.CreatedAt).HasColumnType("datetime");
-        //     entity.HasOne(d => d.TourGuide).WithMany(p => p.IncurredCosts)
-        //         .HasForeignKey(d => d.TourGuideId)
-        //         .OnDelete(DeleteBehavior.ClientSetNull);
-        // });
-
-        modelBuilder.Entity<Location>(entity =>
+        modelBuilder.Entity<Booking>(entity =>
         {
-            entity.HasIndex(e => e.CreatedAt);
-            entity.Property(e => e.CreatedAt).HasColumnType("datetime");
-            entity.Property(e => e.ArrivalTime).HasColumnType("datetime");
+            entity.Property(e => e.Status).HasMaxLength(256);
+            entity.Property(e => e.Timestamp).HasColumnType("datetime");
+
+            entity.HasOne(d => d.TourVariant).WithMany(p => p.Bookings)
+                .HasForeignKey(d => d.TourVariantId);
+
+            entity.HasOne(d => d.Traveler).WithMany(p => p.Bookings)
+                .HasForeignKey(d => d.TravelerId);
         });
 
-        modelBuilder.Entity<TourAttachment>().HasKey(e => new { e.TourId, e.AttachmentId });
+        modelBuilder.Entity<Feedback>();
 
-        modelBuilder.Entity<Manager>(entity =>
+        modelBuilder.Entity<IncurredCost>(
+            entity => { entity.Property(e => e.CreatedAt).HasColumnType("datetime"); });
+
+        modelBuilder.Entity<Admin>(entity =>
         {
-            entity.ToTable("Manager");
+            entity.ToTable("Admin");
+            entity.Property(e => e.Email).HasMaxLength(256);
+            entity.Property(e => e.FirstName).HasMaxLength(256);
+            entity.Property(e => e.Gender).HasMaxLength(256);
+            entity.Property(e => e.LastName).HasMaxLength(256);
+        });
+
+        modelBuilder.Entity<Notification>();
+
+        modelBuilder.Entity<Passenger>();
+
+        modelBuilder.Entity<Schedule>();
+
+        modelBuilder.Entity<Staff>(entity => { entity.ToTable("Staff"); });
+
+        modelBuilder.Entity<Ticket>();
+
+        modelBuilder.Entity<Tour>(entity =>
+        {
+            entity.HasIndex(e => e.CreatedAt);
+            entity.Property(e => e.Title).HasMaxLength(256);
+            entity.Property(e => e.Departure).HasMaxLength(256);
+            entity.Property(e => e.Destination).HasMaxLength(256);
+            entity.Property(e => e.Type).HasMaxLength(256);
+            entity.Property(e => e.Status).HasMaxLength(256);
+            entity.Property(e => e.CreatedAt).HasColumnType("datetime");
+        });
+
+        modelBuilder.Entity<TourVariant>(entity =>
+        {
+            entity.HasIndex(e => e.Code).IsUnique();
+            entity.Property(e => e.Code).HasMaxLength(256);
+            entity.Property(e => e.EndTime).HasColumnType("datetime");
+            entity.Property(e => e.StartTime).HasColumnType("datetime");
+            entity.Property(e => e.Status).HasMaxLength(256);
+        });
+
+        modelBuilder.Entity<TourFlow>(entity => { entity.ToTable("TourFlow"); });
+
+        modelBuilder.Entity<TourGroup>(entity => { entity.HasOne(e => e.TourVariant).WithMany(x => x.TourGroups); });
+
+        modelBuilder.Entity<TourGuide>(entity =>
+        {
+            entity.ToTable("TourGuide");
             entity.Property(e => e.Email).HasMaxLength(256);
             entity.Property(e => e.Birthday).HasColumnType("datetime");
             entity.Property(e => e.FirstName).HasMaxLength(256);
@@ -83,24 +94,63 @@ public static class EntityConfigurations
             entity.Property(e => e.LastName).HasMaxLength(256);
         });
 
-        modelBuilder.Entity<Tour>(entity =>
-        {
-            entity.HasIndex(e => e.Code).IsUnique();
-            entity.HasIndex(e => e.CreatedAt);
+        modelBuilder.Entity<TourImage>().HasKey(e => new { e.TourId, e.AttachmentId });
 
-            entity.Property(e => e.Code).HasMaxLength(256);
-            entity.Property(e => e.Title).HasMaxLength(256);
-            entity.Property(e => e.EndTime).HasColumnType("datetime");
-            entity.Property(e => e.StartTime).HasColumnType("datetime");
-            entity.Property(e => e.Departure).HasMaxLength(256);
-            entity.Property(e => e.Destination).HasMaxLength(256);
-            entity.Property(e => e.Vehicle).HasMaxLength(256);
-            entity.Property(e => e.Type).HasMaxLength(256);
+        modelBuilder.Entity<Transaction>(entity =>
+        {
+            entity.Property(e => e.Timestamp).HasColumnType("datetime");
             entity.Property(e => e.Status).HasMaxLength(256);
-            entity.Property(e => e.CreatedAt).HasColumnType("datetime");
+
+            entity.HasOne(d => d.Booking).WithMany(p => p.Transactions)
+                .HasForeignKey(d => d.BookingId);
         });
 
-        modelBuilder.Entity<TourGroup>(entity => { entity.HasOne(e => e.Tour).WithMany(x => x.TourGroups); });
+        modelBuilder.Entity<Traveler>(entity =>
+        {
+            entity.ToTable("Traveler");
+            entity.Property(e => e.BankNumber).HasMaxLength(256);
+            entity.Property(e => e.BankName).HasMaxLength(256);
+            entity.Property(e => e.Address).HasMaxLength(256);
+            entity.Property(e => e.Birthday).HasColumnType("datetime");
+            entity.Property(e => e.FirstName).HasMaxLength(256);
+            entity.Property(e => e.Gender).HasMaxLength(256);
+            entity.Property(e => e.LastName).HasMaxLength(256);
+        });
+
+        modelBuilder.Entity<Traveler>()
+            .HasMany(traveler => traveler.TourGroups)
+            .WithMany(group => group.Travelers)
+            .UsingEntity<TravelerInTourGroup>(
+                builder => builder.HasOne(tig => tig.TourGroup).WithMany().HasForeignKey(tig => tig.TourGroupId),
+                builder => builder.HasOne(tig => tig.Traveler).WithMany().HasForeignKey(sc => sc.TravelerId),
+                builder =>
+                {
+                    builder.ToTable("TravelerInTourGroup");
+                    builder.HasKey(sc => new { sc.TravelerId, sc.TourGroupId });
+                }
+            );
+
+        modelBuilder.Entity<VnPayResponse>(entity =>
+        {
+            entity.HasKey(e => e.TransactionId);
+            entity.HasOne(response => response.Transaction)
+                .WithOne()
+                .HasForeignKey<VnPayResponse>(x => x.TransactionId);
+        });
+
+        modelBuilder.Entity<AttendanceEvent>(entity =>
+        {
+            entity.HasOne(evt => evt.TourGroup)
+                .WithMany(group => group.AttendanceEvents)
+                .HasForeignKey(evt => evt.TourGroupId);
+        });
+
+        modelBuilder.Entity<Attendance>(entity =>
+        {
+            entity.HasOne(att => att.AttendanceEvent)
+                .WithMany(evt => evt.Attendances)
+                .HasForeignKey(e => e.AttendanceEventId);
+        });
 
         // modelBuilder.Entity<TourDiscount>(entity =>
         // {
@@ -116,49 +166,15 @@ public static class EntityConfigurations
         //         .OnDelete(DeleteBehavior.ClientSetNull);
         // });
 
-        modelBuilder.Entity<TourGuide>(entity =>
-        {
-            entity.ToTable("TourGuide");
-            entity.Property(e => e.Email).HasMaxLength(256);
-            entity.Property(e => e.Birthday).HasColumnType("datetime");
-            entity.Property(e => e.FirstName).HasMaxLength(256);
-            entity.Property(e => e.Gender).HasMaxLength(256);
-            entity.Property(e => e.LastName).HasMaxLength(256);
-        });
-
-        // modelBuilder.Entity<Transaction>(entity =>
+        // modelBuilder.Entity<BookingAppliedDiscount>(entity =>
         // {
-        //     entity.Property(e => e.CreatedAt).HasColumnType("datetime");
-        //     entity.Property(e => e.Description).IsUnicode(false);
-        //     entity.Property(e => e.Status).HasMaxLength(256);
-        //     entity.Property(e => e.Type).HasMaxLength(256);
-        //
-        //     entity.HasOne(d => d.Account).WithMany(p => p.Transactions)
-        //         .HasForeignKey(d => d.AccountId)
+        //     entity.HasOne(d => d.Booking).WithMany(p => p.BookingAppliedDiscounts)
+        //         .HasForeignKey(d => d.BookingId)
         //         .OnDelete(DeleteBehavior.ClientSetNull);
         //
-        //     entity.HasOne(d => d.Booking).WithMany(p => p.Transactions)
-        //         .HasForeignKey(d => d.BookingId);
+        //     entity.HasOne(d => d.DiscountNavigation).WithMany(p => p.BookingAppliedDiscounts)
+        //         .HasForeignKey(d => d.DiscountId)
+        //         .OnDelete(DeleteBehavior.ClientSetNull);
         // });
-
-        modelBuilder.Entity<Traveler>(entity =>
-        {
-            entity.ToTable("Traveler");
-            entity.Property(e => e.Address).HasMaxLength(256);
-            entity.Property(e => e.Birthday).HasColumnType("datetime");
-            entity.Property(e => e.FirstName).HasMaxLength(256);
-            entity.Property(e => e.Gender).HasMaxLength(256);
-            entity.Property(e => e.LastName).HasMaxLength(256);
-        });
-
-        modelBuilder.Entity<TravelerInTourGroup>(entity => { entity.ToTable("TravelerInTourGroup"); });
-
-        modelBuilder.Entity<VnPayRequest>(entity => { entity.HasKey(e => e.TxnRef); });
-
-        modelBuilder.Entity<VnPayResponse>(entity => { entity.HasKey(e => e.TxnRef); });
-        modelBuilder.Entity<VnPayResponse>()
-            .HasOne(response => response.VnPayRequest)
-            .WithOne(request => request.VnPayResponse)
-            .HasForeignKey<VnPayResponse>(x => x.TxnRef);
     }
 }

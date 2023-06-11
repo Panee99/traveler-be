@@ -20,6 +20,8 @@ public interface IRepository<T> where T : class
 
     IQueryable<T> Query();
 
+    ValueTask<T?> FindAsync(params object[] keyValues);
+
     Task<T?> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate);
 
     Task<bool> AnyAsync(Expression<Func<T, bool>> predicate);

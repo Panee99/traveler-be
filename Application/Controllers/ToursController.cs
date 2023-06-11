@@ -1,27 +1,31 @@
 ﻿using Application.Configurations.Auth;
 using Data.Enums;
 using Microsoft.AspNetCore.Mvc;
+using Service.Commons.QueryExtensions;
 using Service.Interfaces;
-using Service.Models.Attachment;
-using Service.Models.Location;
 using Service.Models.Tour;
-using Service.Pagination;
-using Shared.Helpers;
+using Service.Models.TourFlow;
+using Service.Models.TourVariant;
 
 namespace Application.Controllers;
 
-[Authorize(AccountRole.Manager)]
+[Authorize(UserRole.Admin)]
 [Route("tours")]
 public class ToursController : ApiController
 {
     private readonly ITourService _tourService;
+    private readonly ITourGroupService _tourGroupService;
 
-    public ToursController(ITourService tourService)
+    public ToursController(ITourService tourService, ITourGroupService tourGroupService)
     {
         _tourService = tourService;
+        _tourGroupService = tourGroupService;
     }
 
-    [ProducesResponseType(typeof(TourViewModel), StatusCodes.Status200OK)]
+    /// <summary>
+    /// Create a new tour
+    /// </summary>
+    [ProducesResponseType(typeof(TourDetailsViewModel), StatusCodes.Status200OK)]
     [HttpPost("")]
     public async Task<IActionResult> Create(TourCreateModel model)
     {
@@ -29,7 +33,10 @@ public class ToursController : ApiController
         return result.Match(Ok, OnError);
     }
 
-    [ProducesResponseType(typeof(TourViewModel), StatusCodes.Status200OK)]
+    /// <summary>
+    /// Update a tour
+    /// </summary>
+    [ProducesResponseType(typeof(TourDetailsViewModel), StatusCodes.Status200OK)]
     [HttpPatch("{id:guid}")]
     public async Task<IActionResult> Update(Guid id, TourUpdateModel model)
     {
@@ -37,6 +44,9 @@ public class ToursController : ApiController
         return result.Match(Ok, OnError);
     }
 
+    /// <summary>
+    /// Delete a tour
+    /// </summary>
     [ProducesResponseType(StatusCodes.Status200OK)]
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete(Guid id)
@@ -45,16 +55,22 @@ public class ToursController : ApiController
         return result.Match(Ok, OnError);
     }
 
-    [ProducesResponseType(typeof(TourViewModel), StatusCodes.Status200OK)]
+    /// <summary>
+    /// Get details of a tour
+    /// </summary>
+    [ProducesResponseType(typeof(TourDetailsViewModel), StatusCodes.Status200OK)]
     [AllowAnonymous]
-    [HttpGet("{id:guid}")]
-    public async Task<IActionResult> Find(Guid id)
+    [HttpGet("{id:guid}/details")]
+    public async Task<IActionResult> GetDetails(Guid id)
     {
-        var result = await _tourService.Find(id);
+        var result = await _tourService.GetDetails(id);
         return result.Match(Ok, OnError);
     }
 
-    [ProducesResponseType(typeof(PaginationModel<TourFilterViewModel>), StatusCodes.Status200OK)]
+    /// <summary>
+    /// Filter tours
+    /// </summary>
+    [ProducesResponseType(typeof(PaginationModel<TourViewModel>), StatusCodes.Status200OK)]
     [AllowAnonymous]
     [HttpPost("filter")]
     public async Task<IActionResult> Filter(TourFilterModel model)
@@ -64,72 +80,26 @@ public class ToursController : ApiController
     }
 
     /// <summary>
-    /// ATTACHMENTS
+    /// List all variants of a tour
     /// </summary>
-    [ProducesResponseType(typeof(AttachmentViewModel), StatusCodes.Status200OK)]
-    [HttpPut("{id:guid}/thumbnail")]
-    public async Task<IActionResult> UpdateThumbnail(Guid id, IFormFile file)
-    {
-        var validateResult = FileHelper.ValidateImageFile(file);
-        if (!validateResult.IsSuccess) return OnError(validateResult.Error);
-
-        var result = await _tourService.UpdateThumbnail(id, file.ContentType, file.OpenReadStream());
-        return result.Match(Ok, OnError);
-    }
-
-    [ProducesResponseType(typeof(AttachmentViewModel), StatusCodes.Status200OK)]
-    [HttpPost("{id:guid}/attachments")]
-    public async Task<IActionResult> AddAttachment(Guid id, IFormFile file)
-    {
-        var validateResult = FileHelper.ValidateImageFile(file);
-        if (!validateResult.IsSuccess) return OnError(validateResult.Error);
-
-        var result = await _tourService.AddAttachment(id, file.ContentType, file.OpenReadStream());
-        return result.Match(Ok, OnError);
-    }
-
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [HttpDelete("{tourId:guid}/attachments/{attachmentId}")]
-    public async Task<IActionResult> DeleteAttachment(Guid tourId, Guid attachmentId)
-    {
-        var result = await _tourService.DeleteAttachment(tourId, attachmentId);
-        return result.Match(Ok, OnError);
-    }
-
-    [ProducesResponseType(typeof(List<AttachmentViewModel>), StatusCodes.Status200OK)]
-    [HttpGet("{tourId:guid}/attachments")]
+    [ProducesResponseType(typeof(List<TourVariantViewModel>), StatusCodes.Status200OK)]
     [AllowAnonymous]
-    public async Task<IActionResult> ListAttachments(Guid tourId)
+    [HttpGet("{id:guid}/tour-variants")]
+    public async Task<IActionResult> ListTourVariants(Guid id)
     {
-        var result = await _tourService.ListAttachments(tourId);
+        var result = await _tourService.ListTourVariants(id);
         return result.Match(Ok, OnError);
     }
-
+    
     /// <summary>
-    /// LOCATIONS
+    /// Get tour flow of a tour
     /// </summary>
-    [ProducesResponseType(typeof(LocationViewModel), StatusCodes.Status200OK)]
-    [HttpPost("{id:guid}/locations")]
-    public async Task<IActionResult> AddLocation(Guid id, LocationCreateModel model)
-    {
-        var result = await _tourService.AddLocation(id, model);
-        return result.Match(Ok, OnError);
-    }
-
-    [ProducesResponseType(typeof(LocationViewModel), StatusCodes.Status200OK)]
-    [HttpDelete("/locations/{locationId:guid}")]
-    public async Task<IActionResult> DeleteLocation(Guid locationId)
-    {
-        var result = await _tourService.DeleteLocation(locationId);
-        return result.Match(Ok, OnError);
-    }
-
-    [ProducesResponseType(typeof(LocationViewModel), StatusCodes.Status200OK)]
-    [HttpGet("{id:guid}/locations")]
+    [ProducesResponseType(typeof(List<TourFlowViewModel>), StatusCodes.Status200OK)]
     [AllowAnonymous]
-    public async Task<IActionResult> ListLocations(Guid id)
+    [HttpGet("{id:guid}/tour-flow")]
+    public async Task<IActionResult> GetTourFlow(Guid id)
     {
-        var result = await _tourService.ListLocations(id);
+        var result = await _tourService.GetTourFlow(id);
         return result.Match(Ok, OnError);
     }
 }
