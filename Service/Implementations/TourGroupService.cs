@@ -19,12 +19,24 @@ public class TourGroupService : BaseService, ITourGroupService
         _cloudStorageService = cloudStorageService;
     }
 
+    public async Task<int> CountTravelers(Guid tourGroupId)
+    {
+        return await UnitOfWork.TourGroups
+            .Query()
+            .Where(e => e.Id == tourGroupId)
+            .SelectMany(e => e.Travelers)
+            .CountAsync();
+    }
+
     public async Task<Result<TourGroupViewModel>> Get(Guid id)
     {
         var group = await UnitOfWork.TourGroups.FindAsync(id);
         if (group is null) return Error.NotFound();
 
-        return group.Adapt<TourGroupViewModel>();
+        // return
+        var view = group.Adapt<TourGroupViewModel>();
+        view.TravelerCount = await CountTravelers(id);
+        return view;
     }
 
     public async Task<Result<TourGroupViewModel>> Create(TourGroupCreateModel model)
@@ -40,6 +52,7 @@ public class TourGroupService : BaseService, ITourGroupService
 
         await UnitOfWork.SaveChangesAsync();
 
+        // return
         return group.Adapt<TourGroupViewModel>();
     }
 
@@ -61,7 +74,10 @@ public class TourGroupService : BaseService, ITourGroupService
 
         await UnitOfWork.SaveChangesAsync();
 
-        return group.Adapt<TourGroupViewModel>();
+        // return
+        var view = group.Adapt<TourGroupViewModel>();
+        view.TravelerCount = await CountTravelers(groupId);
+        return view;
     }
 
     public async Task<Result> Delete(Guid groupId)
@@ -133,9 +149,7 @@ public class TourGroupService : BaseService, ITourGroupService
         var members = tourGroup.Travelers.Select(traveler =>
         {
             var member = traveler.Adapt<UserViewModel>();
-            member.AvatarUrl = traveler.AvatarId is null
-                ? null
-                : _cloudStorageService.GetMediaLink(traveler.AvatarId.Value);
+            member.AvatarUrl = _cloudStorageService.GetMediaLink(traveler.AvatarId);
             return member;
         }).ToList();
 
@@ -143,9 +157,7 @@ public class TourGroupService : BaseService, ITourGroupService
         if (tourGuide != null)
         {
             var tourGuideMember = tourGuide.Adapt<UserViewModel>();
-            tourGuideMember.AvatarUrl = tourGuide.AvatarId is null
-                ? null
-                : _cloudStorageService.GetMediaLink(tourGuide.AvatarId.Value);
+            tourGuideMember.AvatarUrl = _cloudStorageService.GetMediaLink(tourGuide.AvatarId);
 
             members.Add(tourGuideMember);
         }

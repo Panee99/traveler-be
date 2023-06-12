@@ -56,10 +56,7 @@ public class TicketService : BaseService, ITicketService
         if (ticket is null) return Error.NotFound();
 
         var view = ticket.Adapt<TicketViewModel>();
-
-        if (ticket.ImageId != null)
-            view.ImageUrl = _cloudStorageService.GetMediaLink(ticket.ImageId.Value);
-
+        view.ImageUrl = _cloudStorageService.GetMediaLink(ticket.ImageId);
         return view;
     }
 

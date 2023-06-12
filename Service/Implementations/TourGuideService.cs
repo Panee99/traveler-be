@@ -12,10 +12,14 @@ namespace Service.Implementations;
 public class TourGuideService : BaseService, ITourGuideService
 {
     private readonly ICloudStorageService _cloudStorageService;
+    private readonly ITourGroupService _tourGroupService;
 
-    public TourGuideService(UnitOfWork unitOfWork, ICloudStorageService cloudStorageService) : base(unitOfWork)
+    public TourGuideService(UnitOfWork unitOfWork,
+        ICloudStorageService cloudStorageService,
+        ITourGroupService tourGroupService) : base(unitOfWork)
     {
         _cloudStorageService = cloudStorageService;
+        _tourGroupService = tourGroupService;
     }
 
     public async Task<Result<List<TourViewModel>>> ListAssignedTours(Guid tourGuideId)
@@ -32,8 +36,7 @@ public class TourGuideService : BaseService, ITourGuideService
         var views = assignedTours.Select(e =>
         {
             var view = e.Adapt<TourViewModel>();
-            if (e.ThumbnailId != null)
-                view.ThumbnailUrl = _cloudStorageService.GetMediaLink(e.ThumbnailId.Value);
+            view.ThumbnailUrl = _cloudStorageService.GetMediaLink(e.ThumbnailId);
 
             return view;
         }).ToList();
@@ -55,18 +58,18 @@ public class TourGuideService : BaseService, ITourGuideService
             .ThenInclude(variant => variant.Tour)
             .ToListAsync();
 
-        var views = assignedGroups.Select(group =>
+
+        // return
+        var views = await Task.WhenAll(assignedGroups.Select(async group =>
         {
             var tour = group.TourVariant.Tour;
             var view = group.Adapt<TourGroupViewModel>();
-            view.TourVariant!.Tour!.ThumbnailUrl = tour.ThumbnailId is null
-                ? null
-                : _cloudStorageService.GetMediaLink(tour.ThumbnailId.Value);
-
+            view.TourVariant!.Tour!.ThumbnailUrl = _cloudStorageService.GetMediaLink(tour.ThumbnailId);
+            view.TravelerCount = await _tourGroupService.CountTravelers(group.Id);
             return view;
-        }).ToList();
+        }));
 
-        return views;
+        return views.ToList();
     }
 
     public async Task<Result<TourGroupViewModel>> GetCurrentAssignedTourGroup(Guid tourGuideId)
@@ -89,9 +92,8 @@ public class TourGuideService : BaseService, ITourGuideService
 
         var tour = currentGroup.TourVariant.Tour;
         var view = currentGroup.Adapt<TourGroupViewModel>();
-        view.TourVariant!.Tour!.ThumbnailUrl = tour.ThumbnailId is null
-            ? null
-            : _cloudStorageService.GetMediaLink(tour.ThumbnailId!.Value);
+        view.TourVariant!.Tour!.ThumbnailUrl = _cloudStorageService.GetMediaLink(tour.ThumbnailId);
+        view.TravelerCount = await _tourGroupService.CountTravelers(view.Id);
 
         return view;
     }

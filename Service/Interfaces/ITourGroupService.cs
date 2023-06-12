@@ -22,4 +22,6 @@ public interface ITourGroupService
     Task<Result<List<AttendanceEventViewModel>>> ListAttendanceEvents(Guid tourGroupId);
 
     Task<Result<TourGroupViewModel>> Get(Guid id);
+
+    Task<int> CountTravelers(Guid tourGroupId);
 }

@@ -55,8 +55,7 @@ public class TourService : BaseService, ITourService
 
         // Result
         var view = tour.Adapt<TourDetailsViewModel>();
-        if (tour.ThumbnailId != null)
-            view.ThumbnailUrl = _cloudStorageService.GetMediaLink(tour.ThumbnailId.Value);
+        view.ThumbnailUrl = _cloudStorageService.GetMediaLink(tour.ThumbnailId);
 
         var tourCarousel = await UnitOfWork.TourCarousel
             .Query()
@@ -107,8 +106,7 @@ public class TourService : BaseService, ITourService
         // Result
         var view = tour.Adapt<TourDetailsViewModel>();
 
-        if (tour.ThumbnailId != null)
-            view.ThumbnailUrl = _cloudStorageService.GetMediaLink(tour.ThumbnailId.Value);
+        view.ThumbnailUrl = _cloudStorageService.GetMediaLink(tour.ThumbnailId);
 
         var tourCarousel = await UnitOfWork.TourCarousel
             .Query()
@@ -155,8 +153,7 @@ public class TourService : BaseService, ITourService
         // Result
         var viewModel = tour.Adapt<TourDetailsViewModel>();
 
-        if (tour.ThumbnailId != null)
-            viewModel.ThumbnailUrl = _cloudStorageService.GetMediaLink(tour.ThumbnailId.Value);
+        viewModel.ThumbnailUrl = _cloudStorageService.GetMediaLink(tour.ThumbnailId);
 
         viewModel.Carousel = tour.TourCarousel
             .Select(i => i.Attachment)
@@ -188,8 +185,7 @@ public class TourService : BaseService, ITourService
         return paginationModel.Map(tour =>
         {
             var view = tour.Adapt<TourViewModel>();
-            if (tour.ThumbnailId != null)
-                view.ThumbnailUrl = _cloudStorageService.GetMediaLink(tour.ThumbnailId.Value);
+            view.ThumbnailUrl = _cloudStorageService.GetMediaLink(tour.ThumbnailId);
 
             return view;
         });

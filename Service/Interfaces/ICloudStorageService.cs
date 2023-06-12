@@ -8,5 +8,5 @@ public interface ICloudStorageService
 
     Task<Result> Delete(Guid id);
 
-    string GetMediaLink(Guid id);
+    string? GetMediaLink(Guid? id);
 }

@@ -10,5 +10,6 @@ public class TourGroupViewModel
     public Guid? TourGuideId;
     public int MaxOccupancy;
     public Guid TourVariantId;
+    public int TravelerCount;
     public TourVariantViewModel? TourVariant;
 }

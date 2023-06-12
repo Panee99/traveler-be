@@ -14,8 +14,11 @@ namespace Service.Implementations;
 
 public class TourVariantService : BaseService, ITourVariantService
 {
-    public TourVariantService(UnitOfWork unitOfWork) : base(unitOfWork)
+    private readonly ITourGroupService _tourGroupService;
+
+    public TourVariantService(UnitOfWork unitOfWork, ITourGroupService tourGroupService) : base(unitOfWork)
     {
+        _tourGroupService = tourGroupService;
     }
 
     public async Task<Result<TourVariantViewModel>> Create(TourVariantCreateModel model)
@@ -59,18 +62,25 @@ public class TourVariantService : BaseService, ITourVariantService
 
         return Result.Success();
     }
-    
+
     public async Task<Result<List<TourGroupViewModel>>> ListGroupsByTourVariant(Guid tourVariantId)
     {
         if (!await UnitOfWork.TourVariants.AnyAsync(e => e.Id == tourVariantId)) return Error.NotFound();
-        
+
         var tourGroups = await UnitOfWork.TourGroups
             .Query()
             .Where(e => e.TourVariantId == tourVariantId)
             .ToListAsync();
+
+        // return
+        var views = await Task.WhenAll(
+            tourGroups.Adapt<List<TourGroupViewModel>>().Select(async view =>
+            {
+                view.TravelerCount = await _tourGroupService.CountTravelers(view.Id);
+                return view;
+            })
+        );
         
-        return tourGroups.Adapt<List<TourGroupViewModel>>();
+        return views.ToList();
     }
 }
-
-

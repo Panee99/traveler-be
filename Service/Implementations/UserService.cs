@@ -62,7 +62,7 @@ public class UserService : BaseService, IUserService
         await UnitOfWork.SaveChangesAsync();
 
         var view = user.Adapt<UserViewModel>();
-        if (user.AvatarId != null) view.AvatarUrl = _cloudStorageService.GetMediaLink(user.AvatarId.Value);
+        view.AvatarUrl = _cloudStorageService.GetMediaLink(user.AvatarId);
         return view;
     }
 
@@ -86,8 +86,7 @@ public class UserService : BaseService, IUserService
         return result.Map(user =>
         {
             var view = user.Adapt<UserViewModel>();
-            if (user.AvatarId != null)
-                view.AvatarUrl = _cloudStorageService.GetMediaLink(user.AvatarId.Value);
+            view.AvatarUrl = _cloudStorageService.GetMediaLink(user.AvatarId);
             return view;
         });
     }
@@ -106,8 +105,7 @@ public class UserService : BaseService, IUserService
             _ => throw new ArgumentOutOfRangeException()
         };
 
-        // if (user.AvatarId != null)
-        //     view.AvatarUrl = _cloudStorageService.GetMediaLink(user.AvatarId.Value);
+        view.AvatarUrl = _cloudStorageService.GetMediaLink(user.AvatarId);
 
         return view;
     }
@@ -147,8 +145,7 @@ public class UserService : BaseService, IUserService
         await UnitOfWork.SaveChangesAsync();
 
         // Return
-        if (user.AvatarId != null)
-            view.AvatarUrl = _cloudStorageService.GetMediaLink(user.AvatarId.Value);
+        view.AvatarUrl = _cloudStorageService.GetMediaLink(user.AvatarId);
 
         return view;
     }
@@ -163,7 +160,7 @@ public class UserService : BaseService, IUserService
 
         // Result
         var viewModel = entity.Adapt<UserViewModel>();
-        viewModel.AvatarUrl = entity.AvatarId != null ? _cloudStorageService.GetMediaLink(entity.AvatarId.Value) : null;
+        viewModel.AvatarUrl = _cloudStorageService.GetMediaLink(entity.AvatarId);
 
         return viewModel;
     }
