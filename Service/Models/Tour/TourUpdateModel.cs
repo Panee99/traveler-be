@@ -11,6 +11,7 @@ public record TourUpdateModel
     string? Destination,
     int? MaxOccupancy,
     TourType? Type,
+    string? Duration,
     string? Description,
     string? Policy,
     TourStatus? Status,

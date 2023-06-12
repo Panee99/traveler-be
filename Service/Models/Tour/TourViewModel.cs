@@ -8,6 +8,7 @@ public record TourViewModel
     public string Title = null!;
     public string Departure = null!;
     public string Destination = null!;
+    public string Duration = null!;
     public string? Description;
     public string? Policy;
     public string? ThumbnailUrl;

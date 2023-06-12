@@ -20,6 +20,8 @@ public class Tour
 
     public DateTime CreatedAt { get; set; }
 
+    public string Duration { get; set; } = null!;
+
     public string? Description { get; set; }
 
     public string? Policy { get; set; }
@@ -27,14 +29,14 @@ public class Tour
     public Guid? ThumbnailId { get; set; }
 
     public Attachment? Thumbnail { get; set; }
-    
+
     public virtual ICollection<TourVariant> TourVariants { get; set; } = new List<TourVariant>();
-    
+
     public virtual ICollection<Schedule> Schedules { get; set; } = new List<Schedule>();
 
     public virtual ICollection<TourFlow> TourFlows { get; set; } = new List<TourFlow>();
 
     public virtual ICollection<TourImage> TourCarousel { get; set; } = new List<TourImage>();
-    
+
     // public virtual ICollection<TourDiscount> TourDiscounts { get; set; } = new List<TourDiscount>();
 }
