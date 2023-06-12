@@ -15,12 +15,6 @@ public class ApiController : ControllerBase
     // Must use with [Authorize]
     protected AuthUser CurrentUser => (AuthUser)HttpContext.Items[AppConstants.UserContextKey]!;
 
-    [HttpGet("")]
-    public IActionResult Root()
-    {
-        return Ok("Welcome to Travelers.");
-    }
-
     protected static IActionResult OnError(Error error)
     {
         var response = new ObjectResult(new ErrorResponsePayload
