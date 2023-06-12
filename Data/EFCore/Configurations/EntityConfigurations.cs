@@ -150,6 +150,12 @@ public static class EntityConfigurations
                 .HasForeignKey(e => e.AttendanceEventId);
         });
 
+        modelBuilder.Entity<FcmToken>(entity =>
+        {
+            entity.HasOne(token => token.User)
+                .WithMany(user => user.FcmTokens)
+                .HasForeignKey(e => e.UserId);
+        });
         // modelBuilder.Entity<TourDiscount>(entity =>
         // {
         //     entity.Property(e => e.T1discount).HasColumnName("T1Discount");
