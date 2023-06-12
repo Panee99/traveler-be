@@ -1,7 +1,12 @@
-﻿namespace Service.Models.Schedule;
+﻿using Data.Enums;
+
+namespace Service.Models.Schedule;
 
 public record ScheduleCreateModel
 (
+    int Sequence,
     string Description,
-    int Sequence
+    double? Longitude,
+    double? Latitude,
+    Vehicle? Vehicle
 );

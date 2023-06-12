@@ -3,8 +3,8 @@ using Data.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Service.Commons.QueryExtensions;
 using Service.Interfaces;
+using Service.Models.Schedule;
 using Service.Models.Tour;
-using Service.Models.TourFlow;
 using Service.Models.TourVariant;
 
 namespace Application.Controllers;
@@ -90,16 +90,16 @@ public class ToursController : ApiController
         var result = await _tourService.ListTourVariants(id);
         return result.Match(Ok, OnError);
     }
-    
+
     /// <summary>
-    /// Get tour flow of a tour
+    /// Get schedules of a tour
     /// </summary>
-    [ProducesResponseType(typeof(List<TourFlowViewModel>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(List<ScheduleViewModel>), StatusCodes.Status200OK)]
     [AllowAnonymous]
-    [HttpGet("{id:guid}/tour-flow")]
-    public async Task<IActionResult> GetTourFlow(Guid id)
+    [HttpGet("{id:guid}/schedules")]
+    public async Task<IActionResult> ListSchedules(Guid id)
     {
-        var result = await _tourService.GetTourFlow(id);
+        var result = await _tourService.ListSchedules(id);
         return result.Match(Ok, OnError);
     }
 }

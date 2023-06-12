@@ -1,6 +1,5 @@
 ﻿using Data.Enums;
 using Service.Models.Schedule;
-using Service.Models.TourFlow;
 
 namespace Service.Models.Tour;
 
@@ -16,7 +15,6 @@ public record TourUpdateModel
     string? Policy,
     TourStatus? Status,
     List<ScheduleCreateModel>? Schedules,
-    List<TourFlowCreateModel>? TourFlows,
     List<Guid>? Carousel,
     Guid? ThumbnailId
 );

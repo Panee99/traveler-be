@@ -26,9 +26,6 @@
         <None Update="EFCore\Seeds\travelers.json">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="EFCore\Seeds\tour-flows.json">
-            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
         <None Update="EFCore\Seeds\tour-groups.json">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>

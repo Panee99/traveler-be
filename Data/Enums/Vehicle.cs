@@ -2,6 +2,7 @@
 
 public enum Vehicle
 {
+    None,
     Car,
     Bus,
     Airplane,

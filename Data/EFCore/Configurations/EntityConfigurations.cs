@@ -80,8 +80,6 @@ public static class EntityConfigurations
             entity.Property(e => e.Status).HasMaxLength(256);
         });
 
-        modelBuilder.Entity<TourFlow>(entity => { entity.ToTable("TourFlow"); });
-
         modelBuilder.Entity<TourGroup>(entity => { entity.HasOne(e => e.TourVariant).WithMany(x => x.TourGroups); });
 
         modelBuilder.Entity<TourGuide>(entity =>

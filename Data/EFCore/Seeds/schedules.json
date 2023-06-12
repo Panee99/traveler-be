@@ -9,25 +9,37 @@
     "Id": "c6a144c6-2385-4b79-898f-8aab5c63bf01",
     "TourId": "60f45523-bd04-449a-9889-55fb70beb802",
     "Description": "Tham quan đảo Gầm Ghì",
-    "Sequence": 1
+    "Sequence": 1,
+    "Longitude": 104.01398799005166,
+    "Latitude": 9.9117696645014,
+    "Vehicle": "Boat"
   },
   {
     "Id": "cd976292-1f0a-4ed0-baaa-7a6dd343600a",
     "TourId": "60f45523-bd04-449a-9889-55fb70beb802",
     "Description": "Tham quan hòn Bườm hoặc hòn Móng Tay",
-    "Sequence": 2
+    "Sequence": 2,
+    "Longitude": 104.02198789122028,
+    "Latitude": 9.908465905017515,
+    "Vehicle": "Bus"
   },
   {
     "Id": "8cec478b-8897-42c4-acbe-e3e04d3c15b7",
     "TourId": "60f45523-bd04-449a-9889-55fb70beb802",
     "Description": "Tham quan hòn Mây Rút Trong và dùng bữa trưa ",
-    "Sequence": 3
+    "Sequence": 3,
+    "Longitude": 104.00006488424151,
+    "Latitude": 9.91807154293894,
+    "Vehicle": "Bus"
   },
   {
     "Id": "e54b7c0a-7568-4125-a082-53391764a9b0",
     "TourId": "60f45523-bd04-449a-9889-55fb70beb802",
     "Description": "Trải nghiệm dịch vụ đi dưới biển Seawalker (chi phí tự túc)",
-    "Sequence": 4
+    "Sequence": 4,
+    "Longitude": 103.95486945662066,
+    "Latitude": 10.231102878757673,
+    "Vehicle": "None"
   },
   {
     "Id": "0c896424-08f9-4df4-a658-b20f0b780d2a",

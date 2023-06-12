@@ -8,8 +8,8 @@ using Service.Commons.Mapping;
 using Service.Commons.QueryExtensions;
 using Service.Interfaces;
 using Service.Models.Attachment;
+using Service.Models.Schedule;
 using Service.Models.Tour;
-using Service.Models.TourFlow;
 using Service.Models.TourVariant;
 using Shared.ResultExtensions;
 
@@ -85,7 +85,6 @@ public class TourService : BaseService, ITourService
             .AsSplitQuery()
             .Where(e => e.Id == id)
             .Include(e => e.Schedules)
-            .Include(e => e.TourFlows)
             .Include(e => e.TourCarousel)
             .FirstOrDefaultAsync();
 
@@ -148,7 +147,6 @@ public class TourService : BaseService, ITourService
             .AsSplitQuery()
             .Where(e => e.Id == id)
             .Include(e => e.Schedules)
-            .Include(e => e.TourFlows)
             .Include(e => e.TourCarousel).ThenInclude(i => i.Attachment)
             .FirstOrDefaultAsync();
 
@@ -292,13 +290,13 @@ public class TourService : BaseService, ITourService
         return tourVariants.Adapt<List<TourVariantViewModel>>();
     }
 
-    public async Task<Result<List<TourFlowViewModel>>> GetTourFlow(Guid tourId)
+    public async Task<Result<List<ScheduleViewModel>>> ListSchedules(Guid tourId)
     {
-        var entities = await UnitOfWork.TourFlows
+        var entities = await UnitOfWork.Schedules
             .Query()
             .Where(e => e.TourId == tourId)
             .ToListAsync();
 
-        return entities.Adapt<List<TourFlowViewModel>>();
+        return entities.Adapt<List<ScheduleViewModel>>();
     }
 }

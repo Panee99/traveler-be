@@ -1,7 +1,7 @@
 ﻿using Service.Commons.QueryExtensions;
 using Service.Models.Attachment;
+using Service.Models.Schedule;
 using Service.Models.Tour;
-using Service.Models.TourFlow;
 using Service.Models.TourVariant;
 using Shared.ResultExtensions;
 
@@ -28,5 +28,5 @@ public interface ITourService
 
     Task<Result<List<TourVariantViewModel>>> ListTourVariants(Guid tourId);
 
-    Task<Result<List<TourFlowViewModel>>> GetTourFlow(Guid tourId);
+    Task<Result<List<ScheduleViewModel>>> ListSchedules(Guid tourId);
 }
