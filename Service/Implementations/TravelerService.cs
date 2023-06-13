@@ -79,26 +79,25 @@ public class TravelerService : BaseService, ITravelerService
 
     public async Task<Result<List<TourGroupViewModel>>> ListJoinedGroups(Guid travelerId)
     {
-        var groups = await UnitOfWork.Travelers
+        var groupResults = await UnitOfWork.Travelers
             .Query()
             .AsSplitQuery()
             .Where(traveler => traveler.Id == travelerId)
             .SelectMany(traveler => traveler.TourGroups)
             .Include(group => group.TourVariant)
             .ThenInclude(variant => variant.Tour)
+            .Select(group => new { Group = group, TravelerCount = group.Travelers.Count })
             .ToListAsync();
 
         // return
-        var views = await Task.WhenAll(groups.Select(async group =>
+        return groupResults.Select(groupResult =>
         {
-            var tour = group.TourVariant.Tour;
-            var view = group.Adapt<TourGroupViewModel>();
-            view.TourVariant!.Tour!.ThumbnailUrl = _cloudStorageService.GetMediaLink(tour.ThumbnailId);
-            view.TravelerCount = await _tourGroupService.CountTravelers(group.Id);
+            var view = groupResult.Group.Adapt<TourGroupViewModel>();
+            view.TourVariant!.Tour!.ThumbnailUrl =
+                _cloudStorageService.GetMediaLink(groupResult.Group.TourVariant.Tour.ThumbnailId);
+            view.TravelerCount = groupResult.TravelerCount;
             return view;
-        }));
-
-        return views.ToList();
+        }).ToList();
     }
 
     public async Task<Result<TourGroupViewModel>> GetCurrentJoinedGroup(Guid travelerId)

@@ -67,20 +67,18 @@ public class TourVariantService : BaseService, ITourVariantService
     {
         if (!await UnitOfWork.TourVariants.AnyAsync(e => e.Id == tourVariantId)) return Error.NotFound();
 
-        var tourGroups = await UnitOfWork.TourGroups
+        var groupResults = await UnitOfWork.TourGroups
             .Query()
             .Where(e => e.TourVariantId == tourVariantId)
+            .Select(e => new { Group = e, TravelerCount = e.Travelers.Count })
             .ToListAsync();
 
         // return
-        var views = await Task.WhenAll(
-            tourGroups.Adapt<List<TourGroupViewModel>>().Select(async view =>
-            {
-                view.TravelerCount = await _tourGroupService.CountTravelers(view.Id);
-                return view;
-            })
-        );
-        
-        return views.ToList();
+        return groupResults.Select(groupResult =>
+        {
+            var view = groupResult.Adapt<TourGroupViewModel>();
+            view.TravelerCount = groupResult.TravelerCount;
+            return view;
+        }).ToList();
     }
 }

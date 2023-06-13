@@ -1,5 +1,5 @@
 app = "dotnet-travelers"
-primary_region = "sin"
+primary_region = "hkg"
 
 [http_service]
   internal_port = 8080

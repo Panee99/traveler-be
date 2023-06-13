@@ -49,27 +49,26 @@ public class TourGuideService : BaseService, ITourGuideService
         if (!await UnitOfWork.TourGuides.AnyAsync(e => e.Id == tourGuideId))
             return Error.NotFound("Tour Guide not found.");
 
-        var assignedGroups = await UnitOfWork.TourGuides
+        var groupResults = await UnitOfWork.TourGuides
             .Query()
             .AsSplitQuery()
             .Where(guide => guide.Id == tourGuideId)
             .SelectMany(guide => guide.TourGroups)
             .Include(group => group.TourVariant)
             .ThenInclude(variant => variant.Tour)
+            .Select(group => new { Group = group, TravelerCount = group.Travelers.Count })
             .ToListAsync();
 
-
         // return
-        var views = await Task.WhenAll(assignedGroups.Select(async group =>
-        {
-            var tour = group.TourVariant.Tour;
-            var view = group.Adapt<TourGroupViewModel>();
-            view.TourVariant!.Tour!.ThumbnailUrl = _cloudStorageService.GetMediaLink(tour.ThumbnailId);
-            view.TravelerCount = await _tourGroupService.CountTravelers(group.Id);
-            return view;
-        }));
-
-        return views.ToList();
+        return groupResults.Select(groupResult =>
+            {
+                var view = groupResult.Group.Adapt<TourGroupViewModel>();
+                view.TourVariant!.Tour!.ThumbnailUrl =
+                    _cloudStorageService.GetMediaLink(groupResult.Group.TourVariant.Tour.ThumbnailId);
+                view.TravelerCount = groupResult.TravelerCount;
+                return view;
+            })
+            .ToList();
     }
 
     public async Task<Result<TourGroupViewModel>> GetCurrentAssignedTourGroup(Guid tourGuideId)
@@ -90,9 +89,9 @@ public class TourGuideService : BaseService, ITourGuideService
 
         if (currentGroup is null) return Error.NotFound("No current tour group assigned");
 
-        var tour = currentGroup.TourVariant.Tour;
         var view = currentGroup.Adapt<TourGroupViewModel>();
-        view.TourVariant!.Tour!.ThumbnailUrl = _cloudStorageService.GetMediaLink(tour.ThumbnailId);
+        view.TourVariant!.Tour!.ThumbnailUrl =
+            _cloudStorageService.GetMediaLink(currentGroup.TourVariant.Tour.ThumbnailId);
         view.TravelerCount = await _tourGroupService.CountTravelers(view.Id);
 
         return view;
