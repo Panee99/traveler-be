@@ -3,7 +3,7 @@
     "Id": "377B8315-25FA-4696-B699-24F58698CE70",
     "TourVariantId": "A71D3D04-2EAC-4EBE-999E-DBC60702CE3D",
     "TourGuideId": "21751A9C-FCD9-4FCC-93ED-7A4349A34BC7",
-    "GroupName": "DU LỊCH THỤY SĨ",
+    "GroupName": "Du lịch Thụy Sĩ",
     "CreatedAt": "2023-06-08 09:43:34.0000000",
     "MaxOccupancy": 50
   },
@@ -11,7 +11,7 @@
     "Id": "96FE251F-E3B8-4F20-9FC2-6671D9062FC0",
     "TourVariantId": "F85369AB-7E74-44A4-82B3-9BADB85B278A",
     "TourGuideId": "21751A9C-FCD9-4FCC-93ED-7A4349A34BC7",
-    "GroupName": "DU LỊCH NHẬT BẢN",
+    "GroupName": "Du lịch Nhật Bản",
     "CreatedAt": "2023-06-08 09:43:33.0000000",
     "MaxOccupancy": 50
   },
@@ -19,7 +19,7 @@
     "Id": "4F7090C3-32A4-462F-B7A0-6E05EC9CABC4",
     "TourVariantId": "E15F3A4D-ACDC-4215-BAFF-5C7A978169FB",
     "TourGuideId": "21751A9C-FCD9-4FCC-93ED-7A4349A34BC7",
-    "GroupName": "DU LỊCH CANADA – HOA KỲ - CUBA",
+    "GroupName": "Du lịch Canada – Hoa Kỳ - Cuba",
     "CreatedAt": "2023-06-08 09:43:32.0000000",
     "MaxOccupancy": 50
   },
@@ -35,7 +35,7 @@
     "Id": "D71FBDB2-5F38-4ACA-830E-D8D7D55B33CD",
     "TourVariantId": "A71D3D04-2EAC-4EBE-999E-DBC60702CE3D",
     "TourGuideId": "21751A9C-FCD9-4FCC-93ED-7A4349A34BC7",
-    "GroupName": "DU LỊCH THỤY SĨ",
+    "GroupName": "Du lịch Thụy Sĩ",
     "CreatedAt": "2023-06-08 09:47:47.0000000",
     "MaxOccupancy": 50
   }
