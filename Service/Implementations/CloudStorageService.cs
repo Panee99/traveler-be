@@ -31,7 +31,6 @@ public class CloudStorageService : BaseService, ICloudStorageService
 
     public async Task<Result<string>> Upload(Guid id, string contentType, Stream stream)
     {
-        Console.WriteLine("Cloud");
         try
         {
             await Storage.UploadObjectAsync(
@@ -42,7 +41,7 @@ public class CloudStorageService : BaseService, ICloudStorageService
                 null,
                 CancellationToken.None);
 
-            return GetMediaLink(id);
+            return GetMediaLink(id)!;
         }
         catch (Exception e)
         {
@@ -54,7 +53,6 @@ public class CloudStorageService : BaseService, ICloudStorageService
     // Delete an object, IsSuccess if deleted successfully or not found
     public async Task<Result> Delete(Guid id)
     {
-        Console.WriteLine("Cloud");
         try
         {
             await Storage.DeleteObjectAsync(
@@ -87,10 +85,12 @@ public class CloudStorageService : BaseService, ICloudStorageService
         // return CloudStorageHelper.GenerateV4UploadSignedUrl(
         //     _settings.Bucket,
         //     _settings.Folder + '/' + id);
-
-        if (id is null) return null;
-
-        return $"https://firebasestorage.googleapis.com/v0/b/" +
-               $"{_settings.Bucket}/o/{_settings.Folder}%2F{id}?alt=media";
+        
+        // return $"https://firebasestorage.googleapis.com/v0/b/" +
+        //        $"{_settings.Bucket}/o/{_settings.Folder}%2F{id}?alt=media";
+        
+        return id is null
+            ? null
+            : $"https://storage.googleapis.com/{_settings.Bucket}/{_settings.Folder}/{id}";
     }
 }

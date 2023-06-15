@@ -24,11 +24,11 @@
         <None Update="CloudServices\firebase-admin-sdk.json">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="ExternalServices\CloudStorage\cloud-storage.json">
-            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
         <None Update="ExternalServices\Firebase\firebase-admin-sdk.json">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="ExternalServices\CloudStorage\cloud-storage-key.json">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
     </ItemGroup>
 

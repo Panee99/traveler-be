@@ -13,7 +13,7 @@ public static class CloudStorageHelper
     static CloudStorageHelper()
     {
         var projectPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? "";
-        var credentialPath = Path.Combine(projectPath, "ExternalServices", "CloudStorage", "cloud-storage.json");
+        var credentialPath = Path.Combine(projectPath, "ExternalServices", "CloudStorage", "cloud-storage-key.json");
         var credential = GoogleCredential.FromFile(credentialPath);
 
         // Storage

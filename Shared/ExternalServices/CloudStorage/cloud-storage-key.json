@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "kool-project-380610",
+  "private_key_id": "9ec27012d166ed52328b6f754462caae694867af",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCJzYg56EKKeffK\ne8B8O88dKy4aGo0f6Wm4lLs7eo26Wl7bZcrXQkMFHkPtNEufsEQOCs8AQ4LT70jQ\n20LZMdZt4Vzrl/IT33N2jq/rcRAelcoy2UgyeTckt1ubowkaCyfZ22I/TY/yJHe2\nF37Ey/UkHv4VdBtM76quU2KtcakFb9dkFDCuK0s4Mbg6pBQnsg7fu4NyDhUVLrdJ\nNXbo6CHvUkPwkFvbkiFjJKUzJu0n0ktXsFRYhpeC+EU+39bPCX7G8zkpbALL7sd2\nFUliMCdJWug4baRPK8HF3gEJpi0ZXm+gLt4ojAybrfwM4HCSoUJviPoIFvsuvtVg\ny1A5oe/zAgMBAAECggEABokz365ydk4lDWEjo6c6jzADHPdxbITa0zrKsdGB2ceu\nt0oNF644e4x2vR0KRGXmp6I/mzJlVb2dsiCtyDUJVJp0/v+f9CCL222wTlx4eHR/\n69V+cfADe4xVN5aOBSkBfnj3U5IcNIHvFtK0D1iuvqqk2bBxTKVGO5Dc6n95L50o\n9Yc2QaXCjoiX7oeJCfvLDAgqwtXd+3mKCjvCsBFwpVcI6LMGSy7nBP630Nb94E+q\nz2ycVAB9tbthCz2EZud0CW+tG8e80GOIac6PxgCa1erva+CV+JwiMloEIR39hG4+\ntr724401QjyA4gxRzeHxq0RPbw5j9r3BIuqHn9qAcQKBgQDB1NVZJjBASc3pPu2P\nrWacq3HoEOD0ufqjvmeLyZVKNZlDz4sq+jXQId2a5QwBUNsFmilN4BDstbrg7EsA\nuVG4IXb4wuvEaJ+1vIilWAOHCXzxhdSgmbGpvHv46lbe79HUxf5xrB5QqZgRFU6a\nEbgiKBY/p/EcVu9ItnUpCIOvvQKBgQC2AEqvqk5ORoQ4E+dwwGUOiH0Y8Q1vC56e\n+cXWYeQP/mbzssxqDV9uJ4mmbOf/kGgb0BbPE2wBdNR4bsRvdzVG87c1JU2PtrmS\n4f0s+GMLb5Zd+Q/rEWEW8Ui5jwrld74W/6v9dWdgFJi1SlrvINYwF0EXU7W/UnsP\njv0H3U0BbwKBgQCQNwO5/cDexErxJQHp6bE0Fhd8+7n0O7+xPwSZrBVojnKHUo8Q\nHfQV9GyGR67j973N8EKVD4ZoKFpv6T9wvXGA111GfviePN2/gRQGOXL+cN/Gb7Wg\n/FmEmZl/vRN/cd2kOuAywUYY6+YZp8nAtjhTKZJMMG8jj8cfSanoKs6X3QKBgC+M\nj/apBeBJaA3GlXbNrRlI63XytFHItV5PXzKNTKopCvisQ9+JMt9ykPHcDhikv65U\nhUEAj/0pasE0HzoH6PFqhvjpkAP19zG6vQxcsHOyaZSPl2sQlU8LJrbj+jLNP+p+\nTY7gd2uQtfzXOj6zU4Io8SaJBji/8cq0zsKZPJ8dAoGAWFgZFFGktSmbAFgcy9Rv\n+bdy4bCRjivijcaNlLm3tSH59uy2PhP5N42CscOvhl+p9Dgmlj9S6xIFe1R5l7ev\nzs59M4RT8rC/uJzji+LNGtlA8HgHCkZ7lFdb9FaPtF29J1Mj2uKtDwR23BeYzHWX\nBHAdODZwSlDxkpsQqQb8DHU=\n-----END PRIVATE KEY-----\n",
+  "client_email": "cloud-storage@kool-project-380610.iam.gserviceaccount.com",
+  "client_id": "106106166745244594383",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/cloud-storage%40kool-project-380610.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
