@@ -59,15 +59,15 @@ public class TourVariantsController : ApiController
         return result.Match(Ok, OnError);
     }
     
-    /// <summary>
-    /// List travelers in tour variant
-    /// </summary>
-    [HttpGet("{id:guid}/travelers")]
-    public async Task<IActionResult> ListByTourVariant(Guid id)
-    {
-        var result = await _travelerService.ListByTourVariant(id);
-        return result.Match(Ok, OnError);
-    }
+    // /// <summary>
+    // /// List travelers in tour variant
+    // /// </summary>
+    // [HttpGet("{id:guid}/travelers")]
+    // public async Task<IActionResult> ListByTourVariant(Guid id)
+    // {
+    //     var result = await _travelerService.ListByTourVariant(id);
+    //     return result.Match(Ok, OnError);
+    // }
     
     /// <summary>
     /// List groups of this tour variant

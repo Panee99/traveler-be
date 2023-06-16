@@ -14,11 +14,8 @@ namespace Service.Implementations;
 
 public class TourVariantService : BaseService, ITourVariantService
 {
-    private readonly ITourGroupService _tourGroupService;
-
-    public TourVariantService(UnitOfWork unitOfWork, ITourGroupService tourGroupService) : base(unitOfWork)
+    public TourVariantService(UnitOfWork unitOfWork) : base(unitOfWork)
     {
-        _tourGroupService = tourGroupService;
     }
 
     public async Task<Result<TourVariantViewModel>> Create(TourVariantCreateModel model)
@@ -76,7 +73,7 @@ public class TourVariantService : BaseService, ITourVariantService
         // return
         return groupResults.Select(groupResult =>
         {
-            var view = groupResult.Adapt<TourGroupViewModel>();
+            var view = groupResult.Group.Adapt<TourGroupViewModel>();
             view.TravelerCount = groupResult.TravelerCount;
             return view;
         }).ToList();
