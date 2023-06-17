@@ -2,5 +2,5 @@
 
 public interface ICloudNotificationService
 {
-    void SendBatchMessages(ICollection<string> tokens, string title, string payload);
+    Task SendBatchMessages(ICollection<string> tokens, string title, string payload);
 }

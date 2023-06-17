@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using Service.Interfaces;
+﻿using Service.Interfaces;
 using Shared.Channels.Notification;
 
 namespace Application.Workers;
@@ -28,8 +27,11 @@ public class NotificationWorker : BackgroundService
             try
             {
                 var job = await _jobQueue.DequeueAsync();
-                //
-                _cloudNotificationService.SendBatchMessages(job.ReceiverTokens, job.Title, job.Payload);
+                _ = Task.Run(
+                    async () =>
+                    {
+                        await _cloudNotificationService.SendBatchMessages(job.ReceiverTokens, job.Title, job.Payload);
+                    }, stoppingToken);
             }
             catch (Exception ex)
             {

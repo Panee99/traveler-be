@@ -17,32 +17,31 @@ public class CloudNotificationService : ICloudNotificationService
         _messaging = FirebaseAppHelper.GetMessaging();
     }
 
-    public void SendBatchMessages(ICollection<string> tokens, string title, string payload)
+    public async Task SendBatchMessages(ICollection<string> tokens, string title, string payload)
     {
         if (tokens.Count == 0) return;
 
-        _ = Task.Run(async () =>
+        var messages = tokens.Select(token => _buildFirebaseMessage(token, title, payload));
+
+        try
         {
-            var messages = tokens.Select(token => _buildFirebaseMessage(token, title, payload));
+            var batchResponse = await _messaging.SendAllAsync(messages);
 
-            try
+            if (batchResponse.FailureCount == 0) return;
+
+            foreach (var response in batchResponse.Responses)
             {
-                var batchResponse = await _messaging.SendAllAsync(messages);
+                if (response.IsSuccess) continue;
 
-                foreach (var response in batchResponse.Responses)
-                {
-                    if (response.IsSuccess) continue;
-
-                    _logger.LogError(response.Exception,
-                        "Sending attendance notification failed: {Message}",
-                        response.Exception.Message);
-                }
+                _logger.LogError(response.Exception,
+                    "Sending attendance notification failed: {Message}",
+                    response.Exception.Message);
             }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "Error sending batch notifications: {Message}", e.Message);
-            }
-        });
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Error sending batch notifications: {Message}", e.Message);
+        }
     }
 
     private static Message _buildFirebaseMessage(string token, string title, string payload)
