@@ -17,11 +17,11 @@ public class CloudNotificationService : ICloudNotificationService
         _messaging = FirebaseAppHelper.GetMessaging();
     }
 
-    public async Task SendBatchMessages(ICollection<string> tokens, string title, string payload)
+    public async Task SendBatchMessages(ICollection<string> tokens, string title, string payload, string type)
     {
         if (tokens.Count == 0) return;
 
-        var messages = tokens.Select(token => _buildFirebaseMessage(token, title, payload));
+        var messages = tokens.Select(token => _buildFirebaseMessage(token, title, payload, type));
 
         try
         {
@@ -44,7 +44,7 @@ public class CloudNotificationService : ICloudNotificationService
         }
     }
 
-    private static Message _buildFirebaseMessage(string token, string title, string payload)
+    private static Message _buildFirebaseMessage(string token, string title, string payload, string type)
     {
         return new Message()
         {
@@ -54,7 +54,8 @@ public class CloudNotificationService : ICloudNotificationService
                 Data = new Dictionary<string, string>
                 {
                     { "id", Guid.NewGuid().ToString() },
-                    { "timestamp", DateTimeHelper.GetUtcTimestamp().ToString() }
+                    { "timestamp", DateTimeHelper.GetUtcTimestamp().ToString() },
+                    { "type", type }
                 },
                 Notification = new AndroidNotification()
                 {

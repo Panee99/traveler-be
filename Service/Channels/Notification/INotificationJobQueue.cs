@@ -1,4 +1,4 @@
-﻿namespace Shared.Channels.Notification;
+﻿namespace Service.Channels.Notification;
 
 public interface INotificationJobQueue
 {

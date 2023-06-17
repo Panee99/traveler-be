@@ -38,6 +38,7 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<Tour>().HasSeedData("tours.json");
         modelBuilder.Entity<Traveler>().HasSeedData("travelers.json");
         modelBuilder.Entity<TravelerInTourGroup>().HasSeedData("travelers-in-tour-groups.json");
+        modelBuilder.Entity<Notification>().HasSeedData("notifications.json");
     }
 }
 

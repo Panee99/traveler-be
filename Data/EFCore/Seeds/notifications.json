@@ -1,0 +1,18 @@
+﻿[
+  {
+    "Id": "814904e0-a8c1-4207-60d8-08db6f4dd64f",
+    "ReceiverId": "e6618130-62e9-4053-4047-08db269c26be",
+    "Title": "Attendance event",
+    "Payload": "A new attendance event opened: Evt 1",
+    "Type": "AttendanceEvent",
+    "Timestamp": "2023-06-17 23:13:50.1683174"
+  },
+  {
+    "Id": "2cdaa101-7be9-4fe7-60d9-08db6f4dd64f",
+    "ReceiverId": "ed3ebf19-3225-4f93-93a6-2ca03d43529b",
+    "Title": "Attendance event",
+    "Payload": "A new attendance event opened: Evt 1",
+    "Type": "AttendanceEvent",
+    "Timestamp": "2023-06-17 23:13:50.1828016"
+  }
+]

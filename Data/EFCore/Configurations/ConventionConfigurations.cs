@@ -18,5 +18,6 @@ public static class ConventionConfigurations
         configurationBuilder.Properties<Vehicle>().HaveConversion<string>();
         configurationBuilder.Properties<TransactionStatus>().HaveConversion<string>();
         configurationBuilder.Properties<VnPayRequestStatus>().HaveConversion<string>();
+        configurationBuilder.Properties<NotificationType>().HaveConversion<string>();
     }
 }

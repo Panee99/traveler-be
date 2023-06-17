@@ -1,6 +1,6 @@
 ﻿using System.Threading.Channels;
 
-namespace Shared.Channels.Notification;
+namespace Service.Channels.Notification;
 
 public sealed class NotificationJobQueue : INotificationJobQueue
 {

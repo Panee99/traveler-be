@@ -1,11 +1,12 @@
 ﻿using Data.EFCore;
 using Data.Entities;
+using Data.Enums;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
+using Service.Channels.Notification;
 using Service.Interfaces;
 using Service.Models.Attendance;
 using Service.Models.AttendanceEvent;
-using Shared.Channels.Notification;
 using Shared.Helpers;
 using Shared.ResultExtensions;
 
@@ -30,7 +31,7 @@ public class AttendanceEventService : BaseService, IAttendanceEventService
 
         await UnitOfWork.SaveChangesAsync();
 
-        // Send notification
+        // Notifications
         var travelerIds = await UnitOfWork.TourGroups
             .Query()
             .Where(group => group.Id == model.TourGroupId)
@@ -38,18 +39,13 @@ public class AttendanceEventService : BaseService, IAttendanceEventService
             .Select(traveler => traveler.Id)
             .ToListAsync();
 
-        var fcmTokens = await UnitOfWork.FcmTokens
-            .Query()
-            .Where(e => travelerIds.Contains(e.UserId))
-            .Select(e => e.Token)
-            .ToListAsync();
-
         await _notificationJobQueue.EnqueueAsync(
-            new NotificationJob(fcmTokens, "Attendance event",
-                $"A new attendance event opened: {attendanceEvent.Name}"));
-
-        // Save notification
-        // TODO
+            new NotificationJob(
+                travelerIds,
+                "Attendance event",
+                $"A new attendance event opened: {attendanceEvent.Name}",
+                NotificationType.AttendanceEvent
+            ));
 
         // Return
         return attendanceEvent.Adapt<AttendanceEventViewModel>();

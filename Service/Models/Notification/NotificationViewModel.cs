@@ -1,14 +1,10 @@
 ﻿using Data.Enums;
 
-namespace Data.Entities;
+namespace Service.Models.Notification;
 
-public class Notification
+public class NotificationViewModel
 {
     public Guid Id { get; set; }
-
-    public Guid ReceiverId { get; set; }
-
-    public User Receiver { get; set; } = null!;
 
     public string Title { get; set; } = null!;
 

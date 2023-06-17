@@ -3,9 +3,9 @@ using Application.Workers;
 using Data.EFCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using Service.Channels.Notification;
 using Service.Implementations;
 using Service.Interfaces;
-using Shared.Channels.Notification;
 using Shared.ExternalServices.VnPay;
 using Shared.Settings;
 

@@ -25,7 +25,8 @@ public class UnitOfWork : UnitOfWorkBase
     public IRepository<VnPayResponse> VnPayResponses => Repo<VnPayResponse>();
     public IRepository<IncurredCost> IncurredCosts => Repo<IncurredCost>();
     public IRepository<FcmToken> FcmTokens => Repo<FcmToken>();
-
+    public IRepository<Notification> Notifications => Repo<Notification>(); 
+    
     public UnitOfWork(AppDbContext context) : base(context)
     {
     }
