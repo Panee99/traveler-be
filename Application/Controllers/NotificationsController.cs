@@ -1,6 +1,7 @@
 ﻿using Application.Configurations.Auth;
 using Microsoft.AspNetCore.Mvc;
 using Service.Interfaces;
+using Service.Models.Notification;
 
 namespace Application.Controllers;
 
@@ -15,6 +16,7 @@ public class NotificationsController : ApiController
         _notificationService = notificationService;
     }
 
+    [ProducesResponseType(typeof(List<NotificationViewModel>), StatusCodes.Status200OK)]
     [HttpGet("")]
     public async Task<IActionResult> ListAll()
     {
