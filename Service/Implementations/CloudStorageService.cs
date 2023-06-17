@@ -1,5 +1,4 @@
 ﻿using System.Net;
-using Data.EFCore;
 using Google;
 using Google.Cloud.Storage.V1;
 using Microsoft.Extensions.Logging;
@@ -11,7 +10,7 @@ using Shared.Settings;
 
 namespace Service.Implementations;
 
-public class CloudStorageService : BaseService, ICloudStorageService
+public class CloudStorageService : ICloudStorageService
 {
     private static readonly StorageClient Storage;
     private readonly ILogger<CloudStorageService> _logger;
@@ -22,8 +21,8 @@ public class CloudStorageService : BaseService, ICloudStorageService
         Storage = CloudStorageHelper.GetStorage();
     }
 
-    public CloudStorageService(UnitOfWork unitOfWork, IOptions<CloudStorageSettings> settings,
-        ILogger<CloudStorageService> logger) : base(unitOfWork)
+    public CloudStorageService(IOptions<CloudStorageSettings> settings,
+        ILogger<CloudStorageService> logger)
     {
         _settings = settings.Value;
         _logger = logger;
@@ -85,10 +84,10 @@ public class CloudStorageService : BaseService, ICloudStorageService
         // return CloudStorageHelper.GenerateV4UploadSignedUrl(
         //     _settings.Bucket,
         //     _settings.Folder + '/' + id);
-        
+
         // return $"https://firebasestorage.googleapis.com/v0/b/" +
         //        $"{_settings.Bucket}/o/{_settings.Folder}%2F{id}?alt=media";
-        
+
         return id is null
             ? null
             : $"https://storage.googleapis.com/{_settings.Bucket}/{_settings.Folder}/{id}";

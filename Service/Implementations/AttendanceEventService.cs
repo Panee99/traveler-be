@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Service.Interfaces;
 using Service.Models.Attendance;
 using Service.Models.AttendanceEvent;
+using Shared.Channels.Notification;
 using Shared.Helpers;
 using Shared.ResultExtensions;
 
@@ -12,18 +13,45 @@ namespace Service.Implementations;
 
 public class AttendanceEventService : BaseService, IAttendanceEventService
 {
-    public AttendanceEventService(UnitOfWork unitOfWork) : base(unitOfWork)
+    private readonly INotificationJobQueue _notificationJobQueue;
+
+    public AttendanceEventService(UnitOfWork unitOfWork,
+        INotificationJobQueue notificationJobQueue) : base(unitOfWork)
     {
+        _notificationJobQueue = notificationJobQueue;
     }
 
     public async Task<Result<AttendanceEventViewModel>> Create(AttendanceEventCreateModel model)
     {
+        // Create attendance event
         var attendanceEvent = model.Adapt<AttendanceEvent>();
         attendanceEvent.CreatedAt = DateTimeHelper.VnNow();
         UnitOfWork.AttendanceEvents.Add(attendanceEvent);
 
         await UnitOfWork.SaveChangesAsync();
 
+        // Send notification
+        var travelerIds = await UnitOfWork.TourGroups
+            .Query()
+            .Where(group => group.Id == model.TourGroupId)
+            .SelectMany(group => group.Travelers)
+            .Select(traveler => traveler.Id)
+            .ToListAsync();
+
+        var fcmTokens = await UnitOfWork.FcmTokens
+            .Query()
+            .Where(e => travelerIds.Contains(e.UserId))
+            .Select(e => e.Token)
+            .ToListAsync();
+
+        await _notificationJobQueue.EnqueueAsync(
+            new NotificationJob(fcmTokens, "Attendance event",
+                $"A new attendance event opened: {attendanceEvent.Name}"));
+
+        // Save notification
+        // TODO
+
+        // Return
         return attendanceEvent.Adapt<AttendanceEventViewModel>();
     }
 

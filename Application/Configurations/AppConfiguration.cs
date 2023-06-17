@@ -1,8 +1,11 @@
 ﻿using Application.Middlewares;
+using Application.Workers;
 using Data.EFCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Service.Implementations;
+using Service.Interfaces;
+using Shared.Channels.Notification;
 using Shared.ExternalServices.VnPay;
 using Shared.Settings;
 
@@ -35,16 +38,25 @@ public static class AppConfiguration
 
     private static IServiceCollection AddDependencies(this IServiceCollection services)
     {
+        // Workers
+        services.AddSingleton<INotificationJobQueue>(new NotificationJobQueue());
+        services.AddHostedService<NotificationWorker>();
+
+        // Middleware
         services.AddScoped<HttpRequestLoggingMiddleware>();
         services.AddScoped<JwtMiddleware>();
-        services.AddScoped<UnitOfWork>();
 
-        // Inject Services
+        // Add all BaseService
+        services.AddScoped<UnitOfWork>();
         services.Scan(scan => scan
             .FromAssemblyOf<BaseService>()
             .AddClasses(classes => classes.AssignableTo<BaseService>())
             .AsImplementedInterfaces()
             .WithScopedLifetime());
+
+        // Other services
+        services.AddSingleton<ICloudStorageService, CloudStorageService>();
+        services.AddSingleton<ICloudNotificationService, CloudNotificationService>();
 
         return services;
     }

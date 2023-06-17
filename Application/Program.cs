@@ -1,5 +1,4 @@
 using Application.Configurations;
-using Application.Configurations.Auth;
 using Application.Middlewares;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -7,6 +6,7 @@ using Newtonsoft.Json.Serialization;
 using Serilog;
 using Shared.ExternalServices.Firebase;
 
+// Static instances
 FirebaseAppHelper.Init();
 
 // Serilog for file logging
@@ -46,7 +46,7 @@ var builder = WebApplication.CreateBuilder(args);
 // APPLICATION
 var app = builder.Build();
 {
-    Console.WriteLine(app.Environment.EnvironmentName);
+    app.Logger.LogInformation("Environment: {Env}", app.Environment.EnvironmentName);
     app
         // .UseHttpsRedirection()
         .UseCors(x => x
