@@ -1,4 +1,5 @@
-﻿using FirebaseAdmin.Messaging;
+﻿using Data.Enums;
+using FirebaseAdmin.Messaging;
 using Microsoft.Extensions.Logging;
 using Service.Interfaces;
 using Shared.ExternalServices.Firebase;
@@ -17,7 +18,11 @@ public class CloudNotificationService : ICloudNotificationService
         _messaging = FirebaseAppHelper.GetMessaging();
     }
 
-    public async Task SendBatchMessages(ICollection<string> tokens, string title, string payload, string type)
+    public async Task SendBatchMessages(
+        ICollection<string> tokens,
+        string title,
+        string payload,
+        NotificationType type)
     {
         if (tokens.Count == 0) return;
 
@@ -44,7 +49,11 @@ public class CloudNotificationService : ICloudNotificationService
         }
     }
 
-    private static Message _buildFirebaseMessage(string token, string title, string payload, string type)
+    private static Message _buildFirebaseMessage(
+        string token,
+        string title,
+        string payload,
+        NotificationType type)
     {
         return new Message()
         {
@@ -55,14 +64,28 @@ public class CloudNotificationService : ICloudNotificationService
                 {
                     { "id", Guid.NewGuid().ToString() },
                     { "timestamp", DateTimeHelper.GetUtcTimestamp().ToString() },
-                    { "type", type }
+                    { "type", type.ToString() }
                 },
                 Notification = new AndroidNotification()
                 {
                     Title = title,
                     Body = payload,
+                    EventTimestamp = DateTimeHelper.VnNow(),
+                    ClickAction = type switch
+                    {
+                        NotificationType.AttendanceEvent => NotificationAction.Attendance,
+                        _ => null
+                    },
                 },
             }
         };
     }
+}
+
+internal struct NotificationAction
+{
+    public const string Warning = "ACTION_WARNING";
+    public const string Attendance = "ACTION_ATTENDENCE";
+    public const string StartTour = "ACTION_START_TOUR";
+    public const string AcceptTour = "ACTION_TRAVELLER_ACCEPT_TOUR";
 }

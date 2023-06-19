@@ -62,7 +62,7 @@ public class NotificationWorker : BackgroundService
                             .ToListAsync(stoppingToken);
 
                         await _cloudNotificationService.SendBatchMessages(
-                            fcmTokens, job.Title, job.Payload, job.Type.ToString());
+                            fcmTokens, job.Title, job.Payload, job.Type);
                     },
                     stoppingToken);
             }
