@@ -8,5 +8,6 @@ public record ScheduleCreateModel
     string Description,
     double? Longitude,
     double? Latitude,
+    int DayNo,
     Vehicle? Vehicle
 );

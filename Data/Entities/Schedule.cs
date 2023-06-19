@@ -16,6 +16,8 @@ public class Schedule
 
     public double? Latitude { get; set; }
 
+    public int DayNo { get; set; }
+
     public Vehicle? Vehicle { get; set; }
 
     //

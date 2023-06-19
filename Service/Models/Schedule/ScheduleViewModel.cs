@@ -9,5 +9,6 @@ public record ScheduleViewModel
     public string Description = null!;
     public double? Longitude;
     public double? Latitude;
+    public int DayNo;
     public Vehicle? Vehicle;
 }

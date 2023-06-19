@@ -1,56 +1,282 @@
 ﻿[
   {
+    "Id": "025718af-d4cf-4b98-abb7-847c628eaa47",
+    "Sequence": 0,
+    "Description": "20:40-08:00 Quý khách có mặt tại sân bay quốc tế Tân Sơn Nhất",
+    "Longitude": 106.66191897486208,
+    "Latitude": 10.816368242616889,
+    "DayNo": 1,
+    "Vehicle": null,
+    "TourId": "aff4f4f3-6368-4afc-bc98-d82b662cfadb"
+  },
+  {
     "Id": "bac02b50-4931-45bc-b072-ec5001ec46a7",
-    "TourId": "60f45523-bd04-449a-9889-55fb70beb802",
+    "Sequence": 0,
     "Description": "08:30-17:00 Đón khách ",
-    "Sequence": 0
+    "Longitude": null,
+    "Latitude": null,
+    "DayNo": 1,
+    "Vehicle": null,
+    "TourId": "60f45523-bd04-449a-9889-55fb70beb802"
   },
   {
     "Id": "c6a144c6-2385-4b79-898f-8aab5c63bf01",
-    "TourId": "60f45523-bd04-449a-9889-55fb70beb802",
-    "Description": "Tham quan đảo Gầm Ghì",
     "Sequence": 1,
+    "Description": "Tham quan đảo Gầm Ghì",
     "Longitude": 104.01398799005166,
     "Latitude": 9.9117696645014,
-    "Vehicle": "Boat"
+    "DayNo": 1,
+    "Vehicle": "Boat",
+    "TourId": "60f45523-bd04-449a-9889-55fb70beb802"
+  },
+  {
+    "Id": "5b48b4be-e8da-469f-98e1-1aa892fafa33",
+    "Sequence": 1,
+    "Description": "06:30-21:00 Ngày 1: Đến Nhật Bản (Bữa trưa/Bữa tối) ",
+    "Longitude": null,
+    "Latitude": null,
+    "DayNo": 2,
+    "Vehicle": "AirPlane",
+    "TourId": "aff4f4f3-6368-4afc-bc98-d82b662cfadb"
+  },
+  {
+    "Id": "950321a1-f464-45e2-806c-43d12389a83c",
+    "Sequence": 2,
+    "Description": "Ngôi làng cổ Oshino Hakkai—ngôi làng cổ nằm yên bình dưới chân núi Phú Sĩ. Cho đến ngày nay",
+    "Longitude": 138.8325,
+    "Latitude": 35.4601,
+    "DayNo": 2,
+    "Vehicle": "Bus",
+    "TourId": "aff4f4f3-6368-4afc-bc98-d82b662cfadb"
   },
   {
     "Id": "cd976292-1f0a-4ed0-baaa-7a6dd343600a",
-    "TourId": "60f45523-bd04-449a-9889-55fb70beb802",
-    "Description": "Tham quan hòn Bườm hoặc hòn Móng Tay",
     "Sequence": 2,
+    "Description": "Tham quan hòn Bườm hoặc hòn Móng Tay",
     "Longitude": 104.02198789122028,
     "Latitude": 9.908465905017515,
-    "Vehicle": "Bus"
+    "DayNo": 1,
+    "Vehicle": "Bus",
+    "TourId": "60f45523-bd04-449a-9889-55fb70beb802"
+  },
+  {
+    "Id": "f6a200b2-7f1b-422f-a329-06dc14bec92f",
+    "Sequence": 3,
+    "Description": "Du thuyền Swan Cruise (25 phút) trên hồ Yamanaka.",
+    "Longitude": 138.87319271268908,
+    "Latitude": 35.41905597974736,
+    "DayNo": 2,
+    "Vehicle": "Boat",
+    "TourId": "aff4f4f3-6368-4afc-bc98-d82b662cfadb"
   },
   {
     "Id": "8cec478b-8897-42c4-acbe-e3e04d3c15b7",
-    "TourId": "60f45523-bd04-449a-9889-55fb70beb802",
-    "Description": "Tham quan hòn Mây Rút Trong và dùng bữa trưa ",
     "Sequence": 3,
+    "Description": "Tham quan hòn Mây Rút Trong và dùng bữa trưa ",
     "Longitude": 104.00006488424151,
     "Latitude": 9.91807154293894,
-    "Vehicle": "Bus"
+    "DayNo": 1,
+    "Vehicle": "Bus",
+    "TourId": "60f45523-bd04-449a-9889-55fb70beb802"
   },
   {
     "Id": "e54b7c0a-7568-4125-a082-53391764a9b0",
-    "TourId": "60f45523-bd04-449a-9889-55fb70beb802",
-    "Description": "Trải nghiệm dịch vụ đi dưới biển Seawalker (chi phí tự túc)",
     "Sequence": 4,
+    "Description": "Trải nghiệm dịch vụ đi dưới biển Seawalker (chi phí tự túc)",
     "Longitude": 103.95486945662066,
     "Latitude": 10.231102878757673,
-    "Vehicle": "None"
+    "DayNo": 1,
+    "Vehicle": "None",
+    "TourId": "60f45523-bd04-449a-9889-55fb70beb802"
+  },
+  {
+    "Id": "3d5c948b-1ed7-4274-a19b-6dbd530765a3",
+    "Sequence": 4,
+    "Description": "Núi Phú Sĩ—ngọn núi cao nhất Nhật Bản so với mực nước biển là 3776 mét. Khách sẽ lên trạm dừng chân thứ 5 ở độ cao 2.300m để ngắm núi Phú Sĩ rõ hơn (nếu thời tiết cho phép).",
+    "Longitude": 138.73359313318142,
+    "Latitude": 35.39419886895542,
+    "DayNo": 2,
+    "Vehicle": "Bus",
+    "TourId": "aff4f4f3-6368-4afc-bc98-d82b662cfadb"
   },
   {
     "Id": "0c896424-08f9-4df4-a658-b20f0b780d2a",
-    "TourId": "60f45523-bd04-449a-9889-55fb70beb802",
+    "Sequence": 5,
     "Description": "Trả khách",
-    "Sequence": 5
+    "Longitude": null,
+    "Latitude": null,
+    "DayNo": 1,
+    "Vehicle": null,
+    "TourId": "60f45523-bd04-449a-9889-55fb70beb802"
+  },
+  {
+    "Id": "a259598c-be5a-46ce-b652-b55ba0526244",
+    "Sequence": 5,
+    "Description": "Về khách sạn Shinko Hotel (hoặc khách sạn có tiêu chuẩn tương đương) nhận phòng nghỉ ngơi.",
+    "Longitude": 138.642290282682,
+    "Latitude": 35.65555976585962,
+    "DayNo": 2,
+    "Vehicle": "Bus",
+    "TourId": "aff4f4f3-6368-4afc-bc98-d82b662cfadb"
+  },
+  {
+    "Id": "60e4ab42-305a-44a3-bddf-cfea37356eb7",
+    "Sequence": 6,
+    "Description": "Trải nghiệm tắm Onsen—nét văn hóa độc đáo ở xứ sở hoa anh đào.",
+    "Longitude": null,
+    "Latitude": null,
+    "DayNo": 2,
+    "Vehicle": null,
+    "TourId": "aff4f4f3-6368-4afc-bc98-d82b662cfadb"
   },
   {
     "Id": "c72d15dd-dd97-4b96-a6b8-7d3639e8b0a3",
-    "TourId": "60f45523-bd04-449a-9889-55fb70beb802",
+    "Sequence": 6,
     "Description": "Kết thúc tour. ",
-    "Sequence": 6
+    "Longitude": null,
+    "Latitude": null,
+    "DayNo": 1,
+    "Vehicle": null,
+    "TourId": "60f45523-bd04-449a-9889-55fb70beb802"
+  },
+  {
+    "Id": "c4386322-45ef-46c0-acc9-48609ac76f18",
+    "Sequence": 7,
+    "Description": "06:30-21:00 Ngày 2 (Bữa sáng/trưa/tối) ",
+    "Longitude": null,
+    "Latitude": null,
+    "DayNo": 3,
+    "Vehicle": null,
+    "TourId": "aff4f4f3-6368-4afc-bc98-d82b662cfadb"
+  },
+  {
+    "Id": "5451e8e8-9436-44f0-a81f-bf8aebcd393a",
+    "Sequence": 8,
+    "Description": "Thưởng thức và vào vườn hái trái cây theo mùa: Nho, Táo, Lê, Đào, Hồng giòn, Dâu Kiwi,... (tùy theo mùa).",
+    "Longitude": null,
+    "Latitude": null,
+    "DayNo": 3,
+    "Vehicle": null,
+    "TourId": "aff4f4f3-6368-4afc-bc98-d82b662cfadb"
+  },
+  {
+    "Id": "ff8fb1bc-3528-432b-957b-6cc0854e42ef",
+    "Sequence": 9,
+    "Description": "Hoàng Cung—nơi Nhật Hoàng sống và làm việc (tham quan và chụp ảnh bên ngoài). ",
+    "Longitude": 139.7527243943221,
+    "Latitude": 35.685357973316556,
+    "DayNo": 3,
+    "Vehicle": "Bus",
+    "TourId": "aff4f4f3-6368-4afc-bc98-d82b662cfadb"
+  },
+  {
+    "Id": "7b3fc33c-5861-4c87-87db-070cb7415a9d",
+    "Sequence": 10,
+    "Description": "Chùa cổ Asakusa Kannon—ngôi đền linh thiêng và là một trong những ngôi đền cổ kính nhất hiện nay của Tokyo với kiến trúc truyền thống hết sức đặc trưng. ",
+    "Longitude": 139.79715120123248,
+    "Latitude": 35.71506573611945,
+    "DayNo": 3,
+    "Vehicle": "Bus",
+    "TourId": "aff4f4f3-6368-4afc-bc98-d82b662cfadb"
+  },
+  {
+    "Id": "2cd5bc91-ad48-42f7-a22c-c35938926285",
+    "Sequence": 11,
+    "Description": "Tham quan con phố mua sắm Nakamise trước chùa. ",
+    "Longitude": 139.7964257524543,
+    "Latitude": 35.71191393984327,
+    "DayNo": 3,
+    "Vehicle": null,
+    "TourId": "aff4f4f3-6368-4afc-bc98-d82b662cfadb"
+  },
+  {
+    "Id": "d37fc08c-aa01-46d0-b9ee-2e895fc7f5d2",
+    "Sequence": 12,
+    "Description": "Tokyo Sky Tree—tháp truyền hình của Nhật Bản",
+    "Longitude": 139.80903283424433,
+    "Latitude": 35.71041640301107,
+    "DayNo": 3,
+    "Vehicle": "Bus",
+    "TourId": "aff4f4f3-6368-4afc-bc98-d82b662cfadb"
+  },
+  {
+    "Id": "26189394-aeb1-42b4-80fc-87b45212526c",
+    "Sequence": 13,
+    "Description": "Mua sắm tại khu phố thương mại nổi tiếng ở Tokyo: thành phố điện tử Akihabara- hàng trăm món đồ điện tử được trưng bày nơi đây tha hồ cho du khách nhìn ngắm. Giá đồ điện tử ở đây rẻ hơn từ 20–30%",
+    "Longitude": 139.77143572793966,
+    "Latitude": 35.69979908490874,
+    "DayNo": 3,
+    "Vehicle": null,
+    "TourId": "aff4f4f3-6368-4afc-bc98-d82b662cfadb"
+  },
+  {
+    "Id": "75ca5e4b-b310-413d-9acc-4b7bf78539bf",
+    "Sequence": 14,
+    "Description": "Về khách sạn Shinjuku Washington (hoặc tương đương) nhận phòng và nghỉ ngơi. ",
+    "Longitude": 139.69347496217677,
+    "Latitude": 35.68698952025577,
+    "DayNo": 3,
+    "Vehicle": "Bus",
+    "TourId": "aff4f4f3-6368-4afc-bc98-d82b662cfadb"
+  },
+  {
+    "Id": "410bfece-34ee-4e18-b498-e996b047ebf9",
+    "Sequence": 15,
+    "Description": "06:30-21:00 Ngày 3 (Bữa sáng/trưa/tối)  ",
+    "Longitude": null,
+    "Latitude": null,
+    "DayNo": 4,
+    "Vehicle": null,
+    "TourId": "aff4f4f3-6368-4afc-bc98-d82b662cfadb"
+  },
+  {
+    "Id": "1bcbce99-34b1-4d54-be42-66d19d534d26",
+    "Sequence": 16,
+    "Description": "Hitachi Seaside Park—Công viên ven biển Hitachi có diện tích khoảng 190 Hecta là một địa điểm để đi bộ ngắm các loài hoa đặc sắc ở Nhật và đặc biệt nổi tiếng với cỏ đỏ Kochia vào tháng 10 hàng năm. ",
+    "Longitude": 140.5966453565954,
+    "Latitude": 36.40605161399731,
+    "DayNo": 4,
+    "Vehicle": "Bus",
+    "TourId": "aff4f4f3-6368-4afc-bc98-d82b662cfadb"
+  },
+  {
+    "Id": "d3177b48-1d24-408d-ab41-b4f128a4d74c",
+    "Sequence": 17,
+    "Description": "Chiêm bái và lễ phật tại Đại tượng phật USHIKU-DAIBUTSU (A Di Đà) cao 120m, trọng lượng tổng thể 4.000 tấn và được ghép từ 6.000 phiến đồng thiếc (seido, thanh đồng) có độ bền cao. Năm 1996, tượng Ushiku Daibutsu được công nhận kỷ lục là bức tượng Phật bằng đồng lớn nhất thế giới, được ghi vào Guiness Book of Records, và là một trong những kỳ quan của thế giới. ",
+    "Longitude": 140.22022260968097,
+    "Latitude": 35.98288815169589,
+    "DayNo": 4,
+    "Vehicle": "Bus",
+    "TourId": "aff4f4f3-6368-4afc-bc98-d82b662cfadb"
+  },
+  {
+    "Id": "48d53e76-5086-41ab-b1f8-51743fbfa7ad",
+    "Sequence": 18,
+    "Description": "Tiếp tục tham quan và mua sắm tại Ami Premium Outlets—khu mua sắm hàng đầu của Nhật",
+    "Longitude": 140.23754558061557,
+    "Latitude": 35.98417016193703,
+    "DayNo": 4,
+    "Vehicle": "Bus",
+    "TourId": "aff4f4f3-6368-4afc-bc98-d82b662cfadb"
+  },
+  {
+    "Id": "7f5f3722-b2ce-44e7-b005-3e979f06707f",
+    "Sequence": 19,
+    "Description": "06:00-13:00 Ngày 4 (Bữa sáng) ",
+    "Longitude": null,
+    "Latitude": null,
+    "DayNo": 5,
+    "Vehicle": null,
+    "TourId": "aff4f4f3-6368-4afc-bc98-d82b662cfadb"
+  },
+  {
+    "Id": "a2879cec-225e-4293-967d-f0fcf158fb52",
+    "Sequence": 20,
+    "Description": "Xe đón đoàn ra sân bay làm thủ tục đáp chuyến bay về thành phố Hồ Chí Minh. Kết thúc tour. ",
+    "Longitude": null,
+    "Latitude": null,
+    "DayNo": 5,
+    "Vehicle": "Bus",
+    "TourId": "aff4f4f3-6368-4afc-bc98-d82b662cfadb"
   }
 ]
