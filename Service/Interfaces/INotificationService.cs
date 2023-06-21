@@ -9,4 +9,8 @@ public interface INotificationService
     Task<Result<List<NotificationViewModel>>> ListAll(Guid userId);
 
     Task AddNotifications(IEnumerable<Guid> receiverIds, string title, string payload, NotificationType type);
+
+    Task<Result> MarkAsRead(Guid notificationId);
+
+    Task<Result> MarkAllAsRead();
 }

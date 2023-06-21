@@ -25,6 +25,37 @@ public class NotificationService : BaseService, INotificationService
             .ToListAsync();
     }
 
+    public async Task<Result> MarkAsRead(Guid notificationId)
+    {
+        var notification = await UnitOfWork.Notifications.FindAsync(notificationId);
+        if (notification is null) return Error.NotFound();
+
+        notification.IsRead = true;
+        UnitOfWork.Notifications.Update(notification);
+        await UnitOfWork.SaveChangesAsync();
+        
+        return Result.Success();
+    }
+
+    public async Task<Result> MarkAllAsRead()
+    {
+        var notifications = await UnitOfWork.Notifications
+            .Query()
+            .Where(e => e.IsRead == false)
+            .ToListAsync();
+
+        notifications = notifications.Select(e =>
+        {
+            e.IsRead = true;
+            return e;
+        }).ToList();
+
+        UnitOfWork.Notifications.UpdateRange(notifications);
+        await UnitOfWork.SaveChangesAsync();
+        
+        return Result.Success();
+    }
+
     public async Task AddNotifications(
         IEnumerable<Guid> receiverIds,
         string title,
@@ -37,6 +68,7 @@ public class NotificationService : BaseService, INotificationService
             Title = title,
             Payload = payload,
             Timestamp = DateTimeHelper.VnNow(),
+            IsRead = false,
             Type = type
         });
 

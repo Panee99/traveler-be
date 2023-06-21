@@ -23,4 +23,20 @@ public class NotificationsController : ApiController
         var result = await _notificationService.ListAll(CurrentUser.Id);
         return result.Match(Ok, OnError);
     }
+
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [HttpPut("{id:guid}/read")]
+    public async Task<IActionResult> Read(Guid id)
+    {
+        var result = await _notificationService.MarkAsRead(id);
+        return result.Match(Ok, OnError);
+    }
+
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [HttpPut("read-all")]
+    public async Task<IActionResult> ReadAll()
+    {
+        var result = await _notificationService.MarkAllAsRead();
+        return result.Match(Ok, OnError);
+    }
 }

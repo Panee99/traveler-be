@@ -12,5 +12,7 @@ public class NotificationViewModel
 
     public NotificationType Type { get; set; }
 
+    public bool IsRead { get; set; }
+
     public DateTime Timestamp { get; set; }
 }
