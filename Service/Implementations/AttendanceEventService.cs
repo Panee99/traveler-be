@@ -42,8 +42,8 @@ public class AttendanceEventService : BaseService, IAttendanceEventService
         await _notificationJobQueue.EnqueueAsync(
             new NotificationJob(
                 travelerIds,
-                "Attendance event",
-                $"A new attendance event opened: {attendanceEvent.Name}",
+                "Tour Guide",
+                attendanceEvent.Name,
                 NotificationType.AttendanceEvent
             ));
 

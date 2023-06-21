@@ -1,5 +1,6 @@
 ﻿using Application.Middlewares;
 using Application.Workers;
+using Application.Workers.Notification;
 using Data.EFCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;

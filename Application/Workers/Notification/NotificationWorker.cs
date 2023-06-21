@@ -1,11 +1,11 @@
 ﻿using Data.EFCore;
-using Data.Entities;
+using Data.Enums;
 using Microsoft.EntityFrameworkCore;
+using RazorEngineCore;
 using Service.Channels.Notification;
 using Service.Interfaces;
-using Shared.Helpers;
 
-namespace Application.Workers;
+namespace Application.Workers.Notification;
 
 public class NotificationWorker : BackgroundService
 {
@@ -13,6 +13,9 @@ public class NotificationWorker : BackgroundService
     private readonly ICloudNotificationService _cloudNotificationService;
     private readonly INotificationJobQueue _jobQueue;
     private readonly IServiceProvider _serviceProvider;
+
+    private readonly RazorEngine _razorEngine;
+    private readonly string _attendanceTemplate;
 
     public NotificationWorker(
         INotificationJobQueue jobQueue,
@@ -24,6 +27,9 @@ public class NotificationWorker : BackgroundService
         _logger = logger;
         _serviceProvider = serviceProvider;
         _cloudNotificationService = cloudNotificationService;
+        //
+        _razorEngine = new RazorEngine();
+        _attendanceTemplate = _readTemplate("attendance.html");
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -34,25 +40,22 @@ public class NotificationWorker : BackgroundService
             try
             {
                 var job = await _jobQueue.DequeueAsync();
-
                 _ = Task.Run(
                     async () =>
                     {
                         using var scope = _serviceProvider.CreateScope();
                         var unitOfWork = scope.ServiceProvider.GetRequiredService<UnitOfWork>();
+                        var notificationService = scope.ServiceProvider.GetRequiredService<INotificationService>();
+
+                        var title = _buildTitle(job.Type);
+                        var rawPayload = _buildPayload(job.Type, job.Subject, job.DirectObject, false);
+                        var templatePayload = _buildPayload(job.Type, job.Subject, job.DirectObject, true);
 
                         // 1. Save notifications
-                        var notifications = job.ReceiverIds.Select(travelerId => new Notification()
-                        {
-                            ReceiverId = travelerId,
-                            Title = job.Title,
-                            Payload = job.Payload,
-                            Timestamp = DateTimeHelper.VnNow(),
-                            Type = job.Type
-                        });
-
-                        unitOfWork.Notifications.AddRange(notifications);
-                        await unitOfWork.SaveChangesAsync();
+                        await notificationService.AddNotifications(job.ReceiverIds,
+                            title,
+                            templatePayload,
+                            job.Type);
 
                         // 2. Send notifications
                         var fcmTokens = await unitOfWork.FcmTokens
@@ -62,7 +65,7 @@ public class NotificationWorker : BackgroundService
                             .ToListAsync(stoppingToken);
 
                         await _cloudNotificationService.SendBatchMessages(
-                            fcmTokens, job.Title, job.Payload, job.Type);
+                            fcmTokens, title, rawPayload, job.Type);
                     },
                     stoppingToken);
             }
@@ -78,5 +81,39 @@ public class NotificationWorker : BackgroundService
     {
         _logger.LogInformation($"{nameof(NotificationWorker)} is stopping.");
         await base.StopAsync(stoppingToken);
+    }
+
+    private string _buildTitle(NotificationType type)
+    {
+        return type switch
+        {
+            NotificationType.AttendanceEvent => "Attendance Event",
+            NotificationType.TourStarted => throw new ArgumentOutOfRangeException(),
+            _ => throw new ArgumentOutOfRangeException()
+        };
+    }
+
+    private string _buildPayload(NotificationType type, string subject, string directObject, bool useTemplate)
+    {
+        switch (type)
+        {
+            case NotificationType.AttendanceEvent:
+            {
+                if (!useTemplate)
+                {
+                    return $"A new attendance event opened: {directObject}";
+                }
+
+                var compiledTemplate = _razorEngine.Compile(_attendanceTemplate);
+                return compiledTemplate.Run(new { Name = directObject });
+            }
+            case NotificationType.TourStarted: throw new ArgumentOutOfRangeException();
+            default: throw new ArgumentOutOfRangeException();
+        }
+    }
+
+    private static string _readTemplate(string fileName)
+    {
+        return File.ReadAllText($"Workers/Notification/Templates/{fileName}");
     }
 }

@@ -2,5 +2,6 @@
 
 public enum NotificationType
 {
-    AttendanceEvent
+    AttendanceEvent,
+    TourStarted
 }
