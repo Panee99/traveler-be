@@ -288,6 +288,9 @@ public class TourService : BaseService, ITourService
 
     public async Task<Result<List<ScheduleViewModel>>> ListSchedules(Guid tourId)
     {
+        if (!await UnitOfWork.Tours.AnyAsync(e => e.Id == tourId))
+            return Error.NotFound("Tour not found.");
+
         var entities = await UnitOfWork.Schedules
             .Query()
             .Where(e => e.TourId == tourId)

@@ -5,6 +5,7 @@
     "Title": "Attendance event",
     "Payload": "<div style=\"text-align: left; font-size: 16px; color: #202625;\">\r\n    Attendance for\r\n    <strong>\r\n        Prepare to depart\r\n    </strong>\r\n    has been\r\n    <span style=\"color: #00C738; font-weight: normal;\">\r\n        opened\r\n    </span>.\r\n</div>",
     "Type": "AttendanceEvent",
+    "IsRead": false,
     "Timestamp": "2023-06-17 23:13:50.1683174"
   },
   {
@@ -13,6 +14,7 @@
     "Title": "Attendance Event",
     "Payload": "<div style=\"text-align: left; font-size: 16px; color: #202625;\">\r\n    Attendance for\r\n    <strong>\r\n        Day 2\r\n    </strong>\r\n    has been\r\n    <span style=\"color: #00C738; font-weight: normal;\">\r\n        opened\r\n    </span>.\r\n</div>",
     "Type": "AttendanceEvent",
+    "IsRead": false,
     "Timestamp": "2023-06-18 18:00:51.1300000"
   },
   {
@@ -21,6 +23,7 @@
     "Title": "Attendance event",
     "Payload": "<div style=\"text-align: left; font-size: 16px; color: #202625;\">\r\n    Attendance for\r\n    <strong>\r\n        Prepare to depart\r\n    </strong>\r\n    has been\r\n    <span style=\"color: #00C738; font-weight: normal;\">\r\n        opened\r\n    </span>.\r\n</div>",
     "Type": "AttendanceEvent",
+    "IsRead": false,
     "Timestamp": "2023-06-17 23:13:50.1828016"
   },
   {
@@ -29,6 +32,7 @@
     "Title": "Attendance Event",
     "Payload": "<div style=\"text-align: left; font-size: 16px; color: #202625;\">\r\n    Attendance for\r\n    <strong>\r\n        Day 2\r\n    </strong>\r\n    has been\r\n    <span style=\"color: #00C738; font-weight: normal;\">\r\n        opened\r\n    </span>.\r\n</div>",
     "Type": "AttendanceEvent",
+    "IsRead": false,
     "Timestamp": "2023-06-18 18:00:51.1730000"
   },
   {
@@ -37,6 +41,7 @@
     "Title": "Attendance Event",
     "Payload": "<div style=\"text-align: left; font-size: 16px; color: #202625;\">\r\n    Attendance for\r\n    <strong>\r\n        Day 2\r\n    </strong>\r\n    has been\r\n    <span style=\"color: #00C738; font-weight: normal;\">\r\n        opened\r\n    </span>.\r\n</div>",
     "Type": "AttendanceEvent",
+    "IsRead": false,
     "Timestamp": "2023-06-18 18:00:51.1300000"
   },
   {
@@ -45,6 +50,7 @@
     "Title": "Attendance Event",
     "Payload": "<div style=\"text-align: left; font-size: 16px; color: #202625;\">\r\n    Attendance for\r\n    <strong>\r\n        Prepare to depart\r\n    </strong>\r\n    has been\r\n    <span style=\"color: #00C738; font-weight: normal;\">\r\n        opened\r\n    </span>.\r\n</div>",
     "Type": "AttendanceEvent",
+    "IsRead": false,
     "Timestamp": "2023-06-17 23:13:50.1683174"
   }
 ]
