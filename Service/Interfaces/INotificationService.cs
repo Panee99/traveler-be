@@ -12,5 +12,7 @@ public interface INotificationService
 
     Task<Result> MarkAsRead(Guid notificationId);
 
-    Task<Result> MarkAllAsRead();
+    Task<Result> MarkAllAsRead(Guid userId);
+
+    Task<Result<int>> GetUnreadCount(Guid userId);
 }

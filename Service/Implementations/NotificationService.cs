@@ -33,14 +33,15 @@ public class NotificationService : BaseService, INotificationService
         notification.IsRead = true;
         UnitOfWork.Notifications.Update(notification);
         await UnitOfWork.SaveChangesAsync();
-        
+
         return Result.Success();
     }
 
-    public async Task<Result> MarkAllAsRead()
+    public async Task<Result> MarkAllAsRead(Guid userId)
     {
         var notifications = await UnitOfWork.Notifications
             .Query()
+            .Where(e => e.ReceiverId == userId)
             .Where(e => e.IsRead == false)
             .ToListAsync();
 
@@ -52,8 +53,17 @@ public class NotificationService : BaseService, INotificationService
 
         UnitOfWork.Notifications.UpdateRange(notifications);
         await UnitOfWork.SaveChangesAsync();
-        
+
         return Result.Success();
+    }
+
+    public async Task<Result<int>> GetUnreadCount(Guid userId)
+    {
+        return await UnitOfWork.Notifications
+            .Query()
+            .Where(e => e.ReceiverId == userId)
+            .Where(e => e.IsRead == false)
+            .CountAsync();
     }
 
     public async Task AddNotifications(

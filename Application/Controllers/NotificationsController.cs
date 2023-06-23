@@ -36,7 +36,15 @@ public class NotificationsController : ApiController
     [HttpPut("read-all")]
     public async Task<IActionResult> ReadAll()
     {
-        var result = await _notificationService.MarkAllAsRead();
+        var result = await _notificationService.MarkAllAsRead(CurrentUser.Id);
         return result.Match(Ok, OnError);
+    }
+
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [HttpPut("unread-count")]
+    public async Task<IActionResult> GetUnreadCount()
+    {
+        var result = await _notificationService.GetUnreadCount(CurrentUser.Id);
+        return result.IsSuccess ? Ok(new { Count = result.Value }) : OnError(result.Error);
     }
 }
