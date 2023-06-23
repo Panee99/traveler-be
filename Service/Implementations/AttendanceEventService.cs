@@ -24,6 +24,9 @@ public class AttendanceEventService : BaseService, IAttendanceEventService
 
     public async Task<Result<AttendanceEventViewModel>> Create(AttendanceEventCreateModel model)
     {
+        var tourGroup = await UnitOfWork.TourGroups.FindAsync(model.TourGroupId);
+        if (tourGroup is null) return Error.NotFound("Tour Group not found");
+
         // Create attendance event
         var attendanceEvent = model.Adapt<AttendanceEvent>();
         attendanceEvent.CreatedAt = DateTimeHelper.VnNow();
@@ -32,16 +35,18 @@ public class AttendanceEventService : BaseService, IAttendanceEventService
         await UnitOfWork.SaveChangesAsync();
 
         // Notifications
-        var travelerIds = await UnitOfWork.TourGroups
+        var receiverIds = await UnitOfWork.TourGroups
             .Query()
             .Where(group => group.Id == model.TourGroupId)
             .SelectMany(group => group.Travelers)
             .Select(traveler => traveler.Id)
             .ToListAsync();
 
+        if (tourGroup.TourGuideId != null) receiverIds.Add(tourGroup.TourGuideId.Value);
+
         await _notificationJobQueue.EnqueueAsync(
             new NotificationJob(
-                travelerIds,
+                receiverIds,
                 "Tour Guide",
                 attendanceEvent.Name,
                 NotificationType.AttendanceEvent
