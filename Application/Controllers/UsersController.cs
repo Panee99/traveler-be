@@ -16,6 +16,15 @@ public class UsersController : ApiController
         _userService = userService;
     }
 
+    [Authorize]
+    [ProducesResponseType(typeof(UserViewModel), StatusCodes.Status200OK)]
+    [HttpPut("self/password")]
+    public async Task<IActionResult> ChangePassword(PasswordUpdateModel model)
+    {
+        var result = await _userService.ChangePassword(CurrentUser.Id, model);
+        return result.Match(Ok, OnError);
+    }
+
     /// <summary>
     /// Get current user's profile
     /// </summary>
@@ -27,7 +36,7 @@ public class UsersController : ApiController
         var result = await _userService.GetProfile(CurrentUser.Id);
         return result.Match(Ok, OnError);
     }
-    
+
     /// <summary>
     /// Update current user's profile
     /// </summary>
@@ -51,7 +60,7 @@ public class UsersController : ApiController
         var result = await _userService.AdminGetUserById(id);
         return result.Match(Ok, OnError);
     }
-    
+
     #region Required Admin Role
 
     /// <summary>

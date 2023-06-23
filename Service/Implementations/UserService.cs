@@ -175,4 +175,16 @@ public class UserService : BaseService, IUserService
 
         return Result.Success();
     }
+
+    public async Task<Result> ChangePassword(Guid currentUserId, PasswordUpdateModel model)
+    {
+        var user = await UnitOfWork.Users.FindAsync(currentUserId);
+        if (user is null) return Error.Unexpected();
+
+        user.Password = AuthHelper.HashPassword(model.Password);
+        UnitOfWork.Users.Update(user);
+        await UnitOfWork.SaveChangesAsync();
+
+        return Result.Success();
+    }
 }
