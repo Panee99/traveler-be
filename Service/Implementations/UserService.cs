@@ -1,4 +1,5 @@
-﻿using Data.EFCore;
+﻿using System.Text.RegularExpressions;
+using Data.EFCore;
 using Data.Entities;
 using Data.Enums;
 using Mapster;
@@ -168,6 +169,9 @@ public class UserService : BaseService, IUserService
 
     public async Task<Result> ChangePassword(Guid currentUserId, PasswordUpdateModel model)
     {
+        if (!Regex.Match(model.Password, "^[a-zA-Z0-9]{6,20}$").Success)
+            return Error.Validation("Invalid. Password length 6-20, characters and numbers only");
+
         var user = await UnitOfWork.Users.FindAsync(currentUserId);
         if (user is null) return Error.Unexpected();
 
