@@ -56,8 +56,6 @@ public static class EntityConfigurations
 
         modelBuilder.Entity<Schedule>();
 
-        modelBuilder.Entity<Staff>(entity => { entity.ToTable("Staff"); });
-
         modelBuilder.Entity<Tour>(entity =>
         {
             entity.HasIndex(e => e.CreatedAt);

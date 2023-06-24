@@ -81,8 +81,6 @@ public class JwtMiddleware : IMiddleware
                 e => e.Id == id && e.Status == UserStatus.Active),
             UserRole.TourGuide => await _unitOfWork.TourGuides.AnyAsync(
                 e => e.Id == id && e.Status == UserStatus.Active),
-            UserRole.Staff => await _unitOfWork.Staffs.AnyAsync(
-                e => e.Id == id && e.Status == UserStatus.Active),
             _ => throw new ArgumentOutOfRangeException(typeof(JwtMiddleware).ToString())
         };
     }

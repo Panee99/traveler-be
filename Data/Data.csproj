@@ -44,9 +44,6 @@
         <None Update="EFCore\Seeds\schedules.json">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="EFCore\Seeds\staffs.json">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
         <None Update="EFCore\Seeds\tour-variants.json">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>

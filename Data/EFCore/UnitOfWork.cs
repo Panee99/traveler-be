@@ -11,7 +11,6 @@ public class UnitOfWork : UnitOfWorkBase
     public IRepository<Attendance> Attendances => Repo<Attendance>();
     public IRepository<Booking> Bookings => Repo<Booking>();
     public IRepository<Schedule> Schedules => Repo<Schedule>();
-    public IRepository<Staff> Staffs => Repo<Staff>();
     public IRepository<Admin> Admins => Repo<Admin>();
     public IRepository<Tour> Tours => Repo<Tour>();
     public IRepository<TourVariant> TourVariants => Repo<TourVariant>();

@@ -4,6 +4,5 @@ public enum UserRole
 {
     Admin,
     TourGuide,
-    Traveler,
-    Staff
+    Traveler
 }

@@ -7,7 +7,6 @@ using Service.Commons.Mapping;
 using Service.Commons.QueryExtensions;
 using Service.Interfaces;
 using Service.Models.Admin;
-using Service.Models.Staff;
 using Service.Models.TourGuide;
 using Service.Models.Traveler;
 using Service.Models.User;
@@ -40,9 +39,6 @@ public class UserService : BaseService, IUserService
                 break;
             case UserRole.Traveler:
                 user = UnitOfWork.Travelers.Add(model.Adapt<Traveler>());
-                break;
-            case UserRole.Staff:
-                user = UnitOfWork.Staffs.Add(model.Adapt<Staff>());
                 break;
             default:
                 throw new ArgumentOutOfRangeException();
@@ -101,7 +97,6 @@ public class UserService : BaseService, IUserService
             UserRole.Traveler => (await UnitOfWork.Travelers.FindAsync(id))!.Adapt<TravelerViewModel>(),
             UserRole.TourGuide => (await UnitOfWork.TourGuides.FindAsync(id))!.Adapt<TourGuideViewModel>(),
             UserRole.Admin => (await UnitOfWork.Admins.FindAsync(id))!.Adapt<AdminViewModel>(),
-            UserRole.Staff => (await UnitOfWork.Staffs.FindAsync(id))!.Adapt<StaffViewModel>(),
             _ => throw new ArgumentOutOfRangeException()
         };
 
@@ -132,11 +127,6 @@ public class UserService : BaseService, IUserService
                 var traveler = (await UnitOfWork.Travelers.FindAsync(user.Id))!;
                 UnitOfWork.Travelers.Update(model.AdaptIgnoreNull(traveler));
                 view = traveler.Adapt<TravelerViewModel>();
-                break;
-            case UserRole.Staff:
-                var staff = (await UnitOfWork.Staffs.FindAsync(user.Id))!;
-                UnitOfWork.Staffs.Update(model.AdaptIgnoreNull(staff));
-                view = staff.Adapt<StaffViewModel>();
                 break;
             default:
                 throw new ArgumentOutOfRangeException();
