@@ -73,7 +73,10 @@ public class CloudNotificationService : ICloudNotificationService
                 Data = new Dictionary<string, string>
                 {
                     { "id", Guid.NewGuid().ToString() },
-                    { "timestamp", DateTimeHelper.VnNow().ToString(CultureInfo.InvariantCulture) },
+                    {
+                        "timestamp",
+                        DateTimeHelper.VnNow().ToString("yyyy-MM-ddTHH:mm:ss.fff", CultureInfo.InvariantCulture)
+                    },
                     { "type", type.ToString() }
                 },
                 Notification = new AndroidNotification()
@@ -87,7 +90,7 @@ public class CloudNotificationService : ICloudNotificationService
                         NotificationType.AttendanceEvent => NotificationAction.Attendance,
                         _ => null
                     },
-                    Icon = _cloudStorageService.GetMediaLink(iconId)
+                    ImageUrl = _cloudStorageService.GetMediaLink(iconId),
                 },
             }
         };
