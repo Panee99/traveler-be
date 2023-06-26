@@ -1,6 +1,7 @@
 ﻿using Data.Enums;
 using FirebaseAdmin.Messaging;
 using Microsoft.Extensions.Logging;
+using Service.Commons;
 using Service.Interfaces;
 using Shared.ExternalServices.Firebase;
 using Shared.Helpers;
@@ -11,10 +12,12 @@ public class CloudNotificationService : ICloudNotificationService
 {
     private readonly ILogger<CloudNotificationService> _logger;
     private readonly FirebaseMessaging _messaging;
+    private readonly ICloudStorageService _cloudStorageService;
 
-    public CloudNotificationService(ILogger<CloudNotificationService> logger)
+    public CloudNotificationService(ILogger<CloudNotificationService> logger, ICloudStorageService cloudStorageService)
     {
         _logger = logger;
+        _cloudStorageService = cloudStorageService;
         _messaging = FirebaseAppHelper.GetMessaging();
     }
 
@@ -49,12 +52,18 @@ public class CloudNotificationService : ICloudNotificationService
         }
     }
 
-    private static Message _buildFirebaseMessage(
+    private Message _buildFirebaseMessage(
         string token,
         string title,
         string payload,
         NotificationType type)
     {
+        var iconId = type switch
+        {
+            NotificationType.AttendanceEvent => ServiceConstants.AttendanceImage,
+            _ => throw new ArgumentOutOfRangeException()
+        };
+
         return new Message()
         {
             Token = token,
@@ -71,11 +80,13 @@ public class CloudNotificationService : ICloudNotificationService
                     Title = title,
                     Body = payload,
                     EventTimestamp = DateTimeHelper.VnNow(),
+                    Priority = NotificationPriority.HIGH,
                     ClickAction = type switch
                     {
                         NotificationType.AttendanceEvent => NotificationAction.Attendance,
                         _ => null
                     },
+                    Icon = _cloudStorageService.GetMediaLink(iconId)
                 },
             }
         };

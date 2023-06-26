@@ -14,5 +14,7 @@ public class NotificationViewModel
 
     public bool IsRead { get; set; }
 
+    public string ImageUrl { get; set; } = null!;
+
     public DateTime Timestamp { get; set; }
 }

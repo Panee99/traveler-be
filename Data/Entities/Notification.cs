@@ -19,4 +19,8 @@ public class Notification
     public bool IsRead { get; set; }
 
     public DateTime Timestamp { get; set; }
+
+    public Guid ImageId { get; set; }
+
+    public Attachment Image { get; set; } = null!;
 }

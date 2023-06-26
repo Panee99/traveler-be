@@ -68,5 +68,10 @@
     "Id": "6b259aed-2a91-40c7-29ef-08db6d5f699a",
     "ContentType": "image/jpeg",
     "CreatedAt": "2023-06-15 12:14:36.487"
+  },
+  {
+    "Id": "0767bb98-bb08-450e-504e-08db75feb65c",
+    "ContentType": "image/png",
+    "CreatedAt": "2023-06-26 11:35:04.547"
   }
 ]

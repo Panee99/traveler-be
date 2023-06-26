@@ -3,6 +3,7 @@ using Data.Entities;
 using Data.Enums;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
+using Service.Commons;
 using Service.Interfaces;
 using Service.Models.Notification;
 using Shared.Helpers;
@@ -12,17 +13,26 @@ namespace Service.Implementations;
 
 public class NotificationService : BaseService, INotificationService
 {
-    public NotificationService(UnitOfWork unitOfWork) : base(unitOfWork)
+    private readonly ICloudStorageService _cloudStorageService;
+
+    public NotificationService(UnitOfWork unitOfWork, ICloudStorageService cloudStorageService) : base(unitOfWork)
     {
+        _cloudStorageService = cloudStorageService;
     }
 
     public async Task<Result<List<NotificationViewModel>>> ListAll(Guid userId)
     {
-        return await UnitOfWork.Notifications
+        var notifications = await UnitOfWork.Notifications
             .Query()
             .Where(e => e.ReceiverId == userId)
-            .ProjectToType<NotificationViewModel>()
             .ToListAsync();
+
+        return notifications.Select(notification =>
+        {
+            var view = notification.Adapt<NotificationViewModel>();
+            view.ImageUrl = _cloudStorageService.GetMediaLink(notification.ImageId)!;
+            return view;
+        }).ToList();
     }
 
     public async Task<Result> MarkAsRead(Guid notificationId)
@@ -72,14 +82,22 @@ public class NotificationService : BaseService, INotificationService
         string payload,
         NotificationType type)
     {
-        var notifications = receiverIds.Select(travelerId => new Notification()
+        var notifications = receiverIds.Select(travelerId =>
         {
-            ReceiverId = travelerId,
-            Title = title,
-            Payload = payload,
-            Timestamp = DateTimeHelper.VnNow(),
-            IsRead = false,
-            Type = type
+            return new Notification()
+            {
+                ReceiverId = travelerId,
+                Title = title,
+                Payload = payload,
+                Timestamp = DateTimeHelper.VnNow(),
+                IsRead = false,
+                Type = type,
+                ImageId = type switch
+                {
+                    NotificationType.AttendanceEvent => ServiceConstants.AttendanceImage,
+                    _ => throw new ArgumentOutOfRangeException()
+                }
+            };
         });
 
         UnitOfWork.Notifications.AddRange(notifications);
