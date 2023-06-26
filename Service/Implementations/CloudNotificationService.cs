@@ -1,4 +1,5 @@
-﻿using Data.Enums;
+﻿using System.Globalization;
+using Data.Enums;
 using FirebaseAdmin.Messaging;
 using Microsoft.Extensions.Logging;
 using Service.Commons;
@@ -72,7 +73,7 @@ public class CloudNotificationService : ICloudNotificationService
                 Data = new Dictionary<string, string>
                 {
                     { "id", Guid.NewGuid().ToString() },
-                    { "timestamp", DateTimeHelper.GetUtcTimestamp().ToString() },
+                    { "timestamp", DateTimeHelper.VnNow().ToString(CultureInfo.InvariantCulture) },
                     { "type", type.ToString() }
                 },
                 Notification = new AndroidNotification()
