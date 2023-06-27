@@ -2,12 +2,12 @@
 using Data.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Service.Interfaces;
-using Service.Models.InccuredCost;
+using Service.Models.IncurredCost;
 
 namespace Application.Controllers;
 
 // TODO: refactor
-[Authorize(UserRole.Admin, UserRole.Traveler)]
+[Authorize(UserRole.TourGuide)]
 [Route("incurred-costs")]
 public class IncurredCostsController : ApiController
 {
@@ -18,6 +18,9 @@ public class IncurredCostsController : ApiController
         _incurredCostService = incurredCostService;
     }
 
+    /// <summary>
+    /// Create a new Incurred Cost
+    /// </summary>
     [HttpPost("")]
     public async Task<IActionResult> Create(IncurredCostCreateModel model)
     {
@@ -25,17 +28,13 @@ public class IncurredCostsController : ApiController
         return result.Match(Ok, OnError);
     }
 
+    /// <summary>
+    /// Delete an Incurred Cost
+    /// </summary>
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete(Guid id)
     {
         var result = await _incurredCostService.Delete(id);
-        return result.Match(Ok, OnError);
-    }
-
-    [HttpGet("")]
-    public async Task<IActionResult> List([FromQuery] Guid tourId, [FromQuery] Guid tourGuideId)
-    {
-        var result = await _incurredCostService.List(tourId, tourGuideId);
         return result.Match(Ok, OnError);
     }
 }

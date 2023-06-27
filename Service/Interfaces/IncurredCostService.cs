@@ -1,13 +1,13 @@
-﻿using Service.Models.InccuredCost;
+﻿using Service.Models.IncurredCost;
 using Shared.ResultExtensions;
 
 namespace Service.Interfaces;
 
 public interface IIncurredCostService
 {
-    Task<Result<InccuredCostViewModel>> Create(IncurredCostCreateModel model);
+    Task<Result<IncurredCostViewModel>> Create(IncurredCostCreateModel model);
 
     Task<Result> Delete(Guid incurredCostId);
 
-    Task<Result<List<InccuredCostViewModel>>> List(Guid tourId, Guid tourGuideId);
+    Task<Result<List<IncurredCostViewModel>>> ListAll(Guid tourGroupId);
 }

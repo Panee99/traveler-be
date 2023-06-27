@@ -3,53 +3,59 @@ using Data.Entities;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Service.Interfaces;
-using Service.Models.InccuredCost;
+using Service.Models.IncurredCost;
+using Shared.Helpers;
 using Shared.ResultExtensions;
 
 namespace Service.Implementations;
 
 public class IncurredCostService : BaseService, IIncurredCostService
 {
-    public IncurredCostService(UnitOfWork unitOfWork) : base(unitOfWork)
+    private readonly ICloudStorageService _cloudStorageService;
+
+    public IncurredCostService(UnitOfWork unitOfWork,
+        ICloudStorageService cloudStorageService) : base(unitOfWork)
     {
+        _cloudStorageService = cloudStorageService;
     }
 
-    public async Task<Result<InccuredCostViewModel>> Create(IncurredCostCreateModel model)
+    public async Task<Result<IncurredCostViewModel>> Create(IncurredCostCreateModel model)
     {
-        // var incurredCost = model.Adapt<IncurredCost>();
-        //
-        // UnitOfWork.IncurredCosts.Add(incurredCost);
-        //
-        // await UnitOfWork.SaveChangesAsync();
-        //
-        // return incurredCost.Adapt<InccuredCostViewModel>();
+        var incurredCost = model.Adapt<IncurredCost>();
+        incurredCost.CreatedAt = DateTimeHelper.VnNow();
 
-        throw new NotImplementedException();
+        UnitOfWork.IncurredCosts.Add(incurredCost);
+        await UnitOfWork.SaveChangesAsync();
+
+        var view = incurredCost.Adapt<IncurredCostViewModel>();
+        view.ImageUrl = _cloudStorageService.GetMediaLink(model.ImageId);
+
+        return view;
     }
 
     public async Task<Result> Delete(Guid incurredCostId)
     {
-        // var incurredCost = await UnitOfWork.IncurredCosts.FindAsync(incurredCostId);
-        // if (incurredCost is null) return Error.NotFound();
-        //
-        // UnitOfWork.IncurredCosts.Remove(incurredCost);
-        //
-        // await UnitOfWork.SaveChangesAsync();
-        //
-        // return Result.Success();
+        var incurredCost = await UnitOfWork.IncurredCosts.FindAsync(incurredCostId);
+        if (incurredCost is null) return Error.NotFound();
 
-        throw new NotImplementedException();
+        UnitOfWork.IncurredCosts.Remove(incurredCost);
+        await UnitOfWork.SaveChangesAsync();
+
+        return Result.Success();
     }
 
-    public async Task<Result<List<InccuredCostViewModel>>> List(Guid tourId, Guid tourGuideId)
+    public async Task<Result<List<IncurredCostViewModel>>> ListAll(Guid tourGroupId)
     {
-        // var incurredCosts = await UnitOfWork.IncurredCosts
-        //     .Query()
-        //     .Where(e => e.TourGroupId == tourId && e.TourGroup.TourGuideId == tourGuideId)
-        //     .ToListAsync();
-        //
-        // return incurredCosts.Adapt<List<InccuredCostViewModel>>();
+        var incurredCosts = await UnitOfWork.IncurredCosts
+            .Query()
+            .Where(e => e.TourGroupId == tourGroupId)
+            .ToListAsync();
 
-        throw new NotImplementedException();
+        return incurredCosts.Select(e =>
+        {
+            var view = e.Adapt<IncurredCostViewModel>();
+            view.ImageUrl = _cloudStorageService.GetMediaLink(e.ImageId);
+            return view;
+        }).ToList();
     }
 }

@@ -10,10 +10,13 @@ namespace Application.Controllers;
 public class TourGroupsController : ApiController
 {
     private readonly ITourGroupService _tourGroupService;
+    private readonly IIncurredCostService _incurredCostService;
 
-    public TourGroupsController(ITourGroupService tourGroupService)
+    public TourGroupsController(ITourGroupService tourGroupService,
+        IIncurredCostService incurredCostService)
     {
         _tourGroupService = tourGroupService;
+        _incurredCostService = incurredCostService;
     }
 
     /// <summary>
@@ -96,6 +99,16 @@ public class TourGroupsController : ApiController
     public async Task<IActionResult> ListAttendanceEvents([FromRoute] Guid id)
     {
         var result = await _tourGroupService.ListAttendanceEvents(id);
+        return result.Match(Ok, OnError);
+    }
+
+    /// <summary>
+    /// List all Incurred Costs in group
+    /// </summary>
+    [HttpGet("{id:guid}/incurred-costs")]
+    public async Task<IActionResult> ListIncurredCosts(Guid id)
+    {
+        var result = await _incurredCostService.ListAll(id);
         return result.Match(Ok, OnError);
     }
 }
