@@ -11,4 +11,6 @@ public interface ITravelerService
     Task<Result<List<TourGroupViewModel>>> ListJoinedGroups(Guid travelerId);
 
     Task<Result<TourGroupViewModel>> GetCurrentJoinedGroup(Guid travelerId);
+    
+    Task<Result<TravelerTravelInfo>> GetTravelerTravelInfo(Guid travelerId);
 }
