@@ -61,6 +61,15 @@ public class UsersController : ApiController
         return result.Match(Ok, OnError);
     }
 
+    [ProducesResponseType(typeof(TravelInfo), StatusCodes.Status200OK)]
+    [Authorize]
+    [HttpGet("{id:guid}/travel-info")]
+    public async Task<IActionResult> GetTravelInfo(Guid id)
+    {
+        var result = await _userService.GetTravelInfo(id);
+        return result.Match(Ok, OnError);
+    }
+    
     #region Required Admin Role
 
     /// <summary>

@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Service.Interfaces;
 using Service.Models.TourGroup;
 using Service.Models.Traveler;
+using Service.Models.User;
 using Shared.Helpers;
 using Shared.ResultExtensions;
 
@@ -105,23 +106,6 @@ public class TravelerService : BaseService, ITravelerService
         view.TravelerCount = await _tourGroupService.CountTravelers(view.Id);
 
         return view;
-    }
-
-    public async Task<Result<TravelerTravelInfo>> GetTravelerTravelInfo(Guid travelerId)
-    {
-        if (!await UnitOfWork.Travelers.AnyAsync(e => e.Id == travelerId))
-            return Error.NotFound("Traveler not found.");
-
-        var tourCount = await UnitOfWork.Travelers
-            .Query()
-            .Where(traveler => traveler.Id == travelerId)
-            .SelectMany(traveler => traveler.TourGroups)
-            .CountAsync();
-
-        return new TravelerTravelInfo()
-        {
-            TourCount = tourCount
-        };
     }
 
     // PRIVATE

@@ -46,13 +46,4 @@ public class TravelersController : ApiController
         var result = await _travelerService.GetCurrentJoinedGroup(id);
         return result.Match(Ok, OnError);
     }
-
-    [ProducesResponseType(typeof(TravelerTravelInfo), StatusCodes.Status200OK)]
-    [Authorize]
-    [HttpGet("{id:guid}/travel-info")]
-    public async Task<IActionResult> GetTravelerTravelInfo(Guid id)
-    {
-        var result = await _travelerService.GetTravelerTravelInfo(id);
-        return result.Match(Ok, OnError);
-    }
 }

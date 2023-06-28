@@ -21,4 +21,6 @@ public interface IUserService
     Task<Result> AdminDeleteUserById(Guid id);
 
     Task<Result> ChangePassword(Guid currentUserId, PasswordUpdateModel model);
+    
+    Task<Result<TravelInfo>> GetTravelInfo(Guid id);
 }

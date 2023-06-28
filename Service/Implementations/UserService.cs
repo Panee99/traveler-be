@@ -181,4 +181,43 @@ public class UserService : BaseService, IUserService
 
         return Result.Success();
     }
+
+    public async Task<Result<TravelInfo>> GetTravelInfo(Guid userId)
+    {
+        var user = await UnitOfWork.Users.FindAsync(userId);
+        if (user is null) return Error.NotFound("User not found");
+
+        var tourCount = 0;
+
+        switch (user.Role)
+        {
+            case UserRole.Traveler:
+            {
+                tourCount = await UnitOfWork.Travelers
+                    .Query()
+                    .Where(traveler => traveler.Id == userId)
+                    .SelectMany(traveler => traveler.TourGroups)
+                    .CountAsync();
+                break;
+            }
+            case UserRole.TourGuide:
+            {
+                tourCount = await UnitOfWork.TourGuides
+                    .Query()
+                    .Where(tourGuide => tourGuide.Id == userId)
+                    .SelectMany(tourGuide => tourGuide.TourGroups)
+                    .CountAsync();
+                break;
+            }
+            case UserRole.Admin:
+                return Error.Conflict("Tour Guide and Traveler only");
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+
+        return new TravelInfo()
+        {
+            TourCount = tourCount
+        };
+    }
 }
