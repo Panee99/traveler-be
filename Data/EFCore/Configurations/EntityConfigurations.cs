@@ -82,7 +82,6 @@ public static class EntityConfigurations
         {
             entity.ToTable("TourGuide");
             entity.Property(e => e.Email).HasMaxLength(256);
-            entity.Property(e => e.Birthday).HasColumnType("datetime");
             entity.Property(e => e.FirstName).HasMaxLength(256);
             entity.Property(e => e.Gender).HasMaxLength(256);
             entity.Property(e => e.LastName).HasMaxLength(256);
@@ -102,10 +101,7 @@ public static class EntityConfigurations
         modelBuilder.Entity<Traveler>(entity =>
         {
             entity.ToTable("Traveler");
-            entity.Property(e => e.BankNumber).HasMaxLength(256);
-            entity.Property(e => e.BankName).HasMaxLength(256);
             entity.Property(e => e.Address).HasMaxLength(256);
-            entity.Property(e => e.Birthday).HasColumnType("datetime");
             entity.Property(e => e.FirstName).HasMaxLength(256);
             entity.Property(e => e.Gender).HasMaxLength(256);
             entity.Property(e => e.LastName).HasMaxLength(256);
@@ -152,29 +148,5 @@ public static class EntityConfigurations
                 .WithMany(user => user.FcmTokens)
                 .HasForeignKey(e => e.UserId);
         });
-        // modelBuilder.Entity<TourDiscount>(entity =>
-        // {
-        //     entity.Property(e => e.T1discount).HasColumnName("T1Discount");
-        //     entity.Property(e => e.T1discountPercent).HasColumnName("T1DiscountPercent");
-        //     entity.Property(e => e.T1numberOfFirstTickets).HasColumnName("T1NumberOfFirstTickets");
-        //     entity.Property(e => e.T2discount).HasColumnName("T2Discount");
-        //     entity.Property(e => e.T2discountPercent).HasColumnName("T2DiscountPercent");
-        //     entity.Property(e => e.T2numberOfTickets).HasColumnName("T2NumberOfTickets");
-        //
-        //     entity.HasOne(d => d.Tour).WithMany(p => p.TourDiscounts)
-        //         .HasForeignKey(d => d.TourId)
-        //         .OnDelete(DeleteBehavior.ClientSetNull);
-        // });
-
-        // modelBuilder.Entity<BookingAppliedDiscount>(entity =>
-        // {
-        //     entity.HasOne(d => d.Booking).WithMany(p => p.BookingAppliedDiscounts)
-        //         .HasForeignKey(d => d.BookingId)
-        //         .OnDelete(DeleteBehavior.ClientSetNull);
-        //
-        //     entity.HasOne(d => d.DiscountNavigation).WithMany(p => p.BookingAppliedDiscounts)
-        //         .HasForeignKey(d => d.DiscountId)
-        //         .OnDelete(DeleteBehavior.ClientSetNull);
-        // });
     }
 }

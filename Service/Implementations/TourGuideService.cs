@@ -2,9 +2,11 @@
 using Data.Enums;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
+using Service.Commons.Mapping;
 using Service.Interfaces;
 using Service.Models.Tour;
 using Service.Models.TourGroup;
+using Service.Models.TourGuide;
 using Shared.ResultExtensions;
 
 namespace Service.Implementations;
@@ -93,6 +95,21 @@ public class TourGuideService : BaseService, ITourGuideService
         view.Trip!.Tour!.ThumbnailUrl =
             _cloudStorageService.GetMediaLink(currentGroup.Trip.Tour.ThumbnailId);
         view.TravelerCount = await _tourGroupService.CountTravelers(view.Id);
+
+        return view;
+    }
+
+    public async Task<Result<TourGuideViewModel>> UpdateContacts(Guid tourGuideId, ContactsUpdateModel model)
+    {
+        var tourGuide = await UnitOfWork.TourGuides.FindAsync(tourGuideId);
+        if (tourGuide is null) return Error.NotFound();
+
+        model.Adapt(tourGuide);
+        UnitOfWork.TourGuides.Update(tourGuide);
+        await UnitOfWork.SaveChangesAsync();
+
+        var view = tourGuide.Adapt<TourGuideViewModel>();
+        view.AvatarUrl = _cloudStorageService.GetMediaLink(tourGuide.AvatarId);
 
         return view;
     }

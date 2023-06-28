@@ -3,6 +3,7 @@ using Data.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Service.Interfaces;
 using Service.Models.TourGroup;
+using Service.Models.TourGuide;
 
 namespace Application.Controllers;
 
@@ -37,6 +38,15 @@ public class TourGuidesController : ApiController
     public async Task<IActionResult> GetCurrentAssignedTourGroup(Guid id)
     {
         var result = await _tourGuideService.GetCurrentAssignedTourGroup(id);
+        return result.Match(Ok, OnError);
+    }
+
+    [Authorize(UserRole.Admin, UserRole.TourGuide)]
+    [ProducesResponseType(typeof(TourGroupViewModel), StatusCodes.Status200OK)]
+    [HttpPut("{id:guid}/contacts")]
+    public async Task<IActionResult> UpdateContacts(Guid id, ContactsUpdateModel model)
+    {
+        var result = await _tourGuideService.UpdateContacts(id, model);
         return result.Match(Ok, OnError);
     }
 }
