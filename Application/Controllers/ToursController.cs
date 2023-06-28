@@ -5,7 +5,7 @@ using Service.Commons.QueryExtensions;
 using Service.Interfaces;
 using Service.Models.Schedule;
 using Service.Models.Tour;
-using Service.Models.TourVariant;
+using Service.Models.Trip;
 
 namespace Application.Controllers;
 
@@ -80,14 +80,14 @@ public class ToursController : ApiController
     }
 
     /// <summary>
-    /// List all variants of a tour
+    /// List all trips of a tour
     /// </summary>
-    [ProducesResponseType(typeof(List<TourVariantViewModel>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(List<TripViewModel>), StatusCodes.Status200OK)]
     [AllowAnonymous]
-    [HttpGet("{id:guid}/tour-variants")]
-    public async Task<IActionResult> ListTourVariants(Guid id)
+    [HttpGet("{id:guid}/trips")]
+    public async Task<IActionResult> ListTourTrips(Guid id)
     {
-        var result = await _tourService.ListTourVariants(id);
+        var result = await _tourService.ListTourTrips(id);
         return result.Match(Ok, OnError);
     }
 

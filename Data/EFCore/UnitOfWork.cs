@@ -13,7 +13,7 @@ public class UnitOfWork : UnitOfWorkBase
     public IRepository<Schedule> Schedules => Repo<Schedule>();
     public IRepository<Admin> Admins => Repo<Admin>();
     public IRepository<Tour> Tours => Repo<Tour>();
-    public IRepository<TourVariant> TourVariants => Repo<TourVariant>();
+    public IRepository<Trip> Trips => Repo<Trip>();
     public IRepository<TourImage> TourCarousel => Repo<TourImage>();
     public IRepository<TourGroup> TourGroups => Repo<TourGroup>();
     public IRepository<TourGuide> TourGuides => Repo<TourGuide>();

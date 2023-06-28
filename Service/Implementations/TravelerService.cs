@@ -55,28 +55,6 @@ public class TravelerService : BaseService, ITravelerService
         return Result.Success();
     }
 
-    // TODO: Test
-    public async Task<Result<List<TravelerViewModel>>> ListByTourVariant(Guid tourVariantId)
-    {
-        if (!await UnitOfWork.TourVariants.AnyAsync(e => e.Id == tourVariantId))
-            return Error.NotFound("Tour not found.");
-
-        var travelers = await UnitOfWork.TourVariants.Query()
-            .Where(variant => variant.Id == tourVariantId)
-            .SelectMany(variant => variant.TourGroups)
-            .SelectMany(group => group.Travelers)
-            .ToListAsync();
-
-        var views = travelers.Select(e =>
-        {
-            var view = e.Adapt<TravelerViewModel>();
-            view.AvatarUrl = _cloudStorageService.GetMediaLink(e.AvatarId);
-            return view;
-        }).ToList();
-
-        return views;
-    }
-
     public async Task<Result<List<TourGroupViewModel>>> ListJoinedGroups(Guid travelerId)
     {
         var groupResults = await UnitOfWork.Travelers
@@ -84,8 +62,8 @@ public class TravelerService : BaseService, ITravelerService
             .AsSplitQuery()
             .Where(traveler => traveler.Id == travelerId)
             .SelectMany(traveler => traveler.TourGroups)
-            .Include(group => group.TourVariant)
-            .ThenInclude(variant => variant.Tour)
+            .Include(group => group.Trip)
+            .ThenInclude(trip => trip.Tour)
             .Select(group => new { Group = group, TravelerCount = group.Travelers.Count })
             .ToListAsync();
 
@@ -93,8 +71,8 @@ public class TravelerService : BaseService, ITravelerService
         return groupResults.Select(groupResult =>
         {
             var view = groupResult.Group.Adapt<TourGroupViewModel>();
-            view.TourVariant!.Tour!.ThumbnailUrl =
-                _cloudStorageService.GetMediaLink(groupResult.Group.TourVariant.Tour.ThumbnailId);
+            view.Trip!.Tour!.ThumbnailUrl =
+                _cloudStorageService.GetMediaLink(groupResult.Group.Trip.Tour.ThumbnailId);
             view.TravelerCount = groupResult.TravelerCount;
             return view;
         }).ToList();
@@ -112,18 +90,18 @@ public class TravelerService : BaseService, ITravelerService
             .AsSplitQuery()
             .Where(traveler => traveler.Id == travelerId)
             .SelectMany(guide => guide.TourGroups)
-            .Include(group => group.TourVariant)
-            .ThenInclude(variant => variant.Tour)
-            .Where(group => group.TourVariant.Status != TourVariantStatus.Ended &&
-                            group.TourVariant.Status != TourVariantStatus.Canceled)
+            .Include(group => group.Trip)
+            .ThenInclude(trip => trip.Tour)
+            .Where(group => group.Trip.Status != TripStatus.Ended &&
+                            group.Trip.Status != TripStatus.Canceled)
             .FirstOrDefaultAsync();
 
         if (currentGroup is null) return Error.NotFound("No current tour group joined");
 
         // Map to view model
-        var tour = currentGroup.TourVariant.Tour;
+        var tour = currentGroup.Trip.Tour;
         var view = currentGroup.Adapt<TourGroupViewModel>();
-        view.TourVariant!.Tour!.ThumbnailUrl = _cloudStorageService.GetMediaLink(tour.ThumbnailId);
+        view.Trip!.Tour!.ThumbnailUrl = _cloudStorageService.GetMediaLink(tour.ThumbnailId);
         view.TravelerCount = await _tourGroupService.CountTravelers(view.Id);
 
         return view;

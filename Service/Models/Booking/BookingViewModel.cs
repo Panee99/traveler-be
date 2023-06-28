@@ -5,7 +5,7 @@ namespace Service.Models.Booking;
 public record BookingViewModel
 {
     public Guid Id { get; set; }
-    public Guid TourVariantId { get; set; }
+    public Guid TripId { get; set; }
     public Guid TravelerId { get; set; }
     public int AdultQuantity { get; set; }
     public int ChildrenQuantity { get; set; }

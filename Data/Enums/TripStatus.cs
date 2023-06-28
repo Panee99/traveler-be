@@ -1,6 +1,6 @@
 ﻿namespace Data.Enums;
 
-public enum TourVariantStatus
+public enum TripStatus
 {
     Accepting,
     Prepare,

@@ -30,7 +30,7 @@ public class Tour
 
     public Attachment? Thumbnail { get; set; }
 
-    public virtual ICollection<TourVariant> TourVariants { get; set; } = new List<TourVariant>();
+    public virtual ICollection<Trip> Trips { get; set; } = new List<Trip>();
 
     public virtual ICollection<Schedule> Schedules { get; set; } = new List<Schedule>();
 

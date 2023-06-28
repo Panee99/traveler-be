@@ -10,7 +10,7 @@ using Service.Interfaces;
 using Service.Models.Attachment;
 using Service.Models.Schedule;
 using Service.Models.Tour;
-using Service.Models.TourVariant;
+using Service.Models.Trip;
 using Shared.ResultExtensions;
 
 namespace Service.Implementations;
@@ -272,18 +272,18 @@ public class TourService : BaseService, ITourService
         }).ToList();
     }
 
-    public async Task<Result<List<TourVariantViewModel>>> ListTourVariants(Guid tourId)
+    public async Task<Result<List<TripViewModel>>> ListTourTrips(Guid tourId)
     {
         if (!await UnitOfWork.Tours.AnyAsync(e => e.Id == tourId))
             return Error.NotFound("Tour not found.");
 
-        var tourVariants = await UnitOfWork.Tours
+        var trips = await UnitOfWork.Tours
             .Query()
             .Where(e => e.Id == tourId)
-            .SelectMany(e => e.TourVariants)
+            .SelectMany(e => e.Trips)
             .ToListAsync();
 
-        return tourVariants.Adapt<List<TourVariantViewModel>>();
+        return trips.Adapt<List<TripViewModel>>();
     }
 
     public async Task<Result<List<ScheduleViewModel>>> ListSchedules(Guid tourId)

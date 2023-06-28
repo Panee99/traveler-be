@@ -8,8 +8,6 @@ public interface ITravelerService
 {
     Task<Result> Register(TravelerRegistrationModel model);
 
-    Task<Result<List<TravelerViewModel>>> ListByTourVariant(Guid tourVariantId);
-
     Task<Result<List<TourGroupViewModel>>> ListJoinedGroups(Guid travelerId);
 
     Task<Result<TourGroupViewModel>> GetCurrentJoinedGroup(Guid travelerId);

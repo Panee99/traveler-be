@@ -2,7 +2,7 @@
 
 namespace Data.Entities;
 
-public class TourVariant
+public class Trip
 {
     public Guid Id { get; set; }
 
@@ -17,15 +17,14 @@ public class TourVariant
     public int ChildrenPrice { get; set; }
 
     public int InfantPrice { get; set; }
-    
+
     public DateTime StartTime { get; set; }
 
     public DateTime EndTime { get; set; }
 
-    public TourVariantStatus Status { get; set; }
-    
+    public TripStatus Status { get; set; }
+
     public virtual ICollection<Booking> Bookings { get; set; } = new List<Booking>();
-    
+
     public virtual ICollection<TourGroup> TourGroups { get; set; } = new List<TourGroup>();
 }
-

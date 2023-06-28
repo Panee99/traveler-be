@@ -1,4 +1,4 @@
-﻿using Service.Models.TourVariant;
+﻿using Service.Models.Trip;
 
 namespace Service.Models.TourGroup;
 
@@ -9,7 +9,7 @@ public class TourGroupViewModel
     public string GroupName = null!;
     public Guid? TourGuideId;
     public int MaxOccupancy;
-    public Guid TourVariantId;
+    public Guid TripId;
     public int TravelerCount;
-    public TourVariantViewModel? TourVariant;
+    public TripViewModel? Trip;
 }

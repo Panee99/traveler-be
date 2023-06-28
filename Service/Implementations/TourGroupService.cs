@@ -41,12 +41,12 @@ public class TourGroupService : BaseService, ITourGroupService
 
     public async Task<Result<TourGroupViewModel>> Create(TourGroupCreateModel model)
     {
-        var tourVariant = await UnitOfWork.TourVariants.FindAsync(model.TourVariantId);
-        if (tourVariant is null) return Error.NotFound();
+        var trip = await UnitOfWork.Trips.FindAsync(model.TripId);
+        if (trip is null) return Error.NotFound();
 
         var group = UnitOfWork.TourGroups.Add(new TourGroup
         {
-            TourVariantId = tourVariant.Id,
+            TripId = trip.Id,
             GroupName = model.GroupName
         });
 

@@ -1,6 +1,6 @@
-﻿namespace Service.Models.TourVariant;
+﻿namespace Service.Models.Trip;
 
-public record TourVariantCreateModel
+public record TripCreateModel
 (
     Guid TourId,
     int AdultPrice,

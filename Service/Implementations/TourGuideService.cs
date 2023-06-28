@@ -29,8 +29,8 @@ public class TourGuideService : BaseService, ITourGuideService
 
         var assignedTours = await UnitOfWork.TourGuides.Query()
             .SelectMany(guide => guide.TourGroups)
-            .Select(group => group.TourVariant)
-            .Select(variant => variant.Tour)
+            .Select(group => group.Trip)
+            .Select(trip => trip.Tour)
             .ToListAsync();
 
         var views = assignedTours.Select(e =>
@@ -54,8 +54,8 @@ public class TourGuideService : BaseService, ITourGuideService
             .AsSplitQuery()
             .Where(guide => guide.Id == tourGuideId)
             .SelectMany(guide => guide.TourGroups)
-            .Include(group => group.TourVariant)
-            .ThenInclude(variant => variant.Tour)
+            .Include(group => group.Trip)
+            .ThenInclude(trip => trip.Tour)
             .Select(group => new { Group = group, TravelerCount = group.Travelers.Count })
             .ToListAsync();
 
@@ -63,8 +63,8 @@ public class TourGuideService : BaseService, ITourGuideService
         return groupResults.Select(groupResult =>
             {
                 var view = groupResult.Group.Adapt<TourGroupViewModel>();
-                view.TourVariant!.Tour!.ThumbnailUrl =
-                    _cloudStorageService.GetMediaLink(groupResult.Group.TourVariant.Tour.ThumbnailId);
+                view.Trip!.Tour!.ThumbnailUrl =
+                    _cloudStorageService.GetMediaLink(groupResult.Group.Trip.Tour.ThumbnailId);
                 view.TravelerCount = groupResult.TravelerCount;
                 return view;
             })
@@ -81,17 +81,17 @@ public class TourGuideService : BaseService, ITourGuideService
             .AsSplitQuery()
             .Where(guide => guide.Id == tourGuideId)
             .SelectMany(guide => guide.TourGroups)
-            .Include(group => group.TourVariant)
-            .ThenInclude(variant => variant.Tour)
-            .Where(group => group.TourVariant.Status != TourVariantStatus.Ended &&
-                            group.TourVariant.Status != TourVariantStatus.Canceled)
+            .Include(group => group.Trip)
+            .ThenInclude(trip => trip.Tour)
+            .Where(group => group.Trip.Status != TripStatus.Ended &&
+                            group.Trip.Status != TripStatus.Canceled)
             .FirstOrDefaultAsync();
 
         if (currentGroup is null) return Error.NotFound("No current tour group assigned");
 
         var view = currentGroup.Adapt<TourGroupViewModel>();
-        view.TourVariant!.Tour!.ThumbnailUrl =
-            _cloudStorageService.GetMediaLink(currentGroup.TourVariant.Tour.ThumbnailId);
+        view.Trip!.Tour!.ThumbnailUrl =
+            _cloudStorageService.GetMediaLink(currentGroup.Trip.Tour.ThumbnailId);
         view.TravelerCount = await _tourGroupService.CountTravelers(view.Id);
 
         return view;

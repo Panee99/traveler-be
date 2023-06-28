@@ -2,7 +2,7 @@
 using Service.Models.Attachment;
 using Service.Models.Schedule;
 using Service.Models.Tour;
-using Service.Models.TourVariant;
+using Service.Models.Trip;
 using Shared.ResultExtensions;
 
 namespace Service.Interfaces;
@@ -26,7 +26,7 @@ public interface ITourService
 
     Task<Result<List<AttachmentViewModel>>> GetCarousel(Guid tourId);
 
-    Task<Result<List<TourVariantViewModel>>> ListTourVariants(Guid tourId);
+    Task<Result<List<TripViewModel>>> ListTourTrips(Guid tourId);
 
     Task<Result<List<ScheduleViewModel>>> ListSchedules(Guid tourId);
 }

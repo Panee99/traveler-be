@@ -4,7 +4,7 @@ namespace Service.Models.Booking;
 
 public record BookingCreateModel
 (
-    Guid TourVariantId,
+    Guid TripId,
     int AdultQuantity,
     int ChildrenQuantity,
     int InfantQuantity,

@@ -25,20 +25,20 @@ public class BookingService : BaseService, IBookingService
         if (passengerQty != model.Passengers.Count)
             return Error.Conflict($"Passenger count does not match: {passengerQty} vs {model.Passengers.Count}");
 
-        // get tour variant
-        var tourVariant = await UnitOfWork.TourVariants
+        // get trip
+        var trip = await UnitOfWork.Trips
             .Query()
-            .Where(e => e.Id == model.TourVariantId)
+            .Where(e => e.Id == model.TripId)
             .Include(e => e.Tour)
             .FirstOrDefaultAsync();
 
         // validate Status
-        if (tourVariant is null) return Error.NotFound("Tour variant not found");
+        if (trip is null) return Error.NotFound("Trip not found");
 
-        if (tourVariant.Status != TourVariantStatus.Accepting)
-            return Error.Conflict("Can only book Accepting tour variants");
+        if (trip.Status != TripStatus.Accepting)
+            return Error.Conflict("Can only book Accepting tour trips");
 
-        if (tourVariant.Tour.Status != TourStatus.Active)
+        if (trip.Tour.Status != TourStatus.Active)
             return Error.Conflict("Can only book Active tours");
 
         // validate input
@@ -48,13 +48,13 @@ public class BookingService : BaseService, IBookingService
         var travelerInOtherTour = await UnitOfWork.Travelers.Query()
             .Where(traveler => traveler.Id == travelerId)
             .SelectMany(traveler => traveler.TourGroups)
-            .AnyAsync(tourGroup => tourGroup.TourVariant.Status != TourVariantStatus.Ended);
+            .AnyAsync(tourGroup => tourGroup.Trip.Status != TripStatus.Ended);
 
         if (travelerInOtherTour) return Error.Conflict("Traveler already in another Tour");
 
         // check if this tour already booked
         if (await UnitOfWork.Bookings.Query()
-                .AnyAsync(e => e.TourVariantId == model.TourVariantId
+                .AnyAsync(e => e.TripId == model.TripId
                                && e.TravelerId == travelerId))
         {
             return Error.Conflict("This tour is already booked");
@@ -66,9 +66,9 @@ public class BookingService : BaseService, IBookingService
         booking.TravelerId = travelerId;
         booking.Status = BookingStatus.Pending;
         booking.Timestamp = now;
-        booking.AdultPrice = tourVariant.AdultPrice;
-        booking.ChildrenPrice = tourVariant.ChildrenPrice;
-        booking.InfantPrice = tourVariant.InfantPrice;
+        booking.AdultPrice = trip.AdultPrice;
+        booking.ChildrenPrice = trip.ChildrenPrice;
+        booking.InfantPrice = trip.InfantPrice;
         booking.ExpireAt = now.AddHours(2);
 
         UnitOfWork.Bookings.Add(booking);

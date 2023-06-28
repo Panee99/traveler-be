@@ -4,7 +4,7 @@ public class TourGroup
 {
     public Guid Id { get; set; }
 
-    public Guid TourVariantId { get; set; }
+    public Guid TripId { get; set; }
 
     public Guid? TourGuideId { get; set; }
 
@@ -12,7 +12,7 @@ public class TourGroup
 
     public DateTime CreatedAt { get; set; }
 
-    public TourVariant TourVariant { get; set; } = null!;
+    public Trip Trip { get; set; } = null!;
 
     public int MaxOccupancy { get; set; }
 

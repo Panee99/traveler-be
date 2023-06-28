@@ -90,7 +90,7 @@ public class TransactionService : BaseService, ITransactionService
             .AsSplitQuery()
             .Where(trans => trans.Id == model.TxnRef)
             .Include(trans => trans.Booking)
-            .ThenInclude(booking => booking.TourVariant)
+            .ThenInclude(booking => booking.Trip)
             .FirstOrDefaultAsync();
 
         if (transaction is null)
@@ -117,7 +117,7 @@ public class TransactionService : BaseService, ITransactionService
             var occupancy = _totalBookingOccupancy(booking);
             var availableTourGroup = await UnitOfWork.TourGroups
                 .Query()
-                .Where(tourGroup => tourGroup.TourVariantId == booking.TourVariantId)
+                .Where(tourGroup => tourGroup.TripId == booking.TripId)
                 .Where(tourGroup => tourGroup.MaxOccupancy > tourGroup.Travelers.Count + occupancy)
                 .FirstOrDefaultAsync();
 
@@ -125,16 +125,16 @@ public class TransactionService : BaseService, ITransactionService
             if (availableTourGroup is null)
             {
                 // get tour group count. Ex: Exist 4 groups -> create "Group 5". 
-                var tourGroupCount = await UnitOfWork.TourVariants
+                var tourGroupCount = await UnitOfWork.Trips
                     .Query()
-                    .Where(e => e.Id == booking.TourVariantId)
+                    .Where(e => e.Id == booking.TripId)
                     .Select(e => e.TourGroups)
                     .CountAsync();
 
                 availableTourGroup = new TourGroup()
                 {
                     GroupName = $"Group {tourGroupCount + 1}",
-                    TourVariantId = booking.TourVariantId,
+                    TripId = booking.TripId,
                     MaxOccupancy = 50,
                 };
 

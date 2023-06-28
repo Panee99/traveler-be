@@ -1,9 +1,9 @@
 ﻿using Data.Enums;
 using Service.Models.Tour;
 
-namespace Service.Models.TourVariant;
+namespace Service.Models.Trip;
 
-public record TourVariantViewModel
+public record TripViewModel
 {
     public Guid Id;
     public string Code = null!;
@@ -12,7 +12,7 @@ public record TourVariantViewModel
     public int InfantPrice;
     public DateTime StartTime;
     public DateTime EndTime;
-    public TourVariantStatus Status;
+    public TripStatus Status;
     public Guid TourId;
     public TourViewModel? Tour;
 }

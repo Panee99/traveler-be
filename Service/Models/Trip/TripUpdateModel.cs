@@ -1,6 +1,6 @@
-﻿namespace Service.Models.TourVariant;
+﻿namespace Service.Models.Trip;
 
-public record TourVariantUpdateModel
+public record TripUpdateModel
 {
     public int? AdultPrice;
     public int? ChildrenPrice;
