@@ -35,6 +35,4 @@ public class Tour
     public virtual ICollection<Schedule> Schedules { get; set; } = new List<Schedule>();
 
     public virtual ICollection<TourImage> TourCarousel { get; set; } = new List<TourImage>();
-
-    // public virtual ICollection<TourDiscount> TourDiscounts { get; set; } = new List<TourDiscount>();
 }

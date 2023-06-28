@@ -1,5 +1,4 @@
 ﻿using Application.Middlewares;
-using Application.Workers;
 using Application.Workers.Notification;
 using Data.EFCore;
 using Microsoft.EntityFrameworkCore;
@@ -7,7 +6,6 @@ using Microsoft.OpenApi.Models;
 using Service.Channels.Notification;
 using Service.Implementations;
 using Service.Interfaces;
-using Shared.ExternalServices.VnPay;
 using Shared.Settings;
 
 namespace Application.Configurations;
@@ -24,15 +22,11 @@ public static class AppConfiguration
 
         // Settings
         services.Configure<AppSettings>(configuration.GetSection("AppSettings"));
-        services.Configure<VnPaySettings>(configuration.GetSection("VnPaySettings"));
         services.Configure<CloudStorageSettings>(configuration.GetSection("CloudStorageSettings"));
 
         // DbContext
         services.AddDbContextPool<AppDbContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
-
-        // VnPay
-        services.AddSingleton<VnPay>();
 
         return services.AddDependencies();
     }

@@ -24,18 +24,6 @@ public static class EntityConfigurations
             entity.Property(e => e.CreatedAt).HasColumnType("datetime");
         });
 
-        modelBuilder.Entity<Booking>(entity =>
-        {
-            entity.Property(e => e.Status).HasMaxLength(256);
-            entity.Property(e => e.Timestamp).HasColumnType("datetime");
-
-            entity.HasOne(d => d.Trip).WithMany(p => p.Bookings)
-                .HasForeignKey(d => d.TripId);
-
-            entity.HasOne(d => d.Traveler).WithMany(p => p.Bookings)
-                .HasForeignKey(d => d.TravelerId);
-        });
-
         modelBuilder.Entity<Feedback>();
 
         modelBuilder.Entity<IncurredCost>(
@@ -52,7 +40,7 @@ public static class EntityConfigurations
 
         modelBuilder.Entity<Notification>();
 
-        modelBuilder.Entity<Passenger>();
+        // modelBuilder.Entity<Passenger>();
 
         modelBuilder.Entity<Schedule>();
 
@@ -89,15 +77,6 @@ public static class EntityConfigurations
 
         modelBuilder.Entity<TourImage>().HasKey(e => new { e.TourId, e.AttachmentId });
 
-        modelBuilder.Entity<Transaction>(entity =>
-        {
-            entity.Property(e => e.Timestamp).HasColumnType("datetime");
-            entity.Property(e => e.Status).HasMaxLength(256);
-
-            entity.HasOne(d => d.Booking).WithMany(p => p.Transactions)
-                .HasForeignKey(d => d.BookingId);
-        });
-
         modelBuilder.Entity<Traveler>(entity =>
         {
             entity.ToTable("Traveler");
@@ -119,14 +98,6 @@ public static class EntityConfigurations
                     builder.HasKey(sc => new { sc.TravelerId, sc.TourGroupId });
                 }
             );
-
-        modelBuilder.Entity<VnPayResponse>(entity =>
-        {
-            entity.HasKey(e => e.TransactionId);
-            entity.HasOne(response => response.Transaction)
-                .WithOne()
-                .HasForeignKey<VnPayResponse>(x => x.TransactionId);
-        });
 
         modelBuilder.Entity<AttendanceEvent>(entity =>
         {
