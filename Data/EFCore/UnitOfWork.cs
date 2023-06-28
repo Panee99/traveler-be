@@ -7,8 +7,8 @@ public class UnitOfWork : UnitOfWorkBase
 {
     public IRepository<User> Users => Repo<User>();
     public IRepository<Attachment> Attachments => Repo<Attachment>();
-    public IRepository<AttendanceEvent> AttendanceEvents => Repo<AttendanceEvent>();
-    public IRepository<Attendance> Attendances => Repo<Attendance>();
+    public IRepository<Activity> Activities => Repo<Activity>();
+    public IRepository<AttendanceDetail> AttendanceDetails => Repo<AttendanceDetail>();
     public IRepository<Schedule> Schedules => Repo<Schedule>();
     public IRepository<Admin> Admins => Repo<Admin>();
     public IRepository<Tour> Tours => Repo<Tour>();
@@ -20,8 +20,8 @@ public class UnitOfWork : UnitOfWorkBase
     public IRepository<TravelerInTourGroup> TravelersInTourGroups => Repo<TravelerInTourGroup>();
     public IRepository<IncurredCost> IncurredCosts => Repo<IncurredCost>();
     public IRepository<FcmToken> FcmTokens => Repo<FcmToken>();
-    public IRepository<Notification> Notifications => Repo<Notification>(); 
-    
+    public IRepository<Notification> Notifications => Repo<Notification>();
+
     public UnitOfWork(AppDbContext context) : base(context)
     {
     }

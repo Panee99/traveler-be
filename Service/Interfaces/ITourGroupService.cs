@@ -1,4 +1,4 @@
-﻿using Service.Models.AttendanceEvent;
+﻿using Service.Models.Activity;
 using Service.Models.TourGroup;
 using Service.Models.User;
 using Shared.ResultExtensions;
@@ -19,7 +19,7 @@ public interface ITourGroupService
 
     Task<Result<List<UserViewModel>>> ListMembers(Guid tourGroupId);
 
-    Task<Result<List<AttendanceEventViewModel>>> ListAttendanceEvents(Guid tourGroupId);
+    Task<Result<List<ActivityViewModel>>> ListActivities(Guid tourGroupId);
 
     Task<Result<TourGroupViewModel>> Get(Guid id);
 

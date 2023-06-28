@@ -94,7 +94,7 @@ public class NotificationService : BaseService, INotificationService
                 Type = type,
                 ImageId = type switch
                 {
-                    NotificationType.AttendanceEvent => ServiceConstants.AttendanceImage,
+                    NotificationType.AttendanceActivity => ServiceConstants.AttendanceImage,
                     _ => throw new ArgumentOutOfRangeException()
                 }
             };

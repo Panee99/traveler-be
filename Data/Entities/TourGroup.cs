@@ -20,5 +20,5 @@ public class TourGroup
 
     public virtual ICollection<Traveler> Travelers { get; set; } = new List<Traveler>();
 
-    public virtual ICollection<AttendanceEvent> AttendanceEvents { get; set; } = new List<AttendanceEvent>();
+    public virtual ICollection<Activity> Activities { get; set; } = new List<Activity>();
 }

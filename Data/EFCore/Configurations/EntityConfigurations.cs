@@ -99,18 +99,18 @@ public static class EntityConfigurations
                 }
             );
 
-        modelBuilder.Entity<AttendanceEvent>(entity =>
+        modelBuilder.Entity<Activity>(entity =>
         {
-            entity.HasOne(evt => evt.TourGroup)
-                .WithMany(group => group.AttendanceEvents)
-                .HasForeignKey(evt => evt.TourGroupId);
+            entity.HasOne(act => act.TourGroup)
+                .WithMany(group => group.Activities)
+                .HasForeignKey(act => act.TourGroupId);
         });
 
-        modelBuilder.Entity<Attendance>(entity =>
+        modelBuilder.Entity<AttendanceDetail>(entity =>
         {
-            entity.HasOne(att => att.AttendanceEvent)
-                .WithMany(evt => evt.Attendances)
-                .HasForeignKey(e => e.AttendanceEventId);
+            entity.HasOne(att => att.Activity)
+                .WithMany()
+                .HasForeignKey(att => att.ActivityId);
         });
 
         modelBuilder.Entity<FcmToken>(entity =>

@@ -87,7 +87,7 @@ public class NotificationWorker : BackgroundService
     {
         return type switch
         {
-            NotificationType.AttendanceEvent => "Attendance Event",
+            NotificationType.AttendanceActivity => "Attendance Activity",
             NotificationType.TourStarted => throw new ArgumentOutOfRangeException(),
             _ => throw new ArgumentOutOfRangeException()
         };
@@ -97,11 +97,11 @@ public class NotificationWorker : BackgroundService
     {
         switch (type)
         {
-            case NotificationType.AttendanceEvent:
+            case NotificationType.AttendanceActivity:
             {
                 if (!useTemplate)
                 {
-                    return $"A new attendance event opened: {directObject}";
+                    return $"A new attendance activity opened: {directObject}";
                 }
 
                 var compiledTemplate = _razorEngine.Compile(_attendanceTemplate);

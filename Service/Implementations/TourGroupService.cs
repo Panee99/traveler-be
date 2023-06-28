@@ -3,7 +3,7 @@ using Data.Entities;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Service.Interfaces;
-using Service.Models.AttendanceEvent;
+using Service.Models.Activity;
 using Service.Models.TourGroup;
 using Service.Models.User;
 using Shared.ResultExtensions;
@@ -165,16 +165,16 @@ public class TourGroupService : BaseService, ITourGroupService
         return members;
     }
 
-    public async Task<Result<List<AttendanceEventViewModel>>> ListAttendanceEvents(Guid tourGroupId)
+    public async Task<Result<List<ActivityViewModel>>> ListActivities(Guid tourGroupId)
     {
         if (!await UnitOfWork.TourGroups.AnyAsync(e => e.Id == tourGroupId))
             return Error.NotFound();
 
-        var events = await UnitOfWork.AttendanceEvents
+        var activities = await UnitOfWork.Activities
             .Query()
             .Where(e => e.TourGroupId == tourGroupId)
             .ToListAsync();
 
-        return events.Adapt<List<AttendanceEventViewModel>>();
+        return activities.Adapt<List<ActivityViewModel>>();
     }
 }
