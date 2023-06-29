@@ -8,6 +8,8 @@ public class TourGroup
 
     public Guid? TourGuideId { get; set; }
 
+    public Guid? CurrentScheduleId { get; set; }
+
     public string GroupName { get; set; } = null!;
 
     public DateTime CreatedAt { get; set; }
@@ -17,6 +19,8 @@ public class TourGroup
     public int MaxOccupancy { get; set; }
 
     public TourGuide? TourGuide { get; set; } = null!;
+
+    public Schedule? CurrentSchedule { get; set; }
 
     public virtual ICollection<Traveler> Travelers { get; set; } = new List<Traveler>();
 

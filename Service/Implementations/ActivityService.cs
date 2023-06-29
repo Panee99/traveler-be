@@ -4,6 +4,7 @@ using Data.Enums;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Service.Channels.Notification;
+using Service.Commons.Mapping;
 using Service.Interfaces;
 using Service.Models.Activity;
 using Shared.Helpers;
@@ -28,6 +29,7 @@ public class ActivityService : BaseService, IActivityService
 
         // Create activity
         var activity = model.Adapt<Activity>();
+        activity.Status = ActivityStatus.Pending;
         activity.CreatedAt = DateTimeHelper.VnNow();
         UnitOfWork.Activities.Add(activity);
 
@@ -68,6 +70,18 @@ public class ActivityService : BaseService, IActivityService
         await UnitOfWork.SaveChangesAsync();
 
         return Result.Success();
+    }
+
+    public async Task<Result<ActivityViewModel>> Update(Guid activityId, ActivityUpdateModel model)
+    {
+        var activity = await UnitOfWork.Activities.FindAsync(activityId);
+        if (activity is null) return Error.NotFound();
+
+        model.AdaptIgnoreNull(activity);
+        UnitOfWork.Activities.Update(activity);
+        await UnitOfWork.SaveChangesAsync();
+
+        return activity.Adapt<ActivityViewModel>();
     }
 
     // public async Task<Result<AttendanceViewModel>> CreateAttendance(Guid attendanceEventId, AttendanceCreateModel model)

@@ -111,4 +111,14 @@ public class TourGroupsController : ApiController
         var result = await _incurredCostService.ListAll(id);
         return result.Match(Ok, OnError);
     }
+
+    /// <summary>
+    /// Update current schedule
+    /// </summary>
+    [HttpPut("{id:guid}/current-schedule")]
+    public async Task<IActionResult> UpdateCurrentSchedule(Guid id, CurrentScheduleUpdateModel model)
+    {
+        var result = await _incurredCostService.UpdateCurrentSchedule(id, model);
+        return result.Match(Ok, OnError);
+    }
 }

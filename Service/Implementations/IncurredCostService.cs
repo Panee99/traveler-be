@@ -4,6 +4,7 @@ using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Service.Interfaces;
 using Service.Models.IncurredCost;
+using Service.Models.TourGroup;
 using Shared.Helpers;
 using Shared.ResultExtensions;
 
@@ -57,5 +58,20 @@ public class IncurredCostService : BaseService, IIncurredCostService
             view.ImageUrl = _cloudStorageService.GetMediaLink(e.ImageId);
             return view;
         }).ToList();
+    }
+
+    public async Task<Result> UpdateCurrentSchedule(Guid tourGroupId, CurrentScheduleUpdateModel model)
+    {
+        var tourGroup = await UnitOfWork.TourGroups.FindAsync(tourGroupId);
+        if (tourGroup is null) return Error.NotFound("Tour Group not found.");
+
+        if (!await UnitOfWork.Schedules.AnyAsync(e => e.Id == model.CurrentScheduleId))
+            return Error.NotFound("Schedule not found.");
+
+        tourGroup.CurrentScheduleId = model.CurrentScheduleId;
+        UnitOfWork.TourGroups.Update(tourGroup);
+        await UnitOfWork.SaveChangesAsync();
+
+        return Result.Success();
     }
 }

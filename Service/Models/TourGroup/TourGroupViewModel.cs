@@ -11,5 +11,6 @@ public class TourGroupViewModel
     public int MaxOccupancy;
     public Guid TripId;
     public int TravelerCount;
+    public Guid? CurrentScheduleId;
     public TripViewModel? Trip;
 }

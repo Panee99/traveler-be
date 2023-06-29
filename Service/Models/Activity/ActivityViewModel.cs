@@ -6,6 +6,7 @@ public record ActivityViewModel
 {
     public Guid Id;
     public ActivityType Type;
+    public ActivityStatus Status;
     public string Title = null!;
     public string? Description;
     public Guid TourGroupId;
