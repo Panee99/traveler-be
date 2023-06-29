@@ -2,7 +2,10 @@
 using Data.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Service.Interfaces;
+using Service.Models.Activity;
+using Service.Models.IncurredCost;
 using Service.Models.TourGroup;
+using Service.Models.User;
 
 namespace Application.Controllers;
 
@@ -22,6 +25,7 @@ public class TourGroupsController : ApiController
     /// <summary>
     /// Get a tour group
     /// </summary>
+    [ProducesResponseType(typeof(List<TourGroupViewModel>), StatusCodes.Status200OK)]
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> Get(Guid id)
     {
@@ -29,62 +33,63 @@ public class TourGroupsController : ApiController
         return result.Match(Ok, OnError);
     }
 
-    /// <summary>
-    /// Create a new tour group
-    /// </summary>
-    [Authorize(UserRole.Admin)]
-    [HttpPost("")]
-    public async Task<IActionResult> Create(TourGroupCreateModel model)
-    {
-        var result = await _tourGroupService.Create(model);
-        return result.Match(Ok, OnError);
-    }
+    // /// <summary>
+    // /// Create a new tour group
+    // /// </summary>
+    // [Authorize(UserRole.Admin)]
+    // [HttpPost("")]
+    // public async Task<IActionResult> Create(TourGroupCreateModel model)
+    // {
+    //     var result = await _tourGroupService.Create(model);
+    //     return result.Match(Ok, OnError);
+    // }
+
+    // /// <summary>
+    // /// Update a tour group
+    // /// </summary>
+    // [Authorize(UserRole.Admin)]
+    // [HttpPatch("{id:guid}")]
+    // public async Task<IActionResult> Update([FromRoute] Guid id, TourGroupUpdateModel model)
+    // {
+    //     var result = await _tourGroupService.Update(id, model);
+    //     return result.Match(Ok, OnError);
+    // }
+
+    // /// <summary>
+    // /// Delete a tour group
+    // /// </summary>
+    // [Authorize(UserRole.Admin)]
+    // [HttpDelete("{id:guid}")]
+    // public async Task<IActionResult> Delete([FromRoute] Guid id)
+    // {
+    //     var result = await _tourGroupService.Delete(id);
+    //     return result.Match(Ok, OnError);
+    // }
+
+    // /// <summary>
+    // /// Add travelers to group
+    // /// </summary>
+    // [HttpPatch("{id:guid}/travelers")]
+    // public async Task<IActionResult> AddTravelers([FromRoute] Guid id, [FromBody] List<Guid> travelerIds)
+    // {
+    //     var result = await _tourGroupService.AddTravelers(id, travelerIds);
+    //     return result.Match(Ok, OnError);
+    // }
+
+    // /// <summary>
+    // /// Remove travelers from group
+    // /// </summary>
+    // [HttpDelete("{id:guid}/travelers")]
+    // public async Task<IActionResult> RemoveTravelers([FromRoute] Guid id, [FromBody] List<Guid> travelerIds)
+    // {
+    //     var result = await _tourGroupService.RemoveTravelers(id, travelerIds);
+    //     return result.Match(Ok, OnError);
+    // }
 
     /// <summary>
-    /// Update a tour group
+    /// List all travelers and tour guide of a group
     /// </summary>
-    [Authorize(UserRole.Admin)]
-    [HttpPatch("{id:guid}")]
-    public async Task<IActionResult> Update([FromRoute] Guid id, TourGroupUpdateModel model)
-    {
-        var result = await _tourGroupService.Update(id, model);
-        return result.Match(Ok, OnError);
-    }
-
-    /// <summary>
-    /// Delete a tour group
-    /// </summary>
-    [Authorize(UserRole.Admin)]
-    [HttpDelete("{id:guid}")]
-    public async Task<IActionResult> Delete([FromRoute] Guid id)
-    {
-        var result = await _tourGroupService.Delete(id);
-        return result.Match(Ok, OnError);
-    }
-
-    /// <summary>
-    /// Add travelers to group
-    /// </summary>
-    [HttpPatch("{id:guid}/travelers")]
-    public async Task<IActionResult> AddTravelers([FromRoute] Guid id, [FromBody] List<Guid> travelerIds)
-    {
-        var result = await _tourGroupService.AddTravelers(id, travelerIds);
-        return result.Match(Ok, OnError);
-    }
-
-    /// <summary>
-    /// Remove travelers from group
-    /// </summary>
-    [HttpDelete("{id:guid}/travelers")]
-    public async Task<IActionResult> RemoveTravelers([FromRoute] Guid id, [FromBody] List<Guid> travelerIds)
-    {
-        var result = await _tourGroupService.RemoveTravelers(id, travelerIds);
-        return result.Match(Ok, OnError);
-    }
-
-    /// <summary>
-    /// List all travelers of a group
-    /// </summary>
+    [ProducesResponseType(typeof(List<UserViewModel>), StatusCodes.Status200OK)]
     [HttpGet("{id:guid}/members")]
     public async Task<IActionResult> ListMembers([FromRoute] Guid id)
     {
@@ -95,6 +100,7 @@ public class TourGroupsController : ApiController
     /// <summary>
     /// List all activities of a tour group
     /// </summary>
+    [ProducesResponseType(typeof(List<ActivityViewModel>), StatusCodes.Status200OK)]
     [HttpGet("{id:guid}/activities")]
     public async Task<IActionResult> ListActivities(Guid id)
     {
@@ -105,6 +111,7 @@ public class TourGroupsController : ApiController
     /// <summary>
     /// List all Incurred Costs in group
     /// </summary>
+    [ProducesResponseType(typeof(List<IncurredCostViewModel>), StatusCodes.Status200OK)]
     [HttpGet("{id:guid}/incurred-costs")]
     public async Task<IActionResult> ListIncurredCosts(Guid id)
     {
@@ -115,6 +122,7 @@ public class TourGroupsController : ApiController
     /// <summary>
     /// Update current schedule
     /// </summary>
+    [ProducesResponseType(StatusCodes.Status200OK)]
     [HttpPut("{id:guid}/current-schedule")]
     public async Task<IActionResult> UpdateCurrentSchedule(Guid id, CurrentScheduleUpdateModel model)
     {

@@ -34,7 +34,6 @@ public class TourService : BaseService, ITourService
     {
         // Map
         var tour = model.AdaptIgnoreNull<TourCreateModel, Tour>();
-        tour.Status = TourStatus.New;
 
         // Add
         tour = UnitOfWork.Tours.Add(tour);

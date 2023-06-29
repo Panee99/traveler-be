@@ -17,17 +17,17 @@ public class TravelersController : ApiController
         _travelerService = travelerService;
     }
 
-    /// <summary>
-    /// Register for new account (mobile)
-    /// </summary>
-    [SwaggerOperation(Description = "Phone format: '84' or '+84'.")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [HttpPost("register")]
-    public async Task<IActionResult> Register(TravelerRegistrationModel model)
-    {
-        var result = await _travelerService.Register(model);
-        return result.Match(Ok, OnError);
-    }
+    // /// <summary>
+    // /// Register for new account (mobile)
+    // /// </summary>
+    // [SwaggerOperation(Description = "Phone format: '84' or '+84'.")]
+    // [ProducesResponseType(StatusCodes.Status200OK)]
+    // [HttpPost("register")]
+    // public async Task<IActionResult> Register(TravelerRegistrationModel model)
+    // {
+    //     var result = await _travelerService.Register(model);
+    //     return result.Match(Ok, OnError);
+    // }
 
     /// <summary>
     /// List all joined groups

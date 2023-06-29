@@ -1,6 +1,7 @@
 ﻿using Application.Configurations.Auth;
 using Microsoft.AspNetCore.Mvc;
 using Service.Interfaces;
+using Service.Models.TourGroup;
 using Service.Models.Trip;
 
 namespace Application.Controllers;
@@ -9,28 +10,28 @@ namespace Application.Controllers;
 [Route("trips")]
 public class TripsController : ApiController
 {
-    private readonly ITravelerService _travelerService;
     private readonly ITripService _tripService;
 
-    public TripsController(ITravelerService travelerService, ITripService tripService)
+    public TripsController(ITripService tripService)
     {
-        _travelerService = travelerService;
         _tripService = tripService;
     }
 
-    /// <summary>
-    /// Create a trip
-    /// </summary>
-    [HttpPost("")]
-    public async Task<IActionResult> Create(TripCreateModel model)
-    {
-        var result = await _tripService.Create(model);
-        return result.Match(Ok, OnError);
-    }
+    // /// <summary>
+    // /// Create a trip
+    // /// </summary>
+    // [ProducesResponseType(typeof(TripViewModel), StatusCodes.Status200OK)]
+    // [HttpPost("")]
+    // public async Task<IActionResult> Create(TripCreateModel model)
+    // {
+    //     var result = await _tripService.Create(model);
+    //     return result.Match(Ok, OnError);
+    // }
 
     /// <summary>
     /// Update a trip
     /// </summary>
+    [ProducesResponseType(typeof(TripViewModel), StatusCodes.Status200OK)]
     [HttpPatch("{id:guid}")]
     public async Task<IActionResult> Update(Guid id, TripUpdateModel model)
     {
@@ -41,6 +42,7 @@ public class TripsController : ApiController
     /// <summary>
     /// Delete a trip
     /// </summary>
+    [ProducesResponseType(StatusCodes.Status200OK)]
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete(Guid id)
     {
@@ -52,6 +54,7 @@ public class TripsController : ApiController
     /// Get a trip
     /// </summary>
     [AllowAnonymous]
+    [ProducesResponseType(typeof(TripViewModel), StatusCodes.Status200OK)]
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> Get(Guid id)
     {
@@ -62,6 +65,7 @@ public class TripsController : ApiController
     /// <summary>
     /// List groups of a trip
     /// </summary>
+    [ProducesResponseType(typeof(List<TourGroupViewModel>), StatusCodes.Status200OK)]
     [HttpGet("{id:guid}/tour-groups")]
     public async Task<IActionResult> ListGroupsInTrip(Guid id)
     {

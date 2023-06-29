@@ -17,36 +17,25 @@ public class ApiController : ControllerBase
 
     protected static IActionResult OnError(Error error)
     {
-        var response = new ObjectResult(new ErrorResponsePayload
+        return new ObjectResult(new ErrorResponsePayload
         {
             Timestamp = DateTimeHelper.VnNow(),
             Code = error.Code,
             Message = error.Message,
             Details = error.ErrorDetails
-        });
-
-        switch (error.ErrorType)
+        })
         {
-            case ErrorType.Unexpected:
+            StatusCode = error.ErrorType switch
+            {
                 // Log.Warning("Unexpected error: {Code} - {Message}", error.Code, error.Message);
-                response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                break;
-            case ErrorType.Validation:
-                response.StatusCode = (int)HttpStatusCode.BadRequest;
-                break;
-            case ErrorType.Conflict:
-                response.StatusCode = (int)HttpStatusCode.Conflict;
-                break;
-            case ErrorType.NotFound:
-                response.StatusCode = (int)HttpStatusCode.NotFound;
-                break;
-            case ErrorType.Authentication:
-                response.StatusCode = (int)HttpStatusCode.Unauthorized;
-                break;
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
-
-        return response;
+                ErrorType.Unexpected => (int)HttpStatusCode.InternalServerError,
+                ErrorType.Validation => (int)HttpStatusCode.BadRequest,
+                ErrorType.Conflict => (int)HttpStatusCode.Conflict,
+                ErrorType.NotFound => (int)HttpStatusCode.NotFound,
+                ErrorType.Authentication => (int)HttpStatusCode.Unauthorized,
+                ErrorType.Authorization => (int)HttpStatusCode.Forbidden,
+                _ => throw new ArgumentOutOfRangeException()
+            }
+        };
     }
 }

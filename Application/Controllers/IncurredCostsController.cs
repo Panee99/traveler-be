@@ -21,6 +21,7 @@ public class IncurredCostsController : ApiController
     /// <summary>
     /// Create a new Incurred Cost
     /// </summary>
+    [ProducesResponseType(typeof(IncurredCostViewModel), StatusCodes.Status200OK)]
     [HttpPost("")]
     public async Task<IActionResult> Create(IncurredCostCreateModel model)
     {
@@ -31,6 +32,7 @@ public class IncurredCostsController : ApiController
     /// <summary>
     /// Delete an Incurred Cost
     /// </summary>
+    [ProducesResponseType(StatusCodes.Status200OK)]
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete(Guid id)
     {

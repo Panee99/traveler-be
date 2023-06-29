@@ -14,24 +14,22 @@ namespace Application.Controllers;
 public class ToursController : ApiController
 {
     private readonly ITourService _tourService;
-    private readonly ITourGroupService _tourGroupService;
 
-    public ToursController(ITourService tourService, ITourGroupService tourGroupService)
+    public ToursController(ITourService tourService)
     {
         _tourService = tourService;
-        _tourGroupService = tourGroupService;
     }
 
-    /// <summary>
-    /// Create a new tour
-    /// </summary>
-    [ProducesResponseType(typeof(TourDetailsViewModel), StatusCodes.Status200OK)]
-    [HttpPost("")]
-    public async Task<IActionResult> Create(TourCreateModel model)
-    {
-        var result = await _tourService.Create(model);
-        return result.Match(Ok, OnError);
-    }
+    // /// <summary>
+    // /// Create a new tour
+    // /// </summary>
+    // [ProducesResponseType(typeof(TourDetailsViewModel), StatusCodes.Status200OK)]
+    // [HttpPost("")]
+    // public async Task<IActionResult> Create(TourCreateModel model)
+    // {
+    //     var result = await _tourService.Create(model);
+    //     return result.Match(Ok, OnError);
+    // }
 
     /// <summary>
     /// Update a tour

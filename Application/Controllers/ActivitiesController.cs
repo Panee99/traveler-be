@@ -14,6 +14,10 @@ public class ActivitiesController : ApiController
         _activityService = activityService;
     }
 
+    /// <summary>
+    /// Create an activity
+    /// </summary>
+    [ProducesResponseType(typeof(ActivityViewModel), StatusCodes.Status200OK)]
     [HttpPost("")]
     public async Task<IActionResult> Create(ActivityCreateModel model)
     {
@@ -21,13 +25,21 @@ public class ActivitiesController : ApiController
         return result.Match(Ok, OnError);
     }
 
+    /// <summary>
+    /// Delete an activity
+    /// </summary>
+    [ProducesResponseType(StatusCodes.Status200OK)]
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete(Guid id)
     {
         var result = await _activityService.Delete(id);
         return result.Match(Ok, OnError);
     }
-    
+
+    /// <summary>
+    /// Update an activity
+    /// </summary>
+    [ProducesResponseType(typeof(ActivityViewModel), StatusCodes.Status200OK)]
     [HttpPatch("{id:guid}")]
     public async Task<IActionResult> Update(Guid id, ActivityUpdateModel model)
     {

@@ -16,6 +16,9 @@ public class NotificationsController : ApiController
         _notificationService = notificationService;
     }
 
+    /// <summary>
+    /// Get all user's notifications
+    /// </summary>
     [ProducesResponseType(typeof(List<NotificationViewModel>), StatusCodes.Status200OK)]
     [HttpGet("")]
     public async Task<IActionResult> ListAll()
@@ -24,6 +27,9 @@ public class NotificationsController : ApiController
         return result.Match(Ok, OnError);
     }
 
+    /// <summary>
+    /// Read a notification
+    /// </summary>
     [ProducesResponseType(StatusCodes.Status200OK)]
     [HttpPut("{id:guid}/read")]
     public async Task<IActionResult> Read(Guid id)
@@ -32,6 +38,9 @@ public class NotificationsController : ApiController
         return result.Match(Ok, OnError);
     }
 
+    /// <summary>
+    /// Read all user's notifications
+    /// </summary>
     [ProducesResponseType(StatusCodes.Status200OK)]
     [HttpPut("read-all")]
     public async Task<IActionResult> ReadAll()
@@ -40,6 +49,9 @@ public class NotificationsController : ApiController
         return result.Match(Ok, OnError);
     }
 
+    /// <summary>
+    /// Get user's notifications unread count
+    /// </summary>
     [ProducesResponseType(StatusCodes.Status200OK)]
     [HttpGet("unread-count")]
     public async Task<IActionResult> GetUnreadCount()

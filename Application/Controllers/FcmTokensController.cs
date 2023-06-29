@@ -14,6 +14,9 @@ public class FcmTokensController : ApiController
         _fcmTokenService = fcmTokenService;
     }
 
+    /// <summary>
+    /// Create a fcm token
+    /// </summary>
     [ProducesResponseType(typeof(FcmTokenViewModel), StatusCodes.Status200OK)]
     [HttpPost("")]
     public async Task<IActionResult> Create(FcmTokenCreateModel model)
@@ -22,6 +25,9 @@ public class FcmTokensController : ApiController
         return result.Match(Ok, OnError);
     }
 
+    /// <summary>
+    /// Delete a fcm token
+    /// </summary>
     [ProducesResponseType(StatusCodes.Status200OK)]
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete(Guid id)
@@ -30,6 +36,9 @@ public class FcmTokensController : ApiController
         return result.Match(Ok, OnError);
     }
 
+    /// <summary>
+    /// Find fcm tokens by users
+    /// </summary>
     [ProducesResponseType(typeof(List<FcmTokenViewModel>), StatusCodes.Status200OK)]
     [HttpPost("find-by-users")]
     public async Task<IActionResult> FindTokens(List<Guid> userIds)

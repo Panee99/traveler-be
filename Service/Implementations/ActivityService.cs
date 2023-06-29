@@ -21,7 +21,7 @@ public class ActivityService : BaseService, IActivityService
     {
         _notificationJobQueue = notificationJobQueue;
     }
-
+    
     public async Task<Result<ActivityViewModel>> Create(ActivityCreateModel model)
     {
         var tourGroup = await UnitOfWork.TourGroups.FindAsync(model.TourGroupId);
@@ -71,7 +71,7 @@ public class ActivityService : BaseService, IActivityService
 
         return Result.Success();
     }
-
+    
     public async Task<Result<ActivityViewModel>> Update(Guid activityId, ActivityUpdateModel model)
     {
         var activity = await UnitOfWork.Activities.FindAsync(activityId);
@@ -83,47 +83,4 @@ public class ActivityService : BaseService, IActivityService
 
         return activity.Adapt<ActivityViewModel>();
     }
-
-    // public async Task<Result<AttendanceViewModel>> CreateAttendance(Guid attendanceEventId, AttendanceCreateModel model)
-    // {
-    //     if (!await UnitOfWork.AttendanceEvents.AnyAsync(e => e.Id == attendanceEventId))
-    //         return Error.NotFound("AttendanceDetail event not found.");
-    //
-    //     // check if user in right group
-    //     var isUserInGroup = await UnitOfWork.AttendanceEvents
-    //         .Query()
-    //         .Where(evt => evt.Id == attendanceEventId)
-    //         .Select(evt => evt.TourGroup)
-    //         .SelectMany(group => group.Travelers)
-    //         .AnyAsync(traveler => traveler.Id == model.TravelerId);
-    //
-    //     if (!isUserInGroup) return Error.Conflict("User not in this group");
-    //
-    //     // create 
-    //     var attendance = new AttendanceDetail()
-    //     {
-    //         AttendanceEventId = attendanceEventId,
-    //         TravelerId = model.TravelerId,
-    //         Present = model.Present,
-    //         Reason = model.Reason
-    //     };
-    //
-    //     UnitOfWork.Attendances.Add(attendance);
-    //     await UnitOfWork.SaveChangesAsync();
-    //
-    //     return attendance.Adapt<AttendanceViewModel>();
-    // }
-
-    // public async Task<Result<List<AttendanceViewModel>>> ListAttendances(Guid attendanceEventId)
-    // {
-    //     if (!await UnitOfWork.AttendanceEvents.AnyAsync(e => e.Id == attendanceEventId))
-    //         return Error.NotFound("AttendanceDetail event not found.");
-    //
-    //     var attendances = await UnitOfWork.Attendances
-    //         .Query()
-    //         .Where(e => e.AttendanceEventId == attendanceEventId)
-    //         .ToListAsync();
-    //
-    //     return attendances.Adapt<List<AttendanceViewModel>>();
-    // }
 }

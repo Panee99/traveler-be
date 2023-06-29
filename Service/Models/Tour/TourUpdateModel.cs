@@ -13,7 +13,6 @@ public record TourUpdateModel
     string? Duration,
     string? Description,
     string? Policy,
-    TourStatus? Status,
     List<ScheduleCreateModel>? Schedules,
     List<Guid>? Carousel,
     Guid? ThumbnailId

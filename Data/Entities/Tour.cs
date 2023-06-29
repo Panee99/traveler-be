@@ -12,11 +12,7 @@ public class Tour
 
     public string Destination { get; set; } = null!;
 
-    public int MaxOccupancy { get; set; }
-
     public TourType Type { get; set; }
-
-    public TourStatus Status { get; set; }
 
     public DateTime CreatedAt { get; set; }
 
