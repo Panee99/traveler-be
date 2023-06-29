@@ -8,7 +8,6 @@ public record TourUpdateModel
     string? Title,
     string? Departure,
     string? Destination,
-    int? MaxOccupancy,
     TourType? Type,
     string? Duration,
     string? Description,

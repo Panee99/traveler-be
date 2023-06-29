@@ -12,6 +12,5 @@ public record TourViewModel
     public string? Description;
     public string? Policy;
     public string? ThumbnailUrl;
-    public int MaxOccupancy;
     public TourType Type;
 }
