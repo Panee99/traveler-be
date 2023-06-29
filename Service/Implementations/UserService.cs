@@ -8,6 +8,7 @@ using Service.Commons.Mapping;
 using Service.Commons.QueryExtensions;
 using Service.Interfaces;
 using Service.Models.Admin;
+using Service.Models.TourGroup;
 using Service.Models.TourGuide;
 using Service.Models.Traveler;
 using Service.Models.User;
@@ -19,11 +20,14 @@ namespace Service.Implementations;
 public class UserService : BaseService, IUserService
 {
     private readonly ICloudStorageService _cloudStorageService;
+    private readonly ITourGroupService _tourGroupService;
 
-    public UserService(UnitOfWork unitOfWork, ICloudStorageService cloudStorageService)
+    public UserService(UnitOfWork unitOfWork, ICloudStorageService cloudStorageService,
+        ITourGroupService tourGroupService)
         : base(unitOfWork)
     {
         _cloudStorageService = cloudStorageService;
+        _tourGroupService = tourGroupService;
     }
 
     public async Task<Result<UserViewModel>> Create(UserCreateModel model)
@@ -219,5 +223,55 @@ public class UserService : BaseService, IUserService
         {
             TourCount = tourCount
         };
+    }
+
+    public async Task<Result<TourGroupViewModel>> GetCurrentJoinedGroup(Guid userId)
+    {
+        // Check user exist
+        var user = await UnitOfWork.Users.FindAsync(userId);
+        if (user is null) return Error.NotFound("User not found.");
+
+        TourGroup? currentGroup;
+
+        switch (user.Role)
+        {
+            case UserRole.Traveler:
+                // Get traveler current joined group
+                currentGroup = await UnitOfWork.Travelers
+                    .Query()
+                    .AsSplitQuery()
+                    .Where(traveler => traveler.Id == userId)
+                    .SelectMany(guide => guide.TourGroups)
+                    .Include(group => group.Trip)
+                    .ThenInclude(trip => trip.Tour)
+                    .Where(group => group.Trip.Status != TripStatus.Ended &&
+                                    group.Trip.Status != TripStatus.Canceled)
+                    .FirstOrDefaultAsync();
+                break;
+            case UserRole.TourGuide:
+                // Get tour guide current joined group
+                currentGroup = await UnitOfWork.TourGuides
+                    .Query()
+                    .AsSplitQuery()
+                    .Where(guide => guide.Id == userId)
+                    .SelectMany(guide => guide.TourGroups)
+                    .Include(group => group.Trip)
+                    .ThenInclude(trip => trip.Tour)
+                    .Where(group => group.Trip.Status != TripStatus.Ended &&
+                                    group.Trip.Status != TripStatus.Canceled)
+                    .FirstOrDefaultAsync();
+                break;
+            default:
+                return Error.Conflict("Not supported role");
+        }
+
+        if (currentGroup is null) return Error.NotFound("No current tour group joined");
+        // Map to view model
+        var tour = currentGroup.Trip.Tour;
+        var view = currentGroup.Adapt<TourGroupViewModel>();
+        view.Trip!.Tour!.ThumbnailUrl = _cloudStorageService.GetMediaLink(tour.ThumbnailId);
+        view.TravelerCount = await _tourGroupService.CountTravelers(view.Id);
+
+        return view;
     }
 }

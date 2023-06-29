@@ -11,7 +11,5 @@ public interface ITourGuideService
 
     Task<Result<List<TourGroupViewModel>>> ListAssignedGroups(Guid tourGuideId);
 
-    Task<Result<TourGroupViewModel>> GetCurrentAssignedTourGroup(Guid tourGuideId);
-
     Task<Result<TourGuideViewModel>> UpdateContacts(Guid tourGuideId, ContactsUpdateModel model);
 }

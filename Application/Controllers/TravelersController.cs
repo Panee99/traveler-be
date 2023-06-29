@@ -29,21 +29,15 @@ public class TravelersController : ApiController
         return result.Match(Ok, OnError);
     }
 
+    /// <summary>
+    /// List all joined groups
+    /// </summary>
     [ProducesResponseType(typeof(TourGroupViewModel), StatusCodes.Status200OK)]
     [Authorize]
     [HttpGet("{id:guid}/joined-groups")]
     public async Task<IActionResult> ListJoinedGroups(Guid id)
     {
         var result = await _travelerService.ListJoinedGroups(id);
-        return result.Match(Ok, OnError);
-    }
-
-    [ProducesResponseType(typeof(TourGroupViewModel), StatusCodes.Status200OK)]
-    [Authorize]
-    [HttpGet("{id:guid}/current-group")]
-    public async Task<IActionResult> GetCurrentJoinedGroup(Guid id)
-    {
-        var result = await _travelerService.GetCurrentJoinedGroup(id);
         return result.Match(Ok, OnError);
     }
 }

@@ -2,6 +2,7 @@
 using Data.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Service.Interfaces;
+using Service.Models.TourGroup;
 using Service.Models.User;
 
 namespace Application.Controllers;
@@ -61,6 +62,9 @@ public class UsersController : ApiController
         return result.Match(Ok, OnError);
     }
 
+    /// <summary>
+    /// Get travel info
+    /// </summary>
     [ProducesResponseType(typeof(TravelInfo), StatusCodes.Status200OK)]
     [Authorize]
     [HttpGet("{id:guid}/travel-info")]
@@ -69,7 +73,19 @@ public class UsersController : ApiController
         var result = await _userService.GetTravelInfo(id);
         return result.Match(Ok, OnError);
     }
-    
+
+    /// <summary>
+    /// Get current joined group
+    /// </summary>
+    [ProducesResponseType(typeof(TourGroupViewModel), StatusCodes.Status200OK)]
+    [Authorize]
+    [HttpGet("{id:guid}/current-group")]
+    public async Task<IActionResult> GetCurrentJoinedGroup(Guid id)
+    {
+        var result = await _userService.GetCurrentJoinedGroup(id);
+        return result.Match(Ok, OnError);
+    }
+
     #region Required Admin Role
 
     /// <summary>

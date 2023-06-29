@@ -1,4 +1,5 @@
 ﻿using Service.Commons.QueryExtensions;
+using Service.Models.TourGroup;
 using Service.Models.User;
 using Shared.ResultExtensions;
 
@@ -23,4 +24,6 @@ public interface IUserService
     Task<Result> ChangePassword(Guid currentUserId, PasswordUpdateModel model);
     
     Task<Result<TravelInfo>> GetTravelInfo(Guid id);
+    
+    Task<Result<TourGroupViewModel>> GetCurrentJoinedGroup(Guid id);
 }

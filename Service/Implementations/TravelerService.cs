@@ -79,35 +79,6 @@ public class TravelerService : BaseService, ITravelerService
         }).ToList();
     }
 
-    public async Task<Result<TourGroupViewModel>> GetCurrentJoinedGroup(Guid travelerId)
-    {
-        // Check traveler exist
-        if (!await UnitOfWork.Travelers.AnyAsync(e => e.Id == travelerId))
-            return Error.NotFound("Traveler not found.");
-
-        // Get traveler current joined group
-        var currentGroup = await UnitOfWork.Travelers
-            .Query()
-            .AsSplitQuery()
-            .Where(traveler => traveler.Id == travelerId)
-            .SelectMany(guide => guide.TourGroups)
-            .Include(group => group.Trip)
-            .ThenInclude(trip => trip.Tour)
-            .Where(group => group.Trip.Status != TripStatus.Ended &&
-                            group.Trip.Status != TripStatus.Canceled)
-            .FirstOrDefaultAsync();
-
-        if (currentGroup is null) return Error.NotFound("No current tour group joined");
-
-        // Map to view model
-        var tour = currentGroup.Trip.Tour;
-        var view = currentGroup.Adapt<TourGroupViewModel>();
-        view.Trip!.Tour!.ThumbnailUrl = _cloudStorageService.GetMediaLink(tour.ThumbnailId);
-        view.TravelerCount = await _tourGroupService.CountTravelers(view.Id);
-
-        return view;
-    }
-
     // PRIVATE
 
     #region PRIVATE

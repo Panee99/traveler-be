@@ -29,18 +29,6 @@ public class TourGuidesController : ApiController
         return result.Match(Ok, OnError);
     }
 
-    /// <summary>
-    /// List all tour groups this tour guide assigned to
-    /// </summary>
-    [Authorize(UserRole.Admin, UserRole.TourGuide)]
-    [ProducesResponseType(typeof(TourGroupViewModel), StatusCodes.Status200OK)]
-    [HttpGet("{id:guid}/current-group")]
-    public async Task<IActionResult> GetCurrentAssignedTourGroup(Guid id)
-    {
-        var result = await _tourGuideService.GetCurrentAssignedTourGroup(id);
-        return result.Match(Ok, OnError);
-    }
-
     [Authorize(UserRole.Admin, UserRole.TourGuide)]
     [ProducesResponseType(typeof(TourGroupViewModel), StatusCodes.Status200OK)]
     [HttpPut("{id:guid}/contacts")]
