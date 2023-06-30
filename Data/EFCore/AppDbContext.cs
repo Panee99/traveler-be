@@ -27,16 +27,16 @@ public class AppDbContext : DbContext
 
         // Seeds
         modelBuilder.Entity<Attachment>().HasSeedData("attachments.json");
-        modelBuilder.Entity<Admin>().HasSeedData("admins.json");
-        modelBuilder.Entity<Schedule>().HasSeedData("schedules.json");
-        modelBuilder.Entity<TourGroup>().HasSeedData("tour-groups.json");
-        modelBuilder.Entity<TourGuide>().HasSeedData("tour-guides.json");
-        modelBuilder.Entity<TourImage>().HasSeedData("tour-images.json");
-        modelBuilder.Entity<Trip>().HasSeedData("trips.json");
-        modelBuilder.Entity<Tour>().HasSeedData("tours.json");
-        modelBuilder.Entity<Traveler>().HasSeedData("travelers.json");
-        modelBuilder.Entity<TravelerInTourGroup>().HasSeedData("travelers-in-tour-groups.json");
-        modelBuilder.Entity<Notification>().HasSeedData("notifications.json");
+        // modelBuilder.Entity<Admin>().HasSeedData("admins.json");
+        // modelBuilder.Entity<Schedule>().HasSeedData("schedules.json");
+        // modelBuilder.Entity<TourGroup>().HasSeedData("tour-groups.json");
+        // modelBuilder.Entity<TourGuide>().HasSeedData("tour-guides.json");
+        // modelBuilder.Entity<TourImage>().HasSeedData("tour-images.json");
+        // modelBuilder.Entity<Trip>().HasSeedData("trips.json");
+        // modelBuilder.Entity<Tour>().HasSeedData("tours.json");
+        // modelBuilder.Entity<Traveler>().HasSeedData("travelers.json");
+        // modelBuilder.Entity<TravelerInTourGroup>().HasSeedData("travelers-in-tour-groups.json");
+        // modelBuilder.Entity<Notification>().HasSeedData("notifications.json");
     }
 }
 

@@ -39,6 +39,9 @@
         <None Update="Workers\Notification\Templates\attendance.html">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
+        <None Update="Statics\Tour.xlsx">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
     </ItemGroup>
 
     <ItemGroup>
