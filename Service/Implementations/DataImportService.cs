@@ -31,10 +31,11 @@ public class DataImportService : BaseService, IDataImportService
             using var reader = ExcelReaderFactory.CreateReader(fileStream);
             var tour = _readTour(reader);
 
+            if (await UnitOfWork.Tours.AnyAsync(e => e.Id == tour.Id))
+                return Error.Conflict($"Tour '{tour.Id}' already exist.");
+
             UnitOfWork.Tours.Add(tour);
             await UnitOfWork.SaveChangesAsync();
-
-            var view = tour.Adapt<TourDetailsViewModel>();
 
             return await _tourService.GetDetails(tour.Id);
         }
