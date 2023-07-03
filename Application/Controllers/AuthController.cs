@@ -19,7 +19,7 @@ public class AuthController : ApiController
     /// <summary>
     /// Login
     /// </summary>
-    [SwaggerOperation(Description = "traveler:84389376290 - admin@gmail.com - guide@gmail.com - Pass:123123")]
+    [SwaggerOperation(Description = "traveler:84389376290 - manager@gmail.com - guide@gmail.com - Pass:123123")]
     [ProducesResponseType(typeof(AuthenticateResponseModel), StatusCodes.Status200OK)]
     [HttpPost("")]
     public async Task<IActionResult> Authenticate(LoginModel model)

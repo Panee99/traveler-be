@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Service.Commons.Mapping;
 using Service.Commons.QueryExtensions;
 using Service.Interfaces;
-using Service.Models.Admin;
+using Service.Models.Manager;
 using Service.Models.TourGroup;
 using Service.Models.TourGuide;
 using Service.Models.Traveler;
@@ -36,8 +36,8 @@ public class UserService : BaseService, IUserService
         User user;
         switch (model.Role)
         {
-            case UserRole.Admin:
-                user = UnitOfWork.Admins.Add(model.Adapt<Admin>());
+            case UserRole.Manager:
+                user = UnitOfWork.Managers.Add(model.Adapt<Manager>());
                 break;
             case UserRole.TourGuide:
                 user = UnitOfWork.TourGuides.Add(model.Adapt<TourGuide>());
@@ -101,7 +101,7 @@ public class UserService : BaseService, IUserService
         {
             UserRole.Traveler => (await UnitOfWork.Travelers.FindAsync(id))!.Adapt<TravelerViewModel>(),
             UserRole.TourGuide => (await UnitOfWork.TourGuides.FindAsync(id))!.Adapt<TourGuideViewModel>(),
-            UserRole.Admin => (await UnitOfWork.Admins.FindAsync(id))!.Adapt<AdminViewModel>(),
+            UserRole.Manager => (await UnitOfWork.Managers.FindAsync(id))!.Adapt<ManagerViewModel>(),
             _ => throw new ArgumentOutOfRangeException()
         };
 
@@ -118,10 +118,10 @@ public class UserService : BaseService, IUserService
         UserViewModel view;
         switch (user.Role)
         {
-            case UserRole.Admin:
-                var admin = (await UnitOfWork.Admins.FindAsync(user.Id))!;
-                UnitOfWork.Admins.Update(model.AdaptIgnoreNull(admin));
-                view = admin.Adapt<AdminViewModel>();
+            case UserRole.Manager:
+                var manager = (await UnitOfWork.Managers.FindAsync(user.Id))!;
+                UnitOfWork.Managers.Update(model.AdaptIgnoreNull(manager));
+                view = manager.Adapt<ManagerViewModel>();
                 break;
             case UserRole.TourGuide:
                 var tourGuide = (await UnitOfWork.TourGuides.FindAsync(user.Id))!;
@@ -213,7 +213,7 @@ public class UserService : BaseService, IUserService
                     .CountAsync();
                 break;
             }
-            case UserRole.Admin:
+            case UserRole.Manager:
                 return Error.Conflict("Tour Guide and Traveler only");
             default:
                 throw new ArgumentOutOfRangeException();

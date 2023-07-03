@@ -75,7 +75,7 @@ public class JwtMiddleware : IMiddleware
     {
         return role switch
         {
-            UserRole.Admin => await _unitOfWork.Admins.AnyAsync(
+            UserRole.Manager => await _unitOfWork.Managers.AnyAsync(
                 e => e.Id == id && e.Status == UserStatus.Active),
             UserRole.Traveler => await _unitOfWork.Travelers.AnyAsync(
                 e => e.Id == id && e.Status == UserStatus.Active),

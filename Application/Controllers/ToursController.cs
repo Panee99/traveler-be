@@ -9,7 +9,7 @@ using Service.Models.Trip;
 
 namespace Application.Controllers;
 
-[Authorize(UserRole.Admin)]
+[Authorize(UserRole.Manager)]
 [Route("tours")]
 public class ToursController : ApiController
 {

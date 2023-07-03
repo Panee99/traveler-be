@@ -36,7 +36,7 @@ public class TourGroupsController : ApiController
     // /// <summary>
     // /// Create a new tour group
     // /// </summary>
-    // [Authorize(UserRole.Admin)]
+    // [Authorize(UserRole.Manager)]
     // [HttpPost("")]
     // public async Task<IActionResult> Create(TourGroupCreateModel model)
     // {
@@ -47,7 +47,7 @@ public class TourGroupsController : ApiController
     // /// <summary>
     // /// Update a tour group
     // /// </summary>
-    // [Authorize(UserRole.Admin)]
+    // [Authorize(UserRole.Manager)]
     // [HttpPatch("{id:guid}")]
     // public async Task<IActionResult> Update([FromRoute] Guid id, TourGroupUpdateModel model)
     // {
@@ -58,7 +58,7 @@ public class TourGroupsController : ApiController
     // /// <summary>
     // /// Delete a tour group
     // /// </summary>
-    // [Authorize(UserRole.Admin)]
+    // [Authorize(UserRole.Manager)]
     // [HttpDelete("{id:guid}")]
     // public async Task<IActionResult> Delete([FromRoute] Guid id)
     // {

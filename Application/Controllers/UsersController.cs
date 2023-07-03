@@ -53,7 +53,7 @@ public class UsersController : ApiController
     /// <summary>
     /// Get user by id
     /// </summary>
-    [Authorize(UserRole.Admin)]
+    [Authorize(UserRole.Manager)]
     [ProducesResponseType(typeof(UserViewModel), StatusCodes.Status200OK)]
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> AdminGetUserById(Guid id)
@@ -86,12 +86,12 @@ public class UsersController : ApiController
         return result.Match(Ok, OnError);
     }
 
-    #region Required Admin Role
+    #region Required Manager Role
 
     /// <summary>
     /// Create new user
     /// </summary>
-    [Authorize(UserRole.Admin)]
+    [Authorize(UserRole.Manager)]
     [HttpPost("")]
     public async Task<IActionResult> Create(UserCreateModel model)
     {
@@ -102,7 +102,7 @@ public class UsersController : ApiController
     /// <summary>
     /// Update user
     /// </summary>
-    [Authorize(UserRole.Admin)]
+    [Authorize(UserRole.Manager)]
     [HttpPatch("{id:guid}")]
     public async Task<IActionResult> Update(Guid id, UserUpdateModel model)
     {
@@ -113,7 +113,7 @@ public class UsersController : ApiController
     /// <summary>
     /// Filter users
     /// </summary>
-    [Authorize(UserRole.Admin)]
+    [Authorize(UserRole.Manager)]
     [HttpPost("filter")]
     public async Task<IActionResult> Filter(UserFilterModel model)
     {
@@ -124,7 +124,7 @@ public class UsersController : ApiController
     /// <summary>
     /// Delete a user
     /// </summary>
-    [Authorize(UserRole.Admin)]
+    [Authorize(UserRole.Manager)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> AdminDeleteUserById(Guid id)

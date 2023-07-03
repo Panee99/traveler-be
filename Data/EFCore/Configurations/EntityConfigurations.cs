@@ -29,9 +29,9 @@ public static class EntityConfigurations
         modelBuilder.Entity<IncurredCost>(
             entity => { entity.Property(e => e.CreatedAt).HasColumnType("datetime"); });
 
-        modelBuilder.Entity<Admin>(entity =>
+        modelBuilder.Entity<Manager>(entity =>
         {
-            entity.ToTable("Admin");
+            entity.ToTable("Manager");
             entity.Property(e => e.Email).HasMaxLength(256);
             entity.Property(e => e.FirstName).HasMaxLength(256);
             entity.Property(e => e.Gender).HasMaxLength(256);

@@ -20,7 +20,7 @@ public class TourGuidesController : ApiController
     /// <summary>
     /// List all tour groups this tour guide assigned to
     /// </summary>
-    [Authorize(UserRole.Admin, UserRole.TourGuide)]
+    [Authorize(UserRole.Manager, UserRole.TourGuide)]
     [ProducesResponseType(typeof(List<TourGroupViewModel>), StatusCodes.Status200OK)]
     [HttpGet("{id:guid}/assigned-groups")]
     public async Task<IActionResult> ListAssignedTourGroups(Guid id)
@@ -29,7 +29,7 @@ public class TourGuidesController : ApiController
         return result.Match(Ok, OnError);
     }
 
-    [Authorize(UserRole.Admin, UserRole.TourGuide)]
+    [Authorize(UserRole.Manager, UserRole.TourGuide)]
     [ProducesResponseType(typeof(TourGroupViewModel), StatusCodes.Status200OK)]
     [HttpPut("{id:guid}/contacts")]
     public async Task<IActionResult> UpdateContacts(Guid id, ContactsUpdateModel model)

@@ -2,7 +2,7 @@
 
 public enum UserRole
 {
-    Admin,
+    Manager,
     TourGuide,
     Traveler
 }

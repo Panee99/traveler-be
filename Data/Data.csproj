@@ -17,7 +17,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <None Update="EFCore\Seeds\admins.json">
+        <None Update="EFCore\Seeds\managers.json">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
         <None Update="EFCore\Seeds\tour-guides.json">
