@@ -21,4 +21,6 @@ public class Activity
     public DateTime CreatedAt { get; set; }
 
     public TourGroup TourGroup { get; set; } = null!;
+
+    public ICollection<IncurredCost> IncurredCosts = null!;
 }

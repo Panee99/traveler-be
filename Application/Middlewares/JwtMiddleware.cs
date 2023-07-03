@@ -5,8 +5,8 @@ using Data.Enums;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Service.Models.Auth;
+using Service.Settings;
 using Shared;
-using Shared.Settings;
 
 namespace Application.Middlewares;
 

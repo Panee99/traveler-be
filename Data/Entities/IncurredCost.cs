@@ -4,7 +4,7 @@ public class IncurredCost
 {
     public Guid Id { get; set; }
 
-    public Guid TourGroupId { get; set; }
+    public Guid ActivityId { get; set; }
 
     public double Amount { get; set; }
 
@@ -16,7 +16,7 @@ public class IncurredCost
 
     public DateTime CreatedAt { get; set; }
 
-    public virtual TourGroup TourGroup { get; set; } = null!;
+    public virtual Activity Activity { get; set; } = null!;
 
     public Attachment? Image { get; set; } = null!;
 }

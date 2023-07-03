@@ -1,4 +1,4 @@
-﻿namespace Shared.Settings;
+﻿namespace Service.Settings;
 
 public class CloudStorageSettings
 {

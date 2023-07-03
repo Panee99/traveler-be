@@ -4,7 +4,7 @@ public class IncurredCostViewModel
 {
     public Guid Id { get; set; }
 
-    public Guid TourGroupId { get; set; }
+    public Guid ActivityId { get; set; }
 
     public string Title { get; set; } = null!;
 

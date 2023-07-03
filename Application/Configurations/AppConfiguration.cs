@@ -6,7 +6,7 @@ using Microsoft.OpenApi.Models;
 using Service.Channels.Notification;
 using Service.Implementations;
 using Service.Interfaces;
-using Shared.Settings;
+using Service.Settings;
 
 namespace Application.Configurations;
 

@@ -4,9 +4,9 @@ using Google.Cloud.Storage.V1;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Service.Interfaces;
+using Service.Settings;
 using Shared.ExternalServices.CloudStorage;
 using Shared.ResultExtensions;
-using Shared.Settings;
 
 namespace Service.Implementations;
 

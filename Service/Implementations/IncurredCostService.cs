@@ -47,9 +47,11 @@ public class IncurredCostService : BaseService, IIncurredCostService
 
     public async Task<Result<List<IncurredCostViewModel>>> ListAll(Guid tourGroupId)
     {
-        var incurredCosts = await UnitOfWork.IncurredCosts
+        var incurredCosts = await UnitOfWork.TourGroups
             .Query()
-            .Where(e => e.TourGroupId == tourGroupId)
+            .Where(e => e.Id == tourGroupId)
+            .SelectMany(e => e.Activities)
+            .SelectMany(e => e.IncurredCosts)
             .ToListAsync();
 
         return incurredCosts.Select(e =>

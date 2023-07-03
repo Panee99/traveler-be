@@ -2,7 +2,7 @@
 
 public class IncurredCostCreateModel
 {
-    public Guid TourGroupId { get; set; }
+    public Guid ActivityId { get; set; }
 
     public string Title { get; set; } = null!;
 
