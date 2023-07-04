@@ -16,8 +16,6 @@ public class TourGroup
 
     public Trip Trip { get; set; } = null!;
 
-    public int MaxOccupancy { get; set; }
-
     public TourGuide? TourGuide { get; set; } = null!;
 
     public Schedule? CurrentSchedule { get; set; }

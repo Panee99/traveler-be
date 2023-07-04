@@ -8,7 +8,6 @@ public class TourGroupViewModel
     public DateTime CreatedAt;
     public string GroupName = null!;
     public Guid? TourGuideId;
-    public int MaxOccupancy;
     public Guid TripId;
     public int TravelerCount;
     public Guid? CurrentScheduleId;
