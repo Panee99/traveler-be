@@ -3,5 +3,6 @@
 public enum ActivityType
 {
     Attendance,
-    TourEvent
+    NextDestination,
+    Custom
 }

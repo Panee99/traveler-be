@@ -1,4 +1,5 @@
 ﻿using Data.Entities;
+using Data.Entities.Activities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Data.EFCore.Configurations;
@@ -98,25 +99,56 @@ public static class EntityConfigurations
                 }
             );
 
-        modelBuilder.Entity<Activity>(entity =>
-        {
-            entity.HasOne(act => act.TourGroup)
-                .WithMany(group => group.Activities)
-                .HasForeignKey(act => act.TourGroupId);
-        });
-
-        modelBuilder.Entity<AttendanceDetail>(entity =>
-        {
-            entity.HasOne(att => att.Activity)
-                .WithMany()
-                .HasForeignKey(att => att.ActivityId);
-        });
-
         modelBuilder.Entity<FcmToken>(entity =>
         {
             entity.HasOne(token => token.User)
                 .WithMany(user => user.FcmTokens)
                 .HasForeignKey(e => e.UserId);
+        });
+
+        modelBuilder.Entity<AttendanceActivity>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Title).IsRequired();
+            entity.Property(x => x.CreatedAt).IsRequired();
+            entity.Property(x => x.Note).IsRequired().HasDefaultValue(string.Empty);
+            entity.Property(x => x.TourGroupId).IsRequired();
+            entity.HasMany(x => x.Items).WithOne(x => x.Attendance).HasForeignKey(x => x.AttendanceId);
+        });
+
+        modelBuilder.Entity<AttendanceItem>(entity =>
+        {
+            entity.HasKey(x => new { x.AttendanceId, x.UserId });
+            entity.Property(x => x.Present).IsRequired();
+            entity.Property(x => x.Reason).IsRequired().HasDefaultValue(string.Empty);
+            entity.HasOne(x => x.Attendance).WithMany(x => x.Items).HasForeignKey(x => x.AttendanceId);
+        });
+        
+        modelBuilder.Entity<CustomActivity>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Title).IsRequired();
+            entity.Property(x => x.CreatedAt).IsRequired();
+            entity.Property(x => x.Note).IsRequired().HasDefaultValue(string.Empty);
+            entity.Property(x => x.TourGroupId).IsRequired();
+        });
+        
+        modelBuilder.Entity<IncurredCostActivity>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Title).IsRequired();
+            entity.Property(x => x.CreatedAt).IsRequired();
+            entity.Property(x => x.Note).IsRequired().HasDefaultValue(string.Empty);
+            entity.Property(x => x.TourGroupId).IsRequired();
+        });
+        
+        modelBuilder.Entity<NextDestinationActivity>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Title).IsRequired();
+            entity.Property(x => x.CreatedAt).IsRequired();
+            entity.Property(x => x.Note).IsRequired().HasDefaultValue(string.Empty);
+            entity.Property(x => x.TourGroupId).IsRequired();
         });
     }
 }

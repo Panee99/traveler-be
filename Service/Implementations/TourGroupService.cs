@@ -1,5 +1,6 @@
 ﻿using Data.EFCore;
 using Data.Entities;
+using Data.Enums;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Service.Interfaces;
@@ -170,11 +171,29 @@ public class TourGroupService : BaseService, ITourGroupService
         if (!await UnitOfWork.TourGroups.AnyAsync(e => e.Id == tourGroupId))
             return Error.NotFound();
 
-        var activities = await UnitOfWork.Activities
-            .Query()
-            .Where(e => e.TourGroupId == tourGroupId)
-            .ToListAsync();
+        var attendanceActivities = UnitOfWork.AttendanceActivities.Query()
+            .Include(x => x.Items)!
+            .ThenInclude(x => x.User)
+            .Where(x => x.TourGroupId == tourGroupId)
+            .Select(x => new ActivityViewModel
+                { Type = ActivityType.Attendance, Data = x, CreatedAt = (DateTime)x.CreatedAt! })
+            .ToList();
 
-        return activities.Adapt<List<ActivityViewModel>>();
+        var customActivities = UnitOfWork.CustomActivities.Query()
+            .Where(x => x.TourGroupId == tourGroupId)
+            .Select(x => new ActivityViewModel
+                { Type = ActivityType.Attendance, Data = x, CreatedAt = (DateTime)x.CreatedAt! })
+            .ToList();
+
+        var nextDestinationActivities = UnitOfWork.NextDestinationActivities.Query()
+            .Where(x => x.TourGroupId == tourGroupId)
+            .Select(x => new ActivityViewModel
+                { Type = ActivityType.Attendance, Data = x, CreatedAt = (DateTime)x.CreatedAt! })
+            .ToList();
+
+        var activities = attendanceActivities.Concat(customActivities).Concat(nextDestinationActivities)
+            .OrderBy(x => x.CreatedAt).ToList();
+
+        return activities;
     }
 }

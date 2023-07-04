@@ -16,7 +16,5 @@ public class IncurredCost
 
     public DateTime CreatedAt { get; set; }
 
-    public virtual Activity Activity { get; set; } = null!;
-
     public Attachment? Image { get; set; } = null!;
 }
