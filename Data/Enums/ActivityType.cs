@@ -3,5 +3,5 @@
 public enum ActivityType
 {
     Attendance,
-    TourEvent
+    Other
 }
