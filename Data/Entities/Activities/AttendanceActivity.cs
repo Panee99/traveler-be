@@ -1,12 +1,12 @@
-﻿namespace Data.Entities.Activities;
+﻿using Newtonsoft.Json;
+
+namespace Data.Entities.Activities;
 
 public class AttendanceActivity : IActivity
 {
     public Guid? Id { get; set; }
 
     public Guid? TourGroupId { get; set; }
-
-    public TourGroup? TourGroup { get; set; }
 
     public string? Title { get; set; }
 

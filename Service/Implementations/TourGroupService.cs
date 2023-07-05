@@ -172,8 +172,6 @@ public class TourGroupService : BaseService, ITourGroupService
             return Error.NotFound();
 
         var attendanceActivities = UnitOfWork.AttendanceActivities.Query()
-            .Include(x => x.Items)!
-            .ThenInclude(x => x.User)
             .Where(x => x.TourGroupId == tourGroupId)
             .Select(x => new ActivityViewModel
                 { Type = ActivityType.Attendance, Data = x, CreatedAt = (DateTime)x.CreatedAt! })
