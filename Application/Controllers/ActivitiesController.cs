@@ -19,7 +19,7 @@ public class ActivitiesController : ApiController
     /// </summary>
     [ProducesResponseType(typeof(ActivityViewModel), StatusCodes.Status200OK)]
     [HttpPost("")]
-    public async Task<IActionResult> Create(CreateActivityModel model)
+    public async Task<IActionResult> Create(PartialActivityModel model)
     {
         var result = await _activityService.Create(model);
         return result.Match(Ok, OnError);
@@ -40,11 +40,10 @@ public class ActivitiesController : ApiController
     /// Update an activity
     /// </summary>
     [ProducesResponseType(typeof(ActivityViewModel), StatusCodes.Status200OK)]
-    [HttpPatch("{id:guid}")]
-    public async Task<IActionResult> Update(Guid id, ActivityUpdateModel model)
+    [HttpPatch]
+    public async Task<IActionResult> Update(PartialActivityModel model)
     {
-        // var result = await _activityService.Update(id, model);
-        // return result.Match(Ok, OnError);
-        throw new NotImplementedException();
+        var result = await _activityService.Update(model);
+        return result.Match(Ok, OnError);
     }
 }

@@ -3,8 +3,6 @@ namespace Data.Entities.Activities;
 public interface IActivity
 {
     public Guid? TourGroupId { get; set; }
-
-    public TourGroup? TourGroup { get; set; }
     
     public string? Title { get; set; }
 

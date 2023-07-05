@@ -113,27 +113,16 @@ public static class EntityConfigurations
             entity.Property(x => x.CreatedAt).IsRequired();
             entity.Property(x => x.Note).IsRequired().HasDefaultValue(string.Empty);
             entity.Property(x => x.TourGroupId).IsRequired();
-            entity.HasMany(x => x.Items).WithOne(x => x.Attendance).HasForeignKey(x => x.AttendanceId);
         });
 
         modelBuilder.Entity<AttendanceItem>(entity =>
         {
-            entity.HasKey(x => new { x.AttendanceId, x.UserId });
+            entity.HasKey(x => new { AttendanceId = x.AttendanceActivityId, x.UserId });
             entity.Property(x => x.Present).IsRequired();
             entity.Property(x => x.Reason).IsRequired().HasDefaultValue(string.Empty);
-            entity.HasOne(x => x.Attendance).WithMany(x => x.Items).HasForeignKey(x => x.AttendanceId);
         });
         
         modelBuilder.Entity<CustomActivity>(entity =>
-        {
-            entity.HasKey(x => x.Id);
-            entity.Property(x => x.Title).IsRequired();
-            entity.Property(x => x.CreatedAt).IsRequired();
-            entity.Property(x => x.Note).IsRequired().HasDefaultValue(string.Empty);
-            entity.Property(x => x.TourGroupId).IsRequired();
-        });
-        
-        modelBuilder.Entity<IncurredCostActivity>(entity =>
         {
             entity.HasKey(x => x.Id);
             entity.Property(x => x.Title).IsRequired();

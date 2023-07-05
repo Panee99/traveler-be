@@ -3,7 +3,7 @@ using Data.Enums;
 
 namespace Service.Models.Activity;
 
-public class CreateActivityModel
+public class PartialActivityModel
 {
     public ActivityType Type { get; set; }
 

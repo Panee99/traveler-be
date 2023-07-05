@@ -1,15 +1,10 @@
 ﻿using Data.EFCore;
-using Data.EFCore.Repositories;
-using Data.Entities;
-using Data.Entities.Activities;
 using Data.Enums;
-using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Service.Channels.Notification;
 using Service.Commons.Mapping;
 using Service.Interfaces;
 using Service.Models.Activity;
-using Shared.Helpers;
 using Shared.ResultExtensions;
 
 namespace Service.Implementations;
@@ -24,56 +19,47 @@ public class ActivityService : BaseService, IActivityService
         _notificationJobQueue = notificationJobQueue;
     }
 
-    public async Task<Result> Create(AttendanceActivity model)
+    // public async Task<Result> Create(AttendanceActivity model)
+    // {
+    //     var tourGroup = await UnitOfWork.TourGroups.FindAsync(model.TourGroupId);
+    //     if (tourGroup is null) return Error.NotFound("Tour Group not found");
+    //
+    //     UnitOfWork.AttendanceActivities.Add(model);
+    //
+    //     await UnitOfWork.SaveChangesAsync();
+    //
+    //     // Notifications
+    //     var receiverIds = await UnitOfWork.TourGroups
+    //         .Query()
+    //         .Where(group => group.Id == model.TourGroupId)
+    //         .SelectMany(group => group.Travelers)
+    //         .Select(traveler => traveler.Id)
+    //         .ToListAsync();
+    //
+    //     if (tourGroup.TourGuideId != null) receiverIds.Add(tourGroup.TourGuideId.Value);
+    //
+    //     await _notificationJobQueue.EnqueueAsync(
+    //         new NotificationJob(
+    //             receiverIds,
+    //             "Tour Guide",
+    //             model.Title,
+    //             NotificationType.AttendanceActivity
+    //         ));
+    //
+    //     // Return
+    //     return Result.Success();
+    // }
+
+    public async Task<Result> Create(PartialActivityModel model)
     {
-        var tourGroup = await UnitOfWork.TourGroups.FindAsync(model.TourGroupId);
-        if (tourGroup is null) return Error.NotFound("Tour Group not found");
+        var (repo, tourGroupId, dataModel) = _destructurePartialActivityModel(model);
 
-        UnitOfWork.AttendanceActivities.Add(model);
-
-        await UnitOfWork.SaveChangesAsync();
-
-        // Notifications
-        var receiverIds = await UnitOfWork.TourGroups
-            .Query()
-            .Where(group => group.Id == model.TourGroupId)
-            .SelectMany(group => group.Travelers)
-            .Select(traveler => traveler.Id)
-            .ToListAsync();
-
-        if (tourGroup.TourGuideId != null) receiverIds.Add(tourGroup.TourGuideId.Value);
-
-        await _notificationJobQueue.EnqueueAsync(
-            new NotificationJob(
-                receiverIds,
-                "Tour Guide",
-                model.Title,
-                NotificationType.AttendanceActivity
-            ));
-
-        // Return
-        return Result.Success();
-    }
-
-    public async Task<Result> Create(CreateActivityModel model)
-    {
-        var (repo, tourGroupId, dataModel) = model switch
-        {
-            { Type: ActivityType.Attendance } => (UnitOfWork.AttendanceActivities,
-                model.AttendanceActivity?.TourGroupId, model.AttendanceActivity),
-            { Type: ActivityType.Custom } => (UnitOfWork.CustomActivities,
-                model.CustomActivity?.TourGroupId, model.CustomActivity),
-            { Type: ActivityType.NextDestination } => (UnitOfWork.NextDestinationActivities as dynamic,
-                model.NextDestinationActivity?.TourGroupId,model.NextDestinationActivity as dynamic),
-            _ => throw new ArgumentOutOfRangeException()
-        };
-
-        if (tourGroupId == null || await UnitOfWork.TourGroups.FindAsync(tourGroupId) is not {} tourGroup)
+        if (tourGroupId == null || await UnitOfWork.TourGroups.FindAsync(tourGroupId) is not { } tourGroup)
             return Error.NotFound("Tour Group not found");
-        
+
         repo.Add(dataModel);
         await UnitOfWork.SaveChangesAsync();
-        
+
         // Notifications
         var receiverIds = await UnitOfWork.TourGroups
             .Query()
@@ -109,11 +95,6 @@ public class ActivityService : BaseService, IActivityService
             UnitOfWork.CustomActivities.Remove(customActivity);
             deleted = true;
         }
-        else if (await UnitOfWork.IncurredCostActivities.FindAsync(id) is { } incurredCostActivity)
-        {
-            UnitOfWork.IncurredCostActivities.Remove(incurredCostActivity);
-            deleted = true;
-        }
         else if (await UnitOfWork.NextDestinationActivities.FindAsync(id) is { } nextDestinationActivity)
         {
             UnitOfWork.NextDestinationActivities.Remove(nextDestinationActivity);
@@ -127,51 +108,33 @@ public class ActivityService : BaseService, IActivityService
         return Result.Success();
     }
 
-    public async Task<Result> Update(AttendanceActivity model)
+    public async Task<Result> Update(PartialActivityModel model)
     {
-        if (model.Id == null || await UnitOfWork.AttendanceActivities.FindAsync(model.Id) is not { } activity)
-            return Error.NotFound();
+        var (repo, _, dataModel) = _destructurePartialActivityModel(model);
 
-        model.AdaptIgnoreNull(activity);
-        UnitOfWork.AttendanceActivities.Update(activity);
+        var activity = await repo.FindAsync(dataModel?.Id);
+        if (dataModel == null || activity == null) return Error.NotFound("Activity not found");
+
+        (dataModel as object).CustomAdaptIgnoreNull(activity as object);
+
+        repo.Update(activity);
         await UnitOfWork.SaveChangesAsync();
 
         return Result.Success();
     }
 
-    public async Task<Result> Update(CustomActivity model)
+    private (dynamic repo, Guid? tourGroupId, dynamic? dataModel) _destructurePartialActivityModel(
+        PartialActivityModel model)
     {
-        if (model.Id == null || await UnitOfWork.CustomActivities.FindAsync(model.Id) is not { } activity)
-            return Error.NotFound();
-
-        model.AdaptIgnoreNull(activity);
-        UnitOfWork.CustomActivities.Update(activity);
-        await UnitOfWork.SaveChangesAsync();
-
-        return Result.Success();
-    }
-
-    public async Task<Result> Update(IncurredCostActivity model)
-    {
-        if (model.Id == null || await UnitOfWork.IncurredCostActivities.FindAsync(model.Id) is not { } activity)
-            return Error.NotFound();
-
-        model.AdaptIgnoreNull(activity);
-        UnitOfWork.IncurredCostActivities.Update(activity);
-        await UnitOfWork.SaveChangesAsync();
-
-        return Result.Success();
-    }
-
-    public async Task<Result> Update(NextDestinationActivity model)
-    {
-        if (model.Id == null || await UnitOfWork.NextDestinationActivities.FindAsync(model.Id) is not { } activity)
-            return Error.NotFound();
-
-        model.AdaptIgnoreNull(activity);
-        UnitOfWork.NextDestinationActivities.Update(activity);
-        await UnitOfWork.SaveChangesAsync();
-
-        return Result.Success();
+        return model switch
+        {
+            { Type: ActivityType.Attendance } => (UnitOfWork.AttendanceActivities,
+                model.AttendanceActivity?.TourGroupId, model.AttendanceActivity),
+            { Type: ActivityType.Custom } => (UnitOfWork.CustomActivities,
+                model.CustomActivity?.TourGroupId, model.CustomActivity),
+            { Type: ActivityType.NextDestination } => (UnitOfWork.NextDestinationActivities,
+                model.NextDestinationActivity?.TourGroupId, model.NextDestinationActivity),
+            _ => throw new ArgumentOutOfRangeException(nameof(model), model, null)
+        };
     }
 }

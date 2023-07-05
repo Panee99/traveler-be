@@ -6,17 +6,9 @@ namespace Service.Interfaces;
 
 public interface IActivityService
 {
-    Task<Result> Create(CreateActivityModel model);
+    Task<Result> Create(PartialActivityModel model);
 
     Task<Result> Delete(Guid id);
 
-    Task<Result> Update(AttendanceActivity model);
-
-    Task<Result> Update(CustomActivity model);
-
-
-    Task<Result> Update(IncurredCostActivity model);
-
-
-    Task<Result> Update(NextDestinationActivity model);
+    Task<Result> Update(PartialActivityModel model);
 }

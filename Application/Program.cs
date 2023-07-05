@@ -35,7 +35,7 @@ var builder = WebApplication.CreateBuilder(args);
         .AddMvcOptions(options => { options.SuppressAsyncSuffixInActionNames = true; })
         .AddNewtonsoftJson(options =>
             {
-                options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Serialize;
                 options.SerializerSettings.Converters.Add(new StringEnumConverter());
                 options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
                 // options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
