@@ -1,4 +1,5 @@
-﻿using Data.EFCore;
+using Data.EFCore;
+using Data.Entities.Activities;
 using Data.Enums;
 using Microsoft.EntityFrameworkCore;
 using Service.Channels.Notification;

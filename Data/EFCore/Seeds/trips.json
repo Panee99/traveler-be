@@ -1,16 +1,5 @@
 ﻿[
   {
-    "Id": "a71d3d04-2eac-4ebe-999e-dbc60702ce3d",
-    "TourId": "d1936e4c-9c32-49ae-aa51-0f23089a78d4",
-    "Code": "2304-AD9DSAW",
-    "AdultPrice": 11499900,
-    "ChildrenPrice": 10199900,
-    "InfantPrice": 0,
-    "StartTime": "2023-05-08 11:30:24.410",
-    "EndTime": "2023-05-10 11:30:24.410",
-    "Status": "Ended"
-  },
-  {
     "Id": "db4b701e-0290-4331-858f-3f7a60558daa",
     "TourId": "60f45523-bd04-449a-9889-55fb70beb802",
     "Code": "2304-AD9DEXQ",
@@ -20,6 +9,17 @@
     "StartTime": "2023-05-15 19:48:28.000",
     "EndTime": "2023-05-20 19:48:26.000",
     "Status": "Ended"
+  },
+  {
+    "Id": "e15f3a4d-acdc-4215-baff-5c7a978169fb",
+    "TourId": "aff4f4f3-6368-4afc-bc98-d82b662cfadb",
+    "Code": "2304-AD9DLAX",
+    "AdultPrice": 15000000,
+    "ChildrenPrice": 10000000,
+    "InfantPrice": 7000000,
+    "StartTime": "2023-06-08 00:00:00.000",
+    "EndTime": "2023-06-13 00:00:00.000",
+    "Status": "Accepting"
   },
   {
     "Id": "a129282f-a087-46c7-8512-94a7719c93ef",
@@ -33,17 +33,6 @@
     "Status": "Ended"
   },
   {
-    "Id": "e15f3a4d-acdc-4215-baff-5c7a978169fb",
-    "TourId": "aff4f4f3-6368-4afc-bc98-d82b662cfadb",
-    "Code": "2304-AD9DLAX",
-    "AdultPrice": 15000000,
-    "ChildrenPrice": 10000000,
-    "InfantPrice": 7000000,
-    "StartTime": "2023-06-08 09:42:06.000",
-    "EndTime": "2023-06-12 09:42:07.000",
-    "Status": "Accepting"
-  },
-  {
     "Id": "f85369ab-7e74-44a4-82b3-9badb85b278a",
     "TourId": "a838917d-13d3-4783-8bcd-dab2ff0f4bca",
     "Code": "2304-AD9DSOS",
@@ -52,6 +41,17 @@
     "InfantPrice": 4000000,
     "StartTime": "2023-06-08 09:42:08.000",
     "EndTime": "2023-06-10 09:42:09.000",
+    "Status": "Ended"
+  },
+  {
+    "Id": "a71d3d04-2eac-4ebe-999e-dbc60702ce3d",
+    "TourId": "d1936e4c-9c32-49ae-aa51-0f23089a78d4",
+    "Code": "2304-AD9DSAW",
+    "AdultPrice": 11499900,
+    "ChildrenPrice": 10199900,
+    "InfantPrice": 0,
+    "StartTime": "2023-05-08 11:30:24.410",
+    "EndTime": "2023-05-10 11:30:24.410",
     "Status": "Ended"
   }
 ]
