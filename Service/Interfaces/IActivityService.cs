@@ -1,13 +1,22 @@
-﻿using Service.Models.Activity;
+﻿using Data.Entities.Activities;
+using Service.Models.Activity;
 using Shared.ResultExtensions;
 
 namespace Service.Interfaces;
 
 public interface IActivityService
 {
-    Task<Result<ActivityViewModel>> Create(ActivityCreateModel model);
-    
+    Task<Result> Create(CreateActivityModel model);
+
     Task<Result> Delete(Guid id);
-    
-    Task<Result<ActivityViewModel>> Update(Guid activityId, ActivityUpdateModel model);
+
+    Task<Result> Update(AttendanceActivity model);
+
+    Task<Result> Update(CustomActivity model);
+
+
+    Task<Result> Update(IncurredCostActivity model);
+
+
+    Task<Result> Update(NextDestinationActivity model);
 }

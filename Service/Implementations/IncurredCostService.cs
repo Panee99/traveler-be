@@ -47,19 +47,20 @@ public class IncurredCostService : BaseService, IIncurredCostService
 
     public async Task<Result<List<IncurredCostViewModel>>> ListAll(Guid tourGroupId)
     {
-        var incurredCosts = await UnitOfWork.TourGroups
-            .Query()
-            .Where(e => e.Id == tourGroupId)
-            .SelectMany(e => e.Activities)
-            .SelectMany(e => e.IncurredCosts)
-            .ToListAsync();
-
-        return incurredCosts.Select(e =>
-        {
-            var view = e.Adapt<IncurredCostViewModel>();
-            view.ImageUrl = _cloudStorageService.GetMediaLink(e.ImageId);
-            return view;
-        }).ToList();
+        // var incurredCosts = await UnitOfWork.TourGroups
+        //     .Query()
+        //     .Where(e => e.Id == tourGroupId)
+        //     .SelectMany(e => e.Activities)
+        //     .SelectMany(e => e.IncurredCosts)
+        //     .ToListAsync();
+        //
+        // return incurredCosts.Select(e =>
+        // {
+        //     var view = e.Adapt<IncurredCostViewModel>();
+        //     view.ImageUrl = _cloudStorageService.GetMediaLink(e.ImageId);
+        //     return view;
+        // }).ToList();
+        throw new NotImplementedException();
     }
 
     public async Task<Result> UpdateCurrentSchedule(Guid tourGroupId, CurrentScheduleUpdateModel model)

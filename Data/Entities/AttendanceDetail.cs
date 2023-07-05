@@ -13,6 +13,4 @@ public class AttendanceDetail
     public string? Reason { get; set; }
 
     public Traveler Traveler { get; set; } = null!;
-
-    public Activity Activity { get; set; } = null!;
 }

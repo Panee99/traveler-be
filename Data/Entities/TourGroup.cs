@@ -23,6 +23,4 @@ public class TourGroup
     public Schedule? CurrentSchedule { get; set; }
 
     public virtual ICollection<Traveler> Travelers { get; set; } = new List<Traveler>();
-
-    public virtual ICollection<Activity> Activities { get; set; } = new List<Activity>();
 }

@@ -1,5 +1,6 @@
 ﻿using Data.EFCore.Repositories;
 using Data.Entities;
+using Data.Entities.Activities;
 
 namespace Data.EFCore;
 
@@ -7,7 +8,6 @@ public class UnitOfWork : UnitOfWorkBase
 {
     public IRepository<User> Users => Repo<User>();
     public IRepository<Attachment> Attachments => Repo<Attachment>();
-    public IRepository<Activity> Activities => Repo<Activity>();
     public IRepository<AttendanceDetail> AttendanceDetails => Repo<AttendanceDetail>();
     public IRepository<Schedule> Schedules => Repo<Schedule>();
     public IRepository<Manager> Managers => Repo<Manager>();
@@ -21,6 +21,12 @@ public class UnitOfWork : UnitOfWorkBase
     public IRepository<IncurredCost> IncurredCosts => Repo<IncurredCost>();
     public IRepository<FcmToken> FcmTokens => Repo<FcmToken>();
     public IRepository<Notification> Notifications => Repo<Notification>();
+    public IRepository<AttendanceActivity> AttendanceActivities => Repo<AttendanceActivity>();
+    public IRepository<AttendanceItem> AttendanceItems => Repo<AttendanceItem>();
+    public IRepository<CustomActivity> CustomActivities => Repo<CustomActivity>();
+    public IRepository<IncurredCostActivity> IncurredCostActivities => Repo<IncurredCostActivity>();
+    public IRepository<NextDestinationActivity> NextDestinationActivities => Repo<NextDestinationActivity>();
+    
 
     public UnitOfWork(AppDbContext context) : base(context)
     {

@@ -1,15 +1,12 @@
-﻿using Data.Enums;
+using Data.Enums;
 
 namespace Service.Models.Activity;
 
-public record ActivityViewModel
+public class ActivityViewModel
 {
-    public Guid Id;
-    public ActivityType Type;
-    public ActivityStatus Status;
-    public string Title = null!;
-    public string? Description;
-    public Guid TourGroupId;
-    public DateTime StartAt;
-    public DateTime CreatedAt;
+    public ActivityType Type { get; set; }
+
+    public dynamic Data { get; set; }
+
+    public DateTime CreatedAt { get; set; }
 }
