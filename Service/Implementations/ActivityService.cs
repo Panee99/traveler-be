@@ -24,38 +24,7 @@ public class ActivityService : BaseService, IActivityService
         _notificationJobQueue = notificationJobQueue;
     }
 
-    public async Task<Result> Create(AttendanceActivity model)
-    {
-        var tourGroup = await UnitOfWork.TourGroups.FindAsync(model.TourGroupId);
-        if (tourGroup is null) return Error.NotFound("Tour Group not found");
-
-        UnitOfWork.AttendanceActivities.Add(model);
-
-        await UnitOfWork.SaveChangesAsync();
-
-        // Notifications
-        var receiverIds = await UnitOfWork.TourGroups
-            .Query()
-            .Where(group => group.Id == model.TourGroupId)
-            .SelectMany(group => group.Travelers)
-            .Select(traveler => traveler.Id)
-            .ToListAsync();
-
-        if (tourGroup.TourGuideId != null) receiverIds.Add(tourGroup.TourGuideId.Value);
-
-        await _notificationJobQueue.EnqueueAsync(
-            new NotificationJob(
-                receiverIds,
-                "Tour Guide",
-                model.Title,
-                NotificationType.AttendanceActivity
-            ));
-
-        // Return
-        return Result.Success();
-    }
-
-    public async Task<Result> Create(CreateActivityModel model)
+    public async Task<Result> Create(ActivityCreateModel model)
     {
         var (repo, tourGroupId, dataModel) = model switch
         {
@@ -64,15 +33,17 @@ public class ActivityService : BaseService, IActivityService
             { Type: ActivityType.Custom } => (UnitOfWork.CustomActivities,
                 model.CustomActivity?.TourGroupId, model.CustomActivity),
             { Type: ActivityType.NextDestination } => (UnitOfWork.NextDestinationActivities as dynamic,
-                model.NextDestinationActivity?.TourGroupId,model.NextDestinationActivity as dynamic),
+                model.NextDestinationActivity?.TourGroupId, model.NextDestinationActivity as dynamic),
             _ => throw new ArgumentOutOfRangeException()
         };
 
-        if (tourGroupId == null || await UnitOfWork.TourGroups.FindAsync(tourGroupId) is not {} tourGroup)
+        if (tourGroupId == null || await UnitOfWork.TourGroups.FindAsync(tourGroupId) is not { } tourGroup)
             return Error.NotFound("Tour Group not found");
-        
+
         repo.Add(dataModel);
         await UnitOfWork.SaveChangesAsync();
+
+        if (model.Type is not ActivityType.Attendance) return Result.Success();
         
         // Notifications
         var receiverIds = await UnitOfWork.TourGroups

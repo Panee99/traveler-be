@@ -19,7 +19,7 @@ public class ActivitiesController : ApiController
     /// </summary>
     [ProducesResponseType(typeof(ActivityViewModel), StatusCodes.Status200OK)]
     [HttpPost("")]
-    public async Task<IActionResult> Create(CreateActivityModel model)
+    public async Task<IActionResult> Create(ActivityCreateModel model)
     {
         var result = await _activityService.Create(model);
         return result.Match(Ok, OnError);

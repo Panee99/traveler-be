@@ -1,12 +1,15 @@
-﻿using Data.Enums;
+﻿using Data.Entities.Activities;
+using Data.Enums;
 
 namespace Service.Models.Activity;
 
-public record ActivityCreateModel
-(
-    ActivityType Type,
-    string Title,
-    string? Description,
-    Guid TourGroupId,
-    DateTime StartAt
-);
+public class ActivityCreateModel
+{
+    public ActivityType Type { get; set; }
+
+    public AttendanceActivity? AttendanceActivity { get; set; }
+
+    public CustomActivity? CustomActivity { get; set; }
+
+    public NextDestinationActivity? NextDestinationActivity { get; set; }
+}
