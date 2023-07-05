@@ -1,15 +1,11 @@
 ﻿using Data.EFCore;
-using Data.EFCore.Repositories;
-using Data.Entities;
 using Data.Entities.Activities;
 using Data.Enums;
-using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Service.Channels.Notification;
 using Service.Commons.Mapping;
 using Service.Interfaces;
 using Service.Models.Activity;
-using Shared.Helpers;
 using Shared.ResultExtensions;
 
 namespace Service.Implementations;
