@@ -12,12 +12,6 @@ public class Trip
 
     public string Code { get; set; } = null!;
 
-    public int AdultPrice { get; set; }
-
-    public int ChildrenPrice { get; set; }
-
-    public int InfantPrice { get; set; }
-
     public DateTime StartTime { get; set; }
 
     public DateTime EndTime { get; set; }

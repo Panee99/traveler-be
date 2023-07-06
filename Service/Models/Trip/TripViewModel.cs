@@ -7,9 +7,6 @@ public record TripViewModel
 {
     public Guid Id;
     public string Code = null!;
-    public int AdultPrice;
-    public int ChildrenPrice;
-    public int InfantPrice;
     public DateTime StartTime;
     public DateTime EndTime;
     public TripStatus Status;
