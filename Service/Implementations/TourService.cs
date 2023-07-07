@@ -1,6 +1,5 @@
 ﻿using Data.EFCore;
 using Data.Entities;
-using Data.Enums;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -274,7 +273,7 @@ public class TourService : BaseService, ITourService
     public async Task<Result<List<TripViewModel>>> ListTourTrips(Guid tourId)
     {
         if (!await UnitOfWork.Tours.AnyAsync(e => e.Id == tourId))
-            return Error.NotFound("Tour not found.");
+            return Error.NotFound(DomainErrors.Tour.NotFound);
 
         var trips = await UnitOfWork.Tours
             .Query()
@@ -288,7 +287,7 @@ public class TourService : BaseService, ITourService
     public async Task<Result<List<ScheduleViewModel>>> ListSchedules(Guid tourId)
     {
         if (!await UnitOfWork.Tours.AnyAsync(e => e.Id == tourId))
-            return Error.NotFound("Tour not found.");
+            return Error.NotFound(DomainErrors.Tour.NotFound);
 
         var entities = await UnitOfWork.Schedules
             .Query()

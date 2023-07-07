@@ -1,8 +1,6 @@
 ﻿using Data.EFCore;
-using Data.Enums;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
-using Service.Commons.Mapping;
 using Service.Interfaces;
 using Service.Models.Tour;
 using Service.Models.TourGroup;
@@ -14,20 +12,17 @@ namespace Service.Implementations;
 public class TourGuideService : BaseService, ITourGuideService
 {
     private readonly ICloudStorageService _cloudStorageService;
-    private readonly ITourGroupService _tourGroupService;
 
     public TourGuideService(UnitOfWork unitOfWork,
-        ICloudStorageService cloudStorageService,
-        ITourGroupService tourGroupService) : base(unitOfWork)
+        ICloudStorageService cloudStorageService) : base(unitOfWork)
     {
         _cloudStorageService = cloudStorageService;
-        _tourGroupService = tourGroupService;
     }
 
     public async Task<Result<List<TourViewModel>>> ListAssignedTours(Guid tourGuideId)
     {
         if (!await UnitOfWork.TourGuides.AnyAsync(e => e.Id == tourGuideId))
-            return Error.NotFound("Tour Guide not found.");
+            return Error.NotFound(DomainErrors.TourGuide.NotFound);
 
         var assignedTours = await UnitOfWork.TourGuides.Query()
             .SelectMany(guide => guide.TourGroups)
@@ -49,7 +44,7 @@ public class TourGuideService : BaseService, ITourGuideService
     public async Task<Result<List<TourGroupViewModel>>> ListAssignedGroups(Guid tourGuideId)
     {
         if (!await UnitOfWork.TourGuides.AnyAsync(e => e.Id == tourGuideId))
-            return Error.NotFound("Tour Guide not found.");
+            return Error.NotFound(DomainErrors.TourGuide.NotFound);
 
         var groupResults = await UnitOfWork.TourGuides
             .Query()
@@ -71,32 +66,6 @@ public class TourGuideService : BaseService, ITourGuideService
                 return view;
             })
             .ToList();
-    }
-
-    public async Task<Result<TourGroupViewModel>> GetCurrentAssignedTourGroup(Guid tourGuideId)
-    {
-        if (!await UnitOfWork.TourGuides.AnyAsync(e => e.Id == tourGuideId))
-            return Error.NotFound("Tour Guide not found.");
-
-        var currentGroup = await UnitOfWork.TourGuides
-            .Query()
-            .AsSplitQuery()
-            .Where(guide => guide.Id == tourGuideId)
-            .SelectMany(guide => guide.TourGroups)
-            .Include(group => group.Trip)
-            .ThenInclude(trip => trip.Tour)
-            .Where(group => group.Trip.Status != TripStatus.Ended &&
-                            group.Trip.Status != TripStatus.Canceled)
-            .FirstOrDefaultAsync();
-
-        if (currentGroup is null) return Error.NotFound("No current tour group assigned");
-
-        var view = currentGroup.Adapt<TourGroupViewModel>();
-        view.Trip!.Tour!.ThumbnailUrl =
-            _cloudStorageService.GetMediaLink(currentGroup.Trip.Tour.ThumbnailId);
-        view.TravelerCount = await _tourGroupService.CountTravelers(view.Id);
-
-        return view;
     }
 
     public async Task<Result<TourGuideViewModel>> UpdateContacts(Guid tourGuideId, ContactsUpdateModel model)

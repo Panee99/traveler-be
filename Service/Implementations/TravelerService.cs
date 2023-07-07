@@ -16,44 +16,12 @@ namespace Service.Implementations;
 public class TravelerService : BaseService, ITravelerService
 {
     private readonly ICloudStorageService _cloudStorageService;
-    private readonly ITourGroupService _tourGroupService;
 
     public TravelerService(UnitOfWork unitOfWork,
         IHttpContextAccessor httpContextAccessor,
-        ICloudStorageService cloudStorageService,
-        ITourGroupService tourGroupService)
-        : base(unitOfWork, httpContextAccessor)
+        ICloudStorageService cloudStorageService) : base(unitOfWork, httpContextAccessor)
     {
         _cloudStorageService = cloudStorageService;
-        _tourGroupService = tourGroupService;
-    }
-
-    public async Task<Result> Register(TravelerRegistrationModel model)
-    {
-        if (!model.Phone.StartsWith('+')) model.Phone = '+' + model.Phone;
-
-        if (!model.Phone.StartsWith("+84")) return Error.Validation();
-
-        var formattedPhone = _formatPhoneNum(model.Phone);
-
-        if (await UnitOfWork.Users.AnyAsync(e => e.Phone == formattedPhone))
-            return Error.Conflict("UserUser with this phone number already exist");
-
-        UnitOfWork.Travelers.Add(
-            new Traveler
-            {
-                Phone = formattedPhone,
-                Password = AuthHelper.HashPassword(model.Password),
-                Status = UserStatus.Active,
-                FirstName = model.FirstName,
-                LastName = model.LastName,
-                Gender = model.Gender,
-                Role = UserRole.Traveler
-            }
-        );
-
-        await UnitOfWork.SaveChangesAsync();
-        return Result.Success();
     }
 
     public async Task<Result<List<TourGroupViewModel>>> ListJoinedGroups(Guid travelerId)

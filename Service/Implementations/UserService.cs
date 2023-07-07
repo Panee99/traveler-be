@@ -189,9 +189,9 @@ public class UserService : BaseService, IUserService
     public async Task<Result<TravelInfo>> GetTravelInfo(Guid userId)
     {
         var user = await UnitOfWork.Users.FindAsync(userId);
-        if (user is null) return Error.NotFound("User not found");
+        if (user is null) return Error.NotFound(DomainErrors.User.NotFound);
 
-        var tourCount = 0;
+        int tourCount;
 
         switch (user.Role)
         {
@@ -214,7 +214,7 @@ public class UserService : BaseService, IUserService
                 break;
             }
             case UserRole.Manager:
-                return Error.Conflict("Tour Guide and Traveler only");
+                return Error.Authorization(DomainErrors.Auth.NotSupportedRole);
             default:
                 throw new ArgumentOutOfRangeException();
         }
@@ -229,7 +229,7 @@ public class UserService : BaseService, IUserService
     {
         // Check user exist
         var user = await UnitOfWork.Users.FindAsync(userId);
-        if (user is null) return Error.NotFound("User not found.");
+        if (user is null) return Error.NotFound(DomainErrors.User.NotFound);
 
         TourGroup? currentGroup;
 
@@ -262,10 +262,10 @@ public class UserService : BaseService, IUserService
                     .FirstOrDefaultAsync();
                 break;
             default:
-                return Error.Conflict("Not supported role");
+                return Error.Authorization(DomainErrors.Auth.NotSupportedRole);
         }
 
-        if (currentGroup is null) return Error.NotFound("No current tour group joined");
+        if (currentGroup is null) return Error.NotFound(DomainErrors.User.NoCurrentGroup);
         // Map to view model
         var tour = currentGroup.Trip.Tour;
         var view = currentGroup.Adapt<TourGroupViewModel>();

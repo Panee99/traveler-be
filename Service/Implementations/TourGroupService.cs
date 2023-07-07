@@ -60,14 +60,14 @@ public class TourGroupService : BaseService, ITourGroupService
     public async Task<Result<TourGroupViewModel>> Update(Guid groupId, TourGroupUpdateModel model)
     {
         var group = await UnitOfWork.TourGroups.FindAsync(groupId);
-        if (group is null) return Error.NotFound("Tour group not found.");
+        if (group is null) return Error.NotFound(DomainErrors.TourGroup.NotFound);
 
         if (model.GroupName != null) group.GroupName = model.GroupName;
 
         if (model.TourGuideId != null)
         {
             var tourGuide = await UnitOfWork.TourGuides.FindAsync(model.TourGuideId);
-            if (tourGuide is null) return Error.NotFound("Tour guide not found.");
+            if (tourGuide is null) return Error.NotFound(DomainErrors.TourGuide.NotFound);
             group.TourGuide = tourGuide;
         }
 
@@ -145,7 +145,7 @@ public class TourGroupService : BaseService, ITourGroupService
             .Include(e => e.Travelers)
             .SingleOrDefaultAsync();
 
-        if (tourGroup is null) return Error.NotFound("Tour Group not found.");
+        if (tourGroup is null) return Error.NotFound(DomainErrors.TourGroup.NotFound);
 
         var members = tourGroup.Travelers.Select(traveler =>
         {

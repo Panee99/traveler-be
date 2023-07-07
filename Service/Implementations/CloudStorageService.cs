@@ -81,13 +81,6 @@ public class CloudStorageService : ICloudStorageService
     // Object url
     public string? GetMediaLink(Guid? id)
     {
-        // return CloudStorageHelper.GenerateV4UploadSignedUrl(
-        //     _settings.Bucket,
-        //     _settings.Folder + '/' + id);
-
-        // return $"https://firebasestorage.googleapis.com/v0/b/" +
-        //        $"{_settings.Bucket}/o/{_settings.Folder}%2F{id}?alt=media";
-
         return id is null
             ? null
             : $"https://storage.googleapis.com/{_settings.Bucket}/{_settings.Folder}/{id}";

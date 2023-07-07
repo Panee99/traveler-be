@@ -47,7 +47,7 @@ public class AuthService : BaseService, IAuthService
         var user = await query.Select(e => new AuthResult(e.Id, e.Password, e.Role)).FirstOrDefaultAsync();
 
         if (user == null || !AuthHelper.VerifyPassword(model.Password, user.Password))
-            return Error.Authentication();
+            return Error.Authentication(DomainErrors.Auth.LoginFailed);
 
         return new AuthenticateResponseModel(_generateJwtToken(user.Id, user.Role));
     }

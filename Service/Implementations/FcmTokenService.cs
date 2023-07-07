@@ -17,7 +17,7 @@ public class FcmTokenService : BaseService, IFcmTokenService
     public async Task<Result<FcmTokenViewModel>> Create(FcmTokenCreateModel model)
     {
         if (!await UnitOfWork.Users.AnyAsync(user => user.Id == model.UserId))
-            return Error.NotFound("User not found.");
+            return Error.NotFound(DomainErrors.User.NotFound);
 
         var existedTokens = await UnitOfWork.FcmTokens
             .Query()
@@ -26,7 +26,7 @@ public class FcmTokenService : BaseService, IFcmTokenService
             .ToListAsync();
 
         if (existedTokens.Contains(model.Token))
-            return Error.Conflict("Token already existed.");
+            return Error.Conflict(DomainErrors.FcmToken.AlreadyExisted);
 
         var entity = model.Adapt<FcmToken>();
         UnitOfWork.FcmTokens.Add(entity);

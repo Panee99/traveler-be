@@ -3,7 +3,6 @@ using Data.EFCore;
 using Data.Entities;
 using Data.Enums;
 using ExcelDataReader;
-using Mapster;
 using Service.Interfaces;
 using Service.Models.Tour;
 using Shared.ResultExtensions;

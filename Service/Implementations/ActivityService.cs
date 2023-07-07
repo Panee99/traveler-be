@@ -56,7 +56,7 @@ public class ActivityService : BaseService, IActivityService
         var (repo, tourGroupId, dataModel) = _destructurePartialActivityModel(model);
 
         if (tourGroupId == null || await UnitOfWork.TourGroups.FindAsync(tourGroupId) is not { } tourGroup)
-            return Error.NotFound("Tour Group not found");
+            return Error.NotFound(DomainErrors.TourGroup.NotFound);
 
         repo.Add(dataModel);
         await UnitOfWork.SaveChangesAsync();
@@ -114,7 +114,8 @@ public class ActivityService : BaseService, IActivityService
         var (repo, _, dataModel) = _destructurePartialActivityModel(model);
 
         var activity = await repo.FindAsync(dataModel?.Id);
-        if (dataModel == null || activity == null) return Error.NotFound("Activity not found");
+        if (dataModel == null || activity == null)
+            return Error.NotFound(DomainErrors.Activity.NotFound);
 
         (dataModel as object).CustomAdaptIgnoreNull(activity as object);
 

@@ -66,10 +66,10 @@ public class IncurredCostService : BaseService, IIncurredCostService
     public async Task<Result> UpdateCurrentSchedule(Guid tourGroupId, CurrentScheduleUpdateModel model)
     {
         var tourGroup = await UnitOfWork.TourGroups.FindAsync(tourGroupId);
-        if (tourGroup is null) return Error.NotFound("Tour Group not found.");
+        if (tourGroup is null) return Error.NotFound(DomainErrors.TourGroup.NotFound);
 
         if (!await UnitOfWork.Schedules.AnyAsync(e => e.Id == model.CurrentScheduleId))
-            return Error.NotFound("Schedule not found.");
+            return Error.NotFound(DomainErrors.Schedule.NotFound);
 
         tourGroup.CurrentScheduleId = model.CurrentScheduleId;
         UnitOfWork.TourGroups.Update(tourGroup);
