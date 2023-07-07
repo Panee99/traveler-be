@@ -18,17 +18,17 @@ public class TripService : BaseService, ITripService
     {
     }
 
-    public async Task<Result<TripViewModel>> Create(TripCreateModel model)
-    {
-        var trip = model.Adapt<Trip>();
-        trip.Code = CodeGenerator.NewCode();
-        trip.Status = TripStatus.Accepting;
-
-        UnitOfWork.Trips.Add(trip);
-        await UnitOfWork.SaveChangesAsync();
-
-        return trip.Adapt<TripViewModel>();
-    }
+    // public async Task<Result<TripViewModel>> Create(TripCreateModel model)
+    // {
+    //     var trip = model.Adapt<Trip>();
+    //     trip.Code = CodeGenerator.NewCode();
+    //     trip.Status = TripStatus.Prepare;
+    //
+    //     UnitOfWork.Trips.Add(trip);
+    //     await UnitOfWork.SaveChangesAsync();
+    //
+    //     return trip.Adapt<TripViewModel>();
+    // }
 
     public async Task<Result<TripViewModel>> Update(Guid id, TripUpdateModel model)
     {

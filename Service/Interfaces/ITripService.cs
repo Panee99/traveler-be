@@ -6,7 +6,7 @@ namespace Service.Interfaces;
 
 public interface ITripService
 {
-    Task<Result<TripViewModel>> Create(TripCreateModel model);
+    // Task<Result<TripViewModel>> Create(TripCreateModel model);
 
     Task<Result<TripViewModel>> Update(Guid id, TripUpdateModel model);
 
