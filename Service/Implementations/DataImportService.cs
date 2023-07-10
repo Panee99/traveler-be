@@ -5,6 +5,7 @@ using Data.Enums;
 using ExcelDataReader;
 using Service.Interfaces;
 using Service.Models.Tour;
+using Service.Models.Trip;
 using Shared.ResultExtensions;
 
 namespace Service.Implementations;
@@ -22,6 +23,26 @@ public class DataImportService : BaseService, IDataImportService
     {
         _tourService = tourService;
     }
+
+    /// <summary>
+    /// Import Trip
+    /// </summary>
+
+    #region Trip
+
+    public Task<Result<TripViewModel>> ImportTrip(Stream fileStream)
+    {
+        throw new NotImplementedException();
+    }
+
+    #endregion
+
+
+    /// <summary>
+    /// Import Tour
+    /// </summary>
+
+    #region Tour
 
     public async Task<Result<TourDetailsViewModel>> ImportTour(Stream fileStream)
     {
@@ -64,9 +85,7 @@ public class DataImportService : BaseService, IDataImportService
             ThumbnailId = Guid.Parse(reader.GetString(8))
         };
 
-        if (!Enum.TryParse(reader.GetString(5), out TourType type))
-            throw new Exception("Parse TourType failed.");
-        tour.Type = type;
+        tour.Type = Enum.Parse<TourType>(reader.GetString(5));
 
         // Read images
         reader.NextResult();
@@ -115,15 +134,13 @@ public class DataImportService : BaseService, IDataImportService
             };
 
             if (!ReferenceEquals(reader.GetString(5), null))
-            {
-                if (!Enum.TryParse(reader.GetString(5), out Vehicle vehicle))
-                    throw new Exception("Parse Vehicle failed.");
-                schedule.Vehicle = vehicle;
-            }
+                schedule.Vehicle = Enum.Parse<Vehicle>(reader.GetString(5));
 
             schedules.Add(schedule);
         }
 
         return schedules;
     }
+
+    #endregion
 }

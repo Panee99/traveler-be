@@ -24,6 +24,9 @@ public class DataImportController : ApiController
         _dataImportService = dataImportService;
     }
 
+    /// <summary>
+    /// Get tour excel sample file
+    /// </summary>
     [HttpGet("tour-sample")]
     public IActionResult DownloadFile()
     {
@@ -34,6 +37,9 @@ public class DataImportController : ApiController
         );
     }
 
+    /// <summary>
+    /// Import tour excel file
+    /// </summary>
     [HttpPost("tours")]
     [ProducesResponseType(typeof(TourDetailsViewModel), StatusCodes.Status200OK)]
     public async Task<IActionResult> TourImport(IFormFile file)
@@ -42,10 +48,13 @@ public class DataImportController : ApiController
         return result.Match(Ok, OnError);
     }
 
-    // [HttpPost("trips")]
-    // public async Task<IActionResult> TripImport(IFormFile file)
-    // {
-    //     var result = await _dataImportService.TripTour(file.OpenReadStream());
-    //     return result.Match(Ok, OnError);
-    // }
+    /// <summary>
+    /// Import trip excel file
+    /// </summary>
+    [HttpPost("trips")]
+    public async Task<IActionResult> TripImport(IFormFile file)
+    {
+        var result = await _dataImportService.ImportTrip(file.OpenReadStream());
+        return result.Match(Ok, OnError);
+    }
 }
