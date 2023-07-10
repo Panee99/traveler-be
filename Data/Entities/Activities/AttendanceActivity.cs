@@ -14,5 +14,6 @@ public class AttendanceActivity : IActivity
 
     public string? Note { get; set; }
 
+    [JsonIgnore]
     public ICollection<AttendanceItem>? Items { get; set; }
 }

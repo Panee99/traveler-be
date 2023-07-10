@@ -131,7 +131,7 @@ public static class EntityConfigurations
             entity.Property(x => x.TourGroupId).IsRequired();
         });
         
-        modelBuilder.Entity<NextDestinationActivity>(entity =>
+        modelBuilder.Entity<CheckInActivity>(entity =>
         {
             entity.HasKey(x => x.Id);
             entity.Property(x => x.Title).IsRequired();

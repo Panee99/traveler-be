@@ -1,6 +1,6 @@
 namespace Data.Entities.Activities;
 
-public class NextDestinationActivity : IActivity
+public class CheckInActivity : IActivity
 {
     public Guid? Id { get; set; }
 
