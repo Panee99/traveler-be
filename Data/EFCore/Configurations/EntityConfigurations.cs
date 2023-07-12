@@ -113,6 +113,7 @@ public static class EntityConfigurations
             entity.Property(x => x.CreatedAt).IsRequired();
             entity.Property(x => x.Note).IsRequired().HasDefaultValue(string.Empty);
             entity.Property(x => x.TourGroupId).IsRequired();
+            entity.Property(x => x.IsDeleted).HasDefaultValue(false);
         });
 
         modelBuilder.Entity<AttendanceItem>(entity =>
@@ -121,7 +122,7 @@ public static class EntityConfigurations
             entity.Property(x => x.Present).IsRequired();
             entity.Property(x => x.Reason).IsRequired().HasDefaultValue(string.Empty);
         });
-        
+
         modelBuilder.Entity<CustomActivity>(entity =>
         {
             entity.HasKey(x => x.Id);
@@ -129,8 +130,9 @@ public static class EntityConfigurations
             entity.Property(x => x.CreatedAt).IsRequired();
             entity.Property(x => x.Note).IsRequired().HasDefaultValue(string.Empty);
             entity.Property(x => x.TourGroupId).IsRequired();
+            entity.Property(x => x.IsDeleted).HasDefaultValue(false);
         });
-        
+
         modelBuilder.Entity<CheckInActivity>(entity =>
         {
             entity.HasKey(x => x.Id);
@@ -138,6 +140,7 @@ public static class EntityConfigurations
             entity.Property(x => x.CreatedAt).IsRequired();
             entity.Property(x => x.Note).IsRequired().HasDefaultValue(string.Empty);
             entity.Property(x => x.TourGroupId).IsRequired();
+            entity.Property(x => x.IsDeleted).HasDefaultValue(false);
         });
     }
 }

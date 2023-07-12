@@ -88,17 +88,20 @@ public class ActivityService : BaseService, IActivityService
         var deleted = false;
         if (await UnitOfWork.AttendanceActivities.FindAsync(id) is { } attendanceActivity)
         {
-            UnitOfWork.AttendanceActivities.Remove(attendanceActivity);
+            attendanceActivity.IsDeleted= true;
+            UnitOfWork.AttendanceActivities.Update(attendanceActivity);
             deleted = true;
         }
         else if (await UnitOfWork.CustomActivities.FindAsync(id) is { } customActivity)
         {
-            UnitOfWork.CustomActivities.Remove(customActivity);
+            customActivity.IsDeleted = true;
+            UnitOfWork.CustomActivities.Update(customActivity);
             deleted = true;
         }
         else if (await UnitOfWork.CheckInActivities.FindAsync(id) is { } checkInActivity)
         {
-            UnitOfWork.CheckInActivities.Remove(checkInActivity);
+            checkInActivity.IsDeleted = true;
+            UnitOfWork.CheckInActivities.Update(checkInActivity);
             deleted = true;
         }
 
