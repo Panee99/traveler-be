@@ -32,4 +32,13 @@
         </None>
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Remove="Settings\VnPaySettings.cs" />
+      <Compile Remove="Settings\CloudStorageSettings.cs" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="ExternalServices\VnPay\Models\" />
+    </ItemGroup>
+
 </Project>

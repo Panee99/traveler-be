@@ -50,6 +50,7 @@
         <None Update="EFCore\Seeds\notifications.json">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
+        <None Remove="EFCore\Seeds\tour-variants.json" />
     </ItemGroup>
 
 </Project>
