@@ -88,17 +88,20 @@ public class ActivityService : BaseService, IActivityService
         var deleted = false;
         if (await UnitOfWork.AttendanceActivities.FindAsync(id) is { } attendanceActivity)
         {
-            UnitOfWork.AttendanceActivities.Remove(attendanceActivity);
+            attendanceActivity.IsDeleted= true;
+            UnitOfWork.AttendanceActivities.Update(attendanceActivity);
             deleted = true;
         }
         else if (await UnitOfWork.CustomActivities.FindAsync(id) is { } customActivity)
         {
-            UnitOfWork.CustomActivities.Remove(customActivity);
+            customActivity.IsDeleted = true;
+            UnitOfWork.CustomActivities.Update(customActivity);
             deleted = true;
         }
-        else if (await UnitOfWork.NextDestinationActivities.FindAsync(id) is { } nextDestinationActivity)
+        else if (await UnitOfWork.CheckInActivities.FindAsync(id) is { } checkInActivity)
         {
-            UnitOfWork.NextDestinationActivities.Remove(nextDestinationActivity);
+            checkInActivity.IsDeleted = true;
+            UnitOfWork.CheckInActivities.Update(checkInActivity);
             deleted = true;
         }
 
@@ -134,8 +137,8 @@ public class ActivityService : BaseService, IActivityService
                 model.AttendanceActivity?.TourGroupId, model.AttendanceActivity),
             { Type: ActivityType.Custom } => (UnitOfWork.CustomActivities,
                 model.CustomActivity?.TourGroupId, model.CustomActivity),
-            { Type: ActivityType.NextDestination } => (UnitOfWork.NextDestinationActivities,
-                model.NextDestinationActivity?.TourGroupId, model.NextDestinationActivity),
+            { Type: ActivityType.CheckIn } => (UnitOfWork.CheckInActivities,
+                model.CheckInActivity?.TourGroupId, model.CheckInActivity),
             _ => throw new ArgumentOutOfRangeException(nameof(model), model, null)
         };
     }

@@ -11,5 +11,5 @@ public class ActivityCreateModel
 
     public CustomActivity? CustomActivity { get; set; }
 
-    public NextDestinationActivity? NextDestinationActivity { get; set; }
+    public CheckInActivity? CheckInActivity { get; set; }
 }
