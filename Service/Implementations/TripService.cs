@@ -22,7 +22,6 @@ public class TripService : BaseService, ITripService
     // {
     //     var trip = model.Adapt<Trip>();
     //     trip.Code = CodeGenerator.NewCode();
-    //     trip.Status = TripStatus.Prepare;
     //
     //     UnitOfWork.Trips.Add(trip);
     //     await UnitOfWork.SaveChangesAsync();

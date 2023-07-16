@@ -9,7 +9,7 @@ public record TripViewModel
     public string Code = null!;
     public DateTime StartTime;
     public DateTime EndTime;
-    public TripStatus Status;
+    public TourGroupStatus Status;
     public Guid TourId;
     public TourViewModel? Tour;
 }

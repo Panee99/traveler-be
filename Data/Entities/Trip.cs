@@ -1,6 +1,4 @@
-﻿using Data.Enums;
-
-namespace Data.Entities;
+﻿namespace Data.Entities;
 
 public class Trip
 {
@@ -15,8 +13,6 @@ public class Trip
     public DateTime StartTime { get; set; }
 
     public DateTime EndTime { get; set; }
-
-    public TripStatus Status { get; set; }
 
     public virtual ICollection<TourGroup> TourGroups { get; set; } = new List<TourGroup>();
 }

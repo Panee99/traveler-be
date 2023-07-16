@@ -61,10 +61,13 @@ public static class EntityConfigurations
             entity.Property(e => e.Code).HasMaxLength(256);
             entity.Property(e => e.EndTime).HasColumnType("datetime");
             entity.Property(e => e.StartTime).HasColumnType("datetime");
-            entity.Property(e => e.Status).HasMaxLength(256);
         });
 
-        modelBuilder.Entity<TourGroup>(entity => { entity.HasOne(e => e.Trip).WithMany(x => x.TourGroups); });
+        modelBuilder.Entity<TourGroup>(entity =>
+        {
+            entity.HasOne(e => e.Trip).WithMany(x => x.TourGroups);
+            entity.Property(e => e.Status).HasMaxLength(256);
+        });
 
         modelBuilder.Entity<TourGuide>(entity =>
         {

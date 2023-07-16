@@ -10,7 +10,7 @@ public static class ConventionConfigurations
         configurationBuilder.Properties<UserRole>().HaveConversion<string>();
         configurationBuilder.Properties<UserStatus>().HaveConversion<string>();
         configurationBuilder.Properties<Gender>().HaveConversion<string>();
-        configurationBuilder.Properties<TripStatus>().HaveConversion<string>();
+        configurationBuilder.Properties<TourGroupStatus>().HaveConversion<string>();
         configurationBuilder.Properties<TourType>().HaveConversion<string>();
         configurationBuilder.Properties<Vehicle>().HaveConversion<string>();
         configurationBuilder.Properties<NotificationType>().HaveConversion<string>();
