@@ -7,23 +7,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Data\Data.csproj" />
+        <ProjectReference Include="..\Data\Data.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="ExcelDataReader.DataSet" Version="3.6.0" />
-        <PackageReference Include="Mapster.DependencyInjection" Version="1.0.0" />
+        <PackageReference Include="ExcelDataReader.DataSet" Version="3.6.0"/>
+        <PackageReference Include="Mapster.DependencyInjection" Version="1.0.0"/>
     </ItemGroup>
-
-    <ItemGroup>
-      <Compile Remove="Models\TourVariant\TourVariantUpdateModel.cs" />
-      <Compile Remove="Interfaces\ITicketService.cs" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Models\Admin\" />
-      <Folder Include="Models\AttendanceEvent\" />
-      <Folder Include="Models\TourFlow\" />
-    </ItemGroup>
-
 </Project>
