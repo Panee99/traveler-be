@@ -11,6 +11,7 @@ public class AttendanceActivity : IActivity
     public DateTime? CreatedAt { get; set; }
     public string? Note { get; set; }
     public bool? IsDeleted { get; set; }
+    public bool? IsOpen { get; set; }
     [JsonIgnore]
     public ICollection<AttendanceItem>? Items { get; set; }
 }
