@@ -44,4 +44,9 @@ public static class DomainErrors
     {
         public const string NotFound = "Schedule not found";
     }
+    
+    public static class Trip
+    {
+        public const string NotFound = "Trip not found";
+    }
 }

@@ -1,0 +1,30 @@
+[
+  {
+    "Id": "87964e67-a37b-4456-b60d-283a31ecf618",
+    "TripId": "e15f3a4d-acdc-4215-baff-5c7a978169fb",
+    "Headline": "Heat Advisory issued July 17 at 2:38PM CDT until July 18 at 8:00PM CDT by NWS",
+    "Severity": "Minor",
+    "Areas": "Kay",
+    "Certainty": "Likely",
+    "Event": "Heat Advisory",
+    "Note": "Alert for Kay (Oklahoma) Issued by the National Weather Service",
+    "Effective": "2023-07-18 17:00:00.0000000",
+    "Expires": "2023-07-19 01:00:00.0000000",
+    "Description": "...HEAT ADVISORY REMAINS IN EFFECT FROM NOON TO 8 PM CDT\\nTUESDAY...\\n* WHAT...Heat index values 105 to 109 expected.\\n* WHERE...Kay County.\\n* WHEN...From noon to 8 PM CDT Tuesday.\\n* IMPACTS...Hot temperatures and high humidity may cause heat\\nillnesses to occur.",
+    "Instruction": "Drink plenty of fluids"
+  },
+  {
+    "Id": "33946bfd-17a4-4786-ae57-745ec799af89",
+    "TripId": "e15f3a4d-acdc-4215-baff-5c7a978169fb",
+    "Headline": "Flood Warning issued July 16 at 7:51PM EDT until July 18 at 8:00AM EDT by NWS",
+    "Severity": "Moderate",
+    "Areas": "Hampden",
+    "Certainty": "Likely",
+    "Event": "Flood Warning",
+    "Note": "Alert for Hampden (Massachusetts) Issued by the National Weather Service",
+    "Effective": "2023-07-17 15:00:00.0000000",
+    "Expires": "2023-07-18 12:00:00.0000000",
+    "Description": "...The National Weather Service in Boston/Norton MA has issued a\\nFlood Warning for the following rivers in Massachusetts...\\nConnecticut...Rhode Island...\\nConnecticut River At Thompsonville affecting Hampden and Hartford\\nCounties.\\nFarmington River At Simsbury affecting Hartford County.\\nWood River At Hope Valley affecting Washington County.\\nFor the Connecticut River...including Montague",
+    "Instruction": "Caution is urged when walking near riverbanks.\\nBe especially cautious at night when it is harder to recognize the\\ndangers of flooding.\\nTurn around"
+  }
+]

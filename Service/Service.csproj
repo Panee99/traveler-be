@@ -7,11 +7,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Data\Data.csproj"/>
+        <ProjectReference Include="..\Data\Data.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="ExcelDataReader.DataSet" Version="3.6.0"/>
-        <PackageReference Include="Mapster.DependencyInjection" Version="1.0.0"/>
+        <PackageReference Include="ExcelDataReader.DataSet" Version="3.6.0" />
+        <PackageReference Include="Mapster.DependencyInjection" Version="1.0.0" />
     </ItemGroup>
 </Project>

@@ -145,5 +145,8 @@ public static class EntityConfigurations
             entity.Property(x => x.TourGroupId).IsRequired();
             entity.Property(x => x.IsDeleted).HasDefaultValue(false);
         });
+
+        modelBuilder.Entity<WeatherForecast>();
+        modelBuilder.Entity<WeatherAlert>();
     }
 }

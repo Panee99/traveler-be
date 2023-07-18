@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Service.Interfaces;
 using Service.Models.TourGroup;
 using Service.Models.Trip;
+using Service.Models.Weather;
 
 namespace Application.Controllers;
 
@@ -70,6 +71,17 @@ public class TripsController : ApiController
     public async Task<IActionResult> ListGroupsInTrip(Guid id)
     {
         var result = await _tripService.ListGroupsInTrip(id);
+        return result.Match(Ok, OnError);
+    }
+
+    /// <summary>
+    /// List weather forecasts and alerts of a trip
+    /// </summary>
+    [ProducesResponseType(typeof(WeatherViewModel), StatusCodes.Status200OK)]
+    [HttpGet("{id:guid}/weather")]
+    public async Task<IActionResult> GetWeather(Guid id)
+    {
+        var result = await _tripService.GetWeather(id);
         return result.Match(Ok, OnError);
     }
 }

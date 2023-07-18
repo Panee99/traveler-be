@@ -1,13 +1,11 @@
 ﻿using Data.EFCore;
-using Data.Entities;
-using Data.Enums;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
-using Service.Commons;
 using Service.Commons.Mapping;
 using Service.Interfaces;
 using Service.Models.TourGroup;
 using Service.Models.Trip;
+using Service.Models.Weather;
 using Shared.ResultExtensions;
 
 namespace Service.Implementations;
@@ -76,5 +74,27 @@ public class TripService : BaseService, ITripService
             view.TravelerCount = groupResult.TravelerCount;
             return view;
         }).ToList();
+    }
+
+    public async Task<Result<WeatherViewModel>> GetWeather(Guid tripId)
+    {
+        if (!await UnitOfWork.Trips.AnyAsync(e => e.Id == tripId))
+            return Error.NotFound(DomainErrors.Trip.NotFound);
+
+        var alerts = await UnitOfWork.WeatherAlerts
+            .Query()
+            .Where(e => e.TripId == tripId)
+            .ToListAsync();
+
+        var forecast = await UnitOfWork.WeatherForecasts
+            .Query()
+            .Where(e => e.TripId == tripId)
+            .ToListAsync();
+
+        return new WeatherViewModel()
+        {
+            Alerts = alerts.Adapt<List<WeatherAlertViewModel>>(),
+            Forecasts = forecast.Adapt<List<WeatherForecastViewModel>>()
+        };
     }
 }
