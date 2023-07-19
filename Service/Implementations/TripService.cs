@@ -91,10 +91,18 @@ public class TripService : BaseService, ITripService
             .Where(e => e.TripId == tripId)
             .ToListAsync();
 
-        return new WeatherViewModel()
+        var model = new WeatherViewModel()
         {
             Alerts = alerts.Adapt<List<WeatherAlertViewModel>>(),
             Forecasts = forecast.Adapt<List<WeatherForecastViewModel>>()
         };
+
+        model.Forecasts =
+            model.Forecasts
+                .OrderBy(e => e.Location)
+                .ThenBy(e => e.DateTime)
+                .ToList();
+
+        return model;
     }
 }

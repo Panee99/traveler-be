@@ -6,29 +6,31 @@ public class WeatherForecast
 
     public Guid TripId { get; set; }
 
-    public DateTime Date { get; set; }
+    public DateTime DateTime { get; set; }
 
     public string Location { get; set; } = null!;
 
     public string Country { get; set; } = null!;
 
-    public float MinTemp { get; set; }
+    public float Temperature { get; set; }
 
-    public float MaxTemp { get; set; }
+    public long IsDay { get; set; }
 
-    public float AvgTemp { get; set; }
+    public double WindKph { get; set; }
 
-    public float AvgHumidity { get; set; }
+    public long Humidity { get; set; }
 
-    public bool IsRain { get; set; }
+    public bool WillItRain { get; set; }
 
-    public float ChanceOfRain { get; set; }
+    public long ChanceOfRain { get; set; }
 
-    public bool IsSnow { get; set; }
+    public bool WillItSnow { get; set; }
 
-    public float ChanceOfSnow { get; set; }
+    public long ChanceOfSnow { get; set; }
 
-    public int UvIndex { get; set; }
+    public long VisKm { get; set; }
+
+    public long Uv { get; set; }
 
     public string Condition { get; set; } = null!;
 
