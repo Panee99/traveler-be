@@ -77,7 +77,7 @@ public class TripsController : ApiController
     /// <summary>
     /// List weather forecasts and alerts of a trip
     /// </summary>
-    [ProducesResponseType(typeof(WeatherViewModel), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(List<WeatherAlertViewModel>), StatusCodes.Status200OK)]
     [HttpGet("{id:guid}/weather-alerts")]
     public async Task<IActionResult> GetWeatherAlerts(Guid id)
     {
