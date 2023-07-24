@@ -7,6 +7,7 @@ public class AttendanceItem
 {
     public Guid Id { get; set; }
     
+    [JsonIgnore]    
     public Guid AttendanceActivityId { get; set; }
 
     public Guid UserId { get; set; }
@@ -15,5 +16,5 @@ public class AttendanceItem
 
     public string Reason { get; set; } = string.Empty;
 
-    public DateTime? CreatedAt { get; set; }
+    public DateTime? AttendanceAt { get; set; }
 }
