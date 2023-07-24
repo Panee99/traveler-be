@@ -15,4 +15,6 @@ public class Trip
     public DateTime EndTime { get; set; }
 
     public virtual ICollection<TourGroup> TourGroups { get; set; } = new List<TourGroup>();
+
+    public virtual ICollection<WeatherAlert> WeatherAlerts { get; set; } = new List<WeatherAlert>();
 }

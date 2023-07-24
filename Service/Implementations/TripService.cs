@@ -76,7 +76,7 @@ public class TripService : BaseService, ITripService
         }).ToList();
     }
 
-    public async Task<Result<WeatherViewModel>> GetWeather(Guid tripId)
+    public async Task<Result<List<WeatherAlertViewModel>>> GetWeatherAlerts(Guid tripId)
     {
         if (!await UnitOfWork.Trips.AnyAsync(e => e.Id == tripId))
             return Error.NotFound(DomainErrors.Trip.NotFound);
@@ -86,23 +86,6 @@ public class TripService : BaseService, ITripService
             .Where(e => e.TripId == tripId)
             .ToListAsync();
 
-        var forecast = await UnitOfWork.WeatherForecasts
-            .Query()
-            .Where(e => e.TripId == tripId)
-            .ToListAsync();
-
-        var model = new WeatherViewModel()
-        {
-            Alerts = alerts.Adapt<List<WeatherAlertViewModel>>(),
-            Forecasts = forecast.Adapt<List<WeatherForecastViewModel>>()
-        };
-
-        model.Forecasts =
-            model.Forecasts
-                .OrderBy(e => e.Location)
-                .ThenBy(e => e.DateTime)
-                .ToList();
-
-        return model;
+        return alerts.Adapt<List<WeatherAlertViewModel>>();
     }
 }
