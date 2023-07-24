@@ -1,4 +1,5 @@
 ﻿using Application.Middlewares;
+using Application.Workers;
 using Application.Workers.Notification;
 using Data.EFCore;
 using Microsoft.EntityFrameworkCore;
@@ -36,7 +37,8 @@ public static class AppConfiguration
         // Workers
         services.AddSingleton<INotificationJobQueue>(new NotificationJobQueue());
         services.AddHostedService<NotificationWorker>();
-
+        services.AddHostedService<WeatherForecastWorker>();
+        
         // Middleware
         services.AddScoped<HttpRequestLoggingMiddleware>();
         services.AddScoped<JwtMiddleware>();
