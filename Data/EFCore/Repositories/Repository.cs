@@ -57,11 +57,6 @@ public class Repository<T> : IRepository<T> where T : class
         return _entities.FindAsync(keyValues);
     }
 
-    public Task<T?> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate)
-    {
-        return _entities.AsNoTracking().FirstOrDefaultAsync(predicate);
-    }
-
     public Task<bool> AnyAsync(Expression<Func<T, bool>> predicate)
     {
         return _entities.AnyAsync(predicate);

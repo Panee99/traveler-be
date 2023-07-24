@@ -15,5 +15,4 @@
         <PackageReference Include="FireSharp" Version="2.0.4" />
         <PackageReference Include="Mapster.DependencyInjection" Version="1.0.0" />
     </ItemGroup>
-
 </Project>

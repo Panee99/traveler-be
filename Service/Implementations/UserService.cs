@@ -244,8 +244,8 @@ public class UserService : BaseService, IUserService
                     .SelectMany(guide => guide.TourGroups)
                     .Include(group => group.Trip)
                     .ThenInclude(trip => trip.Tour)
-                    .Where(group => group.Trip.Status != TripStatus.Ended &&
-                                    group.Trip.Status != TripStatus.Canceled)
+                    .Where(group => group.Status != TourGroupStatus.Ended &&
+                                    group.Status != TourGroupStatus.Canceled)
                     .FirstOrDefaultAsync();
                 break;
             case UserRole.TourGuide:
@@ -257,8 +257,8 @@ public class UserService : BaseService, IUserService
                     .SelectMany(guide => guide.TourGroups)
                     .Include(group => group.Trip)
                     .ThenInclude(trip => trip.Tour)
-                    .Where(group => group.Trip.Status != TripStatus.Ended &&
-                                    group.Trip.Status != TripStatus.Canceled)
+                    .Where(group => group.Status != TourGroupStatus.Ended &&
+                                    group.Status != TourGroupStatus.Canceled)
                     .FirstOrDefaultAsync();
                 break;
             default:

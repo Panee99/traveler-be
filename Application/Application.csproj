@@ -28,6 +28,8 @@
 
     <ItemGroup>
         <Compile Remove="logs\**" />
+        <Compile Remove="Controllers\TransactionsController.cs" />
+        <Compile Remove="Controllers\TicketsController.cs" />
     </ItemGroup>
 
     <ItemGroup>
