@@ -14,10 +14,12 @@ public class WeatherForecastWorker : BackgroundService
     private const int ForecastDays = 3;
     private readonly HttpClient _client;
     private readonly IServiceProvider _serviceProvider;
+    private readonly ILogger<WeatherForecastWorker> _logger;
 
-    public WeatherForecastWorker(IServiceProvider serviceProvider)
+    public WeatherForecastWorker(IServiceProvider serviceProvider, ILogger<WeatherForecastWorker> logger)
     {
         _serviceProvider = serviceProvider;
+        _logger = logger;
         _client = new HttpClient();
     }
 
@@ -70,8 +72,8 @@ public class WeatherForecastWorker : BackgroundService
             .AsSplitQuery()
             .ToListAsync();
 
-        Console.WriteLine("Weather Forecast started.");
-        Console.WriteLine($"Available Trips: {availableTrips.Count}");
+        _logger.LogInformation("Weather Forecast started.");
+        _logger.LogInformation($"Available Trips: {availableTrips.Count}");
 
         availableTrips = availableTrips
             .Select(trip =>
@@ -108,8 +110,6 @@ public class WeatherForecastWorker : BackgroundService
 
         var alertModels = scheduleGroups.Select(scheduleGroup =>
             {
-                Console.WriteLine($"Day No: {scheduleGroup.Key}");
-
                 // All forecast models for locations
                 var forecastModels = scheduleGroup.Select(schedule =>
                 {
@@ -170,6 +170,7 @@ public class WeatherForecastWorker : BackgroundService
             Note = model.Note,
             Severity = model.Severity,
             Description = model.Desc,
+            Urgency = model.Urgency
         }).ToList();
     }
 

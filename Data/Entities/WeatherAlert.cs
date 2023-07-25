@@ -8,6 +8,8 @@ public class WeatherAlert
 
     public string Headline { get; set; } = null!;
 
+    public string Urgency { get; set; } = null!;
+
     public string Severity { get; set; } = null!;
 
     public string Areas { get; set; } = null!;
