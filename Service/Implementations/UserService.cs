@@ -274,4 +274,9 @@ public class UserService : BaseService, IUserService
 
         return view;
     }
+
+    public async Task<Result<ICollection<UserViewModel>>> FetchUsersInfo(ICollection<Guid> ids)
+    {
+        return (await UnitOfWork.Users.Query().Where(x=>ids.Contains(x.Id)).ToListAsync()).Adapt<List<UserViewModel>>();
+    }
 }

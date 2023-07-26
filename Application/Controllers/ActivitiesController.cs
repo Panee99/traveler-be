@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Application.Configurations.Auth;
+using Microsoft.AspNetCore.Mvc;
 using Service.Interfaces;
 using Service.Models.Activity;
 
 namespace Application.Controllers;
 
+[Authorize]
 [Route("activities")]
 public class ActivitiesController : ApiController
 {
@@ -17,7 +19,7 @@ public class ActivitiesController : ApiController
     /// <summary>
     /// Create an activity
     /// </summary>
-    [ProducesResponseType(typeof(ActivityViewModel), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     [HttpPost("")]
     public async Task<IActionResult> Create(PartialActivityModel model)
     {
@@ -39,7 +41,7 @@ public class ActivitiesController : ApiController
     /// <summary>
     /// Update an activity
     /// </summary>
-    [ProducesResponseType(typeof(ActivityViewModel), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     [HttpPatch]
     public async Task<IActionResult> Update(PartialActivityModel model)
     {

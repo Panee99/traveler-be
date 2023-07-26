@@ -1,11 +1,14 @@
 using Data.EFCore;
 using Data.Entities.Activities;
 using Data.Enums;
+using FireSharp.Interfaces;
+using FireSharp.Response;
 using Microsoft.EntityFrameworkCore;
 using Service.Channels.Notification;
 using Service.Commons.Mapping;
 using Service.Interfaces;
 using Service.Models.Activity;
+using Shared.Helpers;
 using Shared.ResultExtensions;
 
 namespace Service.Implementations;
@@ -13,11 +16,14 @@ namespace Service.Implementations;
 public class ActivityService : BaseService, IActivityService
 {
     private readonly INotificationJobQueue _notificationJobQueue;
+    private readonly IFirebaseClient _firebaseClient;
+    private static string AttendanceKey = "attendances";
 
     public ActivityService(UnitOfWork unitOfWork,
-        INotificationJobQueue notificationJobQueue) : base(unitOfWork)
+        INotificationJobQueue notificationJobQueue, IFirebaseClient firebaseClient) : base(unitOfWork)
     {
         _notificationJobQueue = notificationJobQueue;
+        _firebaseClient = firebaseClient;
     }
 
     // public async Task<Result> Create(AttendanceActivity model)
@@ -51,15 +57,39 @@ public class ActivityService : BaseService, IActivityService
     //     return Result.Success();
     // }
 
-    public async Task<Result> Create(PartialActivityModel model)
+    public async Task<Result<string>> Create(PartialActivityModel model)
     {
         var (repo, tourGroupId, dataModel) = _destructurePartialActivityModel(model);
 
         if (tourGroupId == null || await UnitOfWork.TourGroups.FindAsync(tourGroupId) is not { } tourGroup)
             return Error.NotFound(DomainErrors.TourGroup.NotFound);
 
-        repo.Add(dataModel);
+        // Activity is attendance
+        if (dataModel is AttendanceActivity attendanceActivity)
+        {
+            if (attendanceActivity.Items == null || attendanceActivity.Items.Count == 0)
+            {
+                // Append members to attendance activity
+                attendanceActivity.Items = UnitOfWork.TourGroups.Query().Include(x => x.Travelers)
+                    .FirstOrDefault(x => x.Id == tourGroupId)?.Travelers.Select(x => new AttendanceItem
+                    {
+                        Present = false,
+                        Reason = string.Empty,
+                        UserId = x.Id,
+                        AttendanceAt = DateTimeHelper.VnNow()
+                    }).ToList();
+            }
+
+            dataModel = attendanceActivity;
+        }
+
+        var entity = repo.Add(dataModel);
+
         await UnitOfWork.SaveChangesAsync();
+
+        // Realtime Database
+        if (entity is AttendanceActivity attendanceEntity)
+            _insertAttendanceIntoRealtimeDatabase(attendanceEntity.Id!.Value, attendanceEntity.Items!);
 
         // Notifications
         var receiverIds = await UnitOfWork.TourGroups
@@ -80,7 +110,7 @@ public class ActivityService : BaseService, IActivityService
             ));
 
         // Return
-        return Result.Success();
+        return entity.Id.ToString();
     }
 
     public async Task<Result> Delete(Guid id)
@@ -88,7 +118,7 @@ public class ActivityService : BaseService, IActivityService
         var deleted = false;
         if (await UnitOfWork.AttendanceActivities.FindAsync(id) is { } attendanceActivity)
         {
-            attendanceActivity.IsDeleted= true;
+            attendanceActivity.IsDeleted = true;
             UnitOfWork.AttendanceActivities.Update(attendanceActivity);
             deleted = true;
         }
@@ -141,5 +171,11 @@ public class ActivityService : BaseService, IActivityService
                 model.CheckInActivity?.TourGroupId, model.CheckInActivity),
             _ => throw new ArgumentOutOfRangeException(nameof(model), model, null)
         };
+    }
+
+    private void _insertAttendanceIntoRealtimeDatabase(Guid attendanceId, ICollection<AttendanceItem> items)
+    {
+        var path = $"{AttendanceKey}/{attendanceId}";
+        _firebaseClient.Set(path, items);
     }
 }

@@ -117,11 +117,12 @@ public static class EntityConfigurations
             entity.Property(x => x.Note).IsRequired().HasDefaultValue(string.Empty);
             entity.Property(x => x.TourGroupId).IsRequired();
             entity.Property(x => x.IsDeleted).HasDefaultValue(false);
+            entity.Property(x => x.IsOpen).HasDefaultValue(true);
         });
 
         modelBuilder.Entity<AttendanceItem>(entity =>
         {
-            entity.HasKey(x => new { AttendanceId = x.AttendanceActivityId, x.UserId });
+            entity.HasKey(x => x.Id);
             entity.Property(x => x.Present).IsRequired();
             entity.Property(x => x.Reason).IsRequired().HasDefaultValue(string.Empty);
         });

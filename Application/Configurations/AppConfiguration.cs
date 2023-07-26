@@ -2,6 +2,9 @@
 using Application.Workers;
 using Application.Workers.Notification;
 using Data.EFCore;
+using FireSharp;
+using FireSharp.Config;
+using FireSharp.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Service.Channels.Notification;
@@ -28,6 +31,12 @@ public static class AppConfiguration
         // DbContext
         services.AddDbContextPool<AppDbContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+
+        services.AddSingleton<IFirebaseClient>(new FirebaseClient(new FirebaseConfig
+        {
+            BasePath = configuration.GetSection("Firebase:RealtimeDatabase:BaseUrl").Value,
+            AuthSecret =configuration.GetSection("Firebase:RealtimeDatabase:Secret").Value
+        }));
 
         return services.AddDependencies();
     }
