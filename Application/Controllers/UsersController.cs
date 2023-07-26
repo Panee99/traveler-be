@@ -135,11 +135,11 @@ public class UsersController : ApiController
 
     #endregion
 
-    [Authorize(UserRole.TourGuide, UserRole.Manager)]
-    [HttpPost]
-    public async Task<IActionResult> FetchUsersInfo(ICollection<Guid> ids)
-    {
-        var result = await _userService.FetchUsersInfo(ids);
-        return result.Match(Ok, OnError);
-    }
+    // [Authorize(UserRole.TourGuide, UserRole.Manager)]
+    // [HttpPost("info")]
+    // public async Task<IActionResult> FetchUsersInfo(ICollection<Guid> ids)
+    // {
+    //     var result = await _userService.FetchUsersInfo(ids);
+    //     return result.Match(Ok, OnError);
+    // }
 }
