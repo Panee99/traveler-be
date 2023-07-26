@@ -77,11 +77,11 @@ public class TripsController : ApiController
     /// <summary>
     /// List weather forecasts and alerts of a trip
     /// </summary>
-    [ProducesResponseType(typeof(WeatherViewModel), StatusCodes.Status200OK)]
-    [HttpGet("{id:guid}/weather")]
-    public async Task<IActionResult> GetWeather(Guid id)
+    [ProducesResponseType(typeof(List<WeatherAlertViewModel>), StatusCodes.Status200OK)]
+    [HttpGet("{id:guid}/weather-alerts")]
+    public async Task<IActionResult> GetWeatherAlerts(Guid id)
     {
-        var result = await _tripService.GetWeather(id);
+        var result = await _tripService.GetWeatherAlerts(id);
         return result.Match(Ok, OnError);
     }
 }

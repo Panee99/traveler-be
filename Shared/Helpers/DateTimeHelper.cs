@@ -7,6 +7,11 @@ public static class DateTimeHelper
         return DateTime.UtcNow.AddHours(7);
     }
 
+    public static DateTime ToVnNow(this DateTimeOffset dateTimeOffset)
+    {
+        return dateTimeOffset.UtcDateTime.AddHours(7);
+    }
+
     public static long GetUtcTimestamp()
     {
         return DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();

@@ -54,9 +54,6 @@
         <None Update="EFCore\Seeds\weather-alerts.json">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="EFCore\Seeds\weather-forecasts.json">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
     </ItemGroup>
 
 </Project>

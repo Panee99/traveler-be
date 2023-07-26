@@ -5,6 +5,7 @@ public record WeatherAlertViewModel
     public Guid Id;
     public Guid TripId;
     public string Headline = null!;
+    public string Urgency = null!;
     public string Severity = null!;
     public string Areas = null!;
     public string Certainty = null!;

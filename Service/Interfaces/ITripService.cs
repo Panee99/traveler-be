@@ -16,6 +16,6 @@ public interface ITripService
     Task<Result> Delete(Guid id);
 
     Task<Result<List<TourGroupViewModel>>> ListGroupsInTrip(Guid tripId);
-    
-    Task<Result<WeatherViewModel>> GetWeather(Guid tripId);
+
+    Task<Result<List<WeatherAlertViewModel>>> GetWeatherAlerts(Guid tripId);
 }
