@@ -62,19 +62,4 @@ public class IncurredCostService : BaseService, IIncurredCostService
         // }).ToList();
         throw new NotImplementedException();
     }
-
-    public async Task<Result> UpdateCurrentSchedule(Guid tourGroupId, CurrentScheduleUpdateModel model)
-    {
-        var tourGroup = await UnitOfWork.TourGroups.FindAsync(tourGroupId);
-        if (tourGroup is null) return Error.NotFound(DomainErrors.TourGroup.NotFound);
-
-        if (!await UnitOfWork.Schedules.AnyAsync(e => e.Id == model.CurrentScheduleId))
-            return Error.NotFound(DomainErrors.Schedule.NotFound);
-
-        tourGroup.CurrentScheduleId = model.CurrentScheduleId;
-        UnitOfWork.TourGroups.Update(tourGroup);
-        await UnitOfWork.SaveChangesAsync();
-
-        return Result.Success();
-    }
 }
