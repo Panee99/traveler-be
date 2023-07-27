@@ -9,6 +9,4 @@ public class TravelerInTourGroup
     public Guid TourGroupId { get; set; }
 
     public TourGroup TourGroup { get; set; } = null!;
-
-    public DateTime JoinedAt { get; set; }
 }

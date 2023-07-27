@@ -1,17 +1,14 @@
 ﻿[
   {
     "TravelerId": "e6618130-62e9-4053-4047-08db269c26be",
-    "TourGroupId": "96fe251f-e3b8-4f20-9fc2-6671d9062fc0",
-    "JoinedAt": "2023-06-19 19:33:32.0000000"
+    "TourGroupId": "96fe251f-e3b8-4f20-9fc2-6671d9062fc0"
   },
   {
     "TravelerId": "e6618130-62e9-4053-4047-08db269c26be",
-    "TourGroupId": "d71fbdb2-5f38-4aca-830e-d8d7d55b33cd",
-    "JoinedAt": "2023-05-11 20:17:02.0000000"
+    "TourGroupId": "d71fbdb2-5f38-4aca-830e-d8d7d55b33cd"
   },
   {
     "TravelerId": "ed3ebf19-3225-4f93-93a6-2ca03d43529b",
-    "TourGroupId": "d71fbdb2-5f38-4aca-830e-d8d7d55b33cd",
-    "JoinedAt": "2023-06-09 16:40:52.0000000"
+    "TourGroupId": "d71fbdb2-5f38-4aca-830e-d8d7d55b33cd"
   }
 ]

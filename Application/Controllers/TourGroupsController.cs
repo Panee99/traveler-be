@@ -33,59 +33,6 @@ public class TourGroupsController : ApiController
         return result.Match(Ok, OnError);
     }
 
-    // /// <summary>
-    // /// Create a new tour group
-    // /// </summary>
-    // [Authorize(UserRole.Manager)]
-    // [HttpPost("")]
-    // public async Task<IActionResult> Create(TourGroupCreateModel model)
-    // {
-    //     var result = await _tourGroupService.Create(model);
-    //     return result.Match(Ok, OnError);
-    // }
-
-    // /// <summary>
-    // /// Update a tour group
-    // /// </summary>
-    // [Authorize(UserRole.Manager)]
-    // [HttpPatch("{id:guid}")]
-    // public async Task<IActionResult> Update([FromRoute] Guid id, TourGroupUpdateModel model)
-    // {
-    //     var result = await _tourGroupService.Update(id, model);
-    //     return result.Match(Ok, OnError);
-    // }
-
-    // /// <summary>
-    // /// Delete a tour group
-    // /// </summary>
-    // [Authorize(UserRole.Manager)]
-    // [HttpDelete("{id:guid}")]
-    // public async Task<IActionResult> Delete([FromRoute] Guid id)
-    // {
-    //     var result = await _tourGroupService.Delete(id);
-    //     return result.Match(Ok, OnError);
-    // }
-
-    // /// <summary>
-    // /// Add travelers to group
-    // /// </summary>
-    // [HttpPatch("{id:guid}/travelers")]
-    // public async Task<IActionResult> AddTravelers([FromRoute] Guid id, [FromBody] List<Guid> travelerIds)
-    // {
-    //     var result = await _tourGroupService.AddTravelers(id, travelerIds);
-    //     return result.Match(Ok, OnError);
-    // }
-
-    // /// <summary>
-    // /// Remove travelers from group
-    // /// </summary>
-    // [HttpDelete("{id:guid}/travelers")]
-    // public async Task<IActionResult> RemoveTravelers([FromRoute] Guid id, [FromBody] List<Guid> travelerIds)
-    // {
-    //     var result = await _tourGroupService.RemoveTravelers(id, travelerIds);
-    //     return result.Match(Ok, OnError);
-    // }
-
     /// <summary>
     /// List all travelers and tour guide of a group
     /// </summary>
