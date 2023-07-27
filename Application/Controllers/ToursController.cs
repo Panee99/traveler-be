@@ -48,22 +48,22 @@ public class ToursController : ApiController
     /// </summary>
     [HttpPost("import")]
     [ProducesResponseType(typeof(TourDetailsViewModel), StatusCodes.Status200OK)]
-    public async Task<IActionResult> TourImport(IFormFile file)
+    public async Task<IActionResult> ImportTour(IFormFile file)
     {
         var result = await _tourService.ImportTour(file.OpenReadStream());
         return result.Match(Ok, OnError);
     }
 
-    /// <summary>
-    /// Update a tour
-    /// </summary>
-    [ProducesResponseType(typeof(TourDetailsViewModel), StatusCodes.Status200OK)]
-    [HttpPatch("{id:guid}")]
-    public async Task<IActionResult> Update(Guid id, TourUpdateModel model)
-    {
-        var result = await _tourService.Update(id, model);
-        return result.Match(Ok, OnError);
-    }
+    // /// <summary>
+    // /// Update a tour
+    // /// </summary>
+    // [ProducesResponseType(typeof(TourDetailsViewModel), StatusCodes.Status200OK)]
+    // [HttpPatch("{id:guid}")]
+    // public async Task<IActionResult> Update(Guid id, TourUpdateModel model)
+    // {
+    //     var result = await _tourService.Update(id, model);
+    //     return result.Match(Ok, OnError);
+    // }
 
     /// <summary>
     /// Delete a tour
