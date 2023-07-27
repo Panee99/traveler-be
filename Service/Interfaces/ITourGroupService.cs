@@ -24,4 +24,10 @@ public interface ITourGroupService
     Task<Result<TourGroupViewModel>> Get(Guid id);
 
     Task<int> CountTravelers(Guid tourGroupId);
+
+    Task<Result> Start(Guid id);
+
+    Task<Result> End(Guid id);
+
+    Task<Result> Cancel(Guid id);
 }

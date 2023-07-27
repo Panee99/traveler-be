@@ -29,6 +29,51 @@ public class TourGroupService : BaseService, ITourGroupService
             .CountAsync();
     }
 
+    public async Task<Result> Start(Guid id)
+    {
+        var tourGroup = await UnitOfWork.TourGroups.FindAsync(id);
+        if (tourGroup is null) return Error.NotFound(DomainErrors.TourGroup.NotFound);
+
+        if (tourGroup.Status != TourGroupStatus.Prepare)
+            return Error.Conflict("Tour Group status must be 'Prepare' to Start");
+
+        tourGroup.Status = TourGroupStatus.Ongoing;
+        UnitOfWork.TourGroups.Update(tourGroup);
+        await UnitOfWork.SaveChangesAsync();
+
+        return Result.Success();
+    }
+
+    public async Task<Result> End(Guid id)
+    {
+        var tourGroup = await UnitOfWork.TourGroups.FindAsync(id);
+        if (tourGroup is null) return Error.NotFound(DomainErrors.TourGroup.NotFound);
+
+        if (tourGroup.Status != TourGroupStatus.Ongoing)
+            return Error.Conflict("Tour Group status must be 'Ongoing' to End");
+
+        tourGroup.Status = TourGroupStatus.Ended;
+        UnitOfWork.TourGroups.Update(tourGroup);
+        await UnitOfWork.SaveChangesAsync();
+
+        return Result.Success();
+    }
+
+    public async Task<Result> Cancel(Guid id)
+    {
+        var tourGroup = await UnitOfWork.TourGroups.FindAsync(id);
+        if (tourGroup is null) return Error.NotFound(DomainErrors.TourGroup.NotFound);
+
+        if (tourGroup.Status is TourGroupStatus.Ended or TourGroupStatus.Canceled)
+            return Error.Conflict("Cannot cancel 'Ended' or 'Canceled' Tour Group");
+
+        tourGroup.Status = TourGroupStatus.Canceled;
+        UnitOfWork.TourGroups.Update(tourGroup);
+        await UnitOfWork.SaveChangesAsync();
+
+        return Result.Success();
+    }
+
     public async Task<Result<TourGroupViewModel>> Get(Guid id)
     {
         var group = await UnitOfWork.TourGroups.FindAsync(id);
