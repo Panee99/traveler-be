@@ -1,6 +1,4 @@
-﻿using Application.Configurations.Auth;
-using Data.Enums;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Service.Interfaces;
 using Service.Models.Activity;
 using Service.Models.IncurredCost;
@@ -63,17 +61,6 @@ public class TourGroupsController : ApiController
     public async Task<IActionResult> ListIncurredCosts(Guid id)
     {
         var result = await _incurredCostService.ListAll(id);
-        return result.Match(Ok, OnError);
-    }
-
-    /// <summary>
-    /// Update current schedule
-    /// </summary>
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [HttpPut("{id:guid}/current-schedule")]
-    public async Task<IActionResult> UpdateCurrentSchedule(Guid id, CurrentScheduleUpdateModel model)
-    {
-        var result = await _incurredCostService.UpdateCurrentSchedule(id, model);
         return result.Match(Ok, OnError);
     }
 }
