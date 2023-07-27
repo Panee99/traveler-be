@@ -1,6 +1,4 @@
-﻿using Data.Entities.Activities;
-using FireSharp.Response;
-using Service.Models.Activity;
+﻿using Service.Models.Activity;
 using Shared.ResultExtensions;
 
 namespace Service.Interfaces;

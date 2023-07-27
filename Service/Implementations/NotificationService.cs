@@ -3,6 +3,7 @@ using Data.Entities;
 using Data.Enums;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
+using Service.Channels.Notification;
 using Service.Commons;
 using Service.Interfaces;
 using Service.Models.Notification;
@@ -14,10 +15,18 @@ namespace Service.Implementations;
 public class NotificationService : BaseService, INotificationService
 {
     private readonly ICloudStorageService _cloudStorageService;
+    private readonly INotificationJobQueue _notificationJobQueue;
 
-    public NotificationService(UnitOfWork unitOfWork, ICloudStorageService cloudStorageService) : base(unitOfWork)
+    public NotificationService(UnitOfWork unitOfWork, ICloudStorageService cloudStorageService,
+        INotificationJobQueue notificationJobQueue) : base(unitOfWork)
     {
         _cloudStorageService = cloudStorageService;
+        _notificationJobQueue = notificationJobQueue;
+    }
+
+    public async Task EnqueueNotification(NotificationJob notificationJob)
+    {
+        await _notificationJobQueue.EnqueueAsync(notificationJob);
     }
 
     public async Task<Result<List<NotificationViewModel>>> ListAll(Guid userId)
@@ -76,7 +85,7 @@ public class NotificationService : BaseService, INotificationService
             .CountAsync();
     }
 
-    public async Task AddNotifications(
+    public async Task SaveNotifications(
         IEnumerable<Guid> receiverIds,
         string title,
         string payload,

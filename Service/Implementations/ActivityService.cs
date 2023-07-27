@@ -2,7 +2,6 @@ using Data.EFCore;
 using Data.Entities.Activities;
 using Data.Enums;
 using FireSharp.Interfaces;
-using FireSharp.Response;
 using Microsoft.EntityFrameworkCore;
 using Service.Channels.Notification;
 using Service.Commons.Mapping;
@@ -15,15 +14,15 @@ namespace Service.Implementations;
 
 public class ActivityService : BaseService, IActivityService
 {
-    private readonly INotificationJobQueue _notificationJobQueue;
     private readonly IFirebaseClient _firebaseClient;
     private static string AttendanceKey = "attendances";
+    private readonly INotificationService _notificationService;
 
-    public ActivityService(UnitOfWork unitOfWork,
-        INotificationJobQueue notificationJobQueue, IFirebaseClient firebaseClient) : base(unitOfWork)
+    public ActivityService(UnitOfWork unitOfWork, IFirebaseClient firebaseClient,
+        INotificationService notificationService) : base(unitOfWork)
     {
-        _notificationJobQueue = notificationJobQueue;
         _firebaseClient = firebaseClient;
+        _notificationService = notificationService;
     }
 
     // public async Task<Result> Create(AttendanceActivity model)
@@ -101,7 +100,7 @@ public class ActivityService : BaseService, IActivityService
 
         if (tourGroup.TourGuideId != null) receiverIds.Add(tourGroup.TourGuideId.Value);
 
-        await _notificationJobQueue.EnqueueAsync(
+        await _notificationService.EnqueueNotification(
             new NotificationJob(
                 receiverIds,
                 "Tour Guide",

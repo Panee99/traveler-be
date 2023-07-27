@@ -52,7 +52,7 @@ public class NotificationWorker : BackgroundService
                         var templatePayload = _buildPayload(job.Type, job.Subject, job.DirectObject, true);
 
                         // 1. Save notifications
-                        await notificationService.AddNotifications(job.ReceiverIds,
+                        await notificationService.SaveNotifications(job.ReceiverIds,
                             title,
                             templatePayload,
                             job.Type);
