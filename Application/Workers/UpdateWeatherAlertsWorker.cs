@@ -8,15 +8,15 @@ using Shared.Helpers;
 
 namespace Application.Workers;
 
-public class WeatherForecastWorker : BackgroundService
+public class UpdateWeatherAlertsWorker : BackgroundService
 {
     private const string ApiKey = "e9a560f9a61e445193792558231607";
     private const int ForecastDays = 3;
     private readonly HttpClient _client;
     private readonly IServiceProvider _serviceProvider;
-    private readonly ILogger<WeatherForecastWorker> _logger;
+    private readonly ILogger<UpdateWeatherAlertsWorker> _logger;
 
-    public WeatherForecastWorker(IServiceProvider serviceProvider, ILogger<WeatherForecastWorker> logger)
+    public UpdateWeatherAlertsWorker(IServiceProvider serviceProvider, ILogger<UpdateWeatherAlertsWorker> logger)
     {
         _serviceProvider = serviceProvider;
         _logger = logger;
@@ -78,7 +78,7 @@ public class WeatherForecastWorker : BackgroundService
         availableTrips = availableTrips
             .Select(trip =>
             {
-                var alerts = GetWeatherAlerts(trip.StartTime, trip.Tour.Schedules).ToList();
+                var alerts = FetchWeatherAlerts(trip.StartTime, trip.Tour.Schedules).ToList();
                 trip.WeatherAlerts = alerts;
                 return trip;
             }).ToList();
@@ -102,7 +102,7 @@ public class WeatherForecastWorker : BackgroundService
         await unitOfWork.SaveChangesAsync();
     }
 
-    private IEnumerable<WeatherAlert> GetWeatherAlerts(
+    private IEnumerable<WeatherAlert> FetchWeatherAlerts(
         DateTime startDate, IEnumerable<Schedule> schedules)
     {
         // Group schedule by DayNo
