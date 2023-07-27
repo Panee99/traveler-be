@@ -1,6 +1,4 @@
-﻿using Application.Configurations.Auth;
-using Data.Enums;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Service.Interfaces;
 using Service.Models.Activity;
 using Service.Models.IncurredCost;
@@ -23,6 +21,39 @@ public class TourGroupsController : ApiController
     }
 
     /// <summary>
+    /// Start a tour group
+    /// </summary>
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [HttpPut("{id:guid}/start")]
+    public async Task<IActionResult> Start(Guid id)
+    {
+        var result = await _tourGroupService.Start(id);
+        return result.Match(Ok, OnError);
+    }
+
+    /// <summary>
+    /// End a tour group
+    /// </summary>
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [HttpPut("{id:guid}/end")]
+    public async Task<IActionResult> End(Guid id)
+    {
+        var result = await _tourGroupService.End(id);
+        return result.Match(Ok, OnError);
+    }
+
+    /// <summary>
+    /// Cancel a tour group
+    /// </summary>
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [HttpPut("{id:guid}/cancel")]
+    public async Task<IActionResult> Cancel(Guid id)
+    {
+        var result = await _tourGroupService.Cancel(id);
+        return result.Match(Ok, OnError);
+    }
+
+    /// <summary>
     /// Get a tour group
     /// </summary>
     [ProducesResponseType(typeof(List<TourGroupViewModel>), StatusCodes.Status200OK)]
@@ -32,59 +63,6 @@ public class TourGroupsController : ApiController
         var result = await _tourGroupService.Get(id);
         return result.Match(Ok, OnError);
     }
-
-    // /// <summary>
-    // /// Create a new tour group
-    // /// </summary>
-    // [Authorize(UserRole.Manager)]
-    // [HttpPost("")]
-    // public async Task<IActionResult> Create(TourGroupCreateModel model)
-    // {
-    //     var result = await _tourGroupService.Create(model);
-    //     return result.Match(Ok, OnError);
-    // }
-
-    // /// <summary>
-    // /// Update a tour group
-    // /// </summary>
-    // [Authorize(UserRole.Manager)]
-    // [HttpPatch("{id:guid}")]
-    // public async Task<IActionResult> Update([FromRoute] Guid id, TourGroupUpdateModel model)
-    // {
-    //     var result = await _tourGroupService.Update(id, model);
-    //     return result.Match(Ok, OnError);
-    // }
-
-    // /// <summary>
-    // /// Delete a tour group
-    // /// </summary>
-    // [Authorize(UserRole.Manager)]
-    // [HttpDelete("{id:guid}")]
-    // public async Task<IActionResult> Delete([FromRoute] Guid id)
-    // {
-    //     var result = await _tourGroupService.Delete(id);
-    //     return result.Match(Ok, OnError);
-    // }
-
-    // /// <summary>
-    // /// Add travelers to group
-    // /// </summary>
-    // [HttpPatch("{id:guid}/travelers")]
-    // public async Task<IActionResult> AddTravelers([FromRoute] Guid id, [FromBody] List<Guid> travelerIds)
-    // {
-    //     var result = await _tourGroupService.AddTravelers(id, travelerIds);
-    //     return result.Match(Ok, OnError);
-    // }
-
-    // /// <summary>
-    // /// Remove travelers from group
-    // /// </summary>
-    // [HttpDelete("{id:guid}/travelers")]
-    // public async Task<IActionResult> RemoveTravelers([FromRoute] Guid id, [FromBody] List<Guid> travelerIds)
-    // {
-    //     var result = await _tourGroupService.RemoveTravelers(id, travelerIds);
-    //     return result.Match(Ok, OnError);
-    // }
 
     /// <summary>
     /// List all travelers and tour guide of a group
@@ -116,17 +94,6 @@ public class TourGroupsController : ApiController
     public async Task<IActionResult> ListIncurredCosts(Guid id)
     {
         var result = await _incurredCostService.ListAll(id);
-        return result.Match(Ok, OnError);
-    }
-
-    /// <summary>
-    /// Update current schedule
-    /// </summary>
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [HttpPut("{id:guid}/current-schedule")]
-    public async Task<IActionResult> UpdateCurrentSchedule(Guid id, CurrentScheduleUpdateModel model)
-    {
-        var result = await _incurredCostService.UpdateCurrentSchedule(id, model);
         return result.Match(Ok, OnError);
     }
 }

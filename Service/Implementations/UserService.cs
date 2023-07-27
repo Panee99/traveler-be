@@ -225,7 +225,7 @@ public class UserService : BaseService, IUserService
         };
     }
 
-    public async Task<Result<TourGroupViewModel>> GetCurrentJoinedGroup(Guid userId)
+    public async Task<Result<CurrentTourGroupViewModel>> GetCurrentJoinedGroup(Guid userId)
     {
         // Check user exist
         var user = await UnitOfWork.Users.FindAsync(userId);
@@ -268,7 +268,15 @@ public class UserService : BaseService, IUserService
         if (currentGroup is null) return Error.NotFound(DomainErrors.User.NoCurrentGroup);
         // Map to view model
         var tour = currentGroup.Trip.Tour;
-        var view = currentGroup.Adapt<TourGroupViewModel>();
+        var view = currentGroup.Adapt<CurrentTourGroupViewModel>();
+
+        view.TotalDays = await UnitOfWork.Schedules
+            .Query()
+            .Where(s => s.TourId == view.Trip!.TourId)
+            .OrderBy(s => s.DayNo)
+            .Select(s => s.DayNo)
+            .LastOrDefaultAsync();
+
         view.Trip!.Tour!.ThumbnailUrl = _cloudStorageService.GetMediaLink(tour.ThumbnailId);
         view.TravelerCount = await _tourGroupService.CountTravelers(view.Id);
 
@@ -277,6 +285,7 @@ public class UserService : BaseService, IUserService
 
     public async Task<Result<ICollection<UserViewModel>>> FetchUsersInfo(ICollection<Guid> ids)
     {
-        return (await UnitOfWork.Users.Query().Where(x=>ids.Contains(x.Id)).ToListAsync()).Adapt<List<UserViewModel>>();
+        return (await UnitOfWork.Users.Query().Where(x => ids.Contains(x.Id)).ToListAsync())
+            .Adapt<List<UserViewModel>>();
     }
 }

@@ -19,28 +19,6 @@ public class TourGuideService : BaseService, ITourGuideService
         _cloudStorageService = cloudStorageService;
     }
 
-    public async Task<Result<List<TourViewModel>>> ListAssignedTours(Guid tourGuideId)
-    {
-        if (!await UnitOfWork.TourGuides.AnyAsync(e => e.Id == tourGuideId))
-            return Error.NotFound(DomainErrors.TourGuide.NotFound);
-
-        var assignedTours = await UnitOfWork.TourGuides.Query()
-            .SelectMany(guide => guide.TourGroups)
-            .Select(group => group.Trip)
-            .Select(trip => trip.Tour)
-            .ToListAsync();
-
-        var views = assignedTours.Select(e =>
-        {
-            var view = e.Adapt<TourViewModel>();
-            view.ThumbnailUrl = _cloudStorageService.GetMediaLink(e.ThumbnailId);
-
-            return view;
-        }).ToList();
-
-        return views;
-    }
-
     public async Task<Result<List<TourGroupViewModel>>> ListAssignedGroups(Guid tourGuideId)
     {
         if (!await UnitOfWork.TourGuides.AnyAsync(e => e.Id == tourGuideId))

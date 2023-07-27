@@ -30,7 +30,7 @@ public class TourGuidesController : ApiController
     }
 
     [Authorize(UserRole.Manager, UserRole.TourGuide)]
-    [ProducesResponseType(typeof(TourGroupViewModel), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(TourGuideViewModel), StatusCodes.Status200OK)]
     [HttpPut("{id:guid}/contacts")]
     public async Task<IActionResult> UpdateContacts(Guid id, ContactsUpdateModel model)
     {

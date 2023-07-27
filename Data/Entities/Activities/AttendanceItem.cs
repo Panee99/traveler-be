@@ -18,5 +18,7 @@ public class AttendanceItem
 
     public DateTime? AttendanceAt { get; set; }
 
+    public User User { get; set; } = null!;
+
     public DateTime? LastUpdateAt { get; set; }
 }

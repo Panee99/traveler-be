@@ -11,6 +11,4 @@ public interface IIncurredCostService
     Task<Result> Delete(Guid incurredCostId);
 
     Task<Result<List<IncurredCostViewModel>>> ListAll(Guid tourGroupId);
-
-    Task<Result> UpdateCurrentSchedule(Guid tourGroupId, CurrentScheduleUpdateModel model);
 }

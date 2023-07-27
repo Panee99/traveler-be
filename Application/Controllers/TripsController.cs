@@ -17,17 +17,16 @@ public class TripsController : ApiController
     {
         _tripService = tripService;
     }
-
-    // /// <summary>
-    // /// Create a trip
-    // /// </summary>
-    // [ProducesResponseType(typeof(TripViewModel), StatusCodes.Status200OK)]
-    // [HttpPost("")]
-    // public async Task<IActionResult> Create(TripCreateModel model)
-    // {
-    //     var result = await _tripService.Create(model);
-    //     return result.Match(Ok, OnError);
-    // }
+    
+    /// <summary>
+    /// Import trip excel file
+    /// </summary>
+    [HttpPost("trips")]
+    public async Task<IActionResult> TripImport(IFormFile file)
+    {
+        var result = await _tripService.ImportTrip(file.OpenReadStream());
+        return result.Match(Ok, OnError);
+    }
 
     /// <summary>
     /// Update a trip
@@ -81,7 +80,7 @@ public class TripsController : ApiController
     [HttpGet("{id:guid}/weather-alerts")]
     public async Task<IActionResult> GetWeatherAlerts(Guid id)
     {
-        var result = await _tripService.GetWeatherAlerts(id);
+        var result = await _tripService.ListWeatherAlerts(id);
         return result.Match(Ok, OnError);
     }
 }

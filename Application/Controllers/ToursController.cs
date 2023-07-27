@@ -15,32 +15,55 @@ public class ToursController : ApiController
 {
     private readonly ITourService _tourService;
 
+    private static readonly byte[] TourSampleData;
+
+    static ToursController()
+    {
+        // Read tour sample data to memory
+        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "Statics", "Tour.xlsx");
+        if (!System.IO.File.Exists(filePath)) throw new Exception("'Tour.xlsx' file not found.");
+        TourSampleData = System.IO.File.ReadAllBytes(filePath);
+    }
+
     public ToursController(ITourService tourService)
     {
         _tourService = tourService;
     }
 
-    // /// <summary>
-    // /// Create a new tour
-    // /// </summary>
-    // [ProducesResponseType(typeof(TourDetailsViewModel), StatusCodes.Status200OK)]
-    // [HttpPost("")]
-    // public async Task<IActionResult> Create(TourCreateModel model)
-    // {
-    //     var result = await _tourService.Create(model);
-    //     return result.Match(Ok, OnError);
-    // }
+    /// <summary>
+    /// Get tour excel sample file
+    /// </summary>
+    [HttpGet("import/sample")]
+    public IActionResult DownloadFile()
+    {
+        return File(
+            TourSampleData,
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            "Tour.xlsx"
+        );
+    }
 
     /// <summary>
-    /// Update a tour
+    /// Import tour excel file
     /// </summary>
+    [HttpPost("import")]
     [ProducesResponseType(typeof(TourDetailsViewModel), StatusCodes.Status200OK)]
-    [HttpPatch("{id:guid}")]
-    public async Task<IActionResult> Update(Guid id, TourUpdateModel model)
+    public async Task<IActionResult> ImportTour(IFormFile file)
     {
-        var result = await _tourService.Update(id, model);
+        var result = await _tourService.ImportTour(file.OpenReadStream());
         return result.Match(Ok, OnError);
     }
+
+    // /// <summary>
+    // /// Update a tour
+    // /// </summary>
+    // [ProducesResponseType(typeof(TourDetailsViewModel), StatusCodes.Status200OK)]
+    // [HttpPatch("{id:guid}")]
+    // public async Task<IActionResult> Update(Guid id, TourUpdateModel model)
+    // {
+    //     var result = await _tourService.Update(id, model);
+    //     return result.Match(Ok, OnError);
+    // }
 
     /// <summary>
     /// Delete a tour
@@ -83,9 +106,9 @@ public class ToursController : ApiController
     [ProducesResponseType(typeof(List<TripViewModel>), StatusCodes.Status200OK)]
     [AllowAnonymous]
     [HttpGet("{id:guid}/trips")]
-    public async Task<IActionResult> ListTourTrips(Guid id)
+    public async Task<IActionResult> ListTrips(Guid id)
     {
-        var result = await _tourService.ListTourTrips(id);
+        var result = await _tourService.ListTrips(id);
         return result.Match(Ok, OnError);
     }
 

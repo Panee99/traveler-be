@@ -46,7 +46,7 @@ public static class AppConfiguration
         // Workers
         services.AddSingleton<INotificationJobQueue>(new NotificationJobQueue());
         services.AddHostedService<NotificationWorker>();
-        services.AddHostedService<WeatherForecastWorker>();
+        services.AddHostedService<UpdateWeatherAlertsWorker>();
         
         // Middleware
         services.AddScoped<HttpRequestLoggingMiddleware>();
