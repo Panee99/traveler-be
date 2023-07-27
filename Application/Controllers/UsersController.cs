@@ -77,7 +77,7 @@ public class UsersController : ApiController
     /// <summary>
     /// Get current joined group
     /// </summary>
-    [ProducesResponseType(typeof(TourGroupViewModel), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(CurrentTourGroupViewModel), StatusCodes.Status200OK)]
     [Authorize]
     [HttpGet("{id:guid}/current-group")]
     public async Task<IActionResult> GetCurrentJoinedGroup(Guid id)

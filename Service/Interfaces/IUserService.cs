@@ -25,7 +25,7 @@ public interface IUserService
 
     Task<Result<TravelInfo>> GetTravelInfo(Guid id);
 
-    Task<Result<TourGroupViewModel>> GetCurrentJoinedGroup(Guid id);
+    Task<Result<CurrentTourGroupViewModel>> GetCurrentJoinedGroup(Guid id);
 
     Task<Result<ICollection<UserViewModel>>> FetchUsersInfo(ICollection<Guid> ids);
 }

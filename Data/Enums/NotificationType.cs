@@ -3,5 +3,7 @@
 public enum NotificationType
 {
     AttendanceActivity,
-    TourStarted
+    CheckInActivity,
+    CustomActivity,
+    TourStarted,
 }
