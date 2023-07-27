@@ -173,27 +173,27 @@ public class TourGroupService : BaseService, ITourGroupService
 
         var attendanceActivities = UnitOfWork.AttendanceActivities.Query()
             .Where(x => x.TourGroupId == tourGroupId)
-            .Where(x=>x.IsDeleted == false)
+            .Where(x => x.IsDeleted == false)
             .Select(x => new ActivityViewModel
                 { Type = ActivityType.Attendance, Data = x, CreatedAt = (DateTime)x.CreatedAt! })
             .ToList();
 
         var customActivities = UnitOfWork.CustomActivities.Query()
             .Where(x => x.TourGroupId == tourGroupId)
-            .Where(x=>x.IsDeleted == false)
+            .Where(x => x.IsDeleted == false)
             .Select(x => new ActivityViewModel
                 { Type = ActivityType.Custom, Data = x, CreatedAt = (DateTime)x.CreatedAt! })
             .ToList();
 
         var checkInActivities = UnitOfWork.CheckInActivities.Query()
             .Where(x => x.TourGroupId == tourGroupId)
-            .Where(x=>x.IsDeleted == false)
+            .Where(x => x.IsDeleted == false)
             .Select(x => new ActivityViewModel
                 { Type = ActivityType.CheckIn, Data = x, CreatedAt = (DateTime)x.CreatedAt! })
             .ToList();
 
         var activities = attendanceActivities.Concat(customActivities).Concat(checkInActivities)
-            .OrderBy(x => x.CreatedAt).ToList();
+            .OrderByDescending(x => x.CreatedAt).ToList();
 
         return activities;
     }

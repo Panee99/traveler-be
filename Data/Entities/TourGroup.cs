@@ -1,4 +1,5 @@
-﻿using Data.Enums;
+﻿using Data.Entities.Activities;
+using Data.Enums;
 
 namespace Data.Entities;
 
@@ -25,4 +26,6 @@ public class TourGroup
     public TourGroupStatus Status { get; set; }
 
     public virtual ICollection<Traveler> Travelers { get; set; } = new List<Traveler>();
+    
+    public virtual ICollection<AttendanceActivity> AttendanceActivities { get; set; } = new List<AttendanceActivity>();
 }

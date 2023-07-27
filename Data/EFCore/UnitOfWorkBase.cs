@@ -1,4 +1,5 @@
 ﻿using Data.EFCore.Repositories;
+using Data.Entities.Activities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -73,6 +74,14 @@ public class UnitOfWorkBase
         {
             if (entry.Properties.Any(p => p.Metadata.Name == "CreatedAt"))
                 entry.Property("CreatedAt").CurrentValue = DateTimeHelper.VnNow();
+        }
+        
+        // update attendance activity last update
+        var attendanceItemModified = entities.Where(e => e.State == EntityState.Modified && e.Entity is AttendanceItem);
+        foreach (var entry in attendanceItemModified)
+        {
+            if(entry.OriginalValues.GetValue<bool>("Present") != entry.CurrentValues.GetValue<bool>("Present"))
+                entry.Property("LastUpdateAt").CurrentValue = DateTimeHelper.VnNow();
         }
     }
 }

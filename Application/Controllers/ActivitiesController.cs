@@ -37,6 +37,17 @@ public class ActivitiesController : ApiController
         var result = await _activityService.Delete(id);
         return result.Match(Ok, OnError);
     }
+    
+    /// <summary>
+    /// Delete an draft activity
+    /// </summary>
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [HttpDelete("draft/{id:guid}")]
+    public async Task<IActionResult> DeleteDraft(Guid id)
+    {
+        var result = await _activityService.DeleteDraft(id);
+        return result.Match(Ok, OnError);
+    }
 
     /// <summary>
     /// Update an activity

@@ -67,6 +67,7 @@ public static class EntityConfigurations
         {
             entity.HasOne(e => e.Trip).WithMany(x => x.TourGroups);
             entity.Property(e => e.Status).HasMaxLength(256);
+            entity.HasMany(x => x.AttendanceActivities).WithOne(x => x.TourGroup).HasForeignKey(x => x.TourGroupId);
         });
 
         modelBuilder.Entity<TourGuide>(entity =>

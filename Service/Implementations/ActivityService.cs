@@ -1,8 +1,10 @@
+using System.Collections;
 using Data.EFCore;
 using Data.Entities.Activities;
 using Data.Enums;
 using FireSharp.Interfaces;
 using FireSharp.Response;
+using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Service.Channels.Notification;
 using Service.Commons.Mapping;
@@ -18,12 +20,16 @@ public class ActivityService : BaseService, IActivityService
     private readonly INotificationJobQueue _notificationJobQueue;
     private readonly IFirebaseClient _firebaseClient;
     private static string AttendanceKey = "attendances";
+    private readonly ICloudStorageService _cloudStorageService;
 
     public ActivityService(UnitOfWork unitOfWork,
-        INotificationJobQueue notificationJobQueue, IFirebaseClient firebaseClient) : base(unitOfWork)
+        INotificationJobQueue notificationJobQueue,
+        IFirebaseClient firebaseClient,
+        ICloudStorageService cloudStorageService) : base(unitOfWork)
     {
         _notificationJobQueue = notificationJobQueue;
         _firebaseClient = firebaseClient;
+        _cloudStorageService = cloudStorageService;
     }
 
     // public async Task<Result> Create(AttendanceActivity model)
@@ -76,7 +82,8 @@ public class ActivityService : BaseService, IActivityService
                         Present = false,
                         Reason = string.Empty,
                         UserId = x.Id,
-                        AttendanceAt = DateTimeHelper.VnNow()
+                        AttendanceAt = DateTimeHelper.VnNow(),
+                        LastUpdateAt = DateTimeHelper.VnNow(),
                     }).ToList();
             }
 
@@ -87,9 +94,12 @@ public class ActivityService : BaseService, IActivityService
 
         await UnitOfWork.SaveChangesAsync();
 
-        // Realtime Database
+        // Sync Realtime Database
         if (entity is AttendanceActivity attendanceEntity)
-            _insertAttendanceIntoRealtimeDatabase(attendanceEntity.Id!.Value, attendanceEntity.Items!);
+            _syncAttendanceWithRealtimeDatabase(attendanceEntity.Id!.Value);
+        // _insertAttendanceIntoRealtimeDatabase(attendanceEntity.Id!.Value,
+        //     new FirebaseAttendanceModel
+        //         { Items = attendanceEntity.Items!.Adapt<ICollection<FirebaseAttendanceItem>>(), Title = "" });
 
         // Notifications
         var receiverIds = await UnitOfWork.TourGroups
@@ -142,6 +152,35 @@ public class ActivityService : BaseService, IActivityService
         return Result.Success();
     }
 
+    public async Task<Result> DeleteDraft(Guid id)
+    {
+        var deleted = false;
+        if (await UnitOfWork.AttendanceActivities.FindAsync(id) is { } attendanceActivity)
+        {
+            UnitOfWork.AttendanceActivities.Remove(attendanceActivity);
+            deleted = true;
+        }
+        else if (await UnitOfWork.CustomActivities.FindAsync(id) is { } customActivity)
+        {
+            UnitOfWork.CustomActivities.Remove(customActivity);
+            deleted = true;
+        }
+        else if (await UnitOfWork.CheckInActivities.FindAsync(id) is { } checkInActivity)
+        {
+            UnitOfWork.CheckInActivities.Remove(checkInActivity);
+            deleted = true;
+        }
+
+        if (!deleted) return Error.NotFound();
+
+        // remove from realtime database
+        _removeAttendanceFromRealtimeDatabase(id);
+
+        await UnitOfWork.SaveChangesAsync();
+
+        return Result.Success();
+    }
+
     public async Task<Result> Update(PartialActivityModel model)
     {
         var (repo, _, dataModel) = _destructurePartialActivityModel(model);
@@ -155,7 +194,18 @@ public class ActivityService : BaseService, IActivityService
         repo.Update(activity);
         await UnitOfWork.SaveChangesAsync();
 
+        // Sync Realtime Database
+        if (model.Type == ActivityType.Attendance && activity != null)
+        {
+            _syncAttendanceWithRealtimeDatabase(activity!.Id);
+        }
+
         return Result.Success();
+    }
+
+    public Task<Result> Attend(string code)
+    {
+        throw new NotImplementedException();
     }
 
     private (dynamic repo, Guid? tourGroupId, dynamic? dataModel) _destructurePartialActivityModel(
@@ -173,9 +223,48 @@ public class ActivityService : BaseService, IActivityService
         };
     }
 
-    private void _insertAttendanceIntoRealtimeDatabase(Guid attendanceId, ICollection<AttendanceItem> items)
+    private void _insertAttendanceIntoRealtimeDatabase(Guid attendanceId, FirebaseAttendanceModel model)
     {
         var path = $"{AttendanceKey}/{attendanceId}";
-        _firebaseClient.Set(path, items);
+        _firebaseClient.Set(path, model);
+    }
+
+    private void _removeAttendanceFromRealtimeDatabase(Guid attendanceId)
+    {
+        var path = $"{AttendanceKey}/{attendanceId}";
+        _firebaseClient.Delete(path);
+    }
+
+    private void _syncAttendanceWithRealtimeDatabase(Guid id)
+    {
+        var path = $"{AttendanceKey}/{id}";
+        var activity = UnitOfWork.AttendanceActivities
+            .Query()
+            .Include(x => x.Items)
+            .Include(x => x.TourGroup).ThenInclude(x => x.Travelers)
+            .FirstOrDefault(x => x.Id == id);
+
+        if (activity == null) return;
+
+        var data = new FirebaseAttendanceModel
+        {
+            Items = activity.Items!.Select(item =>
+            {
+                var traveler = activity.TourGroup!.Travelers.FirstOrDefault(traveler => traveler.Id == item.UserId);
+                return new FirebaseAttendanceItem
+                {
+                    AttendanceAt = item.AttendanceAt,
+                    Present = item.Present,
+                    Reason = item.Reason,
+                    UserId = item.UserId,
+                    Name = traveler != null ? traveler.FirstName + " " + traveler.LastName : string.Empty,
+                    AvatarUrl = _cloudStorageService.GetMediaLink(traveler?.AvatarId) ?? string.Empty,
+                    LastUpdateAt = item.LastUpdateAt
+                };
+            }).ToList(),
+            Title = activity.Title ?? string.Empty
+        };
+
+        _firebaseClient.Update(path, data);
     }
 }

@@ -6,6 +6,8 @@ public class AttendanceActivity : IActivity
 {
     public Guid? Id { get; set; }
     public Guid? TourGroupId { get; set; }
+    [JsonIgnore]
+    public TourGroup? TourGroup { get; set; }
     public string? Title { get; set; }
     public int? DayNo { get; set; }
     public DateTime? CreatedAt { get; set; }
