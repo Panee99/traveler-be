@@ -7,8 +7,6 @@ namespace Service.Interfaces;
 
 public interface ITripService
 {
-    // Task<Result<TripViewModel>> Create(TripCreateModel model);
-
     Task<Result<TripViewModel>> Update(Guid id, TripUpdateModel model);
 
     Task<Result<TripViewModel>> Get(Guid id);
@@ -17,5 +15,7 @@ public interface ITripService
 
     Task<Result<List<TourGroupViewModel>>> ListGroupsInTrip(Guid tripId);
 
-    Task<Result<List<WeatherAlertViewModel>>> GetWeatherAlerts(Guid tripId);
+    Task<Result<List<WeatherAlertViewModel>>> ListWeatherAlerts(Guid tripId);
+    
+    Task<Result<TripViewModel>> ImportTrip(Stream fileStream);
 }
