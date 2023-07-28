@@ -85,46 +85,29 @@ public class TourGroupService : BaseService, ITourGroupService
         return view;
     }
 
-    public async Task<Result<TourGroupViewModel>> Create(TourGroupCreateModel model)
-    {
-        var trip = await UnitOfWork.Trips.FindAsync(model.TripId);
-        if (trip is null) return Error.NotFound();
-
-        var group = UnitOfWork.TourGroups.Add(new TourGroup
-        {
-            TripId = trip.Id,
-            GroupName = model.GroupName
-        });
-
-        await UnitOfWork.SaveChangesAsync();
-
-        // return
-        return group.Adapt<TourGroupViewModel>();
-    }
-
-    public async Task<Result<TourGroupViewModel>> Update(Guid groupId, TourGroupUpdateModel model)
-    {
-        var group = await UnitOfWork.TourGroups.FindAsync(groupId);
-        if (group is null) return Error.NotFound(DomainErrors.TourGroup.NotFound);
-
-        if (model.GroupName != null) group.GroupName = model.GroupName;
-
-        if (model.TourGuideId != null)
-        {
-            var tourGuide = await UnitOfWork.TourGuides.FindAsync(model.TourGuideId);
-            if (tourGuide is null) return Error.NotFound(DomainErrors.TourGuide.NotFound);
-            group.TourGuide = tourGuide;
-        }
-
-        UnitOfWork.TourGroups.Update(group);
-
-        await UnitOfWork.SaveChangesAsync();
-
-        // return
-        var view = group.Adapt<TourGroupViewModel>();
-        view.TravelerCount = await CountTravelers(groupId);
-        return view;
-    }
+    // public async Task<Result<TourGroupViewModel>> Update(Guid groupId, TourGroupUpdateModel model)
+    // {
+    //     var group = await UnitOfWork.TourGroups.FindAsync(groupId);
+    //     if (group is null) return Error.NotFound(DomainErrors.TourGroup.NotFound);
+    //
+    //     if (model.GroupName != null) group.GroupName = model.GroupName;
+    //
+    //     if (model.TourGuideId != null)
+    //     {
+    //         var tourGuide = await UnitOfWork.TourGuides.FindAsync(model.TourGuideId);
+    //         if (tourGuide is null) return Error.NotFound(DomainErrors.TourGuide.NotFound);
+    //         group.TourGuide = tourGuide;
+    //     }
+    //
+    //     UnitOfWork.TourGroups.Update(group);
+    //
+    //     await UnitOfWork.SaveChangesAsync();
+    //
+    //     // return
+    //     var view = group.Adapt<TourGroupViewModel>();
+    //     view.TravelerCount = await CountTravelers(groupId);
+    //     return view;
+    // }
 
     public async Task<Result> Delete(Guid groupId)
     {
@@ -135,51 +118,7 @@ public class TourGroupService : BaseService, ITourGroupService
         await UnitOfWork.SaveChangesAsync();
         return Result.Success();
     }
-
-    public async Task<Result> AddTravelers(Guid tourGroupId, ICollection<Guid> travelerIds)
-    {
-        if (!await UnitOfWork.TourGroups.AnyAsync(e => e.Id == tourGroupId))
-            return Error.NotFound();
-
-        var records = travelerIds.Select(travelerId => new TravelerInTourGroup
-        {
-            TravelerId = travelerId,
-            TourGroupId = tourGroupId
-        });
-
-        // Check all traveler ids
-        var existTravelers = await UnitOfWork.Travelers
-            .Query()
-            .Where(e => travelerIds.Contains(e.Id))
-            .Select(e => e.Id).ToListAsync();
-
-        var nonExistTravelers = travelerIds.Except(existTravelers).ToList();
-
-        if (nonExistTravelers.Count != 0)
-            return Error.NotFound(nonExistTravelers.Select(id => id.ToString()).ToArray());
-
-        UnitOfWork.TravelersInTourGroups.AddRange(records);
-
-        await UnitOfWork.SaveChangesAsync();
-        return Result.Success();
-    }
-
-    public async Task<Result> RemoveTravelers(Guid tourGroupId, List<Guid> travelerIds)
-    {
-        if (!await UnitOfWork.TourGroups.AnyAsync(e => e.Id == tourGroupId))
-            return Error.NotFound();
-
-        var records = await UnitOfWork.TravelersInTourGroups
-            .Query()
-            .Where(e => e.TourGroupId == tourGroupId && travelerIds.Contains(e.TravelerId))
-            .ToListAsync();
-
-        UnitOfWork.TravelersInTourGroups.RemoveRange(records);
-        await UnitOfWork.SaveChangesAsync();
-
-        return Result.Success();
-    }
-
+    
     public async Task<Result<List<UserViewModel>>> ListMembers(Guid tourGroupId)
     {
         var tourGroup = await UnitOfWork.TourGroups

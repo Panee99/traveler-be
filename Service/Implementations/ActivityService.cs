@@ -1,10 +1,7 @@
-using System.Collections;
 using Data.EFCore;
 using Data.Entities.Activities;
 using Data.Enums;
 using FireSharp.Interfaces;
-using FireSharp.Response;
-using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Service.Channels.Notification;
 using Service.Commons.Mapping;
@@ -17,19 +14,19 @@ namespace Service.Implementations;
 
 public class ActivityService : BaseService, IActivityService
 {
-    private readonly INotificationJobQueue _notificationJobQueue;
+    private const string AttendanceKey = "attendances";
     private readonly IFirebaseClient _firebaseClient;
-    private static string AttendanceKey = "attendances";
     private readonly ICloudStorageService _cloudStorageService;
+    private readonly INotificationService _notificationService;
 
     public ActivityService(UnitOfWork unitOfWork,
-        INotificationJobQueue notificationJobQueue,
         IFirebaseClient firebaseClient,
-        ICloudStorageService cloudStorageService) : base(unitOfWork)
+        ICloudStorageService cloudStorageService,
+        INotificationService notificationService) : base(unitOfWork)
     {
-        _notificationJobQueue = notificationJobQueue;
         _firebaseClient = firebaseClient;
         _cloudStorageService = cloudStorageService;
+        _notificationService = notificationService;
     }
 
     // public async Task<Result> Create(AttendanceActivity model)
@@ -111,7 +108,7 @@ public class ActivityService : BaseService, IActivityService
 
         if (tourGroup.TourGuideId != null) receiverIds.Add(tourGroup.TourGuideId.Value);
 
-        await _notificationJobQueue.EnqueueAsync(
+        await _notificationService.EnqueueNotification(
             new NotificationJob(
                 receiverIds,
                 "Tour Guide",
@@ -223,12 +220,6 @@ public class ActivityService : BaseService, IActivityService
         };
     }
 
-    private void _insertAttendanceIntoRealtimeDatabase(Guid attendanceId, FirebaseAttendanceModel model)
-    {
-        var path = $"{AttendanceKey}/{attendanceId}";
-        _firebaseClient.Set(path, model);
-    }
-
     private void _removeAttendanceFromRealtimeDatabase(Guid attendanceId)
     {
         var path = $"{AttendanceKey}/{attendanceId}";
@@ -241,7 +232,7 @@ public class ActivityService : BaseService, IActivityService
         var activity = UnitOfWork.AttendanceActivities
             .Query()
             .Include(x => x.Items)
-            .Include(x => x.TourGroup).ThenInclude(x => x.Travelers)
+            .Include(x => x.TourGroup).ThenInclude(x => x!.Travelers)
             .FirstOrDefault(x => x.Id == id);
 
         if (activity == null) return;
