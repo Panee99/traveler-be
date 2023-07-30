@@ -2,7 +2,6 @@
 using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Service.Interfaces;
-using Service.Models.Tour;
 using Service.Models.TourGroup;
 using Service.Models.TourGuide;
 using Shared.ResultExtensions;
@@ -31,6 +30,7 @@ public class TourGuideService : BaseService, ITourGuideService
             .SelectMany(guide => guide.TourGroups)
             .Include(group => group.Trip)
             .ThenInclude(trip => trip.Tour)
+            .ThenInclude(tour => tour.Thumbnail)
             .Select(group => new { Group = group, TravelerCount = group.Travelers.Count })
             .ToListAsync();
 
@@ -39,7 +39,7 @@ public class TourGuideService : BaseService, ITourGuideService
             {
                 var view = groupResult.Group.Adapt<TourGroupViewModel>();
                 view.Trip!.Tour!.ThumbnailUrl =
-                    _cloudStorageService.GetMediaLink(groupResult.Group.Trip.Tour.ThumbnailId);
+                    _cloudStorageService.GetMediaLink(groupResult.Group.Trip.Tour.Thumbnail?.FileName);
                 view.TravelerCount = groupResult.TravelerCount;
                 return view;
             })
@@ -48,7 +48,12 @@ public class TourGuideService : BaseService, ITourGuideService
 
     public async Task<Result<TourGuideViewModel>> UpdateContacts(Guid tourGuideId, ContactsUpdateModel model)
     {
-        var tourGuide = await UnitOfWork.TourGuides.FindAsync(tourGuideId);
+        var tourGuide = await UnitOfWork.TourGuides
+            .Query()
+            .Where(guide => guide.Id == tourGuideId)
+            .Include(guide => guide.Avatar)
+            .FirstOrDefaultAsync();
+
         if (tourGuide is null) return Error.NotFound();
 
         model.Adapt(tourGuide);
@@ -56,7 +61,7 @@ public class TourGuideService : BaseService, ITourGuideService
         await UnitOfWork.SaveChangesAsync();
 
         var view = tourGuide.Adapt<TourGuideViewModel>();
-        view.AvatarUrl = _cloudStorageService.GetMediaLink(tourGuide.AvatarId);
+        view.AvatarUrl = _cloudStorageService.GetMediaLink(tourGuide.Avatar?.FileName);
 
         return view;
     }

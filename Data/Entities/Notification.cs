@@ -20,7 +20,7 @@ public class Notification
 
     public DateTime Timestamp { get; set; }
 
-    public Guid ImageId { get; set; }
+    public Guid? ImageId { get; set; }
 
-    public Attachment Image { get; set; } = null!;
+    public Attachment? Image { get; set; } = null!;
 }

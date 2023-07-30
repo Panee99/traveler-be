@@ -1,5 +1,4 @@
 ﻿using Data.EFCore;
-using Data.Entities;
 using Data.Enums;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
@@ -118,15 +117,15 @@ public class TourGroupService : BaseService, ITourGroupService
         await UnitOfWork.SaveChangesAsync();
         return Result.Success();
     }
-    
+
     public async Task<Result<List<UserViewModel>>> ListMembers(Guid tourGroupId)
     {
         var tourGroup = await UnitOfWork.TourGroups
             .Query()
             .AsSplitQuery()
             .Where(e => e.Id == tourGroupId)
-            .Include(e => e.TourGuide)
-            .Include(e => e.Travelers)
+            .Include(e => e.TourGuide).ThenInclude(guide => guide.Avatar)
+            .Include(e => e.Travelers).ThenInclude(traveler => traveler.Avatar)
             .SingleOrDefaultAsync();
 
         if (tourGroup is null) return Error.NotFound(DomainErrors.TourGroup.NotFound);
@@ -134,7 +133,7 @@ public class TourGroupService : BaseService, ITourGroupService
         var members = tourGroup.Travelers.Select(traveler =>
         {
             var member = traveler.Adapt<UserViewModel>();
-            member.AvatarUrl = _cloudStorageService.GetMediaLink(traveler.AvatarId);
+            member.AvatarUrl = _cloudStorageService.GetMediaLink(traveler.Avatar?.FileName);
             return member;
         }).ToList();
 
@@ -142,7 +141,7 @@ public class TourGroupService : BaseService, ITourGroupService
         if (tourGuide != null)
         {
             var tourGuideMember = tourGuide.Adapt<UserViewModel>();
-            tourGuideMember.AvatarUrl = _cloudStorageService.GetMediaLink(tourGuide.AvatarId);
+            tourGuideMember.AvatarUrl = _cloudStorageService.GetMediaLink(tourGuide.Avatar?.FileName);
 
             members.Add(tourGuideMember);
         }

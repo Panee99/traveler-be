@@ -15,17 +15,18 @@ public class AttachmentService : BaseService, IAttachmentService
         _cloudStorageService = cloudStorageService;
     }
 
-    public async Task<Result<AttachmentViewModel>> Create(string contentType, Stream stream)
+    public async Task<Result<AttachmentViewModel>> Create(string extension, string contentType, Stream stream)
     {
         var attachment = UnitOfWork.Attachments.Add(new Attachment()
         {
+            Extension = extension,
             ContentType = contentType
         });
 
         await UnitOfWork.SaveChangesAsync();
 
         // Upload to Cloud
-        var uploadResult = await _cloudStorageService.Upload(attachment.Id, contentType, stream);
+        var uploadResult = await _cloudStorageService.Upload(attachment.FileName, contentType, stream);
 
         return uploadResult.IsSuccess
             ? new AttachmentViewModel()
@@ -39,12 +40,13 @@ public class AttachmentService : BaseService, IAttachmentService
 
     public async Task<Result> Delete(Guid id)
     {
-        UnitOfWork.Attachments.Remove(new Attachment { Id = id });
+        var attachment = await UnitOfWork.Attachments.FindAsync(id);
+        if (attachment is null) return Error.NotFound();
 
+        UnitOfWork.Attachments.Remove(attachment);
         await UnitOfWork.SaveChangesAsync();
 
-        var deleteResult = await _cloudStorageService.Delete(id);
-
+        var deleteResult = await _cloudStorageService.Delete(attachment.FileName);
         return deleteResult.IsSuccess ? Result.Success() : Error.Unexpected();
     }
 }

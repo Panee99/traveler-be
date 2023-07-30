@@ -137,6 +137,7 @@ public class TourService : BaseService, ITourService
             .Where(e => e.Id == id)
             .Include(e => e.Schedules)
             .Include(e => e.TourCarousel)
+            .Include(e => e.Thumbnail)
             .FirstOrDefaultAsync();
 
         if (tour is null) return Error.NotFound();
@@ -158,7 +159,7 @@ public class TourService : BaseService, ITourService
         // Result
         var view = tour.Adapt<TourDetailsViewModel>();
 
-        view.ThumbnailUrl = _cloudStorageService.GetMediaLink(tour.ThumbnailId);
+        view.ThumbnailUrl = _cloudStorageService.GetMediaLink(tour.Thumbnail?.FileName);
 
         var tourCarousel = await UnitOfWork.TourCarousel
             .Query()
@@ -172,7 +173,7 @@ public class TourService : BaseService, ITourService
             {
                 Id = attachment.Id,
                 ContentType = attachment.ContentType,
-                Url = _cloudStorageService.GetMediaLink(attachment.Id)
+                Url = _cloudStorageService.GetMediaLink(attachment.FileName)
             })
             .ToList();
 
@@ -197,7 +198,9 @@ public class TourService : BaseService, ITourService
             .AsSplitQuery()
             .Where(e => e.Id == id)
             .Include(e => e.Schedules)
-            .Include(e => e.TourCarousel).ThenInclude(i => i.Attachment)
+            .Include(e => e.Thumbnail)
+            .Include(e => e.TourCarousel)
+            .ThenInclude(i => i.Attachment)
             .FirstOrDefaultAsync();
 
         if (tour is null) return Error.NotFound();
@@ -205,7 +208,7 @@ public class TourService : BaseService, ITourService
         // Result
         var viewModel = tour.Adapt<TourDetailsViewModel>();
 
-        viewModel.ThumbnailUrl = _cloudStorageService.GetMediaLink(tour.ThumbnailId);
+        viewModel.ThumbnailUrl = _cloudStorageService.GetMediaLink(tour.Thumbnail?.FileName);
 
         viewModel.Carousel = tour.TourCarousel
             .Select(i => i.Attachment)
@@ -213,7 +216,7 @@ public class TourService : BaseService, ITourService
             {
                 Id = attachment.Id,
                 ContentType = attachment.ContentType,
-                Url = _cloudStorageService.GetMediaLink(attachment.Id)
+                Url = _cloudStorageService.GetMediaLink(attachment.FileName)
             })
             .ToList();
 
@@ -224,6 +227,7 @@ public class TourService : BaseService, ITourService
     {
         IQueryable<Tour> query = UnitOfWork.Tours
             .Query()
+            .Include(e => e.Thumbnail)
             .Include(e => e.Schedules)
             .OrderBy(e => e.CreatedAt);
 
@@ -237,8 +241,7 @@ public class TourService : BaseService, ITourService
         return paginationModel.Map(tour =>
         {
             var view = tour.Adapt<TourViewModel>();
-            view.ThumbnailUrl = _cloudStorageService.GetMediaLink(tour.ThumbnailId);
-
+            view.ThumbnailUrl = _cloudStorageService.GetMediaLink(tour.Thumbnail?.FileName);
             return view;
         });
     }
@@ -263,7 +266,7 @@ public class TourService : BaseService, ITourService
         {
             Id = e.Id,
             ContentType = e.ContentType,
-            Url = _cloudStorageService.GetMediaLink(e.Id)
+            Url = _cloudStorageService.GetMediaLink(e.FileName)
         }).ToList();
     }
 
