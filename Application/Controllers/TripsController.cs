@@ -13,15 +13,38 @@ public class TripsController : ApiController
 {
     private readonly ITripService _tripService;
 
+    private static readonly byte[] TripSampleData;
+
+    static TripsController()
+    {
+        // Read sample data to memory
+        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "Statics", "Trip.xlsx");
+        if (!System.IO.File.Exists(filePath)) throw new Exception("'Trip.xlsx' file not found.");
+        TripSampleData = System.IO.File.ReadAllBytes(filePath);
+    }
+
     public TripsController(ITripService tripService)
     {
         _tripService = tripService;
     }
-    
+
+    /// <summary>
+    /// Get trip excel sample file
+    /// </summary>
+    [HttpGet("import/sample")]
+    public IActionResult DownloadFile()
+    {
+        return File(
+            TripSampleData,
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            "Trip.xlsx"
+        );
+    }
+
     /// <summary>
     /// Import trip excel file
     /// </summary>
-    [HttpPost("trips")]
+    [HttpPost("import")]
     public async Task<IActionResult> TripImport(IFormFile file)
     {
         var result = await _tripService.ImportTrip(file.OpenReadStream());

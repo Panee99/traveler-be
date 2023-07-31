@@ -19,7 +19,7 @@ public class ToursController : ApiController
 
     static ToursController()
     {
-        // Read tour sample data to memory
+        // Read sample data to memory
         var filePath = Path.Combine(Directory.GetCurrentDirectory(), "Statics", "Tour.xlsx");
         if (!System.IO.File.Exists(filePath)) throw new Exception("'Tour.xlsx' file not found.");
         TourSampleData = System.IO.File.ReadAllBytes(filePath);

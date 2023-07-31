@@ -45,6 +45,9 @@
         <None Update="Statics\Tour.xlsx">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
+        <None Update="Statics\Trip.xlsx">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
     </ItemGroup>
 
     <ItemGroup>
