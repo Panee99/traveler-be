@@ -2,6 +2,7 @@ using Data.EFCore;
 using Data.Entities.Activities;
 using Data.Enums;
 using FireSharp.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Service.Channels.Notification;
 using Service.Commons.Mapping;
@@ -22,7 +23,8 @@ public class ActivityService : BaseService, IActivityService
     public ActivityService(UnitOfWork unitOfWork,
         IFirebaseClient firebaseClient,
         ICloudStorageService cloudStorageService,
-        INotificationService notificationService) : base(unitOfWork)
+        INotificationService notificationService, IHttpContextAccessor httpContextAccessor
+    ) : base(unitOfWork, httpContextAccessor)
     {
         _firebaseClient = firebaseClient;
         _cloudStorageService = cloudStorageService;
@@ -200,9 +202,23 @@ public class ActivityService : BaseService, IActivityService
         return Result.Success();
     }
 
-    public Task<Result> Attend(string code)
+    public async Task<Result> Attend(Guid code)
     {
-        throw new NotImplementedException();
+        if (CurrentUser == null) return Error.Authentication();
+        var userId = CurrentUser.Id;
+
+        var attendanceItem =
+            await UnitOfWork.AttendanceItems.Query()
+                .FirstOrDefaultAsync(x => x.AttendanceActivityId == code && x.UserId == userId);
+
+        if (attendanceItem == null) return Error.NotFound();
+
+        attendanceItem.Present = true;
+        UnitOfWork.AttendanceItems.Update(attendanceItem);
+        await UnitOfWork.SaveChangesAsync();
+        _syncAttendanceWithRealtimeDatabase(code);
+
+        return Result.Success();
     }
 
     private (dynamic repo, Guid? tourGroupId, dynamic? dataModel) _destructurePartialActivityModel(
@@ -252,7 +268,7 @@ public class ActivityService : BaseService, IActivityService
                     AvatarUrl = _cloudStorageService.GetMediaLink(traveler?.AvatarId) ?? string.Empty,
                     LastUpdateAt = item.LastUpdateAt
                 };
-            }).ToList(),
+            }).ToDictionary(x=>x.UserId, x=>x),
             Title = activity.Title ?? string.Empty
         };
 

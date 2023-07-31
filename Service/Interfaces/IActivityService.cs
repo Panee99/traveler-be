@@ -13,5 +13,5 @@ public interface IActivityService
 
     Task<Result> Update(PartialActivityModel model);
     
-    Task<Result> Attend(String code);
+    Task<Result> Attend(Guid code);
 }

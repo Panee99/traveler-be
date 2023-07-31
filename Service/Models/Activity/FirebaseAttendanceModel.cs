@@ -7,6 +7,5 @@ public class FirebaseAttendanceModel
 {
     public String Title { get; set; }
 
-    public ICollection<FirebaseAttendanceItem> Items { get; set; }
+    public IDictionary<Guid, FirebaseAttendanceItem> Items { get; set; }
 }
-

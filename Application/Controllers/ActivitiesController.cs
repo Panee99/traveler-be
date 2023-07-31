@@ -37,7 +37,7 @@ public class ActivitiesController : ApiController
         var result = await _activityService.Delete(id);
         return result.Match(Ok, OnError);
     }
-    
+
     /// <summary>
     /// Delete an draft activity
     /// </summary>
@@ -57,6 +57,17 @@ public class ActivitiesController : ApiController
     public async Task<IActionResult> Update(PartialActivityModel model)
     {
         var result = await _activityService.Update(model);
+        return result.Match(Ok, OnError);
+    }
+
+    /// <summary>
+    /// Attend
+    /// </summary>
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [HttpPost("attend/{code:guid}")]
+    public async Task<IActionResult> Attend(Guid code)
+    {
+        var result = await _activityService.Attend(code);
         return result.Match(Ok, OnError);
     }
 }
