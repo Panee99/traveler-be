@@ -211,7 +211,7 @@ public class TourGroupService : BaseService, ITourGroupService
             .ToList();
 
         var activities = attendanceActivities.Concat(customActivities).Concat(checkInActivities)
-            .OrderBy(x => x.CreatedAt).ToList();
+            .OrderByDescending(x => x.CreatedAt).ToList();
 
         return activities;
     }
