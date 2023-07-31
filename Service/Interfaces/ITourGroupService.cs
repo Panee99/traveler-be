@@ -24,4 +24,6 @@ public interface ITourGroupService
     Task<Result> End(Guid id);
 
     Task<Result> Cancel(Guid id);
+
+    Task<Result> SendEmergency(Guid tourGroupId, Guid senderId, EmergencyRequestModel model);
 }

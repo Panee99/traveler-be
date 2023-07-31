@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Application.Configurations.Auth;
+using Data.Enums;
+using Microsoft.AspNetCore.Mvc;
 using Service.Interfaces;
 using Service.Models.Activity;
 using Service.Models.IncurredCost;
@@ -94,6 +96,14 @@ public class TourGroupsController : ApiController
     public async Task<IActionResult> ListIncurredCosts(Guid id)
     {
         var result = await _incurredCostService.ListAll(id);
+        return result.Match(Ok, OnError);
+    }
+
+    [Authorize(UserRole.Traveler)]
+    [HttpPost("{id:guid}/emergency")]
+    public async Task<IActionResult> SendEmergency(Guid id, EmergencyRequestModel model)
+    {
+        var result = await _tourGroupService.SendEmergency(id, CurrentUser.Id, model);
         return result.Match(Ok, OnError);
     }
 }

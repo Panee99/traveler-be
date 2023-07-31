@@ -5,12 +5,14 @@ using Data.EFCore;
 using FireSharp;
 using FireSharp.Config;
 using FireSharp.Interfaces;
+using Google.Cloud.Firestore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Service.Channels.Notification;
 using Service.Implementations;
 using Service.Interfaces;
 using Service.Settings;
+using Shared.ExternalServices.Firebase;
 
 namespace Application.Configurations;
 
@@ -35,7 +37,7 @@ public static class AppConfiguration
         services.AddSingleton<IFirebaseClient>(new FirebaseClient(new FirebaseConfig
         {
             BasePath = configuration.GetSection("Firebase:RealtimeDatabase:BaseUrl").Value,
-            AuthSecret =configuration.GetSection("Firebase:RealtimeDatabase:Secret").Value
+            AuthSecret = configuration.GetSection("Firebase:RealtimeDatabase:Secret").Value
         }));
 
         return services.AddDependencies();
@@ -47,7 +49,7 @@ public static class AppConfiguration
         services.AddSingleton<INotificationJobQueue>(new NotificationJobQueue());
         services.AddHostedService<NotificationWorker>();
         services.AddHostedService<UpdateWeatherAlertsWorker>();
-        
+
         // Middleware
         services.AddScoped<HttpRequestLoggingMiddleware>();
         services.AddScoped<JwtMiddleware>();
@@ -63,6 +65,7 @@ public static class AppConfiguration
         // Other services
         services.AddSingleton<ICloudStorageService, CloudStorageService>();
         services.AddSingleton<ICloudNotificationService, CloudNotificationService>();
+        services.AddSingleton(FirestoreHelper.GetInstance());
 
         return services;
     }

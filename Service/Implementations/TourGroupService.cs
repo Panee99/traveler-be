@@ -1,11 +1,13 @@
 ﻿using Data.EFCore;
 using Data.Enums;
+using Google.Cloud.Firestore;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Service.Interfaces;
 using Service.Models.Activity;
 using Service.Models.TourGroup;
 using Service.Models.User;
+using Shared.Helpers;
 using Shared.ResultExtensions;
 
 namespace Service.Implementations;
@@ -13,10 +15,13 @@ namespace Service.Implementations;
 public class TourGroupService : BaseService, ITourGroupService
 {
     private readonly ICloudStorageService _cloudStorageService;
+    private readonly FirestoreDb _firestoreDb;
 
-    public TourGroupService(UnitOfWork unitOfWork, ICloudStorageService cloudStorageService) : base(unitOfWork)
+    public TourGroupService(UnitOfWork unitOfWork, ICloudStorageService cloudStorageService, FirestoreDb firestoreDb) :
+        base(unitOfWork)
     {
         _cloudStorageService = cloudStorageService;
+        _firestoreDb = firestoreDb;
     }
 
     public async Task<int> CountTravelers(Guid tourGroupId)
@@ -69,6 +74,36 @@ public class TourGroupService : BaseService, ITourGroupService
         tourGroup.Status = TourGroupStatus.Canceled;
         UnitOfWork.TourGroups.Update(tourGroup);
         await UnitOfWork.SaveChangesAsync();
+
+        return Result.Success();
+    }
+
+    public async Task<Result> SendEmergency(Guid tourGroupId, Guid senderId, EmergencyRequestModel model)
+    {
+        var messagesRef = _firestoreDb
+            .Collection("groups")
+            .Document(tourGroupId.ToString())
+            .Collection("messages");
+
+        if (!await UnitOfWork.TourGroups.AnyAsync(e => e.Id == tourGroupId))
+            return Error.NotFound(DomainErrors.TourGroup.NotFound);
+
+        var sender = await UnitOfWork.Users.FindAsync(senderId);
+        if (sender is null) return Error.NotFound(DomainErrors.User.NotFound);
+
+        var content = $"{sender.FirstName} {sender.LastName} sent Emergency request.\n" +
+                      $"https://www.google.com/maps/@{model.Latitude},{model.Longitude}";
+
+        var message = new
+        {
+            Content = content,
+            SenderId = sender.Id.ToString(),
+            Timestamp = DateTimeHelper.VnNow().ToString("yyyy-MM-ddTHH:mm:ss.ff"),
+            Type = "text",
+        };
+
+        var result = await messagesRef.AddAsync(message);
+        Console.WriteLine(result.Id);
 
         return Result.Success();
     }
