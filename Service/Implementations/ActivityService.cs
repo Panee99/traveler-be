@@ -265,7 +265,7 @@ public class ActivityService : BaseService, IActivityService
                     Reason = item.Reason,
                     UserId = item.UserId,
                     Name = traveler != null ? traveler.FirstName + " " + traveler.LastName : string.Empty,
-                    AvatarUrl = _cloudStorageService.GetMediaLink(traveler?.AvatarId) ?? string.Empty,
+                    AvatarUrl = _cloudStorageService.GetMediaLink(traveler?.AvatarId.ToString()) ?? string.Empty,
                     LastUpdateAt = item.LastUpdateAt
                 };
             }).ToDictionary(x=>x.UserId, x=>x),
