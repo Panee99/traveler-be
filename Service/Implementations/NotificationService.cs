@@ -4,7 +4,6 @@ using Data.Enums;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Service.Channels.Notification;
-using Service.Commons;
 using Service.Interfaces;
 using Service.Models.Notification;
 using Shared.Helpers;
@@ -34,12 +33,13 @@ public class NotificationService : BaseService, INotificationService
         var notifications = await UnitOfWork.Notifications
             .Query()
             .Where(e => e.ReceiverId == userId)
+            .Include(e => e.Image)
             .ToListAsync();
 
         return notifications.Select(notification =>
         {
             var view = notification.Adapt<NotificationViewModel>();
-            view.ImageUrl = _cloudStorageService.GetMediaLink(notification.ImageId)!;
+            view.ImageUrl = _cloudStorageService.GetMediaLink(notification.Image?.FileName)!;
             return view;
         }).ToList();
     }
@@ -101,11 +101,6 @@ public class NotificationService : BaseService, INotificationService
                 Timestamp = DateTimeHelper.VnNow(),
                 IsRead = false,
                 Type = type,
-                ImageId = type switch
-                {
-                    NotificationType.AttendanceActivity => ServiceConstants.AttendanceImage,
-                    _ => throw new ArgumentOutOfRangeException()
-                }
             };
         });
 

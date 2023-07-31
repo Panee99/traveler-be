@@ -1,7 +1,9 @@
 ﻿using Application.Configurations.Auth;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using Service.Interfaces;
 using Service.Models.Attachment;
+using Shared.ResultExtensions;
 
 namespace Application.Controllers;
 
@@ -26,7 +28,9 @@ public class AttachmentsController : ApiController
     [HttpPost]
     public async Task<IActionResult> Upload(IFormFile file)
     {
-        var result = await _attachmentService.Create(file.ContentType, file.OpenReadStream());
+        var extension = Path.GetExtension(file.FileName);
+        if (extension.IsNullOrEmpty()) return OnError(Error.Validation("Invalid extension"));
+        var result = await _attachmentService.Create(extension[1..], file.ContentType, file.OpenReadStream());
         return result.Match(Ok, OnError);
     }
 }

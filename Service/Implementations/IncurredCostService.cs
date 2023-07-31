@@ -1,10 +1,8 @@
 ﻿using Data.EFCore;
 using Data.Entities;
 using Mapster;
-using Microsoft.EntityFrameworkCore;
 using Service.Interfaces;
 using Service.Models.IncurredCost;
-using Service.Models.TourGroup;
 using Shared.Helpers;
 using Shared.ResultExtensions;
 
@@ -25,11 +23,21 @@ public class IncurredCostService : BaseService, IIncurredCostService
         var incurredCost = model.Adapt<IncurredCost>();
         incurredCost.CreatedAt = DateTimeHelper.VnNow();
 
+        if (model.ImageId != null)
+        {
+            var attachment = await UnitOfWork.Attachments.FindAsync(model.ImageId);
+            if (attachment is null)
+                return Error.NotFound(DomainErrors.Attachment.NotFound);
+
+            incurredCost.Image = attachment;
+        }
+
         UnitOfWork.IncurredCosts.Add(incurredCost);
         await UnitOfWork.SaveChangesAsync();
 
+
         var view = incurredCost.Adapt<IncurredCostViewModel>();
-        view.ImageUrl = _cloudStorageService.GetMediaLink(model.ImageId);
+        view.ImageUrl = _cloudStorageService.GetMediaLink(incurredCost.Image?.FileName);
 
         return view;
     }

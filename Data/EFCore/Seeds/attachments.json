@@ -1,101 +1,115 @@
 ﻿[
   {
     "Id": "b3e881e7-514e-406a-8cd7-08db43075b7b",
+    "Extension": "jpg",
     "ContentType": "image/jpeg",
     "CreatedAt": "2023-04-22 14:58:28.230"
   },
   {
     "Id": "33e91f79-21a8-4284-8cd8-08db43075b7b",
+    "Extension": "jpg",
     "ContentType": "image/jpeg",
     "CreatedAt": "2023-04-22 14:59:00.267"
   },
   {
     "Id": "dd887040-bd1a-42f0-e93a-08db55428f57",
+    "Extension": "webp",
     "ContentType": "image/webp",
     "CreatedAt": "2023-05-15 19:47:36.497"
   },
   {
     "Id": "a8e9b075-b682-4e12-e93b-08db55428f57",
+    "Extension": "webp",
     "ContentType": "image/webp",
     "CreatedAt": "2023-05-15 19:47:42.580"
   },
   {
     "Id": "6ae2becc-64d5-4707-e93c-08db55428f57",
+    "Extension": "webp",
     "ContentType": "image/webp",
     "CreatedAt": "2023-05-15 19:47:45.680"
   },
   {
     "Id": "9fa016fb-53b4-4371-e93d-08db55428f57",
+    "Extension": "webp",
     "ContentType": "image/webp",
     "CreatedAt": "2023-05-15 19:47:48.340"
   },
   {
     "Id": "cb4d8285-a4c2-4c4f-e93e-08db55428f57",
+    "Extension": "webp",
     "ContentType": "image/webp",
     "CreatedAt": "2023-05-15 19:47:50.920"
   },
   {
     "Id": "ca2ebed2-ed61-4d12-e93f-08db55428f57",
+    "Extension": "webp",
     "ContentType": "image/webp",
     "CreatedAt": "2023-05-15 19:47:53.463"
   },
   {
-    "Id": "1879da82-4558-484c-e940-08db55428f57",
-    "ContentType": "image/webp",
-    "CreatedAt": "2023-05-15 19:47:55.853"
-  },
-  {
     "Id": "60d2cf8f-40d5-4413-e941-08db55428f57",
+    "Extension": "webp",
     "ContentType": "image/webp",
     "CreatedAt": "2023-05-15 19:47:58.070"
   },
   {
     "Id": "c67c5009-7405-4341-e942-08db55428f57",
+    "Extension": "webp",
     "ContentType": "image/webp",
     "CreatedAt": "2023-05-15 19:48:00.743"
   },
   {
     "Id": "8bafd674-e193-49a0-d77d-08db61d06544",
+    "Extension": "webp",
     "ContentType": "image/webp",
     "CreatedAt": "2023-05-31 19:13:08.367"
   },
   {
     "Id": "c77b8d1b-4b38-4753-adcc-08db61d0d0e2",
+    "Extension": "webp",
     "ContentType": "image/webp",
     "CreatedAt": "2023-05-31 19:16:08.917"
   },
   {
     "Id": "6b259aed-2a91-40c7-29ef-08db6d5f699a",
+    "Extension": "jpg",
     "ContentType": "image/jpeg",
     "CreatedAt": "2023-06-15 12:14:36.487"
   },
   {
     "Id": "0767bb98-bb08-450e-504e-08db75feb65c",
+    "Extension": "png",
     "ContentType": "image/png",
     "CreatedAt": "2023-06-26 11:35:04.547"
   },
   {
     "Id": "e71b1b90-6f78-483b-f041-08db7bc68c07",
+    "Extension": "webp",
     "ContentType": "image/webp",
     "CreatedAt": "2023-07-03 20:08:08.650"
   },
   {
     "Id": "2a3f01e7-d417-4af8-f042-08db7bc68c07",
+    "Extension": "webp",
     "ContentType": "image/webp",
     "CreatedAt": "2023-07-03 20:08:26.237"
   },
   {
     "Id": "ddddfd6d-e2c6-40d3-f043-08db7bc68c07",
+    "Extension": "webp",
     "ContentType": "image/webp",
     "CreatedAt": "2023-07-03 20:08:35.957"
   },
   {
     "Id": "b813f0ac-727a-431c-f044-08db7bc68c07",
+    "Extension": "webp",
     "ContentType": "image/webp",
     "CreatedAt": "2023-07-03 20:08:45.767"
   },
   {
     "Id": "931a6ec2-1d33-4b7f-f045-08db7bc68c07",
+    "Extension": "webp",
     "ContentType": "image/webp",
     "CreatedAt": "2023-07-03 20:08:54.837"
   }

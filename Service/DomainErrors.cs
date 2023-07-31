@@ -8,6 +8,11 @@ public static class DomainErrors
         public const string NotSupportedRole = "Not supported Role";
     }
 
+    public static class Attachment
+    {
+        public const string NotFound = "Attachment not found";
+    }
+    
     public static class Activity
     {
         public const string NotFound = "Activity not found";

@@ -28,19 +28,19 @@ public class CloudStorageService : ICloudStorageService
         _logger = logger;
     }
 
-    public async Task<Result<string>> Upload(Guid id, string contentType, Stream stream)
+    public async Task<Result<string>> Upload(string fileName, string contentType, Stream stream)
     {
         try
         {
             await Storage.UploadObjectAsync(
                 _settings.Bucket,
-                $"{_settings.Folder}/{id}",
+                $"{_settings.Folder}/{fileName}",
                 contentType,
                 stream,
                 null,
                 CancellationToken.None);
 
-            return GetMediaLink(id)!;
+            return GetMediaLink(fileName)!;
         }
         catch (Exception e)
         {
@@ -50,13 +50,13 @@ public class CloudStorageService : ICloudStorageService
     }
 
     // Delete an object, IsSuccess if deleted successfully or not found
-    public async Task<Result> Delete(Guid id)
+    public async Task<Result> Delete(string fileName)
     {
         try
         {
             await Storage.DeleteObjectAsync(
                 _settings.Bucket,
-                $"{_settings.Folder}/{id}",
+                $"{_settings.Folder}/{fileName}",
                 null,
                 CancellationToken.None
             );
@@ -79,10 +79,10 @@ public class CloudStorageService : ICloudStorageService
     }
 
     // Object url
-    public string? GetMediaLink(Guid? id)
+    public string? GetMediaLink(string? fileName)
     {
-        return id is null
+        return fileName is null
             ? null
-            : $"https://storage.googleapis.com/{_settings.Bucket}/{_settings.Folder}/{id}";
+            : $"https://storage.googleapis.com/{_settings.Bucket}/{_settings.Folder}/{fileName}";
     }
 }

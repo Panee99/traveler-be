@@ -4,9 +4,9 @@ namespace Service.Interfaces;
 
 public interface ICloudStorageService
 {
-    Task<Result<string>> Upload(Guid id, string contentType, Stream stream);
+    Task<Result<string>> Upload(string fileName, string contentType, Stream stream);
 
-    Task<Result> Delete(Guid id);
+    Task<Result> Delete(string fileName);
 
-    string? GetMediaLink(Guid? id);
+    string? GetMediaLink(string? fileName);
 }

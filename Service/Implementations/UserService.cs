@@ -55,7 +55,12 @@ public class UserService : BaseService, IUserService
 
     public async Task<Result<UserViewModel>> Update(Guid id, UserUpdateModel model)
     {
-        var user = await UnitOfWork.Users.FindAsync(id);
+        var user = await UnitOfWork.Users
+            .Query()
+            .Where(e => e.Id == id)
+            .Include(e => e.Avatar)
+            .FirstOrDefaultAsync();
+
         if (user is null) return Error.NotFound();
 
         model.AdaptIgnoreNull(user);
@@ -63,16 +68,16 @@ public class UserService : BaseService, IUserService
         await UnitOfWork.SaveChangesAsync();
 
         var view = user.Adapt<UserViewModel>();
-        view.AvatarUrl = _cloudStorageService.GetMediaLink(user.AvatarId);
+        view.AvatarUrl = _cloudStorageService.GetMediaLink(user.Avatar?.FileName);
         return view;
     }
 
     public async Task<Result<PaginationModel<UserViewModel>>> Filter(UserFilterModel model)
     {
-        var query = UnitOfWork.Users.Query();
+        var query = UnitOfWork.Users.Query().Include(e => e.Avatar).AsSplitQuery();
 
-        if (model.Phone != null) query = query.Where(e => e.Phone.Contains(model.Phone));
-        if (model.Email != null) query = query.Where(e => e.Email != null && e.Email.Contains(model.Email));
+        if (model.Phone != null) query = query.Where(e => e.Phone != null && e.Phone.Contains(model.Phone));
+        if (model.Email != null) query = query.Where(e => e.Email.Contains(model.Email));
         if (model.FirstName != null) query = query.Where(e => e.FirstName.Contains(model.FirstName));
         if (model.LastName != null) query = query.Where(e => e.LastName.Contains(model.LastName));
         if (model.Gender != null) query = query.Where(e => e.Gender == model.Gender);
@@ -87,14 +92,18 @@ public class UserService : BaseService, IUserService
         return result.Map(user =>
         {
             var view = user.Adapt<UserViewModel>();
-            view.AvatarUrl = _cloudStorageService.GetMediaLink(user.AvatarId);
+            view.AvatarUrl = _cloudStorageService.GetMediaLink(user.Avatar?.FileName);
             return view;
         });
     }
 
     public async Task<Result<UserViewModel>> GetProfile(Guid id)
     {
-        var user = await UnitOfWork.Users.FindAsync(id);
+        var user = await UnitOfWork.Users.Query()
+            .Where(e => e.Id == id)
+            .Include(e => e.Avatar)
+            .FirstOrDefaultAsync();
+
         if (user is null) return Error.NotFound();
 
         UserViewModel view = user.Role switch
@@ -105,14 +114,18 @@ public class UserService : BaseService, IUserService
             _ => throw new ArgumentOutOfRangeException()
         };
 
-        view.AvatarUrl = _cloudStorageService.GetMediaLink(user.AvatarId);
+        view.AvatarUrl = _cloudStorageService.GetMediaLink(user.Avatar?.FileName);
 
         return view;
     }
 
     public async Task<Result<UserViewModel>> UpdateProfile(Guid id, ProfileUpdateModel model)
     {
-        var user = await UnitOfWork.Users.FindAsync(id);
+        var user = await UnitOfWork.Users.Query()
+            .Where(e => e.Id == id)
+            .Include(e => e.Avatar)
+            .FirstOrDefaultAsync();
+
         if (user is null) return Error.NotFound();
 
         UserViewModel view;
@@ -140,22 +153,23 @@ public class UserService : BaseService, IUserService
         await UnitOfWork.SaveChangesAsync();
 
         // Return
-        view.AvatarUrl = _cloudStorageService.GetMediaLink(user.AvatarId);
+        view.AvatarUrl = _cloudStorageService.GetMediaLink(user.Avatar?.FileName);
 
         return view;
     }
 
     public async Task<Result<UserViewModel>> AdminGetUserById(Guid id)
     {
-        var entity = await UnitOfWork.Users.Query()
+        var user = await UnitOfWork.Users.Query()
             .Where(e => e.Id == id)
+            .Include(e => e.Avatar)
             .FirstOrDefaultAsync();
 
-        if (entity is null) return Error.NotFound();
+        if (user is null) return Error.NotFound();
 
         // Result
-        var viewModel = entity.Adapt<UserViewModel>();
-        viewModel.AvatarUrl = _cloudStorageService.GetMediaLink(entity.AvatarId);
+        var viewModel = user.Adapt<UserViewModel>();
+        viewModel.AvatarUrl = _cloudStorageService.GetMediaLink(user.Avatar?.FileName);
 
         return viewModel;
     }
@@ -243,7 +257,7 @@ public class UserService : BaseService, IUserService
                     .Where(traveler => traveler.Id == userId)
                     .SelectMany(guide => guide.TourGroups)
                     .Include(group => group.Trip)
-                    .ThenInclude(trip => trip.Tour)
+                    .ThenInclude(trip => trip.Tour).ThenInclude(tour => tour.Thumbnail)
                     .Where(group => group.Status != TourGroupStatus.Ended &&
                                     group.Status != TourGroupStatus.Canceled)
                     .FirstOrDefaultAsync();
@@ -256,7 +270,7 @@ public class UserService : BaseService, IUserService
                     .Where(guide => guide.Id == userId)
                     .SelectMany(guide => guide.TourGroups)
                     .Include(group => group.Trip)
-                    .ThenInclude(trip => trip.Tour)
+                    .ThenInclude(trip => trip.Tour).ThenInclude(tour => tour.Thumbnail)
                     .Where(group => group.Status != TourGroupStatus.Ended &&
                                     group.Status != TourGroupStatus.Canceled)
                     .FirstOrDefaultAsync();
@@ -277,7 +291,7 @@ public class UserService : BaseService, IUserService
             .Select(s => s.DayNo)
             .LastOrDefaultAsync();
 
-        view.Trip!.Tour!.ThumbnailUrl = _cloudStorageService.GetMediaLink(tour.ThumbnailId);
+        view.Trip!.Tour!.ThumbnailUrl = _cloudStorageService.GetMediaLink(tour.Thumbnail?.FileName);
         view.TravelerCount = await _tourGroupService.CountTravelers(view.Id);
 
         return view;

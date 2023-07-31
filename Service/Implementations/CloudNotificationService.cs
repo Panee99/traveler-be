@@ -59,7 +59,7 @@ public class CloudNotificationService : ICloudNotificationService
         string payload,
         NotificationType type)
     {
-        var iconId = type switch
+        var icon = type switch
         {
             NotificationType.AttendanceActivity => ServiceConstants.AttendanceImage,
             _ => throw new ArgumentOutOfRangeException()
@@ -90,7 +90,7 @@ public class CloudNotificationService : ICloudNotificationService
                         NotificationType.AttendanceActivity => NotificationAction.Attendance,
                         _ => null
                     },
-                    ImageUrl = _cloudStorageService.GetMediaLink(iconId),
+                    ImageUrl = _cloudStorageService.GetMediaLink(icon),
                 },
             }
         };

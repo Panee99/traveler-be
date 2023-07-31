@@ -31,8 +31,7 @@ public class TravelerService : BaseService, ITravelerService
             .AsSplitQuery()
             .Where(traveler => traveler.Id == travelerId)
             .SelectMany(traveler => traveler.TourGroups)
-            .Include(group => group.Trip)
-            .ThenInclude(trip => trip.Tour)
+            .Include(group => group.Trip).ThenInclude(trip => trip.Tour).ThenInclude(tour => tour.Thumbnail)
             .Select(group => new { Group = group, TravelerCount = group.Travelers.Count })
             .ToListAsync();
 
@@ -41,7 +40,7 @@ public class TravelerService : BaseService, ITravelerService
         {
             var view = groupResult.Group.Adapt<TourGroupViewModel>();
             view.Trip!.Tour!.ThumbnailUrl =
-                _cloudStorageService.GetMediaLink(groupResult.Group.Trip.Tour.ThumbnailId);
+                _cloudStorageService.GetMediaLink(groupResult.Group.Trip.Tour.Thumbnail?.FileName);
             view.TravelerCount = groupResult.TravelerCount;
             return view;
         }).ToList();
