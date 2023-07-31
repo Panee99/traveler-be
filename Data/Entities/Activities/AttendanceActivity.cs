@@ -8,6 +8,9 @@ public class AttendanceActivity : IActivity
     
     public Guid? TourGroupId { get; set; }
     
+    [JsonIgnore]
+    public TourGroup? TourGroup { get; set; }
+    
     public string? Title { get; set; }
     
     public int? DayNo { get; set; }
@@ -22,6 +25,4 @@ public class AttendanceActivity : IActivity
     
     [JsonIgnore]
     public ICollection<AttendanceItem>? Items { get; set; }
-
-    public TourGroup? TourGroup { get; set; }
 }

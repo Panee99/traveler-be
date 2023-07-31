@@ -2,6 +2,7 @@ using Data.EFCore;
 using Data.Entities.Activities;
 using Data.Enums;
 using FireSharp.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Service.Channels.Notification;
 using Service.Commons.Mapping;
@@ -14,14 +15,19 @@ namespace Service.Implementations;
 
 public class ActivityService : BaseService, IActivityService
 {
+    private const string AttendanceKey = "attendances";
     private readonly IFirebaseClient _firebaseClient;
-    private static string AttendanceKey = "attendances";
+    private readonly ICloudStorageService _cloudStorageService;
     private readonly INotificationService _notificationService;
 
-    public ActivityService(UnitOfWork unitOfWork, IFirebaseClient firebaseClient,
-        INotificationService notificationService) : base(unitOfWork)
+    public ActivityService(UnitOfWork unitOfWork,
+        IFirebaseClient firebaseClient,
+        ICloudStorageService cloudStorageService,
+        INotificationService notificationService, IHttpContextAccessor httpContextAccessor
+    ) : base(unitOfWork, httpContextAccessor)
     {
         _firebaseClient = firebaseClient;
+        _cloudStorageService = cloudStorageService;
         _notificationService = notificationService;
     }
 
@@ -75,7 +81,8 @@ public class ActivityService : BaseService, IActivityService
                         Present = false,
                         Reason = string.Empty,
                         UserId = x.Id,
-                        AttendanceAt = DateTimeHelper.VnNow()
+                        AttendanceAt = DateTimeHelper.VnNow(),
+                        LastUpdateAt = DateTimeHelper.VnNow(),
                     }).ToList();
             }
 
@@ -86,9 +93,12 @@ public class ActivityService : BaseService, IActivityService
 
         await UnitOfWork.SaveChangesAsync();
 
-        // Realtime Database
+        // Sync Realtime Database
         if (entity is AttendanceActivity attendanceEntity)
-            _insertAttendanceIntoRealtimeDatabase(attendanceEntity.Id!.Value, attendanceEntity.Items!);
+            _syncAttendanceWithRealtimeDatabase(attendanceEntity.Id!.Value);
+        // _insertAttendanceIntoRealtimeDatabase(attendanceEntity.Id!.Value,
+        //     new FirebaseAttendanceModel
+        //         { Items = attendanceEntity.Items!.Adapt<ICollection<FirebaseAttendanceItem>>(), Title = "" });
 
         // Notifications
         var receiverIds = await UnitOfWork.TourGroups
@@ -141,6 +151,35 @@ public class ActivityService : BaseService, IActivityService
         return Result.Success();
     }
 
+    public async Task<Result> DeleteDraft(Guid id)
+    {
+        var deleted = false;
+        if (await UnitOfWork.AttendanceActivities.FindAsync(id) is { } attendanceActivity)
+        {
+            UnitOfWork.AttendanceActivities.Remove(attendanceActivity);
+            deleted = true;
+        }
+        else if (await UnitOfWork.CustomActivities.FindAsync(id) is { } customActivity)
+        {
+            UnitOfWork.CustomActivities.Remove(customActivity);
+            deleted = true;
+        }
+        else if (await UnitOfWork.CheckInActivities.FindAsync(id) is { } checkInActivity)
+        {
+            UnitOfWork.CheckInActivities.Remove(checkInActivity);
+            deleted = true;
+        }
+
+        if (!deleted) return Error.NotFound();
+
+        // remove from realtime database
+        _removeAttendanceFromRealtimeDatabase(id);
+
+        await UnitOfWork.SaveChangesAsync();
+
+        return Result.Success();
+    }
+
     public async Task<Result> Update(PartialActivityModel model)
     {
         var (repo, _, dataModel) = _destructurePartialActivityModel(model);
@@ -153,6 +192,31 @@ public class ActivityService : BaseService, IActivityService
 
         repo.Update(activity);
         await UnitOfWork.SaveChangesAsync();
+
+        // Sync Realtime Database
+        if (model.Type == ActivityType.Attendance && activity != null)
+        {
+            _syncAttendanceWithRealtimeDatabase(activity!.Id);
+        }
+
+        return Result.Success();
+    }
+
+    public async Task<Result> Attend(Guid code)
+    {
+        if (CurrentUser == null) return Error.Authentication();
+        var userId = CurrentUser.Id;
+
+        var attendanceItem =
+            await UnitOfWork.AttendanceItems.Query()
+                .FirstOrDefaultAsync(x => x.AttendanceActivityId == code && x.UserId == userId);
+
+        if (attendanceItem == null) return Error.NotFound();
+
+        attendanceItem.Present = true;
+        UnitOfWork.AttendanceItems.Update(attendanceItem);
+        await UnitOfWork.SaveChangesAsync();
+        _syncAttendanceWithRealtimeDatabase(code);
 
         return Result.Success();
     }
@@ -172,9 +236,42 @@ public class ActivityService : BaseService, IActivityService
         };
     }
 
-    private void _insertAttendanceIntoRealtimeDatabase(Guid attendanceId, ICollection<AttendanceItem> items)
+    private void _removeAttendanceFromRealtimeDatabase(Guid attendanceId)
     {
         var path = $"{AttendanceKey}/{attendanceId}";
-        _firebaseClient.Set(path, items);
+        _firebaseClient.Delete(path);
+    }
+
+    private void _syncAttendanceWithRealtimeDatabase(Guid id)
+    {
+        var path = $"{AttendanceKey}/{id}";
+        var activity = UnitOfWork.AttendanceActivities
+            .Query()
+            .Include(x => x.Items)
+            .Include(x => x.TourGroup).ThenInclude(x => x!.Travelers)
+            .FirstOrDefault(x => x.Id == id);
+
+        if (activity == null) return;
+
+        var data = new FirebaseAttendanceModel
+        {
+            Items = activity.Items!.Select(item =>
+            {
+                var traveler = activity.TourGroup!.Travelers.FirstOrDefault(traveler => traveler.Id == item.UserId);
+                return new FirebaseAttendanceItem
+                {
+                    AttendanceAt = item.AttendanceAt,
+                    Present = item.Present,
+                    Reason = item.Reason,
+                    UserId = item.UserId,
+                    Name = traveler != null ? traveler.FirstName + " " + traveler.LastName : string.Empty,
+                    AvatarUrl = _cloudStorageService.GetMediaLink(traveler?.AvatarId) ?? string.Empty,
+                    LastUpdateAt = item.LastUpdateAt
+                };
+            }).ToDictionary(x=>x.UserId, x=>x),
+            Title = activity.Title ?? string.Empty
+        };
+
+        _firebaseClient.Update(path, data);
     }
 }
