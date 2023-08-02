@@ -99,7 +99,7 @@ public class TourGroupsController : ApiController
         return result.Match(Ok, OnError);
     }
 
-    [Authorize(UserRole.Traveler)]
+    [Authorize(UserRole.Traveler, UserRole.TourGuide)]
     [HttpPost("{id:guid}/emergency")]
     public async Task<IActionResult> SendEmergency(Guid id, EmergencyRequestModel model)
     {
