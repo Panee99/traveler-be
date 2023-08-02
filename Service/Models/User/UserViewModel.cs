@@ -9,7 +9,7 @@ public class UserViewModel
     public string Email = null!;
     public string FirstName { get; set; } = null!;
     public string LastName { get; set; } = null!;
-    public Gender Gender { get; set; }
+    public Gender? Gender { get; set; }
     public UserRole Role { get; set; }
     public UserStatus Status { get; set; }
     public string? AvatarUrl { get; set; }

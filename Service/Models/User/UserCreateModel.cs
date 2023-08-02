@@ -11,5 +11,5 @@ public record UserCreateModel
     public UserStatus Status;
     public string FirstName = null!;
     public string LastName = null!;
-    public Gender Gender;
+    public Gender? Gender;
 }
