@@ -3,7 +3,7 @@
     "Id": "b04570bc-0f67-4d7b-8697-a3a681a97c34",
     "TripId": "db4b701e-0290-4331-858f-3f7a60558daa",
     "TourGuideId": "21751a9c-fcd9-4fcc-93ed-7a4349a34bc7",
-    "GroupName": "Tour 4 đảo Nam Phú Quốc",
+    "GroupName": "Tour 4 đảo Nam Phú Quốc - Group 1",
     "CreatedAt": "2023-04-08 20:17:02.0000000",
     "Status": "Ended"
   },
@@ -11,7 +11,8 @@
     "Id": "d71fbdb2-5f38-4aca-830e-d8d7d55b33cd",
     "TripId": "e15f3a4d-acdc-4215-baff-5c7a978169fb",
     "TourGuideId": "21751a9c-fcd9-4fcc-93ed-7a4349a34bc7",
-    "GroupName": "Du lịch Nhật Bản",
+    "GroupName": "Du lịch Nhật Bản - Group 1",
+    "CurrentScheduleId": "7b3fc33c-5861-4c87-87db-070cb7415a9d",
     "CreatedAt": "2023-06-08 09:47:47.0000000",
     "Status": "Prepare"
   },
@@ -19,7 +20,7 @@
     "Id": "96fe251f-e3b8-4f20-9fc2-6671d9062fc0",
     "TripId": "f85369ab-7e74-44a4-82b3-9badb85b278a",
     "TourGuideId": "21751a9c-fcd9-4fcc-93ed-7a4349a34bc7",
-    "GroupName": "Du lịch Canada – Hoa Kỳ - Cuba",
+    "GroupName": "Du lịch Canada – Hoa Kỳ - Cuba - Group 1",
     "CreatedAt": "2023-06-08 09:43:33.0000000",
     "Status": "Ended"
   },
@@ -27,7 +28,7 @@
     "Id": "377b8315-25fa-4696-b699-24f58698ce70",
     "TripId": "a71d3d04-2eac-4ebe-999e-dbc60702ce3d",
     "TourGuideId": "21751a9c-fcd9-4fcc-93ed-7a4349a34bc7",
-    "GroupName": "Du lịch Thụy Sĩ",
+    "GroupName": "Du lịch Thụy Sĩ - Group 1",
     "CreatedAt": "2023-06-08 09:43:34.0000000",
     "Status": "Ended"
   }

@@ -16,7 +16,7 @@ public class User
 
     public string LastName { get; set; } = null!;
 
-    public Gender Gender { get; set; }
+    public Gender? Gender { get; set; }
 
     public UserRole Role { get; set; }
 
