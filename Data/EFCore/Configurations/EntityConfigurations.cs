@@ -148,6 +148,17 @@ public static class EntityConfigurations
             entity.Property(x => x.IsDeleted).HasDefaultValue(false);
         });
 
-        modelBuilder.Entity<WeatherAlert>();
+        modelBuilder.Entity<WeatherAlert>(alert =>
+        {
+            alert.HasOne(e => e.Trip).WithMany(trip => trip.WeatherAlerts)
+                .HasForeignKey(e => e.TripId);
+        });
+
+        modelBuilder.Entity<WeatherForecast>(forecast =>
+        {
+            forecast.HasOne(e => e.Trip).WithMany(trip => trip.WeatherForecasts)
+                .HasForeignKey(e => e.TripId)
+                .OnDelete(DeleteBehavior.NoAction);
+        });
     }
 }

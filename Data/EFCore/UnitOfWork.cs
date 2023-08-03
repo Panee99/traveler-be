@@ -26,7 +26,7 @@ public class UnitOfWork : UnitOfWorkBase
     public IRepository<CustomActivity> CustomActivities => Repo<CustomActivity>();
     public IRepository<CheckInActivity> CheckInActivities => Repo<CheckInActivity>();
     public IRepository<WeatherAlert> WeatherAlerts => Repo<WeatherAlert>();
-
+    public IRepository<WeatherForecast> WeatherForecasts => Repo<WeatherForecast>();
     
     public UnitOfWork(AppDbContext context) : base(context)
     {

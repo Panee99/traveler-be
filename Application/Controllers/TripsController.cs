@@ -97,13 +97,24 @@ public class TripsController : ApiController
     }
 
     /// <summary>
-    /// List weather forecasts and alerts of a trip
+    /// List weather alerts of a trip
     /// </summary>
     [ProducesResponseType(typeof(List<WeatherAlertViewModel>), StatusCodes.Status200OK)]
     [HttpGet("{id:guid}/weather-alerts")]
-    public async Task<IActionResult> GetWeatherAlerts(Guid id)
+    public async Task<IActionResult> ListWeatherAlerts(Guid id)
     {
         var result = await _tripService.ListWeatherAlerts(id);
+        return result.Match(Ok, OnError);
+    }
+
+    /// <summary>
+    /// List weather forecasts of a trip
+    /// </summary>
+    [ProducesResponseType(typeof(List<WeatherForecastViewModel>), StatusCodes.Status200OK)]
+    [HttpGet("{id:guid}/weather-forecasts")]
+    public async Task<IActionResult> ListWeatherForecasts(Guid id)
+    {
+        var result = await _tripService.ListWeatherForecasts(id);
         return result.Match(Ok, OnError);
     }
 }
