@@ -1,0 +1,82 @@
+﻿@page "/manager/trips/{id}"
+@model Application.Pages.Manager.TripDetails
+
+<div class="container mt-5">
+    <div class="row">
+
+        <!-- Tour Info -->
+        <div class="col-md-6">
+            <div class="card" style="background-color: #f8f9fa; padding: 20px">
+                <img src="@Model.Tour.ThumbnailUrl" alt="Tour Thumbnail" style="max-height: 200px; object-fit: contain; margin-bottom: 12px">
+                <div>
+                    <p><strong>ID: <span style="color: #40916c">@Model.Tour.Id.ToString().ToUpper()</span></strong></p>
+                    <p><strong>Title: <span class="card-title" style="color: #3f37c9">@Model.Tour.Title</span></strong></p>
+                    <p><strong>Type & Duration:</strong> @Model.Tour.Type (@Model.Tour.Duration)</p>
+                    <p><strong>Departure & Destination:</strong> @Model.Tour.Departure / @Model.Tour.Destination</p>
+                    <p><strong>Created At:</strong> @Model.Tour.CreatedAt</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Trip Info -->
+        <div class="col-md-6">
+            <div class="card" style="background-color: #f8f9fa; padding: 20px">
+                <div>
+                    <h4 class="mb-4">Trip Info: </h4>
+                    <p><strong>ID: <span style="color: #40916c">@Model.Trip.Id.ToString().ToUpper()</span></strong></p>
+                    <p><strong>Code:<span class="card-title" style="color: #3f37c9"> @Model.Trip.Code</span></strong></p>
+                    <p><strong>Start Time: </strong> @DateOnly.FromDateTime(Model.Trip.StartTime)</p>
+                    <p><strong>End Time: </strong> @DateOnly.FromDateTime(Model.Trip.EndTime)</p>
+                    
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<hr/>
+
+<!-- Groups and Travelers Table -->
+<div class="col col-md-6">
+    <h4>Travelers: </h4>
+    <!-- Table -->
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <table class="table table-bordered">
+                
+                <thead>
+                <tr>
+                    <th>Group</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Gender</th>
+                </tr>
+                </thead>
+
+                <!-- Table Data -->
+                <tbody>
+                @foreach (var group in Model.Trip.TourGroups)
+                {
+                    @foreach (var traveler in group.Travelers)
+                    {
+                        <!-- Each Traveler -->
+                        <tr>
+                            <td>@group.GroupName</td>
+                            <td>@traveler.Email</td>
+                            <td>@traveler.Phone</td>
+                            <td>@traveler.FirstName</td>
+                            <td>@traveler.LastName</td>
+                            <td>@traveler.Gender</td>
+                        </tr>
+                    }
+                }
+                </tbody>
+                
+            </table>
+        </div>
+    </div>
+    
+</div>
