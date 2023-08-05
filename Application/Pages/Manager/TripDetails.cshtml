@@ -1,6 +1,20 @@
 ﻿@page "/manager/trips/{id}"
 @model Application.Pages.Manager.TripDetails
 
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/manager/home" style="text-decoration: none">Tours</a></li>
+        <li class="breadcrumb-item active" aria-current="page">
+            <a href="/manager/tours/@Model.Tour.Id" style="text-decoration: none">@Model.Tour.Id</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">Trips</li>
+        <li class="breadcrumb-item active" aria-current="page">@Model.Trip.Id</li>
+    </ol>
+</nav>
+
+<hr/>
+
 <div class="container mt-5">
     <div class="row">
 
