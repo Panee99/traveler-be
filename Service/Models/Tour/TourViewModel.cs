@@ -12,5 +12,6 @@ public record TourViewModel
     public string? Description;
     public string? Policy;
     public string? ThumbnailUrl;
+    public DateTime CreatedAt;
     public TourType Type;
 }

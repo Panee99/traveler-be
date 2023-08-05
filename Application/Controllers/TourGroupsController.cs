@@ -3,7 +3,6 @@ using Data.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Service.Interfaces;
 using Service.Models.Activity;
-using Service.Models.IncurredCost;
 using Service.Models.TourGroup;
 using Service.Models.User;
 
@@ -13,13 +12,10 @@ namespace Application.Controllers;
 public class TourGroupsController : ApiController
 {
     private readonly ITourGroupService _tourGroupService;
-    private readonly IIncurredCostService _incurredCostService;
 
-    public TourGroupsController(ITourGroupService tourGroupService,
-        IIncurredCostService incurredCostService)
+    public TourGroupsController(ITourGroupService tourGroupService)
     {
         _tourGroupService = tourGroupService;
-        _incurredCostService = incurredCostService;
     }
 
     /// <summary>
@@ -85,17 +81,6 @@ public class TourGroupsController : ApiController
     public async Task<IActionResult> ListActivities(Guid id)
     {
         var result = await _tourGroupService.ListActivities(id);
-        return result.Match(Ok, OnError);
-    }
-
-    /// <summary>
-    /// List all Incurred Costs in group
-    /// </summary>
-    [ProducesResponseType(typeof(List<IncurredCostViewModel>), StatusCodes.Status200OK)]
-    [HttpGet("{id:guid}/incurred-costs")]
-    public async Task<IActionResult> ListIncurredCosts(Guid id)
-    {
-        var result = await _incurredCostService.ListAll(id);
         return result.Match(Ok, OnError);
     }
 

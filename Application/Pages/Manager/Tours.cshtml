@@ -1,0 +1,104 @@
+﻿@page "/manager/tours"
+@model Application.Pages.Manager.ToursModel
+@{
+    ViewData["Title"] = "Tours";
+}
+
+<style>
+        .title-link:hover {
+            color: #74c69d;
+        }
+</style>
+<div class="container mt-5">
+    <!-- Search Bar and File Upload Box -->
+    <div class="flex-column justify-content-start">
+        <div style="width: 30%; padding: 24px; background-color: #b6d4fe; border-radius: 8px">
+            <label class="form-label" for="fileUpload">
+                <h5>Import Tour:</h5>
+            </label>
+            <div class="input-group flex-row justify-content-start">
+                <input type="file" accept=".xlsx" class="form-control" id="fileUpload" style="margin-right: 8px"/>
+                <button class="btn btn-success" type="button">Import</button>
+            </div>
+        </div>
+        <hr/>
+        <div class="w-50" style="margin: 20px 0 20px 0">
+            <div class="input-group">
+                <input type="text" class="form-control" style="margin-right: 8px" placeholder="Search">
+                <div class="input-group-append">
+                    <button class="btn btn-primary" type="button">Search</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Table -->
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    @* <th>Id</th> *@
+                    <th>Title</th>
+                    <th>Departure</th>
+                    <th>Destination</th>
+                    <th>Type</th>
+                    <th>CreatedAt</th>
+                    <th>Duration</th>
+                    @* <th>Description</th> *@
+                    <th>Thumbnail</th>
+                </tr>
+                </thead>
+                <tbody>
+                <!-- Table Data -->
+
+                @foreach (var tour in Model.Tours)
+                {
+                    <tr>
+                        @* <td>@tour.Id</td> *@
+                        <td>
+                            <a href="/manager/tours/@tour.Id" class="text-decoration-none title-link">
+                                <b>@tour.Title</b>
+                            </a>
+                        </td>
+                        <td>@tour.Departure</td>
+                        <td>@tour.Destination</td>
+                        <td>@tour.Type</td>
+                        <td>@tour.CreatedAt</td>
+                        <td>@tour.Duration</td>
+                        @* <td>@tour.Description</td> *@
+                        <td>
+                            <img src="@tour.ThumbnailUrl" width="150" height="100" alt="@tour.Id">
+                        </td>
+                    </tr>
+                }
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="row">
+        <div class="col-md-12">
+            <ul class="pagination justify-content-center">
+                <li class="page-item disabled">
+                    <a class="page-link" href="#" tabindex="-1">Previous</a>
+                </li>
+                <li class="page-item active">
+                    <a class="page-link" href="#">1</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="#">2</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="#">3</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="#">Next</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+</div>

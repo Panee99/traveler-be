@@ -27,9 +27,6 @@ public static class EntityConfigurations
 
         modelBuilder.Entity<Feedback>();
 
-        modelBuilder.Entity<IncurredCost>(
-            entity => { entity.Property(e => e.CreatedAt).HasColumnType("datetime"); });
-
         modelBuilder.Entity<Manager>(entity =>
         {
             entity.ToTable("Manager");

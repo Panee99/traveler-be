@@ -25,6 +25,9 @@ var builder = WebApplication.CreateBuilder(args);
         .AddConsole()
         .AddSerilog();
 
+    builder.Services.AddRazorPages();
+    builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
+
     builder.Services
         .AddCors()
         .AddSwagger()
@@ -57,6 +60,10 @@ var app = builder.Build();
         .UseMiddleware<JwtMiddleware>()
         .UseSwagger()
         .UseSwaggerUI();
+
+    app.UseStaticFiles();
+    app.UseRouting();
+    app.MapRazorPages();
 
     app.MapControllers();
     app.Run();

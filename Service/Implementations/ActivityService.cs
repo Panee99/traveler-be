@@ -268,7 +268,7 @@ public class ActivityService : BaseService, IActivityService
                     AvatarUrl = _cloudStorageService.GetMediaLink(traveler?.AvatarId.ToString()) ?? string.Empty,
                     LastUpdateAt = item.LastUpdateAt
                 };
-            }).ToDictionary(x=>x.UserId, x=>x),
+            }).ToDictionary(x => x.UserId, x => x),
             Title = activity.Title ?? string.Empty
         };
 

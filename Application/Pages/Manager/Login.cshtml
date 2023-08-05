@@ -1,0 +1,41 @@
+﻿@page "/manager/login"
+@model Application.Pages.Manager.LoginModel
+@{
+    ViewData["Title"] = "Manager Login";
+}
+
+<div class="row g-0 d-flex align-items-center justify-content-center">
+    <div class="col-lg-4 d-none d-lg-flex">
+        <img src="https://img.freepik.com/premium-photo/flat-lay-design-travel-concept-with-plane-yellow-background_661495-33430.jpg" alt="Trendy Pants and Shoes"
+             class="w-100"/>
+    </div>
+    <div class="col-lg-8 w-50">
+        <div class="card-body py-5 px-md-5">
+            <h2 class="mb-5">Manager Login</h2>
+
+            <form method="post">
+                <!-- Email input -->
+                <div class="form-outline mb-4">
+                    <input type="email" id="email" name="Email" class="form-control" asp-for="Email"/>
+                    <label class="form-label" for="email">Email address</label>
+                </div>
+
+                <!-- Password input -->
+                <div class="form-outline mb-4">
+                    <input type="password" id="password" name="Password" class="form-control"/>
+                    <label class="form-label" for="password">Password</label>
+                </div>
+
+                <!-- Submit button -->
+                <button type="submit" class="btn btn-primary btn-block mb-4">Login</button>
+
+            </form>
+
+            @if (Model.ErrorMessage != null)
+            {
+                <p style="color: red">@Model.ErrorMessage</p>
+            }
+
+        </div>
+    </div>
+</div>

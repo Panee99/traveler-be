@@ -1,0 +1,164 @@
+﻿@page "/manager/tours/{id:guid}"
+@model Application.Pages.Manager.TourDetails
+
+<style>
+        .img-container {
+            position: relative;
+            padding-bottom: 100%;
+            /* 1:1 Aspect Ratio */
+        }
+
+        .img-container img {
+            position: absolute;
+            object-fit: contain;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .schedule-container {
+            max-height: 600px;
+            overflow-y: auto;
+        }
+    </style>
+
+<!-- Trip Table -->
+<div class="col col-md-6">
+    <!-- Table -->
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Code</th>
+                    <th>StartTime</th>
+                    <th>EndTime</th>
+                </tr>
+                </thead>
+                <tbody>
+                <!-- Table Data -->
+
+                @foreach (var trip in Model.Trips)
+                {
+                    <tr>
+                        <td>@trip.Id</td>
+                        <td>@trip.Code</td>
+                        <td>@DateOnly.FromDateTime(trip.StartTime)</td>
+                        <td>@DateOnly.FromDateTime(trip.EndTime)</td>
+                    </tr>
+                }
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="row">
+        <div class="col-md-12">
+            <ul class="pagination justify-content-center">
+                <li class="page-item disabled">
+                    <a class="page-link" href="#" tabindex="-1">Previous</a>
+                </li>
+                <li class="page-item active">
+                    <a class="page-link" href="#">1</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="#">2</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="#">3</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="#">Next</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card" style="background-color: #f8f9fa; padding: 20px">
+                <!-- Thumbnail Image -->
+                <img src="@Model.Tour.ThumbnailUrl" alt="Tour Thumbnail"
+                     style="max-height: 200px; object-fit: contain; margin-bottom: 12px">
+
+                <div >
+                    <!-- Tour ID -->
+                    <p>
+                        <strong>ID: <span style="color: #40916c">@Model.Tour.Id.ToString().ToUpper()</span></strong>
+                    </p>
+
+                    <!-- Tour Title -->
+                    <p>
+                        <strong>Title: <span class="card-title" style="color: #3f37c9">@Model.Tour.Title</span></strong>
+                    </p>
+
+                    <!-- Tour Type and Duration -->
+                    <p><strong>Type & Duration:</strong> @Model.Tour.Type (@Model.Tour.Duration)</p>
+
+                    <!-- Departure and Destination Location -->
+                    <p><strong>Departure & Destination:</strong> @Model.Tour.Departure / @Model.Tour.Destination</p>
+
+                    <!-- Tour Description -->
+                    <p>
+                        <strong>Description:</strong> @Model.Tour.Description
+                    </p>
+
+                    <!-- Tour Policy -->
+                    <p>
+                        <strong>Policy:</strong> @Model.Tour.Policy
+                    </p>
+
+                    <!-- Tour Created At -->
+                    <p>
+                        <strong>Created At:</strong> @Model.Tour.CreatedAt
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="schedule-container col-md-6">
+            <div class="row">
+
+                @foreach (var group in Model.ScheduleGroups)
+                {
+                    <div class="col-md-12 mb-4">
+                        <h5 style="color: #1b6ec2">Day @group.Key: </h5>
+                        <div class="day-container">
+                            <ul class="list-group">
+                                @foreach (var schedule in group)
+                                {
+                                    <li class="list-group-item">
+                                        <b>@schedule.Sequence.</b> @schedule.Description
+                                        <br/>
+                                        <b style="color: #0c63e4">@schedule.Vehicle</b>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+
+    </div>
+
+    <div class="container mt-5">
+        <div class="row">
+            @foreach (var image in Model.Tour.Carousel)
+            {
+                <div class="col-md-3">
+                    <div class="img-container">
+                        <img src="@image.Url" alt="@image.Id">
+                    </div>
+                </div>
+            }
+        </div>
+        <!-- Add more rows as needed -->
+    </div>
+
+</div>

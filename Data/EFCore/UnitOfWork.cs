@@ -18,7 +18,6 @@ public class UnitOfWork : UnitOfWorkBase
     public IRepository<TourGuide> TourGuides => Repo<TourGuide>();
     public IRepository<Traveler> Travelers => Repo<Traveler>();
     public IRepository<TravelerInTourGroup> TravelersInTourGroups => Repo<TravelerInTourGroup>();
-    public IRepository<IncurredCost> IncurredCosts => Repo<IncurredCost>();
     public IRepository<FcmToken> FcmTokens => Repo<FcmToken>();
     public IRepository<Notification> Notifications => Repo<Notification>();
     public IRepository<AttendanceActivity> AttendanceActivities => Repo<AttendanceActivity>();
