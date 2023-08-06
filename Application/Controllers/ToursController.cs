@@ -20,7 +20,7 @@ public class ToursController : ApiController
     static ToursController()
     {
         // Read sample data to memory
-        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "Controllers", "Statics", "Tour.xlsx");
+        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "Controllers", "Statics", "Tour.zip");
         if (!System.IO.File.Exists(filePath)) throw new Exception("'Tour.xlsx' file not found.");
         TourSampleData = System.IO.File.ReadAllBytes(filePath);
     }
@@ -38,8 +38,8 @@ public class ToursController : ApiController
     {
         return File(
             TourSampleData,
-            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-            "Tour.xlsx"
+            "application/zip",
+            "Tour.zip"
         );
     }
 

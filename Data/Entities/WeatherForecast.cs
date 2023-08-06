@@ -31,7 +31,7 @@ public class WeatherForecast
     public string Icon { get; set; } = null!;
 
     public DateTime Date { get; set; }
-    
+
     public Schedule Schedule { get; set; } = null!;
 
     public Trip Trip { get; set; } = null!;

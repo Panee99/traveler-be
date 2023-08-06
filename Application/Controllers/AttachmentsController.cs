@@ -30,7 +30,7 @@ public class AttachmentsController : ApiController
     {
         var extension = Path.GetExtension(file.FileName);
         if (extension.IsNullOrEmpty()) return OnError(Error.Validation("Invalid extension"));
-        var result = await _attachmentService.Create(extension[1..], file.ContentType, file.OpenReadStream());
+        var result = await _attachmentService.Create(extension, file.ContentType, file.OpenReadStream());
         return result.Match(Ok, OnError);
     }
 }

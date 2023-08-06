@@ -22,6 +22,7 @@ public static class EntityConfigurations
         modelBuilder.Entity<Attachment>(entity =>
         {
             entity.Property(e => e.ContentType).HasMaxLength(256);
+            entity.Property(e => e.Extension).HasMaxLength(10);
             entity.Property(e => e.CreatedAt).HasColumnType("datetime");
         });
 
@@ -37,8 +38,6 @@ public static class EntityConfigurations
         });
 
         modelBuilder.Entity<Notification>();
-
-        // modelBuilder.Entity<Passenger>();
 
         modelBuilder.Entity<Schedule>();
 
@@ -58,6 +57,8 @@ public static class EntityConfigurations
             entity.Property(e => e.Code).HasMaxLength(256);
             entity.Property(e => e.EndTime).HasColumnType("datetime");
             entity.Property(e => e.StartTime).HasColumnType("datetime");
+            entity.HasOne(e => e.CreatedBy).WithMany()
+                .HasForeignKey(e => e.CreatedById).OnDelete(DeleteBehavior.NoAction);
         });
 
         modelBuilder.Entity<TourGroup>(entity =>
@@ -123,6 +124,7 @@ public static class EntityConfigurations
             entity.HasKey(x => x.Id);
             entity.Property(x => x.Present).IsRequired();
             entity.Property(x => x.Reason).IsRequired().HasDefaultValue(string.Empty);
+            entity.HasOne(x => x.User).WithMany().HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.NoAction);
         });
 
         modelBuilder.Entity<CustomActivity>(entity =>

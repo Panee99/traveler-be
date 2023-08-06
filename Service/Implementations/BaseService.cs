@@ -10,12 +10,14 @@ public abstract class BaseService
     private readonly IHttpContextAccessor? _httpContextAccessor;
     protected readonly UnitOfWork UnitOfWork;
 
-    protected AuthUser? CurrentUser
+    protected AuthUser CurrentUser
     {
         get
         {
             if (_httpContextAccessor is null) throw new Exception("HttpContextAccessor not set on BaseService.");
-            return (AuthUser?)_httpContextAccessor.HttpContext?.Items[AppConstants.UserContextKey];
+            var user = (AuthUser?)_httpContextAccessor.HttpContext?.Items[AppConstants.UserContextKey];
+            if (user is null) throw new Exception("User not exist in current Context");
+            return user;
         }
     }
 

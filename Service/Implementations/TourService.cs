@@ -1,17 +1,18 @@
-﻿using System.Data;
-using Data.EFCore;
+﻿using Data.EFCore;
 using Data.Entities;
-using Data.Enums;
-using ExcelDataReader;
+using HeyRed.Mime;
 using Mapster;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Service.Commons.Mapping;
+using Microsoft.Extensions.Logging;
 using Service.Commons.QueryExtensions;
+using Service.ImportHelpers;
 using Service.Interfaces;
 using Service.Models.Attachment;
 using Service.Models.Schedule;
 using Service.Models.Tour;
 using Service.Models.Trip;
+using Shared.Helpers;
 using Shared.ResultExtensions;
 
 namespace Service.Implementations;
@@ -19,165 +20,116 @@ namespace Service.Implementations;
 public class TourService : BaseService, ITourService
 {
     private readonly ICloudStorageService _cloudStorageService;
+    private readonly ILogger<TourService> _logger;
 
-    public TourService(UnitOfWork unitOfWork, ICloudStorageService cloudStorageService)
-        : base(unitOfWork)
+    public TourService(
+        UnitOfWork unitOfWork,
+        IHttpContextAccessor httpContextAccessor,
+        ICloudStorageService cloudStorageService,
+        ILogger<TourService> logger) : base(unitOfWork, httpContextAccessor)
     {
         _cloudStorageService = cloudStorageService;
+        _logger = logger;
     }
 
-    #region Import Tour
-
-    public async Task<Result<TourDetailsViewModel>> ImportTour(Stream fileStream)
+    public async Task<Result<TourDetailsViewModel>> ImportTour(Stream tourZipData)
     {
+        var transaction = UnitOfWork.BeginTransaction();
+
         try
         {
-            using var reader = ExcelReaderFactory.CreateReader(fileStream);
-            var tour = _readTour(reader);
+            var tourModel = TourImportHelper.ReadTourArchive(tourZipData);
+            if (await UnitOfWork.Tours.AnyAsync(e => e.Id == tourModel.Id))
+                return Error.Conflict($"Tour '{tourModel.Id}' already exist.");
 
-            if (await UnitOfWork.Tours.AnyAsync(e => e.Id == tour.Id))
-                return Error.Conflict($"Tour '{tour.Id}' already exist.");
-
-            UnitOfWork.Tours.Add(tour);
+            var tour = tourModel.Adapt<Tour>();
+            tour.Thumbnail = null;
+            tour.CreatedById = CurrentUser.Id;
+            tour = UnitOfWork.Tours.Add(tour);
             await UnitOfWork.SaveChangesAsync();
 
+            await _addTourImages(tour.Id, tourModel.Images);
+            await _addTourThumbnail(tour.Id, tourModel.Thumbnail);
+            await UnitOfWork.SaveChangesAsync();
+
+            await transaction.CommitAsync();
             return await GetDetails(tour.Id);
         }
         catch (Exception e)
         {
-            Console.WriteLine(e.StackTrace);
+            await transaction.RollbackAsync();
+            _logger.LogError(e, "Import Tour failed: {Message}", e.Message);
             return Error.Validation(e.Message);
         }
     }
 
-    /// <summary>
-    /// Read Tour data from excel file
-    /// </summary>
-    private static Tour _readTour(IDataReader reader)
+    private async Task _addTourImages(Guid tourId, IEnumerable<ImageModel> imageModels)
     {
-        reader.Read(); // skip header
-        reader.Read(); // tour data
-        var tour = new Tour()
-        {
-            Id = Guid.Parse(reader.GetString(0)),
-            Title = reader.GetString(1),
-            Departure = reader.GetString(2),
-            Destination = reader.GetString(3),
-            Duration = reader.GetString(4),
-            Description = reader.GetString(6),
-            Policy = reader.GetString(7),
-            ThumbnailId = Guid.Parse(reader.GetString(8))
-        };
-
-        tour.Type = Enum.Parse<TourType>(reader.GetString(5));
-
-        // Read images
-        reader.NextResult();
-        tour.TourCarousel = _readImages(reader);
-
-        // Read schedules
-        reader.NextResult();
-        tour.Schedules = _readSchedules(reader);
-
-        return tour;
-    }
-
-    /// <summary>
-    /// Read Tour images from excel file
-    /// </summary>
-    private static ICollection<TourImage> _readImages(IDataReader reader)
-    {
-        var imageIds = new List<Guid>();
-
-        reader.Read(); // skip header
-        while (reader.Read())
-        {
-            imageIds.Add(Guid.Parse(reader.GetString(0)));
-        }
-
-        return imageIds.Select(imageId => new TourImage() { AttachmentId = imageId }).ToList();
-    }
-
-    /// <summary>
-    /// Read Tour schedules from excel file
-    /// </summary>
-    private static ICollection<Schedule> _readSchedules(IDataReader reader)
-    {
-        var schedules = new List<Schedule>();
-
-        reader.Read(); // skip header
-        while (reader.Read())
-        {
-            var schedule = new Schedule()
+        // Create attachments
+        var images = imageModels.Select(model => (
+            Attachment: new Attachment()
             {
-                Sequence = (int)reader.GetDouble(0),
-                Description = reader.GetString(1),
-                Longitude = ReferenceEquals(reader.GetValue(2), null) ? null : reader.GetDouble(2),
-                Latitude = ReferenceEquals(reader.GetValue(3), null) ? null : reader.GetDouble(3),
-                DayNo = (int)reader.GetDouble(4),
-            };
+                Id = Guid.NewGuid(),
+                ContentType = MimeTypesMap.GetMimeType(model.Extension),
+                Extension = model.Extension,
+                CreatedAt = DateTimeHelper.VnNow()
+            },
+            model.Data
+        )).ToList();
 
-            if (!ReferenceEquals(reader.GetString(5), null))
-                schedule.Vehicle = Enum.Parse<Vehicle>(reader.GetString(5));
+        // Create tour images
+        var tourImages = images.Select(img => new TourImage()
+        {
+            TourId = tourId,
+            AttachmentId = img.Attachment.Id
+        });
 
-            schedules.Add(schedule);
+        var attachments = images.Select(img => img.Attachment);
+
+        UnitOfWork.Attachments.AddRange(attachments);
+        await UnitOfWork.SaveChangesAsync();
+        UnitOfWork.TourImages.AddRange(tourImages);
+        await UnitOfWork.SaveChangesAsync();
+
+        // Upload to Cloud
+        foreach (var img in images)
+        {
+            var result = await _cloudStorageService.Upload(
+                img.Attachment.FileName,
+                img.Attachment.ContentType,
+                img.Data
+            );
+
+            if (!result.IsSuccess) throw new Exception("Upload tour images failed");
         }
-
-        return schedules;
     }
 
-    #endregion
-
-    public async Task<Result<TourDetailsViewModel>> Update(Guid id, TourUpdateModel model)
+    private async Task _addTourThumbnail(Guid tourId, ImageModel model)
     {
-        // Get Tour
-        var tour = await UnitOfWork.Tours
-            .TrackingQuery()
-            .AsSplitQuery()
-            .Where(e => e.Id == id)
-            .Include(e => e.Schedules)
-            .Include(e => e.TourCarousel)
-            .Include(e => e.Thumbnail)
-            .FirstOrDefaultAsync();
+        var tour = await UnitOfWork.Tours.FindAsync(tourId);
+        if (tour == null) throw new Exception(DomainErrors.Tour.NotFound);
 
-        if (tour is null) return Error.NotFound();
-
-        // Update
-        model.AdaptIgnoreNull(tour);
-
-        if (model.Carousel != null)
-        {
-            tour.TourCarousel = model.Carousel.Select(attachmentId => new TourImage()
+        var image = (
+            Attachment: new Attachment()
             {
-                TourId = tour.Id,
-                AttachmentId = attachmentId
-            }).ToList();
-        }
+                Id = Guid.NewGuid(),
+                ContentType = MimeTypesMap.GetMimeType(model.Extension),
+                Extension = model.Extension,
+                CreatedAt = DateTimeHelper.VnNow()
+            },
+            model.Data);
+
+        UnitOfWork.Attachments.Add(image.Attachment);
+        tour.ThumbnailId = image.Attachment.Id;
+        UnitOfWork.Tours.Update(tour);
 
         await UnitOfWork.SaveChangesAsync();
 
-        // Result
-        var view = tour.Adapt<TourDetailsViewModel>();
+        // Upload to Cloud
+        var result = await _cloudStorageService
+            .Upload(image.Attachment.FileName, image.Attachment.ContentType, image.Data);
 
-        view.ThumbnailUrl = _cloudStorageService.GetMediaLink(tour.Thumbnail?.FileName);
-
-        var tourCarousel = await UnitOfWork.TourCarousel
-            .Query()
-            .Where(e => e.TourId == tour.Id)
-            .Include(e => e.Attachment)
-            .ToListAsync();
-
-        view.Carousel = tourCarousel
-            .Select(i => i.Attachment)
-            .Select(attachment => new AttachmentViewModel()
-            {
-                Id = attachment.Id,
-                ContentType = attachment.ContentType,
-                Url = _cloudStorageService.GetMediaLink(attachment.FileName)
-            })
-            .ToList();
-
-        return view;
+        if (!result.IsSuccess) throw new Exception("Upload tour thumbnail failed");
     }
 
     public async Task<Result> Delete(Guid id)
@@ -200,7 +152,7 @@ public class TourService : BaseService, ITourService
             .Include(e => e.Schedules)
             .Include(e => e.Thumbnail)
             .Include(e => e.TourCarousel)
-            .ThenInclude(i => i.Attachment)
+            .ThenInclude(x => x.Attachment)
             .FirstOrDefaultAsync();
 
         if (tour is null) return Error.NotFound();
@@ -244,30 +196,6 @@ public class TourService : BaseService, ITourService
             view.ThumbnailUrl = _cloudStorageService.GetMediaLink(tour.Thumbnail?.FileName);
             return view;
         });
-    }
-
-    public async Task<Result<List<AttachmentViewModel>>> GetCarousel(Guid tourId)
-    {
-        if (!await UnitOfWork.Tours.AnyAsync(e => e.Id == tourId))
-            return Error.NotFound();
-
-        var attachmentIds = await UnitOfWork.TourCarousel
-            .Query()
-            .Where(e => e.TourId == tourId)
-            .Select(e => e.AttachmentId)
-            .ToListAsync();
-
-        var attachments = await UnitOfWork.Attachments
-            .Query()
-            .Where(e => attachmentIds.Contains(e.Id))
-            .ToListAsync();
-
-        return attachments.Select(e => new AttachmentViewModel()
-        {
-            Id = e.Id,
-            ContentType = e.ContentType,
-            Url = _cloudStorageService.GetMediaLink(e.FileName)
-        }).ToList();
     }
 
     public async Task<Result<List<TripViewModel>>> ListTrips(Guid tourId)

@@ -19,4 +19,8 @@ public class Trip
     public virtual ICollection<WeatherAlert> WeatherAlerts { get; set; } = new List<WeatherAlert>();
 
     public virtual ICollection<WeatherForecast> WeatherForecasts { get; set; } = new List<WeatherForecast>();
+
+    public Guid CreatedById { get; set; }
+
+    public User CreatedBy { get; set; } = null!;
 }

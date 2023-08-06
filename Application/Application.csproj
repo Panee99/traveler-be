@@ -13,7 +13,6 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="MimeTypesMap" Version="1.0.8" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
         <PackageReference Include="Quartz" Version="3.6.3" />
         <PackageReference Include="RazorEngineCore" Version="2022.8.1" />
@@ -43,10 +42,10 @@
         <None Update="Workers\Notification\Templates\attendance.html">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Controllers\Statics\Tour.xlsx">
+        <None Update="Controllers\Statics\Trip.xlsx">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Controllers\Statics\Trip.xlsx">
+        <None Update="Controllers\Statics\Tour.zip">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
     </ItemGroup>

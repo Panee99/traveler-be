@@ -6,9 +6,8 @@ namespace Data.Entities.Activities;
 public class AttendanceItem
 {
     public Guid Id { get; set; }
-    
-    [JsonIgnore]    
-    public Guid AttendanceActivityId { get; set; }
+
+    [JsonIgnore] public Guid AttendanceActivityId { get; set; }
 
     public Guid UserId { get; set; }
 

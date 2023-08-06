@@ -1,4 +1,6 @@
-﻿namespace Data.Entities;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Data.Entities;
 
 public class Attachment
 {
@@ -10,6 +12,5 @@ public class Attachment
 
     public DateTime CreatedAt { get; set; }
 
-    //
-    public string FileName => $"{Id}.{Extension}";
+    [NotMapped] public string FileName => $"{Id}{Extension}";
 }

@@ -29,7 +29,7 @@ public class Repository<T> : IRepository<T> where T : class
 
     public void AddRange(IEnumerable<T> entities)
     {
-        _entities.AddRangeAsync(entities);
+        _entities.AddRange(entities);
     }
 
     public void UpdateRange(IEnumerable<T> entities)

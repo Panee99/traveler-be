@@ -13,7 +13,7 @@ public class UnitOfWork : UnitOfWorkBase
     public IRepository<Manager> Managers => Repo<Manager>();
     public IRepository<Tour> Tours => Repo<Tour>();
     public IRepository<Trip> Trips => Repo<Trip>();
-    public IRepository<TourImage> TourCarousel => Repo<TourImage>();
+    public IRepository<TourImage> TourImages => Repo<TourImage>();
     public IRepository<TourGroup> TourGroups => Repo<TourGroup>();
     public IRepository<TourGuide> TourGuides => Repo<TourGuide>();
     public IRepository<Traveler> Travelers => Repo<Traveler>();
@@ -26,7 +26,7 @@ public class UnitOfWork : UnitOfWorkBase
     public IRepository<CheckInActivity> CheckInActivities => Repo<CheckInActivity>();
     public IRepository<WeatherAlert> WeatherAlerts => Repo<WeatherAlert>();
     public IRepository<WeatherForecast> WeatherForecasts => Repo<WeatherForecast>();
-    
+
     public UnitOfWork(AppDbContext context) : base(context)
     {
     }
