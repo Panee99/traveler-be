@@ -19,19 +19,26 @@
 <hr/>
 
 <div class="container mt-5">
-    <!-- Search Bar and File Upload Box -->
+
+    <!-- Search Bar and File Import Box -->
     <div class="flex-column justify-content-start">
         <div style="width: 30%; padding: 24px; background-color: #b6d4fe; border-radius: 8px">
-            <label class="form-label" for="fileUpload">
+            <label class="form-label" for="tourImport">
                 <h5>Import Tour:</h5>
             </label>
-            <div class="input-group flex-row justify-content-start">
-                <input type="file" accept=".xlsx" class="form-control" id="fileUpload" style="margin-right: 8px"/>
-                <button class="btn btn-success" type="button">Import</button>
-            </div>
+
+            <!-- File Import Form -->
+            <form method="post" enctype="multipart/form-data" class="input-group flex-row justify-content-start">
+                <input type="file" accept=".zip" asp-for="ImportFile"
+                       class="form-control" id="tourImport" style="margin-right: 8px"/>
+                <button class="btn btn-success" type="submit">Import</button>
+            </form>
+
         </div>
         <hr/>
         <div class="w-50" style="margin: 20px 0 20px 0">
+
+            <!-- Search Tour Form -->
             <div class="input-group">
                 <input type="text" class="form-control" style="margin-right: 8px" placeholder="Search">
                 <div class="input-group-append">

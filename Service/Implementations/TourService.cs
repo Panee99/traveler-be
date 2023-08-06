@@ -2,7 +2,6 @@
 using Data.Entities;
 using HeyRed.Mime;
 using Mapster;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Service.Commons.QueryExtensions;
@@ -24,15 +23,14 @@ public class TourService : BaseService, ITourService
 
     public TourService(
         UnitOfWork unitOfWork,
-        IHttpContextAccessor httpContextAccessor,
         ICloudStorageService cloudStorageService,
-        ILogger<TourService> logger) : base(unitOfWork, httpContextAccessor)
+        ILogger<TourService> logger) : base(unitOfWork)
     {
         _cloudStorageService = cloudStorageService;
         _logger = logger;
     }
 
-    public async Task<Result<TourDetailsViewModel>> ImportTour(Stream tourZipData)
+    public async Task<Result<TourDetailsViewModel>> ImportTour(Guid createdById, Stream tourZipData)
     {
         var transaction = UnitOfWork.BeginTransaction();
 
@@ -44,7 +42,7 @@ public class TourService : BaseService, ITourService
 
             var tour = tourModel.Adapt<Tour>();
             tour.Thumbnail = null;
-            tour.CreatedById = CurrentUser.Id;
+            tour.CreatedById = createdById;
             tour = UnitOfWork.Tours.Add(tour);
             await UnitOfWork.SaveChangesAsync();
 
@@ -181,7 +179,7 @@ public class TourService : BaseService, ITourService
             .Query()
             .Include(e => e.Thumbnail)
             .Include(e => e.Schedules)
-            .OrderBy(e => e.CreatedAt);
+            .OrderByDescending(e => e.CreatedAt);
 
         if (!string.IsNullOrEmpty(model.Title))
             query = query.Where(e => e.Title.Contains(model.Title));

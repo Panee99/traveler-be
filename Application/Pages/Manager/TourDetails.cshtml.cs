@@ -19,7 +19,7 @@ public class TourDetails : PageModel
     public TourDetailsViewModel Tour { get; set; }
     public List<TripViewModel> Trips { get; set; } = new();
 
-    public async Task OnGet(Guid id)
+    public async Task OnGetAsync(Guid id)
     {
         var tourResult = await _tourService.GetDetails(id);
         if (tourResult.IsSuccess) Tour = tourResult.Value;

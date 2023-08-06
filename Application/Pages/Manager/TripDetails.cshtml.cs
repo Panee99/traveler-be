@@ -26,7 +26,7 @@ public class TripDetails : PageModel
     public Trip Trip { get; set; }
     public TourDetailsViewModel Tour { get; set; }
 
-    public async Task OnGet(Guid id)
+    public async Task OnGetAsync(Guid id)
     {
         var trip = await _unitOfWork.Trips
             .Query()

@@ -9,8 +9,8 @@ namespace Service.Interfaces;
 
 public interface ITourService
 {
-    Task<Result<TourDetailsViewModel>> ImportTour(Stream tourZipData);
-    
+    Task<Result<TourDetailsViewModel>> ImportTour(Guid createdById, Stream tourZipData);
+
     Task<Result> Delete(Guid id);
 
     Task<Result<TourDetailsViewModel>> GetDetails(Guid id);

@@ -26,7 +26,7 @@ public class Login : PageModel
         return Page();
     }
 
-    public void OnGet()
+    public async Task OnGetAsync()
     {
     }
 }

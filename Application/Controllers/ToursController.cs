@@ -50,7 +50,7 @@ public class ToursController : ApiController
     [ProducesResponseType(typeof(TourDetailsViewModel), StatusCodes.Status200OK)]
     public async Task<IActionResult> ImportTour(IFormFile file)
     {
-        var result = await _tourService.ImportTour(file.OpenReadStream());
+        var result = await _tourService.ImportTour(CurrentUser.Id, file.OpenReadStream());
         return result.Match(Ok, OnError);
     }
 
