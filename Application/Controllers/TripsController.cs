@@ -18,7 +18,7 @@ public class TripsController : ApiController
     static TripsController()
     {
         // Read sample data to memory
-        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "Statics", "Trip.xlsx");
+        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "Controllers", "Statics", "Trip.xlsx");
         if (!System.IO.File.Exists(filePath)) throw new Exception("'Trip.xlsx' file not found.");
         TripSampleData = System.IO.File.ReadAllBytes(filePath);
     }
