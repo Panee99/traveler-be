@@ -10,7 +10,7 @@ public record TourViewModel
     public string Destination = null!;
     public string Duration = null!;
     public string? Description;
-    public string? Policy;
+    public string? Guide;
     public string? ThumbnailUrl;
     public DateTime CreatedAt;
     public TourType Type;

@@ -46,7 +46,7 @@ public static class TourImportHelper
             Duration = reader.GetString(4),
             Type = Enum.Parse<TourType>(reader.GetString(5)),
             Description = reader.GetString(6),
-            Policy = reader.GetString(7)
+            Guide = reader.GetString(7)
         };
 
         // Read schedules
@@ -143,7 +143,7 @@ public class TourModel
     public string Duration { get; set; } = null!;
     public TourType Type { get; set; }
     public string Description { get; set; } = null!;
-    public string Policy { get; set; } = null!;
+    public string Guide { get; set; } = null!;
     public IEnumerable<ScheduleModel> Schedules { get; set; } = null!;
     public ImageModel Thumbnail { get; set; } = null!;
     public IEnumerable<ImageModel> Images { get; set; } = null!;

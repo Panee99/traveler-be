@@ -34,6 +34,15 @@
                 <button class="btn btn-success" type="submit">Import</button>
             </form>
 
+            @if (Model.ImportSuccess is false)
+            {
+                <p style="color: red">Import failed</p>
+            }
+            else if (Model.ImportSuccess is true)
+            {
+                <p style="color: green">Import success</p>
+            }
+
         </div>
         <hr/>
         <div class="w-50" style="margin: 20px 0 20px 0">

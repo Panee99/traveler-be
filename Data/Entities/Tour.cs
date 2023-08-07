@@ -20,7 +20,7 @@ public class Tour
 
     public string? Description { get; set; }
 
-    public string? Policy { get; set; }
+    public string? Guide { get; set; }
 
     public Guid? ThumbnailId { get; set; }
 
