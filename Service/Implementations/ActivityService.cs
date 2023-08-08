@@ -31,37 +31,6 @@ public class ActivityService : BaseService, IActivityService
         _notificationService = notificationService;
     }
 
-    // public async Task<Result> Create(AttendanceActivity model)
-    // {
-    //     var tourGroup = await UnitOfWork.TourGroups.FindAsync(model.TourGroupId);
-    //     if (tourGroup is null) return Error.NotFound("Tour Group not found");
-    //
-    //     UnitOfWork.AttendanceActivities.Add(model);
-    //
-    //     await UnitOfWork.SaveChangesAsync();
-    //
-    //     // Notifications
-    //     var receiverIds = await UnitOfWork.TourGroups
-    //         .Query()
-    //         .Where(group => group.Id == model.TourGroupId)
-    //         .SelectMany(group => group.Travelers)
-    //         .Select(traveler => traveler.Id)
-    //         .ToListAsync();
-    //
-    //     if (tourGroup.TourGuideId != null) receiverIds.Add(tourGroup.TourGuideId.Value);
-    //
-    //     await _notificationJobQueue.EnqueueAsync(
-    //         new NotificationJob(
-    //             receiverIds,
-    //             "Tour Guide",
-    //             model.Title,
-    //             NotificationType.AttendanceActivity
-    //         ));
-    //
-    //     // Return
-    //     return Result.Success();
-    // }
-
     public async Task<Result<string>> Create(PartialActivityModel model)
     {
         var (repo, tourGroupId, dataModel) = _destructurePartialActivityModel(model);
@@ -100,23 +69,26 @@ public class ActivityService : BaseService, IActivityService
         //     new FirebaseAttendanceModel
         //         { Items = attendanceEntity.Items!.Adapt<ICollection<FirebaseAttendanceItem>>(), Title = "" });
 
-        // Notifications
-        var receiverIds = await UnitOfWork.TourGroups
-            .Query()
-            .Where(group => group.Id == tourGroupId)
-            .SelectMany(group => group.Travelers)
-            .Select(traveler => traveler.Id)
-            .ToListAsync();
+        if (entity is AttendanceActivity)
+        {
+            // Notifications
+            var receiverIds = await UnitOfWork.TourGroups
+                .Query()
+                .Where(group => group.Id == tourGroupId)
+                .SelectMany(group => group.Travelers)
+                .Select(traveler => traveler.Id)
+                .ToListAsync();
 
-        if (tourGroup.TourGuideId != null) receiverIds.Add(tourGroup.TourGuideId.Value);
+            if (tourGroup.TourGuideId != null) receiverIds.Add(tourGroup.TourGuideId.Value);
 
-        await _notificationService.EnqueueNotification(
-            new NotificationJob(
-                receiverIds,
-                "Tour Guide",
-                dataModel?.Title,
-                NotificationType.AttendanceActivity
-            ));
+            await _notificationService.EnqueueNotification(
+                new NotificationJob(
+                    receiverIds,
+                    "Tour Guide",
+                    dataModel?.Title,
+                    NotificationType.AttendanceActivity
+                ));
+        }
 
         // Return
         return entity.Id.ToString();
@@ -143,6 +115,12 @@ public class ActivityService : BaseService, IActivityService
             UnitOfWork.CheckInActivities.Update(checkInActivity);
             deleted = true;
         }
+        else if (await UnitOfWork.IncurredCostActivities.FindAsync(id) is { } incurredCostActivity)
+        {
+            incurredCostActivity.IsDeleted = true;
+            UnitOfWork.IncurredCostActivities.Update(incurredCostActivity);
+            deleted = true;
+        }
 
         if (!deleted) return Error.NotFound();
 
@@ -167,6 +145,11 @@ public class ActivityService : BaseService, IActivityService
         else if (await UnitOfWork.CheckInActivities.FindAsync(id) is { } checkInActivity)
         {
             UnitOfWork.CheckInActivities.Remove(checkInActivity);
+            deleted = true;
+        }
+        else if (await UnitOfWork.IncurredCostActivities.FindAsync(id) is { } incurredCostActivity)
+        {
+            UnitOfWork.IncurredCostActivities.Remove(incurredCostActivity);
             deleted = true;
         }
 
@@ -232,6 +215,8 @@ public class ActivityService : BaseService, IActivityService
                 model.CustomActivity?.TourGroupId, model.CustomActivity),
             { Type: ActivityType.CheckIn } => (UnitOfWork.CheckInActivities,
                 model.CheckInActivity?.TourGroupId, model.CheckInActivity),
+            { Type: ActivityType.IncurredCost } => (UnitOfWork.IncurredCostActivities,
+                model.IncurredCostActivity?.TourGroupId, model.IncurredCostActivity),
             _ => throw new ArgumentOutOfRangeException(nameof(model), model, null)
         };
     }

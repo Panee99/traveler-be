@@ -147,6 +147,16 @@ public static class EntityConfigurations
             entity.Property(x => x.IsDeleted).HasDefaultValue(false);
         });
 
+        modelBuilder.Entity<IncurredCostActivity>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Title).IsRequired();
+            entity.Property(x => x.CreatedAt).IsRequired();
+            entity.Property(x => x.Note).IsRequired().HasDefaultValue(string.Empty);
+            entity.Property(x => x.TourGroupId).IsRequired();
+            entity.Property(x => x.IsDeleted).HasDefaultValue(false);
+        });
+
         modelBuilder.Entity<WeatherAlert>(alert =>
         {
             alert.HasOne(e => e.Trip).WithMany(trip => trip.WeatherAlerts)

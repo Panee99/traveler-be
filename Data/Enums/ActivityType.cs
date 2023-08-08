@@ -4,5 +4,6 @@ public enum ActivityType
 {
     Attendance,
     CheckIn,
-    Custom
+    Custom,
+    IncurredCost
 }

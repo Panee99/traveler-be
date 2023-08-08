@@ -12,4 +12,6 @@ public class PartialActivityModel
     public CustomActivity? CustomActivity { get; set; }
 
     public CheckInActivity? CheckInActivity { get; set; }
+
+    public IncurredCostActivity? IncurredCostActivity { get; set; }
 }

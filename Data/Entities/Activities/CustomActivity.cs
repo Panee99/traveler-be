@@ -1,3 +1,5 @@
+using Newtonsoft.Json;
+
 namespace Data.Entities.Activities;
 
 public class CustomActivity : IActivity
@@ -16,5 +18,5 @@ public class CustomActivity : IActivity
 
     public DateTime? CreatedAt { get; set; }
 
-    public TourGroup? TourGroup { get; set; }
+    [JsonIgnore] public TourGroup? TourGroup { get; set; }
 }

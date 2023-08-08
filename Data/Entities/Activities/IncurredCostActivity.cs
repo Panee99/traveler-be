@@ -2,11 +2,17 @@ using Newtonsoft.Json;
 
 namespace Data.Entities.Activities;
 
-public class CheckInActivity : IActivity
+public class IncurredCostActivity : IActivity
 {
     public Guid? Id { get; set; }
 
     public Guid? TourGroupId { get; set; }
+
+    public Guid? ImageId { get; set; }
+
+    public double Cost { get; set; }
+
+    public string Currency { get; set; } = null!;
 
     public string? Title { get; set; }
 
@@ -19,4 +25,6 @@ public class CheckInActivity : IActivity
     public DateTime? CreatedAt { get; set; }
 
     [JsonIgnore] public TourGroup? TourGroup { get; set; }
+
+    [JsonIgnore] public Attachment? Image { get; set; }
 }
