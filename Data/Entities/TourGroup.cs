@@ -15,6 +15,8 @@ public class TourGroup
 
     public string GroupName { get; set; } = null!;
 
+    public int GroupNo { get; set; }
+
     public DateTime CreatedAt { get; set; }
 
     public Trip Trip { get; set; } = null!;
