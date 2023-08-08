@@ -6,6 +6,7 @@ public record ScheduleViewModel
 {
     public Guid Id;
     public int Sequence;
+    public string Title = null!;
     public string Description = null!;
     public double? Longitude;
     public double? Latitude;
