@@ -11,4 +11,5 @@ public record ScheduleViewModel
     public double? Latitude;
     public int DayNo;
     public Vehicle? Vehicle;
+    public string? ImageUrl;
 }

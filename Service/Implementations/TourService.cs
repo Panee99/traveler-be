@@ -147,7 +147,7 @@ public class TourService : BaseService, ITourService
             .Query()
             .AsSplitQuery()
             .Where(e => e.Id == id)
-            .Include(e => e.Schedules)
+            .Include(e => e.Schedules).ThenInclude(schedule => schedule.Image)
             .Include(e => e.Thumbnail)
             .Include(e => e.TourCarousel)
             .ThenInclude(x => x.Attachment)
@@ -169,6 +169,13 @@ public class TourService : BaseService, ITourService
                 Url = _cloudStorageService.GetMediaLink(attachment.FileName)
             })
             .ToList();
+
+        viewModel.Schedules = tour.Schedules.Select(schedule =>
+        {
+            var scheduleView = schedule.Adapt<ScheduleViewModel>();
+            scheduleView.ImageUrl = _cloudStorageService.GetMediaLink(schedule.Image?.FileName);
+            return scheduleView;
+        }).ToList();
 
         return viewModel;
     }
@@ -215,11 +222,17 @@ public class TourService : BaseService, ITourService
         if (!await UnitOfWork.Tours.AnyAsync(e => e.Id == tourId))
             return Error.NotFound(DomainErrors.Tour.NotFound);
 
-        var entities = await UnitOfWork.Schedules
+        var schedules = await UnitOfWork.Schedules
             .Query()
             .Where(e => e.TourId == tourId)
+            .Include(e => e.Image)
             .ToListAsync();
 
-        return entities.Adapt<List<ScheduleViewModel>>();
+        return schedules.Select(schedule =>
+        {
+            var scheduleView = schedule.Adapt<ScheduleViewModel>();
+            scheduleView.ImageUrl = _cloudStorageService.GetMediaLink(schedule.Image?.FileName);
+            return scheduleView;
+        }).ToList();
     }
 }

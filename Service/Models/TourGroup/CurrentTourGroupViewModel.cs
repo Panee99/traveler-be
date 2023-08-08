@@ -9,6 +9,7 @@ public class CurrentTourGroupViewModel
     public DateTime CreatedAt;
     public int TotalDays;
     public string GroupName = null!;
+    public int GroupNo;
     public Guid? TourGuideId;
     public Guid TripId;
     public int TravelerCount;

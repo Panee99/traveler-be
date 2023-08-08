@@ -8,6 +8,7 @@ public class TourGroupViewModel
     public Guid Id;
     public DateTime CreatedAt;
     public string GroupName = null!;
+    public int GroupNo;
     public Guid? TourGuideId;
     public Guid TripId;
     public int TravelerCount;
