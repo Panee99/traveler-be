@@ -69,11 +69,12 @@ public static class TourImportHelper
             schedules.Add(new ScheduleModel()
             {
                 Sequence = (int)reader.GetDouble(0),
-                Description = reader.GetString(1),
-                Longitude = IsNull(reader.GetValue(2)) ? null : reader.GetDouble(2),
-                Latitude = IsNull(reader.GetValue(3)) ? null : reader.GetDouble(3),
-                DayNo = (int)reader.GetDouble(4),
-                Vehicle = IsNull(reader.GetValue(5)) ? null : Enum.Parse<Vehicle>(reader.GetString(5))
+                Title = reader.GetString(1),
+                Description = reader.GetString(2),
+                Longitude = IsNull(reader.GetValue(3)) ? null : reader.GetDouble(2),
+                Latitude = IsNull(reader.GetValue(4)) ? null : reader.GetDouble(3),
+                DayNo = (int)reader.GetDouble(5),
+                Vehicle = IsNull(reader.GetValue(6)) ? null : Enum.Parse<Vehicle>(reader.GetString(5))
             });
         }
 
@@ -152,6 +153,7 @@ public class TourModel
 public class ScheduleModel
 {
     public int Sequence { get; set; }
+    public string Title { get; set; } = null!;
     public string Description { get; set; } = null!;
     public double? Longitude { get; set; }
     public double? Latitude { get; set; }
