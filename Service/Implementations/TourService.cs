@@ -36,20 +36,24 @@ public class TourService : BaseService, ITourService
 
         try
         {
+            // Read data
             var tourModel = TourImportHelper.ReadTourArchive(tourZipData);
             if (await UnitOfWork.Tours.AnyAsync(e => e.Id == tourModel.Id))
                 return Error.Conflict($"Tour '{tourModel.Id}' already exist.");
 
+            // Create tour
             var tour = tourModel.Adapt<Tour>();
             tour.Thumbnail = null;
             tour.CreatedById = createdById;
             tour = UnitOfWork.Tours.Add(tour);
             await UnitOfWork.SaveChangesAsync();
 
+            // Add images to tour
             await _addTourImages(tour.Id, tourModel.Images);
             await _addTourThumbnail(tour.Id, tourModel.Thumbnail);
             await UnitOfWork.SaveChangesAsync();
 
+            // Commit and return
             await transaction.CommitAsync();
             return await GetDetails(tour.Id);
         }
