@@ -84,9 +84,10 @@ public class ActivityService : BaseService, IActivityService
             await _notificationService.EnqueueNotification(
                 new NotificationJob(
                     receiverIds,
+                    NotificationType.AttendanceActivity,
                     "Tour Guide",
                     dataModel?.Title,
-                    NotificationType.AttendanceActivity
+                    null
                 ));
         }
 

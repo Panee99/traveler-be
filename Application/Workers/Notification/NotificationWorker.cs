@@ -14,8 +14,8 @@ public class NotificationWorker : BackgroundService
     private readonly INotificationJobQueue _jobQueue;
     private readonly IServiceProvider _serviceProvider;
 
-    private readonly RazorEngine _razorEngine;
-    private readonly string _attendanceTemplate;
+    private readonly IRazorEngineCompiledTemplate _attendanceTemplate;
+    private readonly IRazorEngineCompiledTemplate _emergencyTemplate;
 
     public NotificationWorker(
         INotificationJobQueue jobQueue,
@@ -28,8 +28,9 @@ public class NotificationWorker : BackgroundService
         _serviceProvider = serviceProvider;
         _cloudNotificationService = cloudNotificationService;
         //
-        _razorEngine = new RazorEngine();
-        _attendanceTemplate = _readTemplate("attendance.html");
+        var razorEngine = new RazorEngine();
+        _attendanceTemplate = razorEngine.Compile(_readTemplate("attendance.html"));
+        _emergencyTemplate = razorEngine.Compile(_readTemplate("emergency.html"));
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -41,77 +42,85 @@ public class NotificationWorker : BackgroundService
             {
                 var job = await _jobQueue.DequeueAsync();
                 _ = Task.Run(
-                    async () =>
-                    {
-                        using var scope = _serviceProvider.CreateScope();
-                        var unitOfWork = scope.ServiceProvider.GetRequiredService<UnitOfWork>();
-                        var notificationService = scope.ServiceProvider.GetRequiredService<INotificationService>();
-
-                        var title = _buildTitle(job.Type);
-                        var rawPayload = _buildPayload(job.Type, job.Subject, job.DirectObject, false);
-                        var templatePayload = _buildPayload(job.Type, job.Subject, job.DirectObject, true);
-
-                        // 1. Save notifications
-                        await notificationService.SaveNotifications(job.ReceiverIds,
-                            title,
-                            templatePayload,
-                            job.Type);
-
-                        // 2. Send notifications
-                        var fcmTokens = await unitOfWork.FcmTokens
-                            .Query()
-                            .Where(e => job.ReceiverIds.Contains(e.UserId))
-                            .Select(e => e.Token)
-                            .ToListAsync(stoppingToken);
-
-                        await _cloudNotificationService.SendBatchMessages(
-                            fcmTokens, title, rawPayload, job.Type);
-                    },
-                    stoppingToken);
+                    async () => { await _handleNotification(job); }, stoppingToken);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error executing notification task: {Message}", ex.Message);
             }
-            // catch (OperationCanceledException) {}
         }
     }
 
+    // Handler worker stop event
     public override async Task StopAsync(CancellationToken stoppingToken)
     {
         _logger.LogInformation($"{nameof(NotificationWorker)} is stopping.");
         await base.StopAsync(stoppingToken);
     }
 
+    // Handle Notification by types
+    private async Task _handleNotification(NotificationJob job)
+    {
+        // Get Dependencies
+        using var scope = _serviceProvider.CreateScope();
+        var unitOfWork = scope.ServiceProvider.GetRequiredService<UnitOfWork>();
+        var notificationService = scope.ServiceProvider.GetRequiredService<INotificationService>();
+
+        // Get fcm tokens
+        var fcmTokens = await unitOfWork.FcmTokens
+            .Query()
+            .Where(e => job.ReceiverIds.Contains(e.UserId))
+            .Select(e => e.Token)
+            .ToListAsync();
+
+        var title = _buildTitle(job.Type);
+        switch (job.Type)
+        {
+            case NotificationType.AttendanceActivity:
+                await notificationService.SaveNotifications(job.ReceiverIds, title,
+                    await _attendanceTemplate.RunAsync(new { Name = job.DirectObject }), job.Type, job.ImageId);
+
+                await _cloudNotificationService.SendBatchMessages(fcmTokens, title,
+                    $"A new attendance activity opened. {job.DirectObject}", job.Type);
+                break;
+
+            case NotificationType.Emergency:
+                await notificationService.SaveNotifications(job.ReceiverIds, title,
+                    await _emergencyTemplate.RunAsync(new { Name = job.Subject }), job.Type, job.ImageId);
+
+                await _cloudNotificationService.SendBatchMessages(fcmTokens, title,
+                    $"Notice! User {job.Subject} sent emergency request.", job.Type);
+                break;
+
+            case NotificationType.CheckInActivity:
+                break;
+
+            case NotificationType.CustomActivity:
+                break;
+
+            case NotificationType.TourStarted:
+                break;
+
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
+
+    // Create string title from NotificationType
     private string _buildTitle(NotificationType type)
     {
         return type switch
         {
             NotificationType.AttendanceActivity => "Attendance Activity",
-            NotificationType.TourStarted => throw new ArgumentOutOfRangeException(),
+            NotificationType.Emergency => "Emergency",
+            NotificationType.TourStarted => "Tour Started",
+            NotificationType.CustomActivity => "Activity",
+            NotificationType.CheckInActivity => "Check In Activity",
             _ => throw new ArgumentOutOfRangeException()
         };
     }
 
-    private string _buildPayload(NotificationType type, string subject, string directObject, bool useTemplate)
-    {
-        switch (type)
-        {
-            case NotificationType.AttendanceActivity:
-            {
-                if (!useTemplate)
-                {
-                    return $"A new attendance activity opened: {directObject}";
-                }
-
-                var compiledTemplate = _razorEngine.Compile(_attendanceTemplate);
-                return compiledTemplate.Run(new { Name = directObject });
-            }
-            case NotificationType.TourStarted: throw new ArgumentOutOfRangeException();
-            default: throw new ArgumentOutOfRangeException();
-        }
-    }
-
+    // Read .html template file
     private static string _readTemplate(string fileName)
     {
         return File.ReadAllText($"Workers/Notification/Templates/{fileName}");

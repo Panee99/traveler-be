@@ -3,6 +3,7 @@ using Data.Enums;
 using Google.Cloud.Firestore;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
+using Service.Channels.Notification;
 using Service.Interfaces;
 using Service.Models.Activity;
 using Service.Models.TourGroup;
@@ -16,12 +17,15 @@ public class TourGroupService : BaseService, ITourGroupService
 {
     private readonly ICloudStorageService _cloudStorageService;
     private readonly FirestoreDb _firestoreDb;
+    private readonly INotificationService _notificationService;
 
-    public TourGroupService(UnitOfWork unitOfWork, ICloudStorageService cloudStorageService, FirestoreDb firestoreDb) :
+    public TourGroupService(UnitOfWork unitOfWork, ICloudStorageService cloudStorageService, FirestoreDb firestoreDb,
+        INotificationService notificationService) :
         base(unitOfWork)
     {
         _cloudStorageService = cloudStorageService;
         _firestoreDb = firestoreDb;
+        _notificationService = notificationService;
     }
 
     public async Task<int> CountTravelers(Guid tourGroupId)
@@ -80,6 +84,17 @@ public class TourGroupService : BaseService, ITourGroupService
 
     public async Task<Result> SendEmergency(Guid tourGroupId, Guid senderId, EmergencyRequestModel model)
     {
+        var group = await UnitOfWork.TourGroups.Query()
+            .Where(e => e.Id == tourGroupId)
+            .Include(e => e.Travelers)
+            .FirstOrDefaultAsync();
+
+        if (group is null) return Error.NotFound(DomainErrors.TourGroup.NotFound);
+
+        var sender = await UnitOfWork.Users.FindAsync(senderId);
+        if (sender is null) return Error.NotFound(DomainErrors.User.NotFound);
+
+        // Send emergency message to group chat
         var messagesRef = _firestoreDb
             .Collection("groups")
             .Document(tourGroupId.ToString())
@@ -87,9 +102,6 @@ public class TourGroupService : BaseService, ITourGroupService
 
         if (!await UnitOfWork.TourGroups.AnyAsync(e => e.Id == tourGroupId))
             return Error.NotFound(DomainErrors.TourGroup.NotFound);
-
-        var sender = await UnitOfWork.Users.FindAsync(senderId);
-        if (sender is null) return Error.NotFound(DomainErrors.User.NotFound);
 
         var content = $"{sender.FirstName} {sender.LastName} sent Emergency request.\n" +
                       $"https://www.google.com/maps/@{model.Latitude},{model.Longitude}";
@@ -102,8 +114,19 @@ public class TourGroupService : BaseService, ITourGroupService
             Type = "text",
         };
 
-        var result = await messagesRef.AddAsync(message);
-        Console.WriteLine(result.Id);
+        await messagesRef.AddAsync(message);
+
+        // Send via Notification
+        var userIds = group.Travelers.Select(t => t.Id).ToList();
+        if (group.TourGuideId != null) userIds.Add(group.TourGuideId.Value);
+
+        await _notificationService.EnqueueNotification(new NotificationJob(
+            userIds,
+            NotificationType.Emergency,
+            $"{sender.FirstName} {sender.LastName}",
+            null,
+            sender.AvatarId
+        ));
 
         return Result.Success();
     }
@@ -118,30 +141,6 @@ public class TourGroupService : BaseService, ITourGroupService
         view.TravelerCount = await CountTravelers(id);
         return view;
     }
-
-    // public async Task<Result<TourGroupViewModel>> Update(Guid groupId, TourGroupUpdateModel model)
-    // {
-    //     var group = await UnitOfWork.TourGroups.FindAsync(groupId);
-    //     if (group is null) return Error.NotFound(DomainErrors.TourGroup.NotFound);
-    //
-    //     if (model.GroupName != null) group.GroupName = model.GroupName;
-    //
-    //     if (model.TourGuideId != null)
-    //     {
-    //         var tourGuide = await UnitOfWork.TourGuides.FindAsync(model.TourGuideId);
-    //         if (tourGuide is null) return Error.NotFound(DomainErrors.TourGuide.NotFound);
-    //         group.TourGuide = tourGuide;
-    //     }
-    //
-    //     UnitOfWork.TourGroups.Update(group);
-    //
-    //     await UnitOfWork.SaveChangesAsync();
-    //
-    //     // return
-    //     var view = group.Adapt<TourGroupViewModel>();
-    //     view.TravelerCount = await CountTravelers(groupId);
-    //     return view;
-    // }
 
     public async Task<Result> Delete(Guid groupId)
     {

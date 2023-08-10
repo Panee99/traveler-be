@@ -89,19 +89,18 @@ public class NotificationService : BaseService, INotificationService
         IEnumerable<Guid> receiverIds,
         string title,
         string payload,
-        NotificationType type)
+        NotificationType type,
+        Guid? imageId)
     {
-        var notifications = receiverIds.Select(travelerId =>
+        var notifications = receiverIds.Select(travelerId => new Notification()
         {
-            return new Notification()
-            {
-                ReceiverId = travelerId,
-                Title = title,
-                Payload = payload,
-                Timestamp = DateTimeHelper.VnNow(),
-                IsRead = false,
-                Type = type,
-            };
+            ReceiverId = travelerId,
+            Title = title,
+            Payload = payload,
+            Timestamp = DateTimeHelper.VnNow(),
+            IsRead = false,
+            Type = type,
+            ImageId = imageId
         });
 
         UnitOfWork.Notifications.AddRange(notifications);
