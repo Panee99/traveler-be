@@ -1,52 +1,12 @@
 ﻿[
   {
-    "Id": "ddb00ef3-9694-4c99-9865-8083bbee530d",
-    "ReceiverId": "21751a9c-fcd9-4fcc-93ed-7a4349a34bc7",
+    "Id": "814904e0-a8c1-4207-60d8-08db6f4dd64f",
+    "ReceiverId": "e6618130-62e9-4053-4047-08db269c26be",
     "Title": "Attendance Activity",
     "Payload": "<div style=\"text-align: left; font-size: 16px; color: #202625;\">\r\n    Attendance for\r\n    <strong>\r\n        Prepare to depart\r\n    </strong>\r\n    has been\r\n    <span style=\"color: #00C738; font-weight: normal;\">\r\n        opened\r\n    </span>.\r\n</div>",
     "Type": "AttendanceActivity",
     "IsRead": false,
     "Timestamp": "2023-06-17 23:13:50.1683174",
-    "ImageId": null
-  },
-  {
-    "Id": "3f90565e-5126-4f19-91b2-7d509f9c6f59",
-    "ReceiverId": "21751a9c-fcd9-4fcc-93ed-7a4349a34bc7",
-    "Title": "Attendance Activity",
-    "Payload": "<div style=\"text-align: left; font-size: 16px; color: #202625;\">\r\n    Attendance for\r\n    <strong>\r\n        Day 2\r\n    </strong>\r\n    has been\r\n    <span style=\"color: #00C738; font-weight: normal;\">\r\n        opened\r\n    </span>.\r\n</div>",
-    "Type": "AttendanceActivity",
-    "IsRead": false,
-    "Timestamp": "2023-06-18 18:00:51.1300000",
-    "ImageId": null
-  },
-  {
-    "Id": "321542ad-b771-42f2-7f9f-08db998cc20b",
-    "ReceiverId": "21751a9c-fcd9-4fcc-93ed-7a4349a34bc7",
-    "Title": "Emergency",
-    "Payload": "<div style=\"text-align: left; font-size: 16px; color: #202625;\">\r\n    <strong style=\"color:red\">WARNING!!!</strong>\r\n    <strong>\r\n        Emma Ashley\r\n    </strong>\r\n    has pressed the button to activate the emergency.\r\n    <span style=\"color: red; font-weight: normal;\">\r\n         Please send assistance immediately.\r\n    </span>\r\n</div>",
-    "Type": "Emergency",
-    "IsRead": false,
-    "Timestamp": "2023-08-10 17:30:03.3321889",
-    "ImageId": "8bafd674-e193-49a0-d77d-08db61d06544"
-  },
-  {
-    "Id": "f866aa8e-c57c-4dd9-7f9e-08db998cc20b",
-    "ReceiverId": "ed3ebf19-3225-4f93-93a6-2ca03d43529b",
-    "Title": "Emergency",
-    "Payload": "<div style=\"text-align: left; font-size: 16px; color: #202625;\">\r\n    <strong style=\"color:red\">WARNING!!!</strong>\r\n    <strong>\r\n        Emma Ashley\r\n    </strong>\r\n    has pressed the button to activate the emergency.\r\n    <span style=\"color: red; font-weight: normal;\">\r\n         Please send assistance immediately.\r\n    </span>\r\n</div>",
-    "Type": "Emergency",
-    "IsRead": false,
-    "Timestamp": "2023-08-10 17:30:03.3316338",
-    "ImageId": "8bafd674-e193-49a0-d77d-08db61d06544"
-  },
-  {
-    "Id": "c1e52654-cf87-42c2-769e-08db7246c6c9",
-    "ReceiverId": "ed3ebf19-3225-4f93-93a6-2ca03d43529b",
-    "Title": "Attendance Activity",
-    "Payload": "<div style=\"text-align: left; font-size: 16px; color: #202625;\">\r\n    Attendance for\r\n    <strong>\r\n        Day 2\r\n    </strong>\r\n    has been\r\n    <span style=\"color: #00C738; font-weight: normal;\">\r\n        opened\r\n    </span>.\r\n</div>",
-    "Type": "AttendanceActivity",
-    "IsRead": false,
-    "Timestamp": "2023-06-18 18:00:51.1730000",
     "ImageId": null
   },
   {
@@ -60,16 +20,6 @@
     "ImageId": null
   },
   {
-    "Id": "148d676a-cccf-478d-7f9d-08db998cc20b",
-    "ReceiverId": "e6618130-62e9-4053-4047-08db269c26be",
-    "Title": "Emergency",
-    "Payload": "<div style=\"text-align: left; font-size: 16px; color: #202625;\">\r\n    <strong style=\"color:red\">WARNING!!!</strong>\r\n    <strong>\r\n        Emma Ashley\r\n    </strong>\r\n    has pressed the button to activate the emergency.\r\n    <span style=\"color: red; font-weight: normal;\">\r\n         Please send assistance immediately.\r\n    </span>\r\n</div>",
-    "Type": "Emergency",
-    "IsRead": false,
-    "Timestamp": "2023-08-10 17:30:03.2920080",
-    "ImageId": "8bafd674-e193-49a0-d77d-08db61d06544"
-  },
-  {
     "Id": "378bad19-dbc0-4d86-769d-08db7246c6c9",
     "ReceiverId": "e6618130-62e9-4053-4047-08db269c26be",
     "Title": "Attendance Activity",
@@ -80,13 +30,63 @@
     "ImageId": null
   },
   {
-    "Id": "814904e0-a8c1-4207-60d8-08db6f4dd64f",
-    "ReceiverId": "e6618130-62e9-4053-4047-08db269c26be",
+    "Id": "c1e52654-cf87-42c2-769e-08db7246c6c9",
+    "ReceiverId": "ed3ebf19-3225-4f93-93a6-2ca03d43529b",
+    "Title": "Attendance Activity",
+    "Payload": "<div style=\"text-align: left; font-size: 16px; color: #202625;\">\r\n    Attendance for\r\n    <strong>\r\n        Day 2\r\n    </strong>\r\n    has been\r\n    <span style=\"color: #00C738; font-weight: normal;\">\r\n        opened\r\n    </span>.\r\n</div>",
+    "Type": "AttendanceActivity",
+    "IsRead": false,
+    "Timestamp": "2023-06-18 18:00:51.1730000",
+    "ImageId": null
+  },
+  {
+    "Id": "3f90565e-5126-4f19-91b2-7d509f9c6f59",
+    "ReceiverId": "21751a9c-fcd9-4fcc-93ed-7a4349a34bc7",
+    "Title": "Attendance Activity",
+    "Payload": "<div style=\"text-align: left; font-size: 16px; color: #202625;\">\r\n    Attendance for\r\n    <strong>\r\n        Day 2\r\n    </strong>\r\n    has been\r\n    <span style=\"color: #00C738; font-weight: normal;\">\r\n        opened\r\n    </span>.\r\n</div>",
+    "Type": "AttendanceActivity",
+    "IsRead": false,
+    "Timestamp": "2023-06-18 18:00:51.1300000",
+    "ImageId": null
+  },
+  {
+    "Id": "ddb00ef3-9694-4c99-9865-8083bbee530d",
+    "ReceiverId": "21751a9c-fcd9-4fcc-93ed-7a4349a34bc7",
     "Title": "Attendance Activity",
     "Payload": "<div style=\"text-align: left; font-size: 16px; color: #202625;\">\r\n    Attendance for\r\n    <strong>\r\n        Prepare to depart\r\n    </strong>\r\n    has been\r\n    <span style=\"color: #00C738; font-weight: normal;\">\r\n        opened\r\n    </span>.\r\n</div>",
     "Type": "AttendanceActivity",
     "IsRead": false,
     "Timestamp": "2023-06-17 23:13:50.1683174",
     "ImageId": null
+  },
+  {
+    "Id": "148d676a-cccf-478d-7f9d-08db998cc20b",
+    "ReceiverId": "e6618130-62e9-4053-4047-08db269c26be",
+    "Title": "Emergency",
+    "Payload": "<div style=\"text-align: left; font-size: 16px; color: #202625;\">\r\n    <strong style=\"color:red\">WARNING!!!</strong>\r\n    <strong>\r\n        Emma Ashley\r\n    </strong>\r\n    has pressed the button to activate the emergency.\r\n    <span style=\"color: red; font-weight: normal;\">\r\n         Please send assistance immediately.\r\n    </span>\r\n</div>",
+    "Type": "Emergency",
+    "IsRead": false,
+    "Timestamp": "2023-08-10 17:30:03.2920080",
+    "ImageId": "8bafd674-e193-49a0-d77d-08db61d06544"
+  },
+  {
+    "Id": "f866aa8e-c57c-4dd9-7f9e-08db998cc20b",
+    "ReceiverId": "ed3ebf19-3225-4f93-93a6-2ca03d43529b",
+    "Title": "Emergency",
+    "Payload": "<div style=\"text-align: left; font-size: 16px; color: #202625;\">\r\n    <strong style=\"color:red\">WARNING!!!</strong>\r\n    <strong>\r\n        Emma Ashley\r\n    </strong>\r\n    has pressed the button to activate the emergency.\r\n    <span style=\"color: red; font-weight: normal;\">\r\n         Please send assistance immediately.\r\n    </span>\r\n</div>",
+    "Type": "Emergency",
+    "IsRead": false,
+    "Timestamp": "2023-08-10 17:30:03.3316338",
+    "ImageId": "8bafd674-e193-49a0-d77d-08db61d06544"
+  },
+  {
+    "Id": "321542ad-b771-42f2-7f9f-08db998cc20b",
+    "ReceiverId": "21751a9c-fcd9-4fcc-93ed-7a4349a34bc7",
+    "Title": "Emergency",
+    "Payload": "<div style=\"text-align: left; font-size: 16px; color: #202625;\">\r\n    <strong style=\"color:red\">WARNING!!!</strong>\r\n    <strong>\r\n        Emma Ashley\r\n    </strong>\r\n    has pressed the button to activate the emergency.\r\n    <span style=\"color: red; font-weight: normal;\">\r\n         Please send assistance immediately.\r\n    </span>\r\n</div>",
+    "Type": "Emergency",
+    "IsRead": false,
+    "Timestamp": "2023-08-10 17:30:03.3321889",
+    "ImageId": "8bafd674-e193-49a0-d77d-08db61d06544"
   }
 ]
