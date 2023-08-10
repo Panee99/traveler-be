@@ -18,8 +18,8 @@ public class TripsController : ApiController
     static TripsController()
     {
         // Read sample data to memory
-        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "Controllers", "Statics", "Trip.xlsx");
-        if (!System.IO.File.Exists(filePath)) throw new Exception("'Trip.xlsx' file not found.");
+        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "Controllers", "Statics", "Trip.zip");
+        if (!System.IO.File.Exists(filePath)) throw new Exception("'Trip.zip' file not found.");
         TripSampleData = System.IO.File.ReadAllBytes(filePath);
     }
 
@@ -36,8 +36,8 @@ public class TripsController : ApiController
     {
         return File(
             TripSampleData,
-            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-            "Trip.xlsx"
+            "application/zip",
+            "Trip.zip"
         );
     }
 
@@ -47,7 +47,7 @@ public class TripsController : ApiController
     [HttpPost("import")]
     public async Task<IActionResult> TripImport(IFormFile file)
     {
-        var result = await _tripService.ImportTrip(file.OpenReadStream());
+        var result = await _tripService.ImportTrip(CurrentUser.Id, file.OpenReadStream());
         return result.Match(Ok, OnError);
     }
 
