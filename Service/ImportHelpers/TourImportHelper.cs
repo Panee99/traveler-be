@@ -71,12 +71,12 @@ public static class TourImportHelper
                 Sequence = (int)reader.GetDouble(0),
                 Title = reader.GetString(1),
                 Description = reader.GetString(2),
-                Longitude = IsNull(reader.GetValue(3)) ? null : reader.GetDouble(2),
-                Latitude = IsNull(reader.GetValue(4)) ? null : reader.GetDouble(3),
+                Longitude = IsNull(reader.GetValue(3)) ? null : reader.GetDouble(3),
+                Latitude = IsNull(reader.GetValue(4)) ? null : reader.GetDouble(4),
                 DayNo = (int)reader.GetDouble(5),
-                Vehicle = IsNull(reader.GetValue(6)) ? null : Enum.Parse<Vehicle>(reader.GetString(5))
+                Vehicle = IsNull(reader.GetValue(6)) ? null : Enum.Parse<Vehicle>(reader.GetString(6))
             });
-        }
+        }   
 
         return schedules;
     }
