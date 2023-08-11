@@ -111,7 +111,7 @@ public class TourGroupService : BaseService, ITourGroupService
             Content = content,
             SenderId = sender.Id.ToString(),
             Timestamp = DateTimeHelper.VnNow().ToString("yyyy-MM-ddTHH:mm:ss.ff"),
-            Type = "text",
+            Type = "custom",
         };
 
         await messagesRef.AddAsync(message);
