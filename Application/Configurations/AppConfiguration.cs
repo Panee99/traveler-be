@@ -1,11 +1,10 @@
 ﻿using Application.Middlewares;
-using Application.Workers;
 using Application.Workers.Notification;
+using Application.Workers.Weather;
 using Data.EFCore;
 using FireSharp;
 using FireSharp.Config;
 using FireSharp.Interfaces;
-using Google.Cloud.Firestore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Service.Channels.Notification;
@@ -48,7 +47,7 @@ public static class AppConfiguration
         // Workers
         services.AddSingleton<INotificationJobQueue>(new NotificationJobQueue());
         services.AddHostedService<NotificationWorker>();
-        services.AddHostedService<UpdateWeatherAlertsWorker>();
+        services.AddHostedService<UpdateWeatherWorker>();
 
         // Middleware
         services.AddScoped<HttpRequestLoggingMiddleware>();

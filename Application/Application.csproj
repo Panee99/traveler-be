@@ -7,55 +7,54 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.14" />
-        <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="6.0.20" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.14"/>
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="6.0.20"/>
         <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.14">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-        <PackageReference Include="Quartz" Version="3.6.3" />
-        <PackageReference Include="RazorEngineCore" Version="2022.8.1" />
-        <PackageReference Include="Scrutor" Version="4.2.2" />
-        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
-        <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.5.0" />
-        <PackageReference Include="Swashbuckle.AspNetCore.Newtonsoft" Version="6.5.0" />
-        <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.26.1" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.3"/>
+        <PackageReference Include="Quartz" Version="3.6.3"/>
+        <PackageReference Include="RazorEngineCore" Version="2022.8.1"/>
+        <PackageReference Include="Scrutor" Version="4.2.2"/>
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0"/>
+        <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.5.0"/>
+        <PackageReference Include="Swashbuckle.AspNetCore.Newtonsoft" Version="6.5.0"/>
+        <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.26.1"/>
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Service\Service.csproj" />
+        <ProjectReference Include="..\Service\Service.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-        <Compile Remove="logs\**" />
-        <Compile Remove="Controllers\TransactionsController.cs" />
-        <Compile Remove="Controllers\TicketsController.cs" />
+        <Compile Remove="logs\**"/>
+        <Compile Remove="Controllers\TransactionsController.cs"/>
+        <Compile Remove="Controllers\TicketsController.cs"/>
     </ItemGroup>
 
     <ItemGroup>
-        <EmbeddedResource Remove="logs\**" />
+        <EmbeddedResource Remove="logs\**"/>
     </ItemGroup>
 
     <ItemGroup>
-        <None Remove="logs\**" />
+        <None Remove="logs\**"/>
         <None Update="Workers\Notification\Templates\attendance.html">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
         <None Update="Controllers\Statics\Trip.zip">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
         <None Update="Controllers\Statics\Tour.zip">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
         <None Update="Workers\Notification\Templates\emergency.html">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
     </ItemGroup>
 
     <ItemGroup>
-        <Content Remove="logs\**" />
+        <Content Remove="logs\**"/>
     </ItemGroup>
-
-
+    
 </Project>
