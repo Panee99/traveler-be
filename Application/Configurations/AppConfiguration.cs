@@ -28,7 +28,8 @@ public static class AppConfiguration
         // Settings
         services.Configure<AppSettings>(configuration.GetSection("AppSettings"));
         services.Configure<CloudStorageSettings>(configuration.GetSection("CloudStorageSettings"));
-
+        services.Configure<SmtpSettings>(configuration.GetSection("SmtpSettings"));
+        
         // DbContext
         services.AddDbContextPool<AppDbContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
@@ -64,6 +65,7 @@ public static class AppConfiguration
         // Other services
         services.AddSingleton<ICloudStorageService, CloudStorageService>();
         services.AddSingleton<ICloudNotificationService, CloudNotificationService>();
+        services.AddSingleton<ISmtpService, SmtpService>();
         services.AddSingleton(FirestoreHelper.GetInstance());
 
         return services;

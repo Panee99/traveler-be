@@ -19,4 +19,19 @@ public static class AuthHelper
         var inputHash = HashPassword(password);
         return inputHash.Equals(hashedPassword);
     }
+
+    public static string GeneratePassword(int length)
+    {
+        const string validChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        var result = new StringBuilder();
+        var random = new Random();
+
+        for (var i = 0; i < length; i++)
+        {
+            var index = random.Next(validChars.Length);
+            result.Append(validChars[index]);
+        }
+
+        return result.ToString();
+    }
 }

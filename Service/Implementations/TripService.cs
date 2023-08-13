@@ -17,8 +17,11 @@ namespace Service.Implementations;
 
 public class TripService : BaseService, ITripService
 {
-    public TripService(UnitOfWork unitOfWork) : base(unitOfWork)
+    private readonly ISmtpService _smtpService;
+
+    public TripService(UnitOfWork unitOfWork, ISmtpService smtpService) : base(unitOfWork)
     {
+        _smtpService = smtpService;
     }
 
     public async Task<Result<TripViewModel>> ImportTrip(Guid createdById, Stream tripZipData)
@@ -51,6 +54,9 @@ public class TripService : BaseService, ITripService
 
         UnitOfWork.Trips.Add(trip);
 
+        // List of new users, to send credential emails later
+        var newUsers = new List<(string Email, string Name, string Password, string Role)>();
+
         // Create Group entities
         foreach (var groupModel in tripModel.TourGroups)
         {
@@ -63,9 +69,13 @@ public class TripService : BaseService, ITripService
             {
                 // Add to DB if tour guide not exist
                 var user = groupModel.TourGuide.Adapt<TourGuide>();
-                user.Password = AuthHelper.HashPassword("123123");
+                var newPassword = AuthHelper.GeneratePassword(8);
+                user.Password = AuthHelper.HashPassword(newPassword);
                 user.Status = UserStatus.Active;
                 tourGuide = UnitOfWork.TourGuides.Add(user);
+
+                newUsers.Add((user.Email, $"{user.FirstName} {user.LastName}",
+                    newPassword, user.Role.ToString()));
             }
 
             else if (tourGuide.Role is not UserRole.TourGuide)
@@ -77,7 +87,7 @@ public class TripService : BaseService, ITripService
                 Id = Guid.NewGuid(),
                 TripId = trip.Id,
                 TourGuideId = tourGuide.Id,
-                GroupName = "...",
+                GroupName = $"{tour.Title} - Group {groupModel.GroupNo}",
                 GroupNo = groupModel.GroupNo,
                 Status = TourGroupStatus.Prepare,
                 CreatedAt = DateTimeHelper.VnNow(),
@@ -96,10 +106,13 @@ public class TripService : BaseService, ITripService
                 {
                     // Add to DB if traveler not exist
                     var user = travelerModel.Adapt<Traveler>();
-                    user.Password = AuthHelper.HashPassword("123123");
+                    var newPassword = AuthHelper.GeneratePassword(8);
+                    user.Password = AuthHelper.HashPassword(newPassword);
                     user.Status = UserStatus.Active;
                     traveler = UnitOfWork.Travelers.Add(user);
-                    Console.WriteLine(traveler.Id);
+
+                    newUsers.Add((user.Email, $"{user.FirstName} {user.LastName}",
+                        newPassword, user.Role.ToString()));
                 }
 
                 else if (traveler.Role is not UserRole.Traveler)
@@ -115,6 +128,17 @@ public class TripService : BaseService, ITripService
         }
 
         await UnitOfWork.SaveChangesAsync();
+
+        // Send account credentials to new users
+        foreach (var user in newUsers)
+        {
+            _ = Task.Run(() =>
+            {
+                _smtpService.MailAccountCredentials(
+                    user.Email, user.Name, user.Password, user.Role);
+            });
+        }
+
         return await Get(trip.Id);
     }
 
