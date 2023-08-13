@@ -51,7 +51,6 @@ public class TourService : BaseService, ITourService
             // Add images to tour
             await _addTourImages(tour.Id, tourModel.Images);
             await _addTourThumbnail(tour.Id, tourModel.Thumbnail);
-            await UnitOfWork.SaveChangesAsync();
 
             // Commit and return
             await transaction.CommitAsync();
@@ -89,7 +88,6 @@ public class TourService : BaseService, ITourService
         var attachments = images.Select(img => img.Attachment);
 
         UnitOfWork.Attachments.AddRange(attachments);
-        await UnitOfWork.SaveChangesAsync();
         UnitOfWork.TourImages.AddRange(tourImages);
         await UnitOfWork.SaveChangesAsync();
 

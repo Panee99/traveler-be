@@ -31,6 +31,7 @@ public class TripsController : ApiController
     /// <summary>
     /// Get trip excel sample file
     /// </summary>
+    [AllowAnonymous]
     [HttpGet("import/sample")]
     public IActionResult DownloadFile()
     {

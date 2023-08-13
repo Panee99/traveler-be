@@ -29,7 +29,7 @@ public class TripDetails : PageModel
     public List<User> GetUsersInGroup(TourGroup group)
     {
         var users = group.Travelers.Select(t => (User)t).ToList();
-        if (group.TourGuide != null) users.Add(group.TourGuide);
+        if (group.TourGuide != null) users.Insert(0, group.TourGuide);
         return users;
     }
 

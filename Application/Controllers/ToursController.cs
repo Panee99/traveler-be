@@ -30,9 +30,11 @@ public class ToursController : ApiController
         _tourService = tourService;
     }
 
+    
     /// <summary>
     /// Get tour excel sample file
     /// </summary>
+    [AllowAnonymous]
     [HttpGet("import/sample")]
     public IActionResult DownloadFile()
     {
