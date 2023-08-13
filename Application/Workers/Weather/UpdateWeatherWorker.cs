@@ -19,6 +19,7 @@ public class UpdateWeatherWorker : BackgroundService
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         Console.WriteLine("Executing Weather Update");
+        return;
 
         // Get dependencies
         var scope = _serviceProvider.CreateScope();

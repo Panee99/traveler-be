@@ -10,7 +10,7 @@ public class ToursModel : PageModel
     // DI
     private readonly ITourService _tourService;
 
-    // View
+    // Get
     public List<TourViewModel> Tours = new();
 
     // Post
@@ -23,7 +23,7 @@ public class ToursModel : PageModel
         _tourService = tourService;
     }
 
-    public async Task<IActionResult> OnPost()
+    public async Task<IActionResult> OnPostAsync()
     {
         var result = await _tourService.ImportTour(
             Guid.Parse("69f7719f-be55-42ca-843e-bc46cd1b450d"),
@@ -37,12 +37,13 @@ public class ToursModel : PageModel
         return RedirectToPage("Tours", new { ImportSuccess = 1 });
     }
 
-    public async Task OnGetAsync()
+    public async Task OnGetAsync(string? searchValue)
     {
         var filterModel = new TourFilterModel()
         {
             Page = 1,
-            Size = 5
+            Size = 5,
+            Title = searchValue,
         };
 
         var result = await _tourService.Filter(filterModel);

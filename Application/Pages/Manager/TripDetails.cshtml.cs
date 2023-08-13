@@ -26,6 +26,13 @@ public class TripDetails : PageModel
     public Trip Trip { get; set; }
     public TourDetailsViewModel Tour { get; set; }
 
+    public List<User> GetUsersInGroup(TourGroup group)
+    {
+        var users = group.Travelers.Select(t => (User)t).ToList();
+        if (group.TourGuide != null) users.Add(group.TourGuide);
+        return users;
+    }
+
     public async Task OnGetAsync(Guid id)
     {
         var trip = await _unitOfWork.Trips
@@ -33,6 +40,7 @@ public class TripDetails : PageModel
             .Where(trip => trip.Id == id)
             .Include(trip => trip.TourGroups).ThenInclude(group => group.Travelers)
             .Include(trip => trip.TourGroups).ThenInclude(group => group.TourGuide)
+            .AsSplitQuery()
             .FirstOrDefaultAsync();
 
         if (trip != null) Trip = trip;

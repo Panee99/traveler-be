@@ -1,32 +1,36 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Data.EFCore;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
+using Shared.Helpers;
 
 namespace Application.Pages.Manager;
 
 public class Login : PageModel
 {
-    [BindProperty] public string Email { get; set; }
+    private readonly UnitOfWork _unitOfWork;
 
-    [BindProperty] public string Password { get; set; }
-
-    [TempData] public string? ErrorMessage { get; set; }
-
-    public IActionResult OnPost()
+    public Login(UnitOfWork unitOfWork)
     {
-        Console.WriteLine(Email);
-        Console.WriteLine(Password);
+        _unitOfWork = unitOfWork;
+    }
 
-        if (Email == "truong@gmail.com" && Password == "123123")
-        {
-            return RedirectToPage("/index");
-        }
+    [BindProperty] public string Email { get; set; } = null!;
 
-        ErrorMessage = "Invalid email or password.";
+    [BindProperty] public string Password { get; set; } = null!;
 
+    public async Task<IActionResult> OnPost()
+    {
+        var user = await _unitOfWork.Managers.Query()
+            .Where(e => e.Email == Email).FirstOrDefaultAsync();
+
+        if (user != null && user.Password == AuthHelper.HashPassword(Password))
+            return RedirectToPage("Tours");
+        
         return Page();
     }
 
-    public async Task OnGetAsync()
+    public void OnGet()
     {
     }
 }

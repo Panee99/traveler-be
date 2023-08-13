@@ -4,7 +4,7 @@
     ViewData["Title"] = "Manager Login";
 }
 
-<div class="row g-0 d-flex align-items-center justify-content-center">
+<div class="row g-0 d-flex align-items-center justify-content-center p-2" style="border: 1px solid #20c997">
     <div class="col-lg-4 d-none d-lg-flex">
         <img src="https://img.freepik.com/premium-photo/flat-lay-design-travel-concept-with-plane-yellow-background_661495-33430.jpg" alt="Trendy Pants and Shoes"
              class="w-100"/>
@@ -30,11 +30,6 @@
                 <button type="submit" class="btn btn-primary btn-block mb-4">Login</button>
 
             </form>
-
-            @if (Model.ErrorMessage != null)
-            {
-                <p style="color: red">@Model.ErrorMessage</p>
-            }
 
         </div>
     </div>
