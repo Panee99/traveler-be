@@ -33,6 +33,7 @@ public class NotificationService : BaseService, INotificationService
         var notifications = await UnitOfWork.Notifications
             .Query()
             .Where(e => e.ReceiverId == userId)
+            .OrderByDescending(e => e.Timestamp)
             .Include(e => e.Image)
             .ToListAsync();
 
