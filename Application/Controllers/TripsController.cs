@@ -1,4 +1,5 @@
 ﻿using Application.Configurations.Auth;
+using Data.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Service.Interfaces;
 using Service.Models.TourGroup;
@@ -7,12 +8,10 @@ using Service.Models.Weather;
 
 namespace Application.Controllers;
 
-[Authorize]
 [Route("trips")]
 public class TripsController : ApiController
 {
     private readonly ITripService _tripService;
-
     private static readonly byte[] TripSampleData;
 
     static TripsController()
@@ -45,6 +44,7 @@ public class TripsController : ApiController
     /// <summary>
     /// Import trip excel file
     /// </summary>
+    [Authorize(UserRole.Manager)]
     [HttpPost("import")]
     public async Task<IActionResult> TripImport(IFormFile file)
     {
@@ -53,19 +53,9 @@ public class TripsController : ApiController
     }
 
     /// <summary>
-    /// Update a trip
-    /// </summary>
-    [ProducesResponseType(typeof(TripViewModel), StatusCodes.Status200OK)]
-    [HttpPatch("{id:guid}")]
-    public async Task<IActionResult> Update(Guid id, TripUpdateModel model)
-    {
-        var result = await _tripService.Update(id, model);
-        return result.Match(Ok, OnError);
-    }
-
-    /// <summary>
     /// Delete a trip
     /// </summary>
+    [Authorize(UserRole.Manager)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete(Guid id)
@@ -77,7 +67,7 @@ public class TripsController : ApiController
     /// <summary>
     /// Get a trip
     /// </summary>
-    [AllowAnonymous]
+    [Authorize]
     [ProducesResponseType(typeof(TripViewModel), StatusCodes.Status200OK)]
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> Get(Guid id)
@@ -89,6 +79,7 @@ public class TripsController : ApiController
     /// <summary>
     /// List groups of a trip
     /// </summary>
+    [Authorize]
     [ProducesResponseType(typeof(List<TourGroupViewModel>), StatusCodes.Status200OK)]
     [HttpGet("{id:guid}/tour-groups")]
     public async Task<IActionResult> ListGroupsInTrip(Guid id)
@@ -100,6 +91,7 @@ public class TripsController : ApiController
     /// <summary>
     /// List weather alerts of a trip
     /// </summary>
+    [Authorize]
     [ProducesResponseType(typeof(List<WeatherAlertViewModel>), StatusCodes.Status200OK)]
     [HttpGet("{id:guid}/weather-alerts")]
     public async Task<IActionResult> ListWeatherAlerts(Guid id)
@@ -108,14 +100,15 @@ public class TripsController : ApiController
         return result.Match(Ok, OnError);
     }
 
-    /// <summary>
-    /// List weather forecasts of a trip
-    /// </summary>
-    [ProducesResponseType(typeof(List<WeatherForecastViewModel>), StatusCodes.Status200OK)]
-    [HttpGet("{id:guid}/weather-forecasts")]
-    public async Task<IActionResult> ListWeatherForecasts(Guid id)
-    {
-        var result = await _tripService.ListWeatherForecasts(id);
-        return result.Match(Ok, OnError);
-    }
+    // /// <summary>
+    // /// List weather forecasts of a trip
+    // /// </summary>
+    // [Authorize]
+    // [ProducesResponseType(typeof(List<WeatherForecastViewModel>), StatusCodes.Status200OK)]
+    // [HttpGet("{id:guid}/weather-forecasts")]
+    // public async Task<IActionResult> ListWeatherForecasts(Guid id)
+    // {
+    //     var result = await _tripService.ListWeatherForecasts(id);
+    //     return result.Match(Ok, OnError);
+    // }
 }

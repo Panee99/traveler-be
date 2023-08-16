@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Service.Interfaces;
 using Service.Models.Auth;
-using Service.Models.Chat;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace Application.Controllers;

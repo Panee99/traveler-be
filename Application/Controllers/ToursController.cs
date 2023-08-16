@@ -9,7 +9,6 @@ using Service.Models.Trip;
 
 namespace Application.Controllers;
 
-[Authorize(UserRole.Manager)]
 [Route("tours")]
 public class ToursController : ApiController
 {
@@ -30,11 +29,9 @@ public class ToursController : ApiController
         _tourService = tourService;
     }
 
-    
     /// <summary>
     /// Get tour excel sample file
     /// </summary>
-    [AllowAnonymous]
     [HttpGet("import/sample")]
     public IActionResult DownloadFile()
     {
@@ -48,6 +45,7 @@ public class ToursController : ApiController
     /// <summary>
     /// Import tour excel file
     /// </summary>
+    [Authorize(UserRole.Manager)]
     [HttpPost("import")]
     [ProducesResponseType(typeof(TourDetailsViewModel), StatusCodes.Status200OK)]
     public async Task<IActionResult> ImportTour(IFormFile file)
@@ -56,20 +54,10 @@ public class ToursController : ApiController
         return result.Match(Ok, OnError);
     }
 
-    // /// <summary>
-    // /// Update a tour
-    // /// </summary>
-    // [ProducesResponseType(typeof(TourDetailsViewModel), StatusCodes.Status200OK)]
-    // [HttpPatch("{id:guid}")]
-    // public async Task<IActionResult> Update(Guid id, TourUpdateModel model)
-    // {
-    //     var result = await _tourService.Update(id, model);
-    //     return result.Match(Ok, OnError);
-    // }
-
     /// <summary>
     /// Delete a tour
     /// </summary>
+    [Authorize(UserRole.Manager)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete(Guid id)
@@ -82,7 +70,6 @@ public class ToursController : ApiController
     /// Get details of a tour
     /// </summary>
     [ProducesResponseType(typeof(TourDetailsViewModel), StatusCodes.Status200OK)]
-    [AllowAnonymous]
     [HttpGet("{id:guid}/details")]
     public async Task<IActionResult> GetDetails(Guid id)
     {
@@ -94,7 +81,6 @@ public class ToursController : ApiController
     /// Filter tours
     /// </summary>
     [ProducesResponseType(typeof(PaginationModel<TourViewModel>), StatusCodes.Status200OK)]
-    [AllowAnonymous]
     [HttpPost("filter")]
     public async Task<IActionResult> Filter(TourFilterModel model)
     {
@@ -106,7 +92,6 @@ public class ToursController : ApiController
     /// List all trips of a tour
     /// </summary>
     [ProducesResponseType(typeof(List<TripViewModel>), StatusCodes.Status200OK)]
-    [AllowAnonymous]
     [HttpGet("{id:guid}/trips")]
     public async Task<IActionResult> ListTrips(Guid id)
     {
@@ -118,7 +103,6 @@ public class ToursController : ApiController
     /// Get schedules of a tour
     /// </summary>
     [ProducesResponseType(typeof(List<ScheduleViewModel>), StatusCodes.Status200OK)]
-    [AllowAnonymous]
     [HttpGet("{id:guid}/schedules")]
     public async Task<IActionResult> ListSchedules(Guid id)
     {

@@ -1,4 +1,5 @@
 ﻿using Application.Configurations.Auth;
+using Data.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Service.Interfaces;
 using Service.Models.TourGroup;
@@ -20,8 +21,8 @@ public class TravelersController : ApiController
     /// <summary>
     /// List all joined groups
     /// </summary>
+    [Authorize(UserRole.Traveler)]
     [ProducesResponseType(typeof(TourGroupViewModel), StatusCodes.Status200OK)]
-    [Authorize]
     [HttpGet("{id:guid}/joined-groups")]
     public async Task<IActionResult> ListJoinedGroups(Guid id)
     {

@@ -1,11 +1,11 @@
 ﻿using Application.Configurations.Auth;
+using Data.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Service.Interfaces;
 using Service.Models.Activity;
 
 namespace Application.Controllers;
 
-[Authorize]
 [Route("activities")]
 public class ActivitiesController : ApiController
 {
@@ -19,6 +19,7 @@ public class ActivitiesController : ApiController
     /// <summary>
     /// Create an activity
     /// </summary>
+    [Authorize(UserRole.TourGuide)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [HttpPost("")]
     public async Task<IActionResult> Create(PartialActivityModel model)
@@ -30,6 +31,7 @@ public class ActivitiesController : ApiController
     /// <summary>
     /// Delete an activity
     /// </summary>
+    [Authorize(UserRole.TourGuide)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete(Guid id)
@@ -41,6 +43,7 @@ public class ActivitiesController : ApiController
     /// <summary>
     /// Delete an draft activity
     /// </summary>
+    [Authorize(UserRole.TourGuide)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [HttpDelete("draft/{id:guid}")]
     public async Task<IActionResult> DeleteDraft(Guid id)
@@ -52,6 +55,7 @@ public class ActivitiesController : ApiController
     /// <summary>
     /// Update an activity
     /// </summary>
+    [Authorize(UserRole.TourGuide)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [HttpPatch]
     public async Task<IActionResult> Update(PartialActivityModel model)
@@ -63,6 +67,7 @@ public class ActivitiesController : ApiController
     /// <summary>
     /// Attend
     /// </summary>
+    [Authorize(UserRole.Traveler)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [HttpPost("attend/{code:guid}")]
     public async Task<IActionResult> Attend(Guid code)

@@ -21,6 +21,7 @@ public class TourGroupsController : ApiController
     /// <summary>
     /// Start a tour group
     /// </summary>
+    [Authorize(UserRole.TourGuide)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [HttpPut("{id:guid}/start")]
     public async Task<IActionResult> Start(Guid id)
@@ -32,6 +33,7 @@ public class TourGroupsController : ApiController
     /// <summary>
     /// End a tour group
     /// </summary>
+    [Authorize(UserRole.TourGuide)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [HttpPut("{id:guid}/end")]
     public async Task<IActionResult> End(Guid id)
@@ -43,6 +45,7 @@ public class TourGroupsController : ApiController
     /// <summary>
     /// Cancel a tour group
     /// </summary>
+    [Authorize(UserRole.TourGuide)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [HttpPut("{id:guid}/cancel")]
     public async Task<IActionResult> Cancel(Guid id)
@@ -54,6 +57,7 @@ public class TourGroupsController : ApiController
     /// <summary>
     /// Get a tour group
     /// </summary>
+    [Authorize]
     [ProducesResponseType(typeof(List<TourGroupViewModel>), StatusCodes.Status200OK)]
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> Get(Guid id)
@@ -65,6 +69,7 @@ public class TourGroupsController : ApiController
     /// <summary>
     /// List all travelers and tour guide of a group
     /// </summary>
+    [Authorize]
     [ProducesResponseType(typeof(List<UserViewModel>), StatusCodes.Status200OK)]
     [HttpGet("{id:guid}/members")]
     public async Task<IActionResult> ListMembers([FromRoute] Guid id)
@@ -76,6 +81,7 @@ public class TourGroupsController : ApiController
     /// <summary>
     /// List all activities of a tour group
     /// </summary>
+    [Authorize]
     [ProducesResponseType(typeof(List<ActivityViewModel>), StatusCodes.Status200OK)]
     [HttpGet("{id:guid}/activities")]
     public async Task<IActionResult> ListActivities(Guid id)
@@ -84,6 +90,9 @@ public class TourGroupsController : ApiController
         return result.Match(Ok, OnError);
     }
 
+    /// <summary>
+    /// Send emergency request
+    /// </summary>
     [Authorize(UserRole.Traveler, UserRole.TourGuide)]
     [HttpPost("{id:guid}/emergency")]
     public async Task<IActionResult> SendEmergency(Guid id, EmergencyRequestModel model)

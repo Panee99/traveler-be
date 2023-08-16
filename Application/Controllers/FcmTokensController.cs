@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Application.Configurations.Auth;
+using Microsoft.AspNetCore.Mvc;
 using Service.Interfaces;
 using Service.Models.FcmToken;
 
 namespace Application.Controllers;
 
+[Authorize]
 [Route("fcm-tokens")]
 public class FcmTokensController : ApiController
 {
