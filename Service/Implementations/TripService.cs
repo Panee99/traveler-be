@@ -77,10 +77,12 @@ public class TripService : BaseService, ITripService
                 newUsers.Add((user.Email, $"{user.FirstName} {user.LastName}",
                     newPassword, user.Role.ToString()));
             }
-
             else if (tourGuide.Role is not UserRole.TourGuide)
                 // If exist, check if user Role
                 return Error.Conflict($"User '{tourGuide.Email}' is not TourGuide");
+            else if (await _checkIfUserAlreadyInAnotherTrip(
+                         tourGuide.Id, tourGuide.Role, trip.StartTime, trip.EndTime))
+                return Error.Conflict($"User {tourGuide.Email} already in another Trip");
 
             var group = new TourGroup()
             {
@@ -114,10 +116,12 @@ public class TripService : BaseService, ITripService
                     newUsers.Add((user.Email, $"{user.FirstName} {user.LastName}",
                         newPassword, user.Role.ToString()));
                 }
-
                 else if (traveler.Role is not UserRole.Traveler)
                     // If exist, check if user Role
                     return Error.Conflict($"User '{traveler.Email}' is not Traveler");
+                else if (await _checkIfUserAlreadyInAnotherTrip(
+                             traveler.Id, traveler.Role, trip.StartTime, trip.EndTime))
+                    return Error.Conflict($"User {traveler.Email} already in another Trip");
 
                 UnitOfWork.TravelersInTourGroups.Add(new TravelerInTourGroup()
                 {
@@ -140,6 +144,51 @@ public class TripService : BaseService, ITripService
         }
 
         return await Get(trip.Id);
+    }
+
+    // If trip time overlap return true
+    private async Task<bool> _checkIfUserAlreadyInAnotherTrip(
+        Guid userId, UserRole role, DateTime tripStartDate, DateTime tripEndDate)
+    {
+        var groups = new List<TourGroup>();
+
+        switch (role)
+        {
+            case UserRole.Traveler:
+                // fetch groups that traveler currently in
+                groups = await UnitOfWork.Travelers.Query()
+                    .Where(e => e.Id == userId)
+                    .SelectMany(e => e.TourGroups)
+                    .Where(group => group.Status != TourGroupStatus.Canceled && group.Status != TourGroupStatus.Ended)
+                    .Include(group => group.Trip)
+                    .ToListAsync();
+                break;
+
+            case UserRole.TourGuide:
+                // fetch groups that tour guide currently in
+                groups = await UnitOfWork.TourGuides.Query()
+                    .Where(e => e.Id == userId)
+                    .SelectMany(e => e.TourGroups)
+                    .Where(group => group.Status != TourGroupStatus.Canceled && group.Status != TourGroupStatus.Ended)
+                    .Include(group => group.Trip)
+                    .ToListAsync();
+                break;
+
+            default:
+                throw new ArgumentOutOfRangeException(nameof(role), role, null);
+        }
+
+        // check if trip time overlap
+        return groups.Select(g => g.Trip)
+            .Any(trip => CheckTripTimeOverlap(
+                trip.StartTime, trip.EndTime, tripStartDate, tripEndDate));
+    }
+
+    public static bool CheckTripTimeOverlap(
+        DateTime startDate1, DateTime endDate1,
+        DateTime startDate2, DateTime endDate2)
+    {
+        return endDate1 >= startDate2 && endDate2 >= startDate1;
     }
 
     public async Task<Result<TripViewModel>> Update(Guid id, TripUpdateModel model)
