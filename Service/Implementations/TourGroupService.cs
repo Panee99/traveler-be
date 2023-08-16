@@ -15,8 +15,8 @@ namespace Service.Implementations;
 
 public class TourGroupService : BaseService, ITourGroupService
 {
-    private readonly ICloudStorageService _cloudStorageService;
     private readonly FirestoreDb _firestoreDb;
+    private readonly ICloudStorageService _cloudStorageService;
     private readonly INotificationService _notificationService;
 
     public TourGroupService(UnitOfWork unitOfWork, ICloudStorageService cloudStorageService, FirestoreDb firestoreDb,
@@ -39,26 +39,48 @@ public class TourGroupService : BaseService, ITourGroupService
 
     public async Task<Result> Start(Guid id)
     {
-        var tourGroup = await UnitOfWork.TourGroups.FindAsync(id);
+        var tourGroup = await UnitOfWork.TourGroups
+            .Query()
+            .Where(e => e.Id == id)
+            .Include(e => e.Trip)
+            .Include(e => e.Travelers)
+            .FirstOrDefaultAsync();
+
         if (tourGroup is null) return Error.NotFound(DomainErrors.TourGroup.NotFound);
 
         if (tourGroup.Status != TourGroupStatus.Prepare)
             return Error.Conflict("Tour Group status must be 'Prepare' to Start");
 
+        if (tourGroup.Trip.StartTime < DateTimeHelper.VnNow().Date)
+            return Error.Conflict($"Cannot start until {tourGroup.Trip.StartTime}");
+
         tourGroup.Status = TourGroupStatus.Ongoing;
         UnitOfWork.TourGroups.Update(tourGroup);
         await UnitOfWork.SaveChangesAsync();
+
+        // Send notification
+        var travelerIds = tourGroup.Travelers.Select(e => e.Id).ToList();
+        await _notificationService.EnqueueNotification(new NotificationJob(
+            travelerIds, NotificationType.TourStarted, tourGroup.GroupName, null, null));
 
         return Result.Success();
     }
 
     public async Task<Result> End(Guid id)
     {
-        var tourGroup = await UnitOfWork.TourGroups.FindAsync(id);
+        var tourGroup = await UnitOfWork.TourGroups
+            .Query()
+            .Where(e => e.Id == id)
+            .Include(e => e.Trip)
+            .FirstOrDefaultAsync();
+
         if (tourGroup is null) return Error.NotFound(DomainErrors.TourGroup.NotFound);
 
         if (tourGroup.Status != TourGroupStatus.Ongoing)
             return Error.Conflict("Tour Group status must be 'Ongoing' to End");
+
+        if (tourGroup.Trip.EndTime < DateTimeHelper.VnNow().Date)
+            return Error.Conflict($"Cannot end until {tourGroup.Trip.EndTime}");
 
         tourGroup.Status = TourGroupStatus.Ended;
         UnitOfWork.TourGroups.Update(tourGroup);

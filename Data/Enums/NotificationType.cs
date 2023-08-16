@@ -4,7 +4,6 @@ public enum NotificationType
 {
     AttendanceActivity,
     CheckInActivity,
-    CustomActivity,
     TourStarted,
     Emergency,
 }
