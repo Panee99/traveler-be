@@ -26,8 +26,6 @@ public static class EntityConfigurations
             entity.Property(e => e.CreatedAt).HasColumnType("datetime");
         });
 
-        modelBuilder.Entity<Feedback>();
-
         modelBuilder.Entity<Manager>(entity =>
         {
             entity.ToTable("Manager");
