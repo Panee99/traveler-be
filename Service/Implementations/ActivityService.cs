@@ -85,8 +85,8 @@ public class ActivityService : BaseService, IActivityService
                 new NotificationJob(
                     receiverIds,
                     NotificationType.AttendanceActivity,
-                    "Tour Guide",
                     dataModel?.Title,
+                    null,
                     null
                 ));
         }

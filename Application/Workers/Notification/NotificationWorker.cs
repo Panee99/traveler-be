@@ -78,10 +78,10 @@ public class NotificationWorker : BackgroundService
         {
             case NotificationType.AttendanceActivity:
                 await notificationService.SaveNotifications(job.ReceiverIds, title,
-                    await _attendanceTemplate.RunAsync(new { Name = job.DirectObject }), job.Type, job.ImageId);
+                    await _attendanceTemplate.RunAsync(new { Name = job.Subject }), job.Type, job.ImageId);
 
                 await _cloudNotificationService.SendBatchMessages(fcmTokens, title,
-                    $"A new attendance activity opened. {job.DirectObject}", job.Type);
+                    $"A new attendance activity opened. {job.Subject}", job.Type);
                 break;
 
             case NotificationType.Emergency:
@@ -94,7 +94,7 @@ public class NotificationWorker : BackgroundService
 
             case NotificationType.TourStarted:
                 await _cloudNotificationService.SendBatchMessages(fcmTokens, title,
-                    $"Hi! {job.Subject} is started.",job.Type);
+                    $"Hi! {job.Subject} is started.", job.Type);
                 break;
 
             case NotificationType.CheckInActivity:
