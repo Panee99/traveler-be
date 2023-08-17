@@ -4,6 +4,7 @@ using Service.Interfaces;
 using Service.Models.Schedule;
 using Service.Models.Tour;
 using Service.Models.Trip;
+using Shared.ResultExtensions;
 
 namespace Application.Pages.Manager;
 
@@ -25,33 +26,53 @@ public class TourDetails : PageModel
 
     // Post
     public IFormFile ImportFile { get; set; }
+    public string? ErrorMessage { get; set; }
 
-    public async Task<IActionResult> OnPostAsync()
+    public async Task<IActionResult> OnPostAsync(Guid tourId)
     {
-        var result = await _tripService.ImportTrip(
-            Guid.Parse("69f7719f-be55-42ca-843e-bc46cd1b450d"),
-            ImportFile.OpenReadStream());
-
-        if (!result.IsSuccess)
+        if (ReferenceEquals(ImportFile, null))
         {
-            return RedirectToPage("TourDetails");
+            ErrorMessage = "Choose a file";
+        }
+        else
+        {
+            var result = await _tripService.ImportTrip(
+                Guid.Parse("69f7719f-be55-42ca-843e-bc46cd1b450d"),
+                ImportFile.OpenReadStream());
+
+            ErrorMessage = result.IsSuccess ? "" : result.Error.ErrorDetails.FirstOrDefault();
         }
 
-        return RedirectToPage("TourDetails");
+        await _loadPageData(tourId);
+        return Page();
     }
 
-    public async Task OnGetAsync(Guid id)
+    public async Task<IActionResult> OnGetAsync(Guid tourId)
     {
-        var tourResult = await _tourService.GetDetails(id);
-        if (tourResult.IsSuccess) Tour = tourResult.Value;
+        var loadResult = await _loadPageData(tourId);
+        if (loadResult.IsSuccess) return Page();
 
-        var tripsResult = await _tourService.ListTrips(id);
-        if (tripsResult.IsSuccess) Trips = tripsResult.Value;
+        TempData["Error"] = loadResult.Error;
+        return RedirectToPage("/Error");
+    }
+
+    private async Task<Result> _loadPageData(Guid tourId)
+    {
+        var tourResult = await _tourService.GetDetails(tourId);
+        if (!tourResult.IsSuccess) return tourResult.Error;
+
+        var tripsResult = await _tourService.ListTrips(tourId);
+        if (!tripsResult.IsSuccess) return tripsResult.Error;
+
+        Tour = tourResult.Value;
+        Trips = tripsResult.Value;
 
         ScheduleGroups = Tour.Schedules
             .OrderBy(schedule => schedule.Sequence)
             .GroupBy(schedule => schedule.DayNo)
             .OrderBy(group => group.Key)
             .ToList();
+
+        return Result.Success();
     }
 }

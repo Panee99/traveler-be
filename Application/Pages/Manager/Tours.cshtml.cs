@@ -11,12 +11,14 @@ public class ToursModel : PageModel
     private readonly ITourService _tourService;
 
     // Get
+    [BindProperty(SupportsGet = true)] public string? SearchValue { get; set; }
+
     public List<TourViewModel> Tours = new();
 
     // Post
     public IFormFile ImportFile { get; set; }
 
-    public bool? ImportSuccess { get; set; }
+    public string? ErrorMessage { get; set; }
 
     public ToursModel(ITourService tourService)
     {
@@ -25,25 +27,35 @@ public class ToursModel : PageModel
 
     public async Task<IActionResult> OnPostAsync()
     {
-        var result = await _tourService.ImportTour(
-            Guid.Parse("69f7719f-be55-42ca-843e-bc46cd1b450d"),
-            ImportFile.OpenReadStream());
-
-        if (!result.IsSuccess)
+        if (ReferenceEquals(ImportFile, null))
         {
-            return RedirectToPage("Tours", new { ImportSuccess = 0 });
+            ErrorMessage = "Choose a file";
+        }
+        else
+        {
+            var result = await _tourService.ImportTour(
+                Guid.Parse("69f7719f-be55-42ca-843e-bc46cd1b450d"),
+                ImportFile.OpenReadStream());
+
+            ErrorMessage = result.IsSuccess ? "" : result.Error.ErrorDetails.FirstOrDefault();
         }
 
-        return RedirectToPage("Tours", new { ImportSuccess = 1 });
+        await _loadPageData();
+        return Page();
     }
 
-    public async Task OnGetAsync(string? searchValue)
+    public async Task OnGetAsync()
+    {
+        await _loadPageData();
+    }
+
+    private async Task _loadPageData()
     {
         var filterModel = new TourFilterModel()
         {
             Page = 1,
             Size = 5,
-            Title = searchValue,
+            Title = SearchValue,
         };
 
         var result = await _tourService.Filter(filterModel);

@@ -1,0 +1,24 @@
+﻿@page
+@model Application.Pages.ErrorModel
+@{
+    ViewData["Title"] = "Error";
+}
+
+<h1 class="text-danger">Error.</h1>
+<h2 class="text-danger">An error occurred while processing your request.</h2>
+
+@if (Model.ShowRequestId)
+{
+    <p>
+        <strong>Request ID:</strong> <code>@Model.RequestId</code>
+        @Model.Error?.Message
+    </p>
+}
+
+<h3>@Model.Error?.ErrorType - @Model.Error?.Code</h3>
+<p>
+    @foreach (var message in Model.Error?.ErrorDetails)
+    {
+        <b>@message</b>
+    }
+</p>

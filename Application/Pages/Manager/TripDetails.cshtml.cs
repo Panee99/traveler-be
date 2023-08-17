@@ -1,5 +1,6 @@
 ﻿using Data.EFCore;
 using Data.Entities;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Service.Interfaces;
@@ -33,7 +34,7 @@ public class TripDetails : PageModel
         return users;
     }
 
-    public async Task OnGetAsync(Guid id)
+    public async Task<IActionResult> OnGetAsync(Guid id)
     {
         var trip = await _unitOfWork.Trips
             .Query()
@@ -43,9 +44,15 @@ public class TripDetails : PageModel
             .AsSplitQuery()
             .FirstOrDefaultAsync();
 
-        if (trip != null) Trip = trip;
-
+        if (trip is null)
+        {
+            return NotFound("Trip not found");
+        }
+        
+        Trip = trip;
         var tourResult = await _tourService.GetDetails(Trip.TourId);
         if (tourResult.IsSuccess) Tour = tourResult.Value;
+
+        return Page();
     }
 }

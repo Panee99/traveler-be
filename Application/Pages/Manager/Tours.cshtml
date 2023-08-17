@@ -34,13 +34,13 @@
                 <button class="btn btn-success" type="submit">Import</button>
             </form>
 
-            @if (Model.ImportSuccess is false)
+            @if (Model.ErrorMessage is "")
             {
-                <p style="color: red">Import failed</p>
+                <b style="color: green">Import success !</b>
             }
-            else if (Model.ImportSuccess is true)
+            else if (Model.ErrorMessage?.Length > 0)
             {
-                <p style="color: green">Import success</p>
+                <b style="color: red">Error: @Model.ErrorMessage</b>
             }
 
             <br/>
@@ -53,7 +53,7 @@
             <!-- Search Tour Form -->
             <form method="GET">
                 <div class="input-group">
-                    <input type="text" class="form-control" style="margin-right: 8px" name="searchValue" placeholder="Search">
+                    <input asp-for="SearchValue" type="text" class="form-control" style="margin-right: 8px" name="searchValue" placeholder="Search">
                     <div class="input-group-append">
                         <button class="btn btn-primary" type="submit">Search</button>
                     </div>

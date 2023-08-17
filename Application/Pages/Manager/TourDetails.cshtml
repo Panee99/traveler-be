@@ -1,4 +1,4 @@
-﻿@page "/manager/tours/{id:guid}"
+﻿@page "/manager/tours/{tourId:guid}"
 @model Application.Pages.Manager.TourDetails
 
 <style>
@@ -43,6 +43,15 @@
                class="form-control" id="tourImport" style="margin-right: 8px"/>
         <button class="btn btn-success" type="submit">Import</button>
     </form>
+
+    @if (Model.ErrorMessage is "")
+    {
+        <b style="color: green">Import success !</b>
+    }
+    else if (Model.ErrorMessage?.Length > 0)
+    {
+        <b style="color: red">Error: @Model.ErrorMessage</b>
+    }
 
     <br/>
     <a href="/trips/import/sample">Download Sample</a>
