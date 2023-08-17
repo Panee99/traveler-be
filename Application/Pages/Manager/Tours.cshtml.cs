@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Newtonsoft.Json;
 using Service.Interfaces;
 using Service.Models.Tour;
 
@@ -14,6 +15,7 @@ public class ToursModel : PageModel
     [BindProperty(SupportsGet = true)] public string? SearchValue { get; set; }
 
     public List<TourViewModel> Tours = new();
+    public UserSessionModel CurrentUser { get; set; }
 
     // Post
     public IFormFile ImportFile { get; set; }
@@ -44,9 +46,19 @@ public class ToursModel : PageModel
         return Page();
     }
 
-    public async Task OnGetAsync()
+    public async Task<IActionResult> OnGetAsync()
     {
+        // Authenticate User
+        var userSessionData = HttpContext.Session.GetString("User");
+        var userData = userSessionData is null
+            ? null
+            : JsonConvert.DeserializeObject<UserSessionModel>(userSessionData);
+        if (userData is null) return RedirectToPage("Login");
+        CurrentUser = userData;
+        
+        // Load page data
         await _loadPageData();
+        return Page();
     }
 
     private async Task _loadPageData()

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Newtonsoft.Json;
 using Service.Interfaces;
 using Service.Models.Schedule;
 using Service.Models.Tour;
@@ -23,7 +24,8 @@ public class TourDetails : PageModel
     public List<IGrouping<int, ScheduleViewModel>> ScheduleGroups = new();
     public TourDetailsViewModel Tour { get; set; }
     public List<TripViewModel> Trips { get; set; } = new();
-
+    public UserSessionModel CurrentUser { get; set; }
+    
     // Post
     public IFormFile ImportFile { get; set; }
     public string? ErrorMessage { get; set; }
@@ -49,6 +51,15 @@ public class TourDetails : PageModel
 
     public async Task<IActionResult> OnGetAsync(Guid tourId)
     {
+        // Authenticate User
+        var userSessionData = HttpContext.Session.GetString("User");
+        var userData = userSessionData is null
+            ? null
+            : JsonConvert.DeserializeObject<UserSessionModel>(userSessionData);
+        if (userData is null) return RedirectToPage("Login");
+        CurrentUser = userData;
+        
+        //
         var loadResult = await _loadPageData(tourId);
         if (loadResult.IsSuccess) return Page();
 

@@ -30,6 +30,7 @@ var builder = WebApplication.CreateBuilder(args);
 
     builder.Services
         .AddCors()
+        .AddSession()
         .AddSwagger()
         .AddEndpointsApiExplorer()
         .AddSwaggerGenNewtonsoftSupport()
@@ -50,6 +51,8 @@ var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
 {
     app.Logger.LogInformation("Environment: {Env}", app.Environment.EnvironmentName);
+
+    app.UseSession();
     app
         // .UseHttpsRedirection()
         .UseCors(x => x
