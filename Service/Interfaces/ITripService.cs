@@ -7,7 +7,7 @@ namespace Service.Interfaces;
 
 public interface ITripService
 {
-    Task<Result<TripViewModel>> ImportTrip(Guid createdById, Stream tripZipData);
+    Task<Result<TripViewModel>> ImportTrip(Guid createdById, Guid tourId, Stream tripZipData);
 
     Task<Result<TripViewModel>> Update(Guid id, TripUpdateModel model);
 

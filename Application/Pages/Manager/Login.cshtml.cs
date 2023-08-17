@@ -1,6 +1,5 @@
-﻿using Data.EFCore;
-using Data.Entities;
-using Data.Enums;
+﻿using Application.Commons;
+using Data.EFCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -24,18 +23,24 @@ public class Login : PageModel
 
     public string? ErrorMessage { get; set; }
 
+    /// <summary>
+    /// Login
+    /// </summary>
     public async Task<IActionResult> OnPost()
     {
+        // Find user
         var user = await _unitOfWork.Managers.Query()
             .Where(e => e.Email == Email)
             .FirstOrDefaultAsync();
 
+        // Check if user password valid
         if (user is null || user.Password != AuthHelper.HashPassword(Password))
         {
             ErrorMessage = "Login failed, wrong email or password !";
             return Page();
         }
 
+        // Add User to session
         HttpContext.Session.SetString("User", JsonConvert.SerializeObject(new UserSessionModel()
         {
             Id = user.Id,
@@ -50,23 +55,10 @@ public class Login : PageModel
 
     public IActionResult OnGet()
     {
-        // Authenticate User
-        var userSessionData = HttpContext.Session.GetString("User");
-        var userData = userSessionData is null
-            ? null
-            : JsonConvert.DeserializeObject<UserSessionModel>(userSessionData);
-        if (userData is null)
+        if (RazorPageHelper.GetUserFromSession(HttpContext.Session) is null)
             return Page();
-        
+
+        // Redirect to Home if already logged in
         return RedirectToPage("Tours");
     }
-}
-
-public record UserSessionModel
-{
-    public Guid Id;
-    public UserRole Role;
-    public string Email = null!;
-    public string FirstName = null!;
-    public string LastName = null!;
 }

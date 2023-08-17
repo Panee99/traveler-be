@@ -38,8 +38,10 @@ public class TourService : BaseService, ITourService
         {
             // Read data
             var tourModel = TourImportHelper.ReadTourArchive(tourZipData);
-            if (await UnitOfWork.Tours.AnyAsync(e => e.Id == tourModel.Id))
-                return Error.Conflict($"Tour '{tourModel.Id}' already exist.");
+
+            // Check existed tour title
+            if (await UnitOfWork.Tours.AnyAsync(e => e.Title == tourModel.Title))
+                return Error.Validation($"Tour with title '{tourModel.Title}' already exist.");
 
             // Create tour
             var tour = tourModel.Adapt<Tour>();

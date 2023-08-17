@@ -46,9 +46,9 @@ public class TripsController : ApiController
     /// </summary>
     [Authorize(UserRole.Manager)]
     [HttpPost("import")]
-    public async Task<IActionResult> TripImport(IFormFile file)
+    public async Task<IActionResult> TripImport(Guid tourId, IFormFile file)
     {
-        var result = await _tripService.ImportTrip(CurrentUser.Id, file.OpenReadStream());
+        var result = await _tripService.ImportTrip(CurrentUser.Id, tourId, file.OpenReadStream());
         return result.Match(Ok, OnError);
     }
 

@@ -36,9 +36,8 @@ public class TripImportHelper
         reader.Read(); // trip data
         var trip = new TripModel()
         {
-            TourId = Guid.Parse(reader.GetString(0)),
-            StartTime = reader.GetDateTime(1),
-            EndTime = reader.GetDateTime(2),
+            StartTime = reader.GetDateTime(0),
+            EndTime = reader.GetDateTime(1),
         };
 
         // Read Groups - Users
@@ -112,7 +111,6 @@ public class TripImportHelper
 
     public sealed class TripModel
     {
-        public Guid TourId { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
         public ICollection<TourGroupModel> TourGroups { get; set; } = new List<TourGroupModel>();

@@ -24,126 +24,133 @@ public class TripService : BaseService, ITripService
         _smtpService = smtpService;
     }
 
-    public async Task<Result<TripViewModel>> ImportTrip(Guid createdById, Stream tripZipData)
+    public async Task<Result<TripViewModel>> ImportTrip(Guid createdById, Guid tourId, Stream tripZipData)
     {
-        // Read data from Excel
-        var tripModel = TripImportHelper.ReadTripArchive(tripZipData);
-
-        // Check if tour id exist
-        var tour = await UnitOfWork.Tours.FindAsync(tripModel.TourId);
-        if (tour is null) return Error.Validation(DomainErrors.Tour.NotFound);
-
-        // Check if trip StartTime duplicate
-        var isDuplicateTime = await UnitOfWork.Trips.Query()
-            .Where(trip => trip.TourId == tripModel.TourId)
-            .AnyAsync(trip => trip.StartTime == tripModel.StartTime);
-
-        if (isDuplicateTime)
-            return Error.Conflict($"Trip StartTime duplicate: {DateOnly.FromDateTime(tripModel.StartTime)}");
-
-        // Create Trip entity
-        var trip = new Trip()
+        try
         {
-            Id = Guid.NewGuid(),
-            Code = CodeGenerator.NewCode(),
-            StartTime = tripModel.StartTime,
-            EndTime = tripModel.EndTime,
-            TourId = tripModel.TourId,
-            CreatedById = createdById
-        };
+            // Read data from Excel
+            var tripModel = TripImportHelper.ReadTripArchive(tripZipData);
 
-        UnitOfWork.Trips.Add(trip);
+            // Check if tour id exist
+            var tour = await UnitOfWork.Tours.FindAsync(tourId);
+            if (tour is null) return Error.Validation(DomainErrors.Tour.NotFound);
 
-        // List of new users, to send credential emails later
-        var newUsers = new List<(string Email, string Name, string Password, string Role)>();
+            // Check if trip StartTime duplicate
+            var isDuplicateTime = await UnitOfWork.Trips.Query()
+                .Where(trip => trip.TourId == tourId)
+                .AnyAsync(trip => trip.StartTime == tripModel.StartTime);
 
-        // Create Group entities
-        foreach (var groupModel in tripModel.TourGroups)
-        {
-            // Find tour guide in DB
-            var tourGuide = await UnitOfWork.Users.Query()
-                .Where(e => e.Email == groupModel.TourGuide.Email)
-                .FirstOrDefaultAsync();
+            if (isDuplicateTime)
+                return Error.Conflict($"Trip StartTime duplicate: {DateOnly.FromDateTime(tripModel.StartTime)}");
 
-            if (tourGuide is null)
-            {
-                // Add to DB if tour guide not exist
-                var user = groupModel.TourGuide.Adapt<TourGuide>();
-                var newPassword = AuthHelper.GeneratePassword(8);
-                user.Password = AuthHelper.HashPassword(newPassword);
-                user.Status = UserStatus.Active;
-                tourGuide = UnitOfWork.TourGuides.Add(user);
-
-                newUsers.Add((user.Email, $"{user.FirstName} {user.LastName}",
-                    newPassword, user.Role.ToString()));
-            }
-            else if (tourGuide.Role is not UserRole.TourGuide)
-                // If exist, check if user Role
-                return Error.Conflict($"User '{tourGuide.Email}' is not TourGuide");
-            else if (await _checkIfUserAlreadyInAnotherTrip(
-                         tourGuide.Id, tourGuide.Role, trip.StartTime, trip.EndTime))
-                return Error.Conflict($"User {tourGuide.Email} already in another Trip");
-
-            var group = new TourGroup()
+            // Create Trip entity
+            var trip = new Trip()
             {
                 Id = Guid.NewGuid(),
-                TripId = trip.Id,
-                TourGuideId = tourGuide.Id,
-                GroupName = $"{tour.Title} - Group {groupModel.GroupNo}",
-                GroupNo = groupModel.GroupNo,
-                Status = TourGroupStatus.Prepare,
-                CreatedAt = DateTimeHelper.VnNow(),
+                Code = CodeGenerator.NewCode(),
+                StartTime = tripModel.StartTime,
+                EndTime = tripModel.EndTime,
+                TourId = tourId,
+                CreatedById = createdById
             };
 
-            UnitOfWork.TourGroups.Add(group);
+            UnitOfWork.Trips.Add(trip);
 
-            foreach (var travelerModel in groupModel.Travelers)
+            // List of new users, to send credential emails later
+            var newUsers = new List<(string Email, string Name, string Password, string Role)>();
+
+            // Create Group entities
+            foreach (var groupModel in tripModel.TourGroups)
             {
-                // Find traveler in DB
-                var traveler = await UnitOfWork.Users.Query()
-                    .Where(e => e.Email == travelerModel.Email)
+                // Find tour guide in DB
+                var tourGuide = await UnitOfWork.Users.Query()
+                    .Where(e => e.Email == groupModel.TourGuide.Email)
                     .FirstOrDefaultAsync();
 
-                if (traveler is null)
+                if (tourGuide is null)
                 {
-                    // Add to DB if traveler not exist
-                    var user = travelerModel.Adapt<Traveler>();
+                    // Add to DB if tour guide not exist
+                    var user = groupModel.TourGuide.Adapt<TourGuide>();
                     var newPassword = AuthHelper.GeneratePassword(8);
                     user.Password = AuthHelper.HashPassword(newPassword);
                     user.Status = UserStatus.Active;
-                    traveler = UnitOfWork.Travelers.Add(user);
+                    tourGuide = UnitOfWork.TourGuides.Add(user);
 
                     newUsers.Add((user.Email, $"{user.FirstName} {user.LastName}",
                         newPassword, user.Role.ToString()));
                 }
-                else if (traveler.Role is not UserRole.Traveler)
+                else if (tourGuide.Role is not UserRole.TourGuide)
                     // If exist, check if user Role
-                    return Error.Conflict($"User '{traveler.Email}' is not Traveler");
+                    return Error.Conflict($"User '{tourGuide.Email}' is not TourGuide");
                 else if (await _checkIfUserAlreadyInAnotherTrip(
-                             traveler.Id, traveler.Role, trip.StartTime, trip.EndTime))
-                    return Error.Conflict($"User {traveler.Email} already in another Trip");
+                             tourGuide.Id, tourGuide.Role, trip.StartTime, trip.EndTime))
+                    return Error.Conflict($"User {tourGuide.Email} already in another Trip");
 
-                UnitOfWork.TravelersInTourGroups.Add(new TravelerInTourGroup()
+                var group = new TourGroup()
                 {
-                    TourGroupId = group.Id,
-                    TravelerId = traveler.Id
+                    Id = Guid.NewGuid(),
+                    TripId = trip.Id,
+                    TourGuideId = tourGuide.Id,
+                    GroupName = $"{tour.Title} - Group {groupModel.GroupNo}",
+                    GroupNo = groupModel.GroupNo,
+                    Status = TourGroupStatus.Prepare,
+                    CreatedAt = DateTimeHelper.VnNow(),
+                };
+
+                UnitOfWork.TourGroups.Add(group);
+
+                foreach (var travelerModel in groupModel.Travelers)
+                {
+                    // Find traveler in DB
+                    var traveler = await UnitOfWork.Users.Query()
+                        .Where(e => e.Email == travelerModel.Email)
+                        .FirstOrDefaultAsync();
+
+                    if (traveler is null)
+                    {
+                        // Add to DB if traveler not exist
+                        var user = travelerModel.Adapt<Traveler>();
+                        var newPassword = AuthHelper.GeneratePassword(8);
+                        user.Password = AuthHelper.HashPassword(newPassword);
+                        user.Status = UserStatus.Active;
+                        traveler = UnitOfWork.Travelers.Add(user);
+
+                        newUsers.Add((user.Email, $"{user.FirstName} {user.LastName}",
+                            newPassword, user.Role.ToString()));
+                    }
+                    else if (traveler.Role is not UserRole.Traveler)
+                        // If exist, check if user Role
+                        return Error.Conflict($"User '{traveler.Email}' is not Traveler");
+                    else if (await _checkIfUserAlreadyInAnotherTrip(
+                                 traveler.Id, traveler.Role, trip.StartTime, trip.EndTime))
+                        return Error.Conflict($"User {traveler.Email} already in another Trip");
+
+                    UnitOfWork.TravelersInTourGroups.Add(new TravelerInTourGroup()
+                    {
+                        TourGroupId = group.Id,
+                        TravelerId = traveler.Id
+                    });
+                }
+            }
+
+            await UnitOfWork.SaveChangesAsync();
+
+            // Send account credentials to new users
+            foreach (var user in newUsers)
+            {
+                _ = Task.Run(() =>
+                {
+                    _smtpService.MailAccountCredentials(
+                        user.Email, user.Name, user.Password, user.Role);
                 });
             }
+
+            return await Get(trip.Id);
         }
-
-        await UnitOfWork.SaveChangesAsync();
-
-        // Send account credentials to new users
-        foreach (var user in newUsers)
+        catch (Exception e)
         {
-            _ = Task.Run(() =>
-            {
-                _smtpService.MailAccountCredentials(
-                    user.Email, user.Name, user.Password, user.Role);
-            });
+            return Error.Validation(e.Message);
         }
-
-        return await Get(trip.Id);
     }
 
     // If trip time overlap return true
@@ -159,7 +166,8 @@ public class TripService : BaseService, ITripService
                 groups = await UnitOfWork.Travelers.Query()
                     .Where(e => e.Id == userId)
                     .SelectMany(e => e.TourGroups)
-                    .Where(group => group.Status != TourGroupStatus.Canceled && group.Status != TourGroupStatus.Ended)
+                    .Where(group =>
+                        group.Status != TourGroupStatus.Canceled && group.Status != TourGroupStatus.Ended)
                     .Include(group => group.Trip)
                     .ToListAsync();
                 break;
@@ -169,7 +177,8 @@ public class TripService : BaseService, ITripService
                 groups = await UnitOfWork.TourGuides.Query()
                     .Where(e => e.Id == userId)
                     .SelectMany(e => e.TourGroups)
-                    .Where(group => group.Status != TourGroupStatus.Canceled && group.Status != TourGroupStatus.Ended)
+                    .Where(group =>
+                        group.Status != TourGroupStatus.Canceled && group.Status != TourGroupStatus.Ended)
                     .Include(group => group.Trip)
                     .ToListAsync();
                 break;

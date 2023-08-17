@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Application.Commons;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Newtonsoft.Json;
 using Service.Interfaces;
 using Service.Models.Tour;
 
@@ -15,7 +16,7 @@ public class ToursModel : PageModel
     [BindProperty(SupportsGet = true)] public string? SearchValue { get; set; }
 
     public List<TourViewModel> Tours = new();
-    public UserSessionModel CurrentUser { get; set; }
+    public UserSessionModel? CurrentUser { get; set; }
 
     // Post
     public IFormFile ImportFile { get; set; }
@@ -27,18 +28,32 @@ public class ToursModel : PageModel
         _tourService = tourService;
     }
 
+    public override void OnPageHandlerSelected(PageHandlerSelectedContext context)
+    {
+        CurrentUser = RazorPageHelper.GetUserFromSession(HttpContext.Session);
+        base.OnPageHandlerSelected(context);
+    }
+
+    /// <summary>
+    /// Import Tour
+    /// </summary>
     public async Task<IActionResult> OnPostAsync()
     {
+        // Auth
+        if (CurrentUser is null) return RedirectToPage("Login");
+
+        // Check if file exist
         if (ReferenceEquals(ImportFile, null))
         {
             ErrorMessage = "Choose a file";
         }
+        // Import data
         else
         {
             var result = await _tourService.ImportTour(
-                Guid.Parse("69f7719f-be55-42ca-843e-bc46cd1b450d"),
-                ImportFile.OpenReadStream());
+                CurrentUser.Id, ImportFile.OpenReadStream());
 
+            // Error message
             ErrorMessage = result.IsSuccess ? "" : result.Error.ErrorDetails.FirstOrDefault();
         }
 
@@ -48,14 +63,9 @@ public class ToursModel : PageModel
 
     public async Task<IActionResult> OnGetAsync()
     {
-        // Authenticate User
-        var userSessionData = HttpContext.Session.GetString("User");
-        var userData = userSessionData is null
-            ? null
-            : JsonConvert.DeserializeObject<UserSessionModel>(userSessionData);
-        if (userData is null) return RedirectToPage("Login");
-        CurrentUser = userData;
-        
+        // Auth
+        if (CurrentUser is null) return RedirectToPage("Login");
+
         // Load page data
         await _loadPageData();
         return Page();

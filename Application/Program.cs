@@ -30,7 +30,7 @@ var builder = WebApplication.CreateBuilder(args);
 
     builder.Services
         .AddCors()
-        .AddSession()
+        .AddSession(options => options.IdleTimeout = TimeSpan.FromMinutes(60))
         .AddSwagger()
         .AddEndpointsApiExplorer()
         .AddSwaggerGenNewtonsoftSupport()

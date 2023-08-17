@@ -5,6 +5,9 @@ namespace Application.Pages.Manager;
 
 public class IndexModel : PageModel
 {
+    /// <summary>
+    /// Logout
+    /// </summary>
     public IActionResult OnGetLogout()
     {
         HttpContext.Session.Remove("User");

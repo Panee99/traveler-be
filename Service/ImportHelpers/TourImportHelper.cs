@@ -39,14 +39,13 @@ public static class TourImportHelper
         reader.Read(); // tour data
         var tour = new TourModel()
         {
-            Id = Guid.Parse(reader.GetString(0)),
-            Title = reader.GetString(1),
-            Departure = reader.GetString(2),
-            Destination = reader.GetString(3),
-            Duration = reader.GetString(4),
-            Type = Enum.Parse<TourType>(reader.GetString(5)),
-            Description = reader.GetString(6),
-            Guide = reader.GetString(7)
+            Title = reader.GetString(0),
+            Departure = reader.GetString(1),
+            Destination = reader.GetString(2),
+            Duration = reader.GetString(3),
+            Type = Enum.Parse<TourType>(reader.GetString(4)),
+            Description = reader.GetString(5),
+            Guide = reader.GetString(6)
         };
 
         // Read schedules
@@ -137,7 +136,6 @@ public class ImageModel
 
 public class TourModel
 {
-    public Guid Id { get; set; }
     public string Title { get; set; } = null!;
     public string Departure { get; set; } = null!;
     public string Destination { get; set; } = null!;

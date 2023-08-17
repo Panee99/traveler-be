@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Application.Commons;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Newtonsoft.Json;
 using Service.Interfaces;
 using Service.Models.Schedule;
 using Service.Models.Tour;
@@ -24,24 +25,35 @@ public class TourDetails : PageModel
     public List<IGrouping<int, ScheduleViewModel>> ScheduleGroups = new();
     public TourDetailsViewModel Tour { get; set; }
     public List<TripViewModel> Trips { get; set; } = new();
-    public UserSessionModel CurrentUser { get; set; }
-    
+    public UserSessionModel? CurrentUser { get; set; }
+
     // Post
     public IFormFile ImportFile { get; set; }
     public string? ErrorMessage { get; set; }
 
+    public override void OnPageHandlerSelected(PageHandlerSelectedContext context)
+    {
+        CurrentUser = RazorPageHelper.GetUserFromSession(HttpContext.Session);
+        base.OnPageHandlerSelected(context);
+    }
+
     public async Task<IActionResult> OnPostAsync(Guid tourId)
     {
+        // Auth
+        if (CurrentUser is null) return RedirectToPage("Login");
+
+        // Check if file exist
         if (ReferenceEquals(ImportFile, null))
         {
             ErrorMessage = "Choose a file";
         }
+        // Import data
         else
         {
             var result = await _tripService.ImportTrip(
-                Guid.Parse("69f7719f-be55-42ca-843e-bc46cd1b450d"),
-                ImportFile.OpenReadStream());
+                CurrentUser.Id, tourId, ImportFile.OpenReadStream());
 
+            // Error message
             ErrorMessage = result.IsSuccess ? "" : result.Error.ErrorDetails.FirstOrDefault();
         }
 
@@ -51,14 +63,9 @@ public class TourDetails : PageModel
 
     public async Task<IActionResult> OnGetAsync(Guid tourId)
     {
-        // Authenticate User
-        var userSessionData = HttpContext.Session.GetString("User");
-        var userData = userSessionData is null
-            ? null
-            : JsonConvert.DeserializeObject<UserSessionModel>(userSessionData);
-        if (userData is null) return RedirectToPage("Login");
-        CurrentUser = userData;
-        
+        // Auth
+        if (CurrentUser is null) return RedirectToPage("Login");
+
         //
         var loadResult = await _loadPageData(tourId);
         if (loadResult.IsSuccess) return Page();
