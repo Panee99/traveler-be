@@ -28,6 +28,9 @@ public class TourGuideService : BaseService, ITourGuideService
             .AsSplitQuery()
             .Where(guide => guide.Id == tourGuideId)
             .SelectMany(guide => guide.TourGroups)
+            // Filter out deleted Tour and Trip
+            .Where(group => group.Trip.DeletedById == null && 
+                            group.Trip.Tour.DeletedById == null)
             .Include(group => group.Trip)
             .ThenInclude(trip => trip.Tour)
             .ThenInclude(tour => tour.Thumbnail)

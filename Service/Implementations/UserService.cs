@@ -215,6 +215,9 @@ public class UserService : BaseService, IUserService
                     .Query()
                     .Where(traveler => traveler.Id == userId)
                     .SelectMany(traveler => traveler.TourGroups)
+                    // Filter out deleted Tour and Trip
+                    .Where(group => group.Trip.DeletedById == null &&
+                                    group.Trip.Tour.DeletedById == null)
                     .CountAsync();
                 break;
             }
@@ -224,6 +227,9 @@ public class UserService : BaseService, IUserService
                     .Query()
                     .Where(tourGuide => tourGuide.Id == userId)
                     .SelectMany(tourGuide => tourGuide.TourGroups)
+                    // Filter out deleted Tour and Trip
+                    .Where(group => group.Trip.DeletedById == null &&
+                                    group.Trip.Tour.DeletedById == null)
                     .CountAsync();
                 break;
             }
@@ -255,9 +261,14 @@ public class UserService : BaseService, IUserService
                     .Query()
                     .AsSplitQuery()
                     .Where(traveler => traveler.Id == userId)
-                    .SelectMany(guide => guide.TourGroups)
+                    .SelectMany(traveler => traveler.TourGroups)
+                    // Filter out deleted Tour and Trip
+                    .Where(group => group.Trip.DeletedById == null &&
+                                    group.Trip.Tour.DeletedById == null)
+                    // Include tour and trip data
                     .Include(group => group.Trip)
                     .ThenInclude(trip => trip.Tour).ThenInclude(tour => tour.Thumbnail)
+                    // Filter out group Status
                     .Where(group => group.Status != TourGroupStatus.Ended &&
                                     group.Status != TourGroupStatus.Canceled)
                     .FirstOrDefaultAsync();
@@ -269,8 +280,13 @@ public class UserService : BaseService, IUserService
                     .AsSplitQuery()
                     .Where(guide => guide.Id == userId)
                     .SelectMany(guide => guide.TourGroups)
+                    // Filter out deleted Tour and Trip
+                    .Where(group => group.Trip.DeletedById == null &&
+                                    group.Trip.Tour.DeletedById == null)
+                    // Include tour and trip data
                     .Include(group => group.Trip)
                     .ThenInclude(trip => trip.Tour).ThenInclude(tour => tour.Thumbnail)
+                    // Filter out group Status
                     .Where(group => group.Status != TourGroupStatus.Ended &&
                                     group.Status != TourGroupStatus.Canceled)
                     .FirstOrDefaultAsync();

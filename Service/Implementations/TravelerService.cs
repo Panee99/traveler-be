@@ -31,6 +31,9 @@ public class TravelerService : BaseService, ITravelerService
             .AsSplitQuery()
             .Where(traveler => traveler.Id == travelerId)
             .SelectMany(traveler => traveler.TourGroups)
+            // Filter out deleted Tour and Trip
+            .Where(group => group.Trip.DeletedById == null && 
+                            group.Trip.Tour.DeletedById == null)
             .Include(group => group.Trip).ThenInclude(trip => trip.Tour).ThenInclude(tour => tour.Thumbnail)
             .Select(group => new { Group = group, TravelerCount = group.Travelers.Count })
             .ToListAsync();
