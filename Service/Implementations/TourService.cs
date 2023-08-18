@@ -22,7 +22,6 @@ public class TourService : BaseService, ITourService
     private readonly ICloudStorageService _cloudStorageService;
     private readonly ILogger<TourService> _logger;
 
-
     public TourService(UnitOfWork unitOfWork, IHttpContextAccessor httpContextAccessor,
         ICloudStorageService cloudStorageService, ILogger<TourService> logger) : base(unitOfWork, httpContextAccessor)
     {
@@ -53,8 +52,8 @@ public class TourService : BaseService, ITourService
             await UnitOfWork.SaveChangesAsync();
 
             // Add images to tour
-            await _addTourImages(tour.Id, tourModel.Images);
-            await _addTourThumbnail(tour.Id, tourModel.Thumbnail);
+            await _addTourImages(tour, tourModel.Images);
+            await _addTourThumbnail(tour, tourModel.Thumbnail);
 
             // Commit and return
             await transaction.CommitAsync();
@@ -68,7 +67,7 @@ public class TourService : BaseService, ITourService
         }
     }
 
-    private async Task _addTourImages(Guid tourId, IEnumerable<ImageModel> imageModels)
+    private async Task _addTourImages(Tour tour, IEnumerable<ImageModel> imageModels)
     {
         // Create attachments
         var images = imageModels.Select(model => (
@@ -85,7 +84,7 @@ public class TourService : BaseService, ITourService
         // Create tour images
         var tourImages = images.Select(img => new TourImage()
         {
-            TourId = tourId,
+            TourId = tour.Id,
             AttachmentId = img.Attachment.Id
         });
 
@@ -108,15 +107,8 @@ public class TourService : BaseService, ITourService
         }
     }
 
-    private async Task _addTourThumbnail(Guid tourId, ImageModel model)
+    private async Task _addTourThumbnail(Tour tour, ImageModel model)
     {
-        var tour = await UnitOfWork.Tours.Query()
-            .Where(e => e.DeletedById == null)
-            .Where(e => e.Id == tourId)
-            .FirstOrDefaultAsync();
-
-        if (tour == null) throw new Exception(DomainErrors.Tour.NotFound);
-
         var image = (
             Attachment: new Attachment()
             {
