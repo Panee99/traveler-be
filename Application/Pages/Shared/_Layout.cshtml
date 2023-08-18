@@ -30,12 +30,15 @@
 <header>
     <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
         <div class="container flex-row">
+            @* <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent" *@
+                        @*         aria-expanded="false" aria-label="Toggle navigation"> *@
+                        @*     <span class="navbar-toggler-icon"></span> *@
+                        @* </button> *@
+            
+            @* Home *@
             <a class="navbar-brand" asp-area="" asp-page="/manager/tours">Travel Manager</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                    aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
 
+            @* Get user data from Session *@
             @{
                 var userSessionData = Context.Session.GetString("User");
                 var currentUser = userSessionData is null
@@ -43,6 +46,7 @@
                     : JsonConvert.DeserializeObject<UserSessionModel>(userSessionData);
             }
 
+            @* Show user icon element *@
             @if (currentUser != null)
             {
                 <div class="user-profile">
@@ -76,6 +80,9 @@
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <script src="~/js/site.js" asp-append-version="true"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+@* Logout button appear when clicked *@
 <script>
     const userIcon = document.getElementById('user-icon');
     const logoutButton = document.getElementById('logout-button');
@@ -93,6 +100,7 @@
     });
 </script>
 
+@* Prevent resubmit form when refresh page *@
 <script>
     if (window.history.replaceState) {
         window.history.replaceState(null, null, window.location.href);
