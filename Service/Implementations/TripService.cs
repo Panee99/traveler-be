@@ -173,10 +173,13 @@ public class TripService : BaseService, ITripService
             case UserRole.Traveler:
                 // fetch groups that traveler currently in
                 groups = await UnitOfWork.Travelers.Query()
-                    .Where(e => e.Id == userId)
-                    .SelectMany(e => e.TourGroups)
-                    .Where(group =>
-                        group.Status != TourGroupStatus.Canceled && group.Status != TourGroupStatus.Ended)
+                    .Where(traveler => traveler.Id == userId)
+                    .SelectMany(traveler => traveler.TourGroups)
+                    // Filter out deleted Tour and Trip
+                    .Where(group => group.Trip.DeletedById == null &&
+                                    group.Trip.Tour.DeletedById == null)
+                    .Where(group => group.Status != TourGroupStatus.Canceled &&
+                                    group.Status != TourGroupStatus.Ended)
                     .Include(group => group.Trip)
                     .ToListAsync();
                 break;
@@ -184,10 +187,13 @@ public class TripService : BaseService, ITripService
             case UserRole.TourGuide:
                 // fetch groups that tour guide currently in
                 groups = await UnitOfWork.TourGuides.Query()
-                    .Where(e => e.Id == userId)
-                    .SelectMany(e => e.TourGroups)
-                    .Where(group =>
-                        group.Status != TourGroupStatus.Canceled && group.Status != TourGroupStatus.Ended)
+                    .Where(guide => guide.Id == userId)
+                    .SelectMany(guide => guide.TourGroups)
+                    // Filter out deleted Tour and Trip
+                    .Where(group => group.Trip.DeletedById == null &&
+                                    group.Trip.Tour.DeletedById == null)
+                    .Where(group => group.Status != TourGroupStatus.Canceled &&
+                                    group.Status != TourGroupStatus.Ended)
                     .Include(group => group.Trip)
                     .ToListAsync();
                 break;
