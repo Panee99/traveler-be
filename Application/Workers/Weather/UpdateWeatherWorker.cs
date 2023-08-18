@@ -26,8 +26,8 @@ public class UpdateWeatherWorker : BackgroundService
         var unitOfWork = scope.ServiceProvider.GetRequiredService<UnitOfWork>();
 
         // Fetch active trips
-        var activeTrips = await unitOfWork.Trips
-            .Query()
+        var activeTrips = await unitOfWork.Trips.Query()
+            .Where(trip=>trip.DeletedById == null)
             .Where(trip => trip.EndTime >= DateTimeHelper.VnNow().Date)
             .ToListAsync(stoppingToken);
 

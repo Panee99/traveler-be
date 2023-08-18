@@ -41,8 +41,8 @@ public class TripDetails : PageModel
         if (CurrentUser is null) return RedirectToPage("Login");
 
         // Get Trip
-        var trip = await _unitOfWork.Trips
-            .Query()
+        var trip = await _unitOfWork.Trips.Query()
+            .Where(trip => trip.DeletedById == null)
             .Where(trip => trip.Id == tripId)
             .Include(trip => trip.TourGroups).ThenInclude(group => group.Travelers)
             .Include(trip => trip.TourGroups).ThenInclude(group => group.TourGuide)

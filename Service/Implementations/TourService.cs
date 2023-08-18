@@ -158,10 +158,10 @@ public class TourService : BaseService, ITourService
 
     public async Task<Result<TourDetailsViewModel>> GetDetails(Guid id)
     {
-        var tour = await UnitOfWork.Tours
-            .Query()
+        var tour = await UnitOfWork.Tours.Query()
             .AsSplitQuery()
             .Where(e => e.Id == id)
+            .Where(e => e.DeletedById == null)
             .Include(e => e.Schedules).ThenInclude(schedule => schedule.Image)
             .Include(e => e.Thumbnail)
             .Include(e => e.TourCarousel)
@@ -197,8 +197,8 @@ public class TourService : BaseService, ITourService
 
     public async Task<Result<PaginationModel<TourViewModel>>> Filter(TourFilterModel model)
     {
-        IQueryable<Tour> query = UnitOfWork.Tours
-            .Query()
+        IQueryable<Tour> query = UnitOfWork.Tours.Query()
+            .Where(e => e.DeletedById == null)
             .Include(e => e.Thumbnail)
             .Include(e => e.Schedules)
             .OrderByDescending(e => e.CreatedAt);
@@ -220,13 +220,12 @@ public class TourService : BaseService, ITourService
 
     public async Task<Result<List<TripViewModel>>> ListTrips(Guid tourId)
     {
-        if (!await UnitOfWork.Tours.AnyAsync(e => e.Id == tourId))
+        if (!await UnitOfWork.Tours.AnyAsync(e => e.DeletedById == null && e.Id == tourId))
             return Error.NotFound(DomainErrors.Tour.NotFound);
 
-        var trips = await UnitOfWork.Tours
-            .Query()
-            .Where(e => e.Id == tourId)
-            .SelectMany(e => e.Trips)
+        var trips = await UnitOfWork.Trips.Query()
+            .Where(e => e.DeletedById == null)
+            .Where(e => e.TourId == tourId)
             .ToListAsync();
 
         return trips.Adapt<List<TripViewModel>>();
@@ -234,7 +233,7 @@ public class TourService : BaseService, ITourService
 
     public async Task<Result<List<ScheduleViewModel>>> ListSchedules(Guid tourId)
     {
-        if (!await UnitOfWork.Tours.AnyAsync(e => e.Id == tourId))
+        if (!await UnitOfWork.Tours.AnyAsync(e => e.DeletedById == null && e.Id == tourId))
             return Error.NotFound(DomainErrors.Tour.NotFound);
 
         var schedules = await UnitOfWork.Schedules

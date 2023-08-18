@@ -254,7 +254,7 @@ public class TripService : BaseService, ITripService
 
     public async Task<Result<List<TourGroupViewModel>>> ListGroupsInTrip(Guid tripId)
     {
-        if (!await UnitOfWork.Trips.AnyAsync(e => e.Id == tripId)) return Error.NotFound();
+        if (!await UnitOfWork.Trips.AnyAsync(e => e.DeletedById == null && e.Id == tripId)) return Error.NotFound();
 
         var groupResults = await UnitOfWork.TourGroups
             .Query()
@@ -273,7 +273,7 @@ public class TripService : BaseService, ITripService
 
     public async Task<Result<List<WeatherAlertViewModel>>> ListWeatherAlerts(Guid tripId)
     {
-        if (!await UnitOfWork.Trips.AnyAsync(e => e.Id == tripId))
+        if (!await UnitOfWork.Trips.AnyAsync(e => e.DeletedById == null && e.Id == tripId))
             return Error.NotFound(DomainErrors.Trip.NotFound);
 
         var alerts = await UnitOfWork.WeatherAlerts
@@ -286,7 +286,7 @@ public class TripService : BaseService, ITripService
 
     public async Task<Result<List<WeatherForecastViewModel>>> ListWeatherForecasts(Guid tripId)
     {
-        if (!await UnitOfWork.Trips.AnyAsync(e => e.Id == tripId))
+        if (!await UnitOfWork.Trips.AnyAsync(e => e.DeletedById == null && e.Id == tripId))
             return Error.NotFound(DomainErrors.Trip.NotFound);
 
         var forecasts = await UnitOfWork.WeatherForecasts
