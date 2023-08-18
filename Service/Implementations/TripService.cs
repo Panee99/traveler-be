@@ -95,6 +95,7 @@ public class TripService : BaseService, ITripService
                              tourGuide.Id, tourGuide.Role, trip.StartTime, trip.EndTime))
                     return Error.Conflict($"User {tourGuide.Email} already in another Trip");
 
+                // Create Group
                 var group = new TourGroup()
                 {
                     Id = Guid.NewGuid(),
