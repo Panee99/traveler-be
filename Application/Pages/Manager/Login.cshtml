@@ -5,21 +5,21 @@
 }
 
 <div class="row g-0 d-flex align-items-center justify-content-center" >
-    <div class="col-lg-8 w-50" style="background-color: #A8DF8E; margin-left: 20px">
+    <div class="col-lg-8" style="border-radius: 8px ;width: 35%; background-color: #F0B86E; margin-left: 20px">
         <div class="card-body py-5 px-md-5">
             <h2 class="mb-5">Manager Login</h2>
 
             <form method="post">
                 <!-- Email input -->
                 <div class="form-outline mb-4">
+                    <label class="form-label" for="email">Email:</label>
                     <input type="email" id="email" name="Email" class="form-control" asp-for="Email"/>
-                    <label class="form-label" for="email">Email address</label>
                 </div>
 
                 <!-- Password input -->
                 <div class="form-outline mb-4">
+                    <label class="form-label" for="password">Password:</label>
                     <input type="password" id="password" name="Password" class="form-control"/>
-                    <label class="form-label" for="password">Password</label>
                 </div>
 
                 <!-- Submit button -->
