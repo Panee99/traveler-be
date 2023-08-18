@@ -2,6 +2,7 @@
 using Data.Entities;
 using HeyRed.Mime;
 using Mapster;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Service.Commons.QueryExtensions;
@@ -21,10 +22,9 @@ public class TourService : BaseService, ITourService
     private readonly ICloudStorageService _cloudStorageService;
     private readonly ILogger<TourService> _logger;
 
-    public TourService(
-        UnitOfWork unitOfWork,
-        ICloudStorageService cloudStorageService,
-        ILogger<TourService> logger) : base(unitOfWork)
+
+    public TourService(UnitOfWork unitOfWork, IHttpContextAccessor httpContextAccessor,
+        ICloudStorageService cloudStorageService, ILogger<TourService> logger) : base(unitOfWork, httpContextAccessor)
     {
         _cloudStorageService = cloudStorageService;
         _logger = logger;
@@ -146,10 +146,11 @@ public class TourService : BaseService, ITourService
             .Where(e => e.DeletedById == null)
             .Where(e => e.Id == id)
             .FirstOrDefaultAsync();
-
         if (entity is null) return Error.NotFound();
 
-        UnitOfWork.Tours.Remove(entity);
+        if (CurrentUser is null) return Error.Authentication();
+        entity.DeletedById = CurrentUser.Id;
+        UnitOfWork.Tours.Update(entity);
         await UnitOfWork.SaveChangesAsync();
 
         return Result.Success();

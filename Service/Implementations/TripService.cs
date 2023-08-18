@@ -2,6 +2,7 @@
 using Data.Entities;
 using Data.Enums;
 using Mapster;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Service.Commons;
 using Service.Commons.Mapping;
@@ -19,7 +20,10 @@ public class TripService : BaseService, ITripService
 {
     private readonly ISmtpService _smtpService;
 
-    public TripService(UnitOfWork unitOfWork, ISmtpService smtpService) : base(unitOfWork)
+    public TripService(
+        UnitOfWork unitOfWork,
+        IHttpContextAccessor httpContextAccessor,
+        ISmtpService smtpService) : base(unitOfWork, httpContextAccessor)
     {
         _smtpService = smtpService;
     }
@@ -239,7 +243,10 @@ public class TripService : BaseService, ITripService
 
         if (trip is null) return Error.NotFound();
 
-        UnitOfWork.Trips.Remove(trip);
+        if (CurrentUser is null) return Error.Authentication();
+        trip.DeletedById = CurrentUser.Id;
+
+        UnitOfWork.Trips.Update(trip);
         await UnitOfWork.SaveChangesAsync();
 
         return Result.Success();
