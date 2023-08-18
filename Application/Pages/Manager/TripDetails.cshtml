@@ -98,7 +98,26 @@
                 {
                     <tbody>
                     <tr>
-                        <th colspan="7" scope="col" style="color: #9e2a2b">Group @group.GroupNo</th>
+                        <th colspan="6" scope="col" style="color: #9e2a2b">
+                            Group @group.GroupNo:
+                            @switch (group.Status)
+                            {
+                                case TourGroupStatus.Prepare:
+                                    <span class="text-primary">@group.Status.ToString().ToUpper()</span>
+                                    break;
+                                case TourGroupStatus.Ongoing:
+                                    <span class="text-success">@group.Status.ToString().ToUpper()</span>
+                                    break;
+                                case TourGroupStatus.Ended:
+                                    <span class="text-dark">@group.Status.ToString().ToUpper()</span>
+                                    break;
+                                case TourGroupStatus.Canceled:
+                                    <span class="text-secondary">@group.Status.ToString().ToUpper()</span>
+                                    break;
+                                default:
+                                    throw new ArgumentOutOfRangeException();
+                            }
+                        </th>
                     </tr>
                     @foreach (var user in Model.GetUsersInGroup(group))
                     {
@@ -122,7 +141,6 @@
                     }
                     </tbody>
                 }
-
 
             </table>
         </div>

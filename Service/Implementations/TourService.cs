@@ -40,7 +40,9 @@ public class TourService : BaseService, ITourService
             var tourModel = TourImportHelper.ReadTourArchive(tourZipData);
 
             // Check existed tour title
-            if (await UnitOfWork.Tours.AnyAsync(e => e.Title == tourModel.Title))
+            if (await UnitOfWork.Tours.Query()
+                    .Where(e => e.DeletedById == null)
+                    .AnyAsync(e => e.Title == tourModel.Title))
                 return Error.Validation($"Tour with title '{tourModel.Title}' already exist.");
 
             // Create tour
@@ -108,7 +110,11 @@ public class TourService : BaseService, ITourService
 
     private async Task _addTourThumbnail(Guid tourId, ImageModel model)
     {
-        var tour = await UnitOfWork.Tours.FindAsync(tourId);
+        var tour = await UnitOfWork.Tours.Query()
+            .Where(e => e.DeletedById == null)
+            .Where(e => e.Id == tourId)
+            .FirstOrDefaultAsync();
+
         if (tour == null) throw new Exception(DomainErrors.Tour.NotFound);
 
         var image = (
@@ -136,7 +142,11 @@ public class TourService : BaseService, ITourService
 
     public async Task<Result> Delete(Guid id)
     {
-        var entity = await UnitOfWork.Tours.FindAsync(id);
+        var entity = await UnitOfWork.Tours.Query()
+            .Where(e => e.DeletedById == null)
+            .Where(e => e.Id == id)
+            .FirstOrDefaultAsync();
+
         if (entity is null) return Error.NotFound();
 
         UnitOfWork.Tours.Remove(entity);

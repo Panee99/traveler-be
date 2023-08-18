@@ -20,6 +20,7 @@ public class WeatherUpdateHelper
     {
         // Fetch schedules
         var schedules = await unitOfWork.Trips.Query()
+            .Where(trip => trip.DeletedById == null)
             .Where(trip => trip.Id == tripId)
             .SelectMany(trip => trip.Tour.Schedules)
             .ToListAsync();

@@ -32,11 +32,16 @@ public class TripService : BaseService, ITripService
             var tripModel = TripImportHelper.ReadTripArchive(tripZipData);
 
             // Check if tour id exist
-            var tour = await UnitOfWork.Tours.FindAsync(tourId);
+            var tour = await UnitOfWork.Tours.Query()
+                .Where(e => e.DeletedById == null)
+                .Where(e => e.Id == tourId)
+                .FirstOrDefaultAsync();
+
             if (tour is null) return Error.Validation(DomainErrors.Tour.NotFound);
 
             // Check if trip StartTime duplicate
             var isDuplicateTime = await UnitOfWork.Trips.Query()
+                .Where(trip => trip.DeletedById == null)
                 .Where(trip => trip.TourId == tourId)
                 .AnyAsync(trip => trip.StartTime == tripModel.StartTime);
 
@@ -202,7 +207,11 @@ public class TripService : BaseService, ITripService
 
     public async Task<Result<TripViewModel>> Update(Guid id, TripUpdateModel model)
     {
-        var trip = await UnitOfWork.Trips.FindAsync(id);
+        var trip = await UnitOfWork.Trips.Query()
+            .Where(e => e.DeletedById == null)
+            .Where(e => e.Id == id)
+            .FirstOrDefaultAsync();
+
         if (trip is null) return Error.NotFound();
 
         model.AdaptIgnoreNull(trip);
@@ -214,14 +223,20 @@ public class TripService : BaseService, ITripService
 
     public async Task<Result<TripViewModel>> Get(Guid id)
     {
-        var trip = await UnitOfWork.Trips.FindAsync(id);
+        var trip = await UnitOfWork.Trips.Query()
+            .Where(e => e.DeletedById == null)
+            .FirstOrDefaultAsync(e => e.Id == id);
+
         if (trip is null) return Error.NotFound();
         return trip.Adapt<TripViewModel>();
     }
 
     public async Task<Result> Delete(Guid id)
     {
-        var trip = await UnitOfWork.Trips.FindAsync(id);
+        var trip = await UnitOfWork.Trips.Query()
+            .Where(e => e.DeletedById == null)
+            .FirstOrDefaultAsync(e => e.Id == id);
+
         if (trip is null) return Error.NotFound();
 
         UnitOfWork.Trips.Remove(trip);
