@@ -35,6 +35,24 @@ public class TripDetails : PageModel
         base.OnPageHandlerSelected(context);
     }
 
+    public async Task<IActionResult> OnGetDeleteTripAsync(Guid tripId)
+    {
+        // Auth
+        if (CurrentUser is null) return RedirectToPage("Login");
+
+        var trip = await _unitOfWork.Trips.Query()
+            .Where(e => e.DeletedById == null)
+            .FirstOrDefaultAsync(e => e.Id == tripId);
+
+        if (trip is null) return RedirectToPage("Error");
+
+        trip.DeletedById = CurrentUser.Id;
+        _unitOfWork.Trips.Update(trip);
+        await _unitOfWork.SaveChangesAsync();
+
+        return RedirectToPage("TourDetails", new { trip.TourId });
+    }
+
     public async Task<IActionResult> OnGetAsync(Guid tripId)
     {
         // Auth
@@ -61,6 +79,7 @@ public class TripDetails : PageModel
         if (tourResult.IsSuccess) Tour = tourResult.Value;
         return Page();
     }
+
 
     /// <summary>
     /// Combine Traveler and TourGuide into list of members 

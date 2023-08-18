@@ -138,6 +138,7 @@ public class TourService : BaseService, ITourService
             .Where(e => e.DeletedById == null)
             .Where(e => e.Id == id)
             .FirstOrDefaultAsync();
+        
         if (entity is null) return Error.NotFound();
 
         if (CurrentUser is null) return Error.Authentication();

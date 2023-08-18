@@ -1,7 +1,9 @@
 ﻿using Application.Commons;
+using Data.EFCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 using Service.Interfaces;
 using Service.Models.Schedule;
 using Service.Models.Tour;
@@ -14,11 +16,13 @@ public class TourDetails : PageModel
 {
     private readonly ITourService _tourService;
     private readonly ITripService _tripService;
+    private readonly UnitOfWork _unitOfWork;
 
-    public TourDetails(ITourService tourService, ITripService tripService)
+    public TourDetails(ITourService tourService, ITripService tripService, UnitOfWork unitOfWork)
     {
         _tourService = tourService;
         _tripService = tripService;
+        _unitOfWork = unitOfWork;
     }
 
     // Get
@@ -35,6 +39,25 @@ public class TourDetails : PageModel
     {
         CurrentUser = RazorPageHelper.GetUserFromSession(HttpContext.Session);
         base.OnPageHandlerSelected(context);
+    }
+
+    public async Task<IActionResult> OnGetDeleteTourAsync(Guid tourId)
+    {
+        // Auth
+        if (CurrentUser is null) return RedirectToPage("Login");
+
+        var tour = await _unitOfWork.Tours.Query()
+            .Where(e => e.DeletedById == null)
+            .FirstOrDefaultAsync(e => e.Id == tourId);
+
+        if (tour != null)
+        {
+            tour.DeletedById = CurrentUser.Id;
+            _unitOfWork.Tours.Update(tour);
+            await _unitOfWork.SaveChangesAsync();
+        }
+
+        return RedirectToPage("Tours");
     }
 
     public async Task<IActionResult> OnPostAsync(Guid tourId)

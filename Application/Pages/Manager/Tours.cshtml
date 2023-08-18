@@ -101,6 +101,11 @@
                         <td>
                             <img src="@tour.ThumbnailUrl" width="150" height="100" alt="@tour.Id">
                         </td>
+                        <td>
+                            <button onclick="deleteTour('@tour.Id', '@tour.Title')" type="button" class="btn btn-outline-danger">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </td>
                     </tr>
                 }
 
@@ -133,3 +138,23 @@
     @* </div> *@
 
 </div>
+
+<script>
+    function deleteTour(id, title) {
+        console.log(id);
+        Swal.fire({
+                  title: 'Delete Tour ?',
+                  text: title,
+                  icon: 'warning',
+                  showCancelButton: true,
+                  confirmButtonColor: '#d33',
+                  cancelButtonColor: '#3085d6',
+                  confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                  if (result.isConfirmed) {
+                    let baseURL = window.location.origin;
+                    window.location.href = baseURL + `/manager/tours/${id}?handler=deleteTour`;
+                  }
+                })
+     }
+</script>
