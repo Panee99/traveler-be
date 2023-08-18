@@ -35,6 +35,9 @@ public class TripDetails : PageModel
         base.OnPageHandlerSelected(context);
     }
 
+    /// <summary>
+    /// Delete Trip
+    /// </summary>
     public async Task<IActionResult> OnGetDeleteTripAsync(Guid tripId)
     {
         // Auth
@@ -53,6 +56,9 @@ public class TripDetails : PageModel
         return RedirectToPage("TourDetails", new { trip.TourId });
     }
 
+    /// <summary>
+    /// Get page
+    /// </summary>
     public async Task<IActionResult> OnGetAsync(Guid tripId)
     {
         // Auth

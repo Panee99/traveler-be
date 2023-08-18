@@ -53,6 +53,9 @@ public class Login : PageModel
         return RedirectToPage("Tours");
     }
 
+    /// <summary>
+    /// Get page
+    /// </summary>
     public IActionResult OnGet()
     {
         if (RazorPageHelper.GetUserFromSession(HttpContext.Session) is null)

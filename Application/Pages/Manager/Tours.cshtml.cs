@@ -61,6 +61,9 @@ public class ToursModel : PageModel
         return Page();
     }
 
+    /// <summary>
+    /// Get page
+    /// </summary>
     public async Task<IActionResult> OnGetAsync()
     {
         // Auth

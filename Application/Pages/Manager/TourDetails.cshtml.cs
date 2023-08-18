@@ -41,6 +41,9 @@ public class TourDetails : PageModel
         base.OnPageHandlerSelected(context);
     }
 
+    /// <summary>
+    /// Delete Tour
+    /// </summary>
     public async Task<IActionResult> OnGetDeleteTourAsync(Guid tourId)
     {
         // Auth
@@ -60,6 +63,9 @@ public class TourDetails : PageModel
         return RedirectToPage("Tours");
     }
 
+    /// <summary>
+    /// Import trip
+    /// </summary>
     public async Task<IActionResult> OnPostAsync(Guid tourId)
     {
         // Auth
@@ -84,6 +90,9 @@ public class TourDetails : PageModel
         return Page();
     }
 
+    /// <summary>
+    /// Get page
+    /// </summary>
     public async Task<IActionResult> OnGetAsync(Guid tourId)
     {
         // Auth
