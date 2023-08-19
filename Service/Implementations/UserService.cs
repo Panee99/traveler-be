@@ -254,12 +254,12 @@ public class UserService : BaseService, IUserService
                     // Filter out deleted Tour and Trip
                     .Where(group => group.Trip.DeletedById == null &&
                                     group.Trip.Tour.DeletedById == null)
-                    // Include tour and trip data
-                    .Include(group => group.Trip)
-                    .ThenInclude(trip => trip.Tour).ThenInclude(tour => tour.Thumbnail)
                     // Filter out group Status
                     .Where(group => group.Status != TourGroupStatus.Ended &&
                                     group.Status != TourGroupStatus.Canceled)
+                    // Include tour and trip data
+                    .Include(group => group.Trip)
+                    .ThenInclude(trip => trip.Tour).ThenInclude(tour => tour.Thumbnail)
                     .FirstOrDefaultAsync();
                 break;
             case UserRole.TourGuide:
