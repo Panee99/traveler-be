@@ -19,13 +19,9 @@ public interface IUserService
 
     Task<Result<UserViewModel>> GetById(Guid id);
 
-    Task<Result> AdminDeleteUserById(Guid id);
-
     Task<Result> ChangePassword(Guid currentUserId, PasswordUpdateModel model);
 
     Task<Result<TravelInfo>> GetTravelInfo(Guid id);
 
     Task<Result<CurrentTourGroupViewModel>> GetCurrentJoinedGroup(Guid id);
-
-    Task<Result<ICollection<UserViewModel>>> FetchUsersInfo(ICollection<Guid> ids);
 }

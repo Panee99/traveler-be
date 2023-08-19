@@ -174,17 +174,6 @@ public class UserService : BaseService, IUserService
         return viewModel;
     }
 
-    public async Task<Result> AdminDeleteUserById(Guid id)
-    {
-        var entity = await UnitOfWork.Users.FindAsync(id);
-        if (entity is null) return Error.NotFound();
-
-        UnitOfWork.Users.Remove(entity);
-        await UnitOfWork.SaveChangesAsync();
-
-        return Result.Success();
-    }
-
     public async Task<Result> ChangePassword(Guid currentUserId, PasswordUpdateModel model)
     {
         if (!Regex.Match(model.Password, "^[a-zA-Z0-9]{6,20}$").Success)
@@ -311,11 +300,5 @@ public class UserService : BaseService, IUserService
         view.TravelerCount = await _tourGroupService.CountTravelers(view.Id);
 
         return view;
-    }
-
-    public async Task<Result<ICollection<UserViewModel>>> FetchUsersInfo(ICollection<Guid> ids)
-    {
-        return (await UnitOfWork.Users.Query().Where(x => ids.Contains(x.Id)).ToListAsync())
-            .Adapt<List<UserViewModel>>();
     }
 }

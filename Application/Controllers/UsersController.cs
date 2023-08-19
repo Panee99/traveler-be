@@ -1,5 +1,4 @@
 ﻿using Application.Configurations.Auth;
-using Data.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Service.Interfaces;
 using Service.Models.TourGroup;
@@ -88,54 +87,4 @@ public class UsersController : ApiController
         var result = await _userService.GetCurrentJoinedGroup(id);
         return result.Match(Ok, OnError);
     }
-
-    // #region Required Manager Role
-    //
-    // /// <summary>
-    // /// Create new user
-    // /// </summary>
-    // [Authorize(UserRole.Manager)]
-    // [HttpPost("")]
-    // public async Task<IActionResult> Create(UserCreateModel model)
-    // {
-    //     var result = await _userService.Create(model);
-    //     return result.Match(Ok, OnError);
-    // }
-    //
-    // /// <summary>
-    // /// Update user
-    // /// </summary>
-    // [Authorize(UserRole.Manager)]
-    // [HttpPatch("{id:guid}")]
-    // public async Task<IActionResult> Update(Guid id, UserUpdateModel model)
-    // {
-    //     var result = await _userService.Update(id, model);
-    //     return result.Match(Ok, OnError);
-    // }
-    //
-    // /// <summary>
-    // /// Filter users
-    // /// </summary>
-    // [Authorize(UserRole.Manager)]
-    // [HttpPost("filter")]
-    // public async Task<IActionResult> Filter(UserFilterModel model)
-    // {
-    //     var result = await _userService.Filter(model);
-    //     return result.Match(Ok, OnError);
-    // }
-    //
-    // /// <summary>
-    // /// Delete a user
-    // /// </summary>
-    // [Authorize(UserRole.Manager)]
-    // [ProducesResponseType(StatusCodes.Status200OK)]
-    // [HttpDelete("{id:guid}")]
-    // public async Task<IActionResult> AdminDeleteUserById(Guid id)
-    // {
-    //     var result = await _userService.AdminDeleteUserById(id);
-    //     return result.Match(Ok, OnError);
-    // }
-    //
-    // #endregion
-
 }
