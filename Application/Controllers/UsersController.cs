@@ -56,12 +56,12 @@ public class UsersController : ApiController
     /// <summary>
     /// Get user by id
     /// </summary>
-    [Authorize(UserRole.Manager)]
+    [Authorize]
     [ProducesResponseType(typeof(UserViewModel), StatusCodes.Status200OK)]
     [HttpGet("{id:guid}")]
-    public async Task<IActionResult> MangerGetUserById(Guid id)
+    public async Task<IActionResult> GetUserById(Guid id)
     {
-        var result = await _userService.AdminGetUserById(id);
+        var result = await _userService.GetById(id);
         return result.Match(Ok, OnError);
     }
 

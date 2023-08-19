@@ -158,7 +158,7 @@ public class UserService : BaseService, IUserService
         return view;
     }
 
-    public async Task<Result<UserViewModel>> AdminGetUserById(Guid id)
+    public async Task<Result<UserViewModel>> GetById(Guid id)
     {
         var user = await UnitOfWork.Users.Query()
             .Where(e => e.Id == id)
