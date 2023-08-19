@@ -73,19 +73,14 @@ public class TripDetails : PageModel
             .AsSplitQuery()
             .FirstOrDefaultAsync();
 
-        // Redirect if not found
-        if (trip is null)
-        {
-            TempData["Error"] = Error.NotFound(DomainErrors.Trip.NotFound);
-            return RedirectToPage("/Error");
-        }
+        // Return 404 if trip not found
+        if (trip is null) return NotFound();
 
         Trip = trip;
         var tourResult = await _tourService.GetDetails(Trip.TourId);
         if (tourResult.IsSuccess) Tour = tourResult.Value;
         return Page();
     }
-
 
     /// <summary>
     /// Combine Traveler and TourGuide into list of members 

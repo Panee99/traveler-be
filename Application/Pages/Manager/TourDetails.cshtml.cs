@@ -102,8 +102,7 @@ public class TourDetails : PageModel
         var loadResult = await _loadPageData(tourId);
         if (loadResult.IsSuccess) return Page();
 
-        TempData["Error"] = loadResult.Error;
-        return RedirectToPage("/Error");
+        return NotFound();
     }
 
     private async Task<Result> _loadPageData(Guid tourId)
