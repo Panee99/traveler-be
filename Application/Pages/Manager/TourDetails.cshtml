@@ -72,6 +72,7 @@
                     <th>StartTime</th>
                     <th>EndTime</th>
                     <th></th>
+                    <th></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -85,8 +86,10 @@
                         <td>@DateOnly.FromDateTime(trip.StartTime)</td>
                         <td>@DateOnly.FromDateTime(trip.EndTime)</td>
                         <td>
-                            <a href="/manager/trips/@trip.Id" style="text-decoration:none">
-                                <i class="bi bi-eye-fill"> Details</i>
+                            <a href="/manager/trips/@trip.Id">
+                                <button class="btn btn-outline-primary">
+                                    <i class="bi bi-eye-fill"></i>
+                                </button>
                             </a>
                         </td>
                         <td>

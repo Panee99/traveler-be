@@ -47,7 +47,7 @@ public class TripDetails : PageModel
             .Where(e => e.DeletedById == null)
             .FirstOrDefaultAsync(e => e.Id == tripId);
 
-        if (trip is null) return RedirectToPage("Error");
+        if (trip is null) return NotFound();
 
         trip.DeletedById = CurrentUser.Id;
         _unitOfWork.Trips.Update(trip);
@@ -66,7 +66,8 @@ public class TripDetails : PageModel
 
         // Get Trip
         var trip = await _unitOfWork.Trips.Query()
-            .Where(trip => trip.DeletedById == null)
+            .Where(trip => trip.DeletedById == null && 
+                           trip.Tour.DeletedById == null)
             .Where(trip => trip.Id == tripId)
             .Include(trip => trip.TourGroups).ThenInclude(group => group.Travelers)
             .Include(trip => trip.TourGroups).ThenInclude(group => group.TourGuide)

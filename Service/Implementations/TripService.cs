@@ -45,7 +45,8 @@ public class TripService : BaseService, ITripService
 
             // Check if trip StartTime duplicate
             var isDuplicateTime = await UnitOfWork.Trips.Query()
-                .Where(trip => trip.DeletedById == null)
+                .Where(trip => trip.DeletedById == null &&
+                               trip.Tour.DeletedById == null)
                 .Where(trip => trip.TourId == tourId)
                 .AnyAsync(trip => trip.StartTime == tripModel.StartTime);
 
