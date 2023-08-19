@@ -1,52 +1,52 @@
 ﻿using Data.EFCore;
 using Data.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using Service.Settings;
 
 namespace Application.Workers.Weather;
 
-public class WeatherUpdateHelper
+public class WeatherDataFetcher
 {
-    const string ApiKey = "e9a560f9a61e445193792558231607";
-    const int ForecastDays = 3;
+    private readonly WeatherApiSettings _settings;
 
-    //
-    private static readonly HttpClient HttpClient = new();
+    public WeatherDataFetcher(IOptions<WeatherApiSettings> settings)
+    {
+        _settings = settings.Value;
+    }
 
-    public static async Task<(List<WeatherForecast>, List<WeatherAlert>)> GetTripWeather(
-        DateTime startDate,
-        Guid tripId,
-        UnitOfWork unitOfWork)
+    public async Task<(List<WeatherForecast>, List<WeatherAlert>)> GetTripWeather(
+        DateTime startDate, Guid tripId, UnitOfWork unitOfWork)
     {
         // Fetch schedules
         var schedules = await unitOfWork.Trips.Query()
-            .Where(trip => trip.DeletedById == null)
             .Where(trip => trip.Id == tripId)
             .SelectMany(trip => trip.Tour.Schedules)
             .ToListAsync();
 
         // Get weather for each schedule location
-        var weatherModels = schedules.Select(schedule =>
-        {
-            Console.WriteLine(schedule.DayNo);
+        var httpClient = new HttpClient();
+        var weatherModels = new List<(WeatherForecastModel WeatherForecastModel, Guid ScheduleId)>();
 
-            var response = HttpClient.GetAsync(
+        foreach (var schedule in schedules)
+        {
+            Console.WriteLine(schedule.Sequence);
+            var response = httpClient.GetAsync(
                 "https://api.weatherapi.com/v1/forecast.json" +
-                $"?key={ApiKey}" +
+                $"?key={_settings.ApiKey}" +
                 $"&q={schedule.Latitude},{schedule.Longitude}" +
-                $"&days={ForecastDays}" +
+                $"&days={_settings.ForecastRange}" +
                 "&aqi=no" +
                 "&alerts=yes").Result;
 
-            if (!response.IsSuccessStatusCode)
-                throw new Exception("Weather forecast request failed");
+            if (!response.IsSuccessStatusCode) continue;
 
             var model = JsonConvert.DeserializeObject<WeatherForecastModel>(
                 response.Content.ReadAsStringAsync().Result
             );
 
-            if (model is null)
-                throw new Exception("Convert Weather model failed");
+            if (model is null) continue;
 
             var forecastDate = startDate.AddDays(schedule.DayNo - 1);
             var endForecastDate = forecastDate.AddDays(1);
@@ -62,8 +62,8 @@ public class WeatherUpdateHelper
                                   (alert.Effective > endForecastDate && alert.Expires > endForecastDate)))
                 .ToList();
 
-            return (WeatherForecastModel: model, ScheduleId: schedule.Id);
-        }).ToList();
+            weatherModels.Add((model, schedule.Id));
+        }
 
         // Mapping and return
         var weatherAlerts = weatherModels.SelectMany(x => x.WeatherForecastModel.Alerts.Alert)

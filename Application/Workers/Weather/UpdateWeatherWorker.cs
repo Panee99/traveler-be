@@ -1,59 +1,114 @@
 using Data.EFCore;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
+using Quartz;
+using Quartz.Impl;
+using Quartz.Spi;
 using Shared.Helpers;
 
 namespace Application.Workers.Weather;
 
 public class UpdateWeatherWorker : BackgroundService
 {
-    private readonly IServiceProvider _serviceProvider;
+    private readonly IServiceProvider _services;
     private readonly ILogger<UpdateWeatherWorker> _logger;
 
-    public UpdateWeatherWorker(IServiceProvider serviceProvider, ILogger<UpdateWeatherWorker> logger)
+    public UpdateWeatherWorker(IServiceProvider services, ILogger<UpdateWeatherWorker> logger)
     {
-        _serviceProvider = serviceProvider;
+        _services = services;
         _logger = logger;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        Console.WriteLine("Executing Weather Update");
-        return;
+        _logger.LogInformation("UpdateWeatherWorker Started!");
 
+        // Create and start Scheduler
+        var schedulerFactory = new StdSchedulerFactory();
+        var scheduler = await schedulerFactory.GetScheduler(stoppingToken);
+        scheduler.JobFactory = new WeatherUpdateJobFactory(_services);
+        await scheduler.Start(stoppingToken);
+
+        // Create a job
+        var job = JobBuilder.Create<WeatherUpdateJob>()
+            .WithIdentity("UpdateWeatherJob", "Jobs")
+            .Build();
+
+        // Create a trigger
+        var trigger = TriggerBuilder.Create()
+            .WithIdentity("UpdateWeatherTrigger", "Triggers")
+            .StartNow()
+            .WithSimpleSchedule(x => x
+                .WithIntervalInHours(6)
+                .RepeatForever())
+            .Build();
+
+        // Schedule the job with the trigger
+        await scheduler.ScheduleJob(job, trigger, stoppingToken);
+    }
+}
+
+// Define job
+public class WeatherUpdateJob : IJob
+{
+    private readonly IServiceProvider _services;
+
+    public WeatherUpdateJob(IServiceProvider services)
+    {
+        _services = services;
+    }
+
+    public async Task Execute(IJobExecutionContext context)
+    {
         // Get dependencies
-        var scope = _serviceProvider.CreateScope();
+        using var scope = _services.CreateScope();
+        var logger = scope.ServiceProvider.GetRequiredService<ILogger<WeatherUpdateJob>>();
         var unitOfWork = scope.ServiceProvider.GetRequiredService<UnitOfWork>();
+        var weatherDataFetcher = scope.ServiceProvider.GetRequiredService<WeatherDataFetcher>();
+
+        logger.LogInformation("Executing weather update job at {Time}", DateTime.Now);
 
         // Fetch active trips
         var activeTrips = await unitOfWork.Trips.Query()
-            .Where(trip=>trip.DeletedById == null)
+            .Where(trip => trip.DeletedById == null &&
+                           trip.Tour.DeletedById == null)
             .Where(trip => trip.EndTime >= DateTimeHelper.VnNow().Date)
-            .ToListAsync(stoppingToken);
+            .ToListAsync();
 
         // Update weather for each trip
         foreach (var trip in activeTrips)
         {
-            var (forecasts, alerts) = await WeatherUpdateHelper.GetTripWeather(
-                trip.StartTime,
-                trip.Id,
-                unitOfWork);
+            // Fetch weather data
+            var (_, alerts) = await weatherDataFetcher.GetTripWeather(
+                trip.StartTime, trip.Id, unitOfWork);
 
-            Console.WriteLine(JsonConvert.SerializeObject(forecasts));
-            Console.WriteLine(JsonConvert.SerializeObject(alerts));
-
+            // Remove old records
             unitOfWork.WeatherAlerts.RemoveRange(
                 unitOfWork.WeatherAlerts.Query().Where(e => e.TripId == trip.Id));
 
-            var forecastDayMin = forecasts.Min(e => e.Date);
-            unitOfWork.WeatherForecasts.RemoveRange(
-                unitOfWork.WeatherForecasts.Query().Where(
-                    e => e.TripId == trip.Id && e.Date >= forecastDayMin));
-
             unitOfWork.WeatherAlerts.AddRange(alerts);
-            unitOfWork.WeatherForecasts.AddRange(forecasts);
 
             await unitOfWork.SaveChangesAsync();
         }
+
+        logger.LogInformation("Finish weather update job at {Time}", DateTime.Now);
+    }
+}
+
+// For injecting services
+public class WeatherUpdateJobFactory : IJobFactory
+{
+    private readonly IServiceProvider _services;
+
+    public WeatherUpdateJobFactory(IServiceProvider services)
+    {
+        _services = services;
+    }
+
+    public IJob NewJob(TriggerFiredBundle bundle, IScheduler scheduler)
+        => new WeatherUpdateJob(_services);
+
+    public void ReturnJob(IJob job)
+    {
+        // do nothing
     }
 }

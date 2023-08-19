@@ -29,7 +29,8 @@ public static class AppConfiguration
         services.Configure<AppSettings>(configuration.GetSection("AppSettings"));
         services.Configure<CloudStorageSettings>(configuration.GetSection("CloudStorageSettings"));
         services.Configure<SmtpSettings>(configuration.GetSection("SmtpSettings"));
-        
+        services.Configure<WeatherApiSettings>(configuration.GetSection("WeatherApiSettings"));
+
         // DbContext
         services.AddDbContextPool<AppDbContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
@@ -67,6 +68,7 @@ public static class AppConfiguration
         services.AddSingleton<ICloudNotificationService, CloudNotificationService>();
         services.AddSingleton<ISmtpService, SmtpService>();
         services.AddSingleton(FirestoreHelper.GetInstance());
+        services.AddSingleton<WeatherDataFetcher>();
 
         return services;
     }
