@@ -6,4 +6,5 @@ public enum NotificationType
     CheckInActivity,
     TourStarted,
     Emergency,
+    WeatherAlert,
 }

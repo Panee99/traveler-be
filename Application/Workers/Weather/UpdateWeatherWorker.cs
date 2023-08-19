@@ -1,8 +1,11 @@
 using Data.EFCore;
+using Data.Enums;
 using Microsoft.EntityFrameworkCore;
 using Quartz;
 using Quartz.Impl;
 using Quartz.Spi;
+using Service.Channels.Notification;
+using Service.Implementations;
 using Shared.Helpers;
 
 namespace Application.Workers.Weather;
@@ -64,6 +67,7 @@ public class WeatherUpdateJob : IJob
         var logger = scope.ServiceProvider.GetRequiredService<ILogger<WeatherUpdateJob>>();
         var unitOfWork = scope.ServiceProvider.GetRequiredService<UnitOfWork>();
         var weatherDataFetcher = scope.ServiceProvider.GetRequiredService<WeatherDataFetcher>();
+        var notificationService = scope.ServiceProvider.GetRequiredService<NotificationService>();
 
         logger.LogInformation("Executing weather update job at {Time}", DateTime.Now);
 
@@ -84,10 +88,29 @@ public class WeatherUpdateJob : IJob
             // Remove old records
             unitOfWork.WeatherAlerts.RemoveRange(
                 unitOfWork.WeatherAlerts.Query().Where(e => e.TripId == trip.Id));
-
             unitOfWork.WeatherAlerts.AddRange(alerts);
-
             await unitOfWork.SaveChangesAsync();
+
+            // Send notification
+            var groupsInTrip = await unitOfWork.Trips.Query()
+                .Where(e => e.Id == trip.Id)
+                .SelectMany(e => e.TourGroups)
+                .Include(g => g.Travelers)
+                .ToListAsync();
+
+            var receiverIds = groupsInTrip.SelectMany(group =>
+            {
+                var userIds = group.Travelers.Select(t => t.Id).ToList();
+                if (group.TourGuideId != null)
+                    userIds.Add(group.TourGuideId.Value);
+                return userIds;
+            }).ToList();
+
+            foreach (var alert in alerts)
+            {
+                await notificationService.EnqueueNotification(new NotificationJob(
+                    receiverIds, NotificationType.WeatherAlert, alert.Headline, null, null));
+            }
         }
 
         logger.LogInformation("Finish weather update job at {Time}", DateTime.Now);
