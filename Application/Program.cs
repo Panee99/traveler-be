@@ -1,5 +1,6 @@
 using Application.Configurations;
 using Application.Middlewares;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
@@ -25,7 +26,13 @@ var builder = WebApplication.CreateBuilder(args);
         .AddConsole()
         .AddSerilog();
 
-    builder.Services.AddRazorPages();
+    builder.Services.AddRazorPages()
+        .AddRazorPagesOptions(options =>
+        {
+            options.Conventions
+                .ConfigureFilter(new IgnoreAntiforgeryTokenAttribute());
+        });
+    
     builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
 
     builder.Services

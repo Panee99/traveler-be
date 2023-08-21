@@ -1,8 +1,8 @@
 ﻿using System.Globalization;
 using Data.Enums;
+using FirebaseAdmin;
 using FirebaseAdmin.Messaging;
 using Microsoft.Extensions.Logging;
-using Service.Commons;
 using Service.Interfaces;
 using Shared.ExternalServices.Firebase;
 using Shared.Helpers;
@@ -41,7 +41,8 @@ public class CloudNotificationService : ICloudNotificationService
             foreach (var response in batchResponse.Responses)
             {
                 if (response.IsSuccess) continue;
-
+                if (response.Exception.ErrorCode is ErrorCode.NotFound) continue;
+                
                 _logger.LogError(response.Exception,
                     "Sending attendance notification failed: {Message}",
                     response.Exception.Message);
@@ -59,12 +60,6 @@ public class CloudNotificationService : ICloudNotificationService
         string payload,
         NotificationType type)
     {
-        var icon = type switch
-        {
-            NotificationType.AttendanceActivity => ServiceConstants.AttendanceImage,
-            _ => throw new ArgumentOutOfRangeException()
-        };
-
         return new Message()
         {
             Token = token,
@@ -88,9 +83,10 @@ public class CloudNotificationService : ICloudNotificationService
                     ClickAction = type switch
                     {
                         NotificationType.AttendanceActivity => NotificationAction.Attendance,
+                        NotificationType.TourStarted => NotificationAction.StartTour,
+                        NotificationType.WeatherAlert => NotificationAction.Warning,
                         _ => null
-                    },
-                    ImageUrl = _cloudStorageService.GetMediaLink(icon),
+                    }
                 },
             }
         };
@@ -102,5 +98,4 @@ internal struct NotificationAction
     public const string Warning = "ACTION_WARNING";
     public const string Attendance = "ACTION_ATTENDENCE";
     public const string StartTour = "ACTION_START_TOUR";
-    public const string AcceptTour = "ACTION_TRAVELLER_ACCEPT_TOUR";
 }
