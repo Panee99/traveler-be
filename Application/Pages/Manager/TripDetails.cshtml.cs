@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Service;
+using Service.Implementations;
 using Service.Interfaces;
 using Service.Models.Tour;
 using Shared.ResultExtensions;
@@ -16,13 +17,15 @@ public class TripDetails : PageModel
 {
     private readonly UnitOfWork _unitOfWork;
     private readonly ITourService _tourService;
+    public readonly ICloudStorageService CloudStorageService;
 
     public TripDetails(
         UnitOfWork unitOfWork,
-        ITourService tourService)
+        ITourService tourService, ICloudStorageService cloudStorageService)
     {
         _unitOfWork = unitOfWork;
         _tourService = tourService;
+        CloudStorageService = cloudStorageService;
     }
 
     public Trip Trip { get; set; }
@@ -66,11 +69,13 @@ public class TripDetails : PageModel
 
         // Get Trip
         var trip = await _unitOfWork.Trips.Query()
-            .Where(trip => trip.DeletedById == null && 
+            .Where(trip => trip.DeletedById == null &&
                            trip.Tour.DeletedById == null)
             .Where(trip => trip.Id == tripId)
             .Include(trip => trip.TourGroups).ThenInclude(group => group.Travelers)
             .Include(trip => trip.TourGroups).ThenInclude(group => group.TourGuide)
+            .Include(trip => trip.TourGroups).ThenInclude(group => group.IncurredCostActivities)
+            .ThenInclude(cost => cost.Image)
             .AsSplitQuery()
             .FirstOrDefaultAsync();
 

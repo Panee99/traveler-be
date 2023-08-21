@@ -5,11 +5,18 @@
     ViewData["Title"] = "Trip Details";
 }
 
-@* <style> *@
-@*     thead th { width: 100px; border-bottom: solid 1px #ddd; font-weight: bold; } *@
-@*     tbody:nth-child(odd) { background: #f5f5f5;  border: solid 1px #ddd; } *@
-@*     tbody:nth-child(even) { background: #e5e5e5;  border: solid 1px #ddd; } *@
-@* </style> *@
+<style>
+    /* Remove borders from list items */
+    .list-group-item {
+        border: none;
+    }
+    
+    .vertical-line {
+        border-left: 1px solid #000; /* Adjust the color and width as needed */
+        height: 100px; /* Adjust the height of the line as needed */
+        margin: 0 auto; /* Center the line horizontally */
+    }
+</style>
 
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
@@ -76,77 +83,121 @@
 
 <hr/>
 
-<!-- Groups and Travelers Table -->
-<div class="col col-md-6">
-    <h4>Members: </h4>
-    <!-- Table -->
-    <div class="row mt-4">
-        <div class="col-md-12">
-            <table class="table table-bordered">
-
-                <thead>
-                <tr>
-                    <th>Email</th>
-                    <th>Phone</th>
-                    <th>First Name</th>
-                    <th>Last Name</th>
-                    <th>Gender</th>
-                    <th>Role</th>
-                </tr>
-                </thead>
-
-                <!-- Table Data -->
-
-                @foreach (var group in Model.Trip.TourGroups.OrderBy(g => g.GroupNo))
-                {
-                    <tbody>
+<div class="row">
+    <!-- Groups and Travelers Table -->
+    <div class="col col-md-6">
+        <h4>Members: </h4>
+        <!-- Table -->
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <table class="table table-bordered">
+                    <thead>
                     <tr>
-                        <th colspan="6" scope="col" style="color: #9e2a2b">
-                            Group @group.GroupNo:
-                            @switch (group.Status)
-                            {
-                                case TourGroupStatus.Prepare:
-                                    <span class="text-primary">@group.Status.ToString().ToUpper()</span>
-                                    break;
-                                case TourGroupStatus.Ongoing:
-                                    <span class="text-success">@group.Status.ToString().ToUpper()</span>
-                                    break;
-                                case TourGroupStatus.Ended:
-                                    <span class="text-dark">@group.Status.ToString().ToUpper()</span>
-                                    break;
-                                case TourGroupStatus.Canceled:
-                                    <span class="text-secondary">@group.Status.ToString().ToUpper()</span>
-                                    break;
-                                default:
-                                    throw new ArgumentOutOfRangeException();
-                            }
-                        </th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Gender</th>
+                        <th>Role</th>
                     </tr>
-                    @foreach (var user in Model.GetUsersInGroup(group))
-                    {
-                        <!-- Each Traveler -->
-                        <tr>
-                            <td class="text-primary">
-                                <span>@user.Email</span>
-                            </td>
-                            <td>@user.Phone</td>
-                            <td>@user.FirstName</td>
-                            <td>@user.LastName</td>
-                            <td>@user.Gender</td>
-                            <td>
-                                @{
-                                    var roleColor = user.Role is UserRole.TourGuide
-                                        ? "text-primary" : "text-success";
-                                }
-                                <b class="@roleColor">@user.Role</b>
-                            </td>
-                        </tr>
-                    }
-                    </tbody>
-                }
+                    </thead>
 
-            </table>
+                    <!-- Table Data -->
+
+                    @foreach (var group in Model.Trip.TourGroups.OrderBy(g => g.GroupNo))
+                    {
+                        <tbody>
+                        <tr>
+                            <th colspan="6" scope="col" style="color: #9e2a2b">
+                                Group @group.GroupNo:
+                                @switch (group.Status)
+                                {
+                                    case TourGroupStatus.Prepare:
+                                        <span class="text-primary">@group.Status.ToString().ToUpper()</span>
+                                        break;
+                                    case TourGroupStatus.Ongoing:
+                                        <span class="text-success">@group.Status.ToString().ToUpper()</span>
+                                        break;
+                                    case TourGroupStatus.Ended:
+                                        <span class="text-dark">@group.Status.ToString().ToUpper()</span>
+                                        break;
+                                    case TourGroupStatus.Canceled:
+                                        <span class="text-secondary">@group.Status.ToString().ToUpper()</span>
+                                        break;
+                                    default:
+                                        throw new ArgumentOutOfRangeException();
+                                }
+                            </th>
+                        </tr>
+                        @foreach (var user in Model.GetUsersInGroup(group))
+                        {
+                            <!-- Each User -->
+                            <tr>
+                                <td class="text-primary">
+                                    <span>@user.Email</span>
+                                </td>
+                                <td>@user.Phone</td>
+                                <td>@user.FirstName</td>
+                                <td>@user.LastName</td>
+                                <td>@user.Gender</td>
+                                <td>
+                                    @{
+                                        var roleColor = user.Role is UserRole.TourGuide
+                                            ? "text-primary" : "text-success";
+                                    }
+                                    <b class="@roleColor">@user.Role</b>
+                                </td>
+                            </tr>
+                        }
+                        </tbody>
+                    }
+
+                </table>
+            </div>
         </div>
     </div>
 
+    <div class="col col-md-6" style="padding-left: 40px">
+        <h4>Incurred Costs: </h4>
+        @foreach (var group in Model.Trip.TourGroups.Where(g => g.IncurredCostActivities.Count > 0))
+        {
+            <li class="list-group-item">
+                <h4 style="color: #9e2a2b">Group @group.GroupNo: </h4>
+                <ul class="list-group">
+                    <!-- Incurred Costs -->
+                    @foreach (var cost in group.IncurredCostActivities)
+                    {
+                        <li class="list-group-item">
+                            <div class="row">
+                                <div class="col-md-9">
+                                    <h6 class="text-primary">
+                                        <b>@cost.Title</b>
+                                    </h6>
+                                    <p>
+                                        <b>Note:</b> @cost.Note
+                                    </p>
+                                    <p>
+                                        <b>Amount:</b> @cost.Cost @cost.Currency
+                                    </p>
+                                    <p>
+                                        <b>Date:</b> @cost.CreatedAt
+                                    </p>
+                                </div>
+
+                                @if (cost.Image != null)
+                                {
+                                    <div class="col-md-3">
+                                        <img src="@Model.CloudStorageService.GetMediaLink(cost.Image?.FileName)" width="150px" height="150px" alt="@cost.Image?.Id">
+                                    </div>
+                                }
+                            </div>
+                        </li>
+                    }
+                    <!-- End Costs -->
+                </ul>
+            </li>
+            <hr>
+        }
+        <!-- End Groups -->
+    </div>
 </div>
