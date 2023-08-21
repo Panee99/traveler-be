@@ -160,12 +160,5 @@ public static class EntityConfigurations
             alert.HasOne(e => e.Trip).WithMany(trip => trip.WeatherAlerts)
                 .HasForeignKey(e => e.TripId);
         });
-
-        modelBuilder.Entity<WeatherForecast>(forecast =>
-        {
-            forecast.HasOne(e => e.Trip).WithMany(trip => trip.WeatherForecasts)
-                .HasForeignKey(e => e.TripId)
-                .OnDelete(DeleteBehavior.NoAction);
-        });
     }
 }

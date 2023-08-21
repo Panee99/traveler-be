@@ -17,6 +17,4 @@ public class Trip : BaseEntity
     public virtual ICollection<TourGroup> TourGroups { get; set; } = new List<TourGroup>();
 
     public virtual ICollection<WeatherAlert> WeatherAlerts { get; set; } = new List<WeatherAlert>();
-
-    public virtual ICollection<WeatherForecast> WeatherForecasts { get; set; } = new List<WeatherForecast>();
 }

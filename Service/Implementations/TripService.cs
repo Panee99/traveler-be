@@ -291,17 +291,4 @@ public class TripService : BaseService, ITripService
 
         return alerts.Adapt<List<WeatherAlertViewModel>>();
     }
-
-    public async Task<Result<List<WeatherForecastViewModel>>> ListWeatherForecasts(Guid tripId)
-    {
-        if (!await UnitOfWork.Trips.AnyAsync(e => e.DeletedById == null && e.Id == tripId))
-            return Error.NotFound(DomainErrors.Trip.NotFound);
-
-        var forecasts = await UnitOfWork.WeatherForecasts
-            .Query()
-            .Where(e => e.TripId == tripId)
-            .ToListAsync();
-
-        return forecasts.Adapt<List<WeatherForecastViewModel>>();
-    }
 }

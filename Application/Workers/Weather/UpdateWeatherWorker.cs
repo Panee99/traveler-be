@@ -87,7 +87,7 @@ public class WeatherUpdateJob : IJob
         foreach (var trip in activeTrips)
         {
             // Fetch weather data
-            var (_, alerts) = await weatherDataFetcher.GetTripWeather(
+            var alerts = await weatherDataFetcher.GetTripWeather(
                 trip.StartTime, trip.Id, unitOfWork);
 
             // Remove old records

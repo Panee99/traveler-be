@@ -26,7 +26,6 @@ public class UnitOfWork : UnitOfWorkBase
     public IRepository<CheckInActivity> CheckInActivities => Repo<CheckInActivity>();
     public IRepository<IncurredCostActivity> IncurredCostActivities => Repo<IncurredCostActivity>();
     public IRepository<WeatherAlert> WeatherAlerts => Repo<WeatherAlert>();
-    public IRepository<WeatherForecast> WeatherForecasts => Repo<WeatherForecast>();
 
     public UnitOfWork(AppDbContext context) : base(context)
     {

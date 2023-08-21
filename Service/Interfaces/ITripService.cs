@@ -18,6 +18,4 @@ public interface ITripService
     Task<Result<List<TourGroupViewModel>>> ListGroupsInTrip(Guid tripId);
 
     Task<Result<List<WeatherAlertViewModel>>> ListWeatherAlerts(Guid tripId);
-
-    Task<Result<List<WeatherForecastViewModel>>> ListWeatherForecasts(Guid tripId);
 }

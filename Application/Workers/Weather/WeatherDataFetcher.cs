@@ -16,7 +16,7 @@ public class WeatherDataFetcher
         _settings = settings.Value;
     }
 
-    public async Task<(List<WeatherForecast>, List<WeatherAlert>)> GetTripWeather(
+    public async Task<List<WeatherAlert>> GetTripWeather(
         DateTime startDate, Guid tripId, UnitOfWork unitOfWork)
     {
         // Fetch schedules
@@ -84,33 +84,6 @@ public class WeatherDataFetcher
                 Urgency = alert.Urgency,
             }).ToList();
 
-        var weatherForecasts = weatherModels
-            .Where(x => x.WeatherForecastModel.Forecast.Forecastday.Count > 0)
-            .Select(x =>
-            {
-                var forecastDay = x.WeatherForecastModel.Forecast.Forecastday.FirstOrDefault()!;
-                var forecastDayModel = forecastDay.Day;
-
-                return new WeatherForecast
-                {
-                    Id = Guid.NewGuid(),
-                    TripId = tripId,
-                    ScheduleId = x.ScheduleId,
-                    Region = x.WeatherForecastModel.Location.Name,
-                    Condition = forecastDayModel.Condition.Text,
-                    Icon = forecastDayModel.Condition.Icon,
-                    MinTemp = forecastDayModel.MintempC,
-                    MaxTemp = forecastDayModel.MaxtempC,
-                    Humidity = forecastDayModel.AvgHumidity,
-                    WillItRain = forecastDayModel.DailyWillItRain,
-                    WillItSnow = forecastDayModel.DailyWillItSnow,
-                    ChanceOfRain = forecastDayModel.DailyChanceOfRain,
-                    ChanceOfSnow = forecastDayModel.DailyChanceOfSnow,
-                    UvIndex = forecastDayModel.Uv,
-                    Date = forecastDay.Date.ToDateTime(TimeOnly.MinValue),
-                };
-            }).ToList();
-
-        return (weatherForecasts, weatherAlerts);
+        return weatherAlerts;
     }
 }
