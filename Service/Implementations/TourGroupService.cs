@@ -37,35 +37,6 @@ public class TourGroupService : BaseService, ITourGroupService
             .CountAsync();
     }
 
-    public async Task<Result> Start(Guid id)
-    {
-        var tourGroup = await UnitOfWork.TourGroups
-            .Query()
-            .Where(e => e.Id == id)
-            .Include(e => e.Trip)
-            .Include(e => e.Travelers)
-            .FirstOrDefaultAsync();
-
-        if (tourGroup is null) return Error.NotFound(DomainErrors.TourGroup.NotFound);
-
-        if (tourGroup.Status != TourGroupStatus.Prepare)
-            return Error.Conflict("Tour Group status must be 'Prepare' to Start");
-
-        if (tourGroup.Trip.StartTime < DateTimeHelper.VnNow().Date)
-            return Error.Conflict($"Cannot start until {tourGroup.Trip.StartTime}");
-
-        tourGroup.Status = TourGroupStatus.Ongoing;
-        UnitOfWork.TourGroups.Update(tourGroup);
-        await UnitOfWork.SaveChangesAsync();
-
-        // Send notification
-        var travelerIds = tourGroup.Travelers.Select(e => e.Id).ToList();
-        await _notificationService.EnqueueNotification(new NotificationJob(
-            travelerIds, NotificationType.TourStarted, tourGroup.GroupName, null, null));
-
-        return Result.Success();
-    }
-
     public async Task<Result> End(Guid id)
     {
         var tourGroup = await UnitOfWork.TourGroups
@@ -83,21 +54,6 @@ public class TourGroupService : BaseService, ITourGroupService
             return Error.Conflict($"Cannot end until {tourGroup.Trip.EndTime}");
 
         tourGroup.Status = TourGroupStatus.Ended;
-        UnitOfWork.TourGroups.Update(tourGroup);
-        await UnitOfWork.SaveChangesAsync();
-
-        return Result.Success();
-    }
-
-    public async Task<Result> Cancel(Guid id)
-    {
-        var tourGroup = await UnitOfWork.TourGroups.FindAsync(id);
-        if (tourGroup is null) return Error.NotFound(DomainErrors.TourGroup.NotFound);
-
-        if (tourGroup.Status is TourGroupStatus.Ended or TourGroupStatus.Canceled)
-            return Error.Conflict("Cannot cancel 'Ended' or 'Canceled' Tour Group");
-
-        tourGroup.Status = TourGroupStatus.Canceled;
         UnitOfWork.TourGroups.Update(tourGroup);
         await UnitOfWork.SaveChangesAsync();
 

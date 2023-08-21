@@ -19,18 +19,6 @@ public class TourGroupsController : ApiController
     }
 
     /// <summary>
-    /// Start a tour group
-    /// </summary>
-    [Authorize(UserRole.TourGuide)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [HttpPut("{id:guid}/start")]
-    public async Task<IActionResult> Start(Guid id)
-    {
-        var result = await _tourGroupService.Start(id);
-        return result.Match(Ok, OnError);
-    }
-
-    /// <summary>
     /// End a tour group
     /// </summary>
     [Authorize(UserRole.TourGuide)]
@@ -39,18 +27,6 @@ public class TourGroupsController : ApiController
     public async Task<IActionResult> End(Guid id)
     {
         var result = await _tourGroupService.End(id);
-        return result.Match(Ok, OnError);
-    }
-
-    /// <summary>
-    /// Cancel a tour group
-    /// </summary>
-    [Authorize(UserRole.TourGuide)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [HttpPut("{id:guid}/cancel")]
-    public async Task<IActionResult> Cancel(Guid id)
-    {
-        var result = await _tourGroupService.Cancel(id);
         return result.Match(Ok, OnError);
     }
 
