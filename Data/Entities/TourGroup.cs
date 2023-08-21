@@ -30,4 +30,9 @@ public class TourGroup
     public virtual ICollection<Traveler> Travelers { get; set; } = new List<Traveler>();
 
     public virtual ICollection<AttendanceActivity> AttendanceActivities { get; set; } = new List<AttendanceActivity>();
+
+    public virtual ICollection<CheckInActivity> CheckInActivities { get; set; } = new List<CheckInActivity>();
+
+    public virtual ICollection<IncurredCostActivity> IncurredCostActivities { get; set; } =
+        new List<IncurredCostActivity>();
 }

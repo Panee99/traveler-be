@@ -62,6 +62,11 @@ public class WeatherUpdateJob : IJob
 
     public async Task Execute(IJobExecutionContext context)
     {
+        await _updateWeatherAlerts();
+    }
+
+    private async Task _updateWeatherAlerts()
+    {
         // Get dependencies
         using var scope = _services.CreateScope();
         var logger = scope.ServiceProvider.GetRequiredService<ILogger<WeatherUpdateJob>>();
