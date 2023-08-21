@@ -22,7 +22,7 @@ public static class AuthHelper
 
     public static string GeneratePassword(int length)
     {
-        const string validChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        const string validChars = "abcdefghijklmnopqrstuvwxyz0123456789";
         var result = new StringBuilder();
         var random = new Random();
 

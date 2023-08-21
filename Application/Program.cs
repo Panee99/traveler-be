@@ -26,13 +26,7 @@ var builder = WebApplication.CreateBuilder(args);
         .AddConsole()
         .AddSerilog();
 
-    builder.Services.AddRazorPages()
-        .AddRazorPagesOptions(options =>
-        {
-            options.Conventions
-                .ConfigureFilter(new IgnoreAntiforgeryTokenAttribute());
-        });
-    
+    builder.Services.AddRazorPages();
     builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
 
     builder.Services

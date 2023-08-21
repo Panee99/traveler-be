@@ -217,21 +217,21 @@ public class TripService : BaseService, ITripService
         return endDate1 >= startDate2 && endDate2 >= startDate1;
     }
 
-    public async Task<Result<TripViewModel>> Update(Guid id, TripUpdateModel model)
-    {
-        var trip = await UnitOfWork.Trips.Query()
-            .Where(e => e.DeletedById == null)
-            .Where(e => e.Id == id)
-            .FirstOrDefaultAsync();
-
-        if (trip is null) return Error.NotFound();
-
-        model.AdaptIgnoreNull(trip);
-        UnitOfWork.Trips.Update(trip);
-
-        await UnitOfWork.SaveChangesAsync();
-        return trip.Adapt<TripViewModel>();
-    }
+    // public async Task<Result<TripViewModel>> Update(Guid id, TripUpdateModel model)
+    // {
+    //     var trip = await UnitOfWork.Trips.Query()
+    //         .Where(e => e.DeletedById == null)
+    //         .Where(e => e.Id == id)
+    //         .FirstOrDefaultAsync();
+    //
+    //     if (trip is null) return Error.NotFound();
+    //
+    //     model.AdaptIgnoreNull(trip);
+    //     UnitOfWork.Trips.Update(trip);
+    //
+    //     await UnitOfWork.SaveChangesAsync();
+    //     return trip.Adapt<TripViewModel>();
+    // }
 
     public async Task<Result<TripViewModel>> Get(Guid id)
     {

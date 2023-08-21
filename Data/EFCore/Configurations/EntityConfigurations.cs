@@ -125,16 +125,6 @@ public static class EntityConfigurations
             entity.HasOne(x => x.User).WithMany().HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.NoAction);
         });
 
-        modelBuilder.Entity<CustomActivity>(entity =>
-        {
-            entity.HasKey(x => x.Id);
-            entity.Property(x => x.Title).IsRequired();
-            entity.Property(x => x.CreatedAt).IsRequired();
-            entity.Property(x => x.Note).IsRequired().HasDefaultValue(string.Empty);
-            entity.Property(x => x.TourGroupId).IsRequired();
-            entity.Property(x => x.IsDeleted).HasDefaultValue(false);
-        });
-
         modelBuilder.Entity<CheckInActivity>(entity =>
         {
             entity.HasKey(x => x.Id);

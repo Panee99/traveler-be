@@ -104,12 +104,6 @@ public class ActivityService : BaseService, IActivityService
             UnitOfWork.AttendanceActivities.Update(attendanceActivity);
             deleted = true;
         }
-        else if (await UnitOfWork.CustomActivities.FindAsync(id) is { } customActivity)
-        {
-            customActivity.IsDeleted = true;
-            UnitOfWork.CustomActivities.Update(customActivity);
-            deleted = true;
-        }
         else if (await UnitOfWork.CheckInActivities.FindAsync(id) is { } checkInActivity)
         {
             checkInActivity.IsDeleted = true;
@@ -136,11 +130,6 @@ public class ActivityService : BaseService, IActivityService
         if (await UnitOfWork.AttendanceActivities.FindAsync(id) is { } attendanceActivity)
         {
             UnitOfWork.AttendanceActivities.Remove(attendanceActivity);
-            deleted = true;
-        }
-        else if (await UnitOfWork.CustomActivities.FindAsync(id) is { } customActivity)
-        {
-            UnitOfWork.CustomActivities.Remove(customActivity);
             deleted = true;
         }
         else if (await UnitOfWork.CheckInActivities.FindAsync(id) is { } checkInActivity)
@@ -212,8 +201,6 @@ public class ActivityService : BaseService, IActivityService
         {
             { Type: ActivityType.Attendance } => (UnitOfWork.AttendanceActivities,
                 model.AttendanceActivity?.TourGroupId, model.AttendanceActivity),
-            { Type: ActivityType.Custom } => (UnitOfWork.CustomActivities,
-                model.CustomActivity?.TourGroupId, model.CustomActivity),
             { Type: ActivityType.CheckIn } => (UnitOfWork.CheckInActivities,
                 model.CheckInActivity?.TourGroupId, model.CheckInActivity),
             { Type: ActivityType.IncurredCost } => (UnitOfWork.IncurredCostActivities,

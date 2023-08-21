@@ -22,7 +22,6 @@ public class UnitOfWork : UnitOfWorkBase
     public IRepository<Notification> Notifications => Repo<Notification>();
     public IRepository<AttendanceActivity> AttendanceActivities => Repo<AttendanceActivity>();
     public IRepository<AttendanceItem> AttendanceItems => Repo<AttendanceItem>();
-    public IRepository<CustomActivity> CustomActivities => Repo<CustomActivity>();
     public IRepository<CheckInActivity> CheckInActivities => Repo<CheckInActivity>();
     public IRepository<IncurredCostActivity> IncurredCostActivities => Repo<IncurredCostActivity>();
     public IRepository<WeatherAlert> WeatherAlerts => Repo<WeatherAlert>();

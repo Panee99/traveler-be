@@ -223,12 +223,6 @@ public class TourGroupService : BaseService, ITourGroupService
                 { Type = ActivityType.Attendance, Data = x, CreatedAt = (DateTime)x.CreatedAt! })
             .ToList();
 
-        var customActivities = UnitOfWork.CustomActivities.Query()
-            .Where(x => x.TourGroupId == tourGroupId)
-            .Where(x => x.IsDeleted == false)
-            .Select(x => new ActivityViewModel
-                { Type = ActivityType.Custom, Data = x, CreatedAt = (DateTime)x.CreatedAt! })
-            .ToList();
 
         var checkInActivities = UnitOfWork.CheckInActivities.Query()
             .Where(x => x.TourGroupId == tourGroupId)
@@ -237,7 +231,7 @@ public class TourGroupService : BaseService, ITourGroupService
                 { Type = ActivityType.CheckIn, Data = x, CreatedAt = (DateTime)x.CreatedAt! })
             .ToList();
 
-        var activities = attendanceActivities.Concat(customActivities).Concat(checkInActivities)
+        var activities = attendanceActivities.Concat(checkInActivities)
             .OrderByDescending(x => x.CreatedAt).ToList();
 
         return activities;

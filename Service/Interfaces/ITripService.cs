@@ -9,8 +9,6 @@ public interface ITripService
 {
     Task<Result<TripViewModel>> ImportTrip(Guid createdById, Guid tourId, Stream tripZipData);
 
-    Task<Result<TripViewModel>> Update(Guid id, TripUpdateModel model);
-
     Task<Result<TripViewModel>> Get(Guid id);
 
     Task<Result> Delete(Guid id);
