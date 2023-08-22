@@ -15,6 +15,5 @@ public static class ConventionConfigurations
         configurationBuilder.Properties<Vehicle>().HaveConversion<string>();
         configurationBuilder.Properties<NotificationType>().HaveConversion<string>();
         configurationBuilder.Properties<ActivityType>().HaveConversion<string>();
-        configurationBuilder.Properties<ActivityStatus>().HaveConversion<string>();
     }
 }

@@ -2,8 +2,6 @@
 
 public enum TourGroupStatus
 {
-    Prepare,
-    Ongoing,
+    Active,
     Ended,
-    Canceled
 }

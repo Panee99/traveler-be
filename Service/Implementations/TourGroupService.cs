@@ -47,11 +47,11 @@ public class TourGroupService : BaseService, ITourGroupService
 
         if (tourGroup is null) return Error.NotFound(DomainErrors.TourGroup.NotFound);
 
-        if (tourGroup.Status != TourGroupStatus.Ongoing)
-            return Error.Conflict("Tour Group status must be 'Ongoing' to End");
+        if (tourGroup.Status != TourGroupStatus.Active)
+            return Error.Conflict("Tour Group status must be 'Active' to End");
 
-        if (tourGroup.Trip.EndTime < DateTimeHelper.VnNow().Date)
-            return Error.Conflict($"Cannot end until {tourGroup.Trip.EndTime}");
+        // if (tourGroup.Trip.EndTime < DateTimeHelper.VnNow().Date)
+        //     return Error.Conflict($"Cannot end until {tourGroup.Trip.EndTime}");
 
         tourGroup.Status = TourGroupStatus.Ended;
         UnitOfWork.TourGroups.Update(tourGroup);

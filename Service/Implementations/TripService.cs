@@ -105,7 +105,7 @@ public class TripService : BaseService, ITripService
                     TourGuideId = tourGuide.Id,
                     GroupName = $"{tour.Title} - Group {groupModel.GroupNo}",
                     GroupNo = groupModel.GroupNo,
-                    Status = TourGroupStatus.Prepare,
+                    Status = TourGroupStatus.Active,
                     CreatedAt = DateTimeHelper.VnNow(),
                 };
 
@@ -182,8 +182,7 @@ public class TripService : BaseService, ITripService
                     // Filter out deleted Tour and Trip
                     .Where(group => group.Trip.DeletedById == null &&
                                     group.Trip.Tour.DeletedById == null)
-                    .Where(group => group.Status != TourGroupStatus.Canceled &&
-                                    group.Status != TourGroupStatus.Ended)
+                    .Where(group => group.Status != TourGroupStatus.Ended)
                     .Include(group => group.Trip)
                     .ToListAsync();
                 break;
@@ -196,8 +195,7 @@ public class TripService : BaseService, ITripService
                     // Filter out deleted Tour and Trip
                     .Where(group => group.Trip.DeletedById == null &&
                                     group.Trip.Tour.DeletedById == null)
-                    .Where(group => group.Status != TourGroupStatus.Canceled &&
-                                    group.Status != TourGroupStatus.Ended)
+                    .Where(group => group.Status != TourGroupStatus.Ended)
                     .Include(group => group.Trip)
                     .ToListAsync();
                 break;
