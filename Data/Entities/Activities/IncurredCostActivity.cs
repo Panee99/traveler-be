@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using Newtonsoft.Json;
 
 namespace Data.Entities.Activities;
@@ -27,4 +28,7 @@ public class IncurredCostActivity : IActivity
     [JsonIgnore] public TourGroup? TourGroup { get; set; }
 
     [JsonIgnore] public Attachment? Image { get; set; }
+
+    [NotMapped]
+    public String? ImageUrl { get; set; }
 }

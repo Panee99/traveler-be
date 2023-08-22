@@ -1,4 +1,5 @@
 ﻿using Data.EFCore;
+using Data.Entities.Activities;
 using Data.Enums;
 using Google.Cloud.Firestore;
 using Mapster;
@@ -187,11 +188,21 @@ public class TourGroupService : BaseService, ITourGroupService
             .ToList();
         
         var incurredCostActivities = UnitOfWork.IncurredCostActivities.Query()
+            .Include(x => x.Image)
             .Where(x => x.TourGroupId == tourGroupId)
             .Where(x => x.IsDeleted == false)
             .Select(x => new ActivityViewModel
                 { Type = ActivityType.IncurredCost, Data = x, CreatedAt = (DateTime)x.CreatedAt! })
             .ToList();
+        // set incurred costs image url
+        incurredCostActivities.ForEach(x =>
+        {
+            if (x.Data == null) return;
+            
+            if (x.Data is not IncurredCostActivity activity) return;
+
+            activity.ImageUrl = _cloudStorageService.GetMediaLink(activity.Image?.FileName);
+        });
 
         var activities = attendanceActivities.Concat(checkInActivities).Concat(incurredCostActivities)
             .OrderByDescending(x => x.CreatedAt).ToList();
