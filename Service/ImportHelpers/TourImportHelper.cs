@@ -65,6 +65,10 @@ public static class TourImportHelper
         reader.Read(); // skip header
         while (reader.Read())
         {
+            // Check end of values
+            if (ReferenceEquals(reader.GetValue(0), null)) break;
+
+            // Read data
             schedules.Add(new ScheduleModel()
             {
                 Sequence = (int)reader.GetDouble(0),
@@ -75,7 +79,7 @@ public static class TourImportHelper
                 DayNo = (int)reader.GetDouble(5),
                 Vehicle = IsNull(reader.GetValue(6)) ? null : Enum.Parse<Vehicle>(reader.GetString(6))
             });
-        }   
+        }
 
         return schedules;
     }

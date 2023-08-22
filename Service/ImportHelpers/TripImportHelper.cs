@@ -57,9 +57,18 @@ public class TripImportHelper
         reader.Read(); // skip header
         while (reader.Read())
         {
+            // Check end of values
+            if (ReferenceEquals(reader.GetValue(0), null)) break;
+
+            // Format phone
+            var phone = reader.GetString(0);
+            if (phone.StartsWith('+')) phone = phone[1..];
+            phone = phone.Replace(" ", "");
+
+            // Read data
             var userModel = new UserModel
             {
-                Phone = reader.GetDouble(0).ToString(CultureInfo.InvariantCulture),
+                Phone = phone,
                 Email = reader.GetString(1),
                 FirstName = reader.GetString(2),
                 LastName = reader.GetString(3),
@@ -69,7 +78,10 @@ public class TripImportHelper
 
             var groupNo = (int)reader.GetDouble(6);
 
+            // Add to list
             userTuples.Add((groupNo, userModel));
+
+            Console.WriteLine(userModel.Email);
         }
 
         var groups = userTuples
