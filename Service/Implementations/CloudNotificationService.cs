@@ -83,7 +83,6 @@ public class CloudNotificationService : ICloudNotificationService
                     ClickAction = type switch
                     {
                         NotificationType.AttendanceActivity => NotificationAction.Attendance,
-                        NotificationType.TourStarted => NotificationAction.StartTour,
                         NotificationType.WeatherAlert => NotificationAction.Warning,
                         _ => null
                     }
@@ -97,5 +96,4 @@ internal struct NotificationAction
 {
     public const string Warning = "ACTION_WARNING";
     public const string Attendance = "ACTION_ATTENDENCE";
-    public const string StartTour = "ACTION_START_TOUR";
 }

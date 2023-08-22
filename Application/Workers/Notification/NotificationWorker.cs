@@ -92,17 +92,12 @@ public class NotificationWorker : BackgroundService
                     $"Notice! User {job.Subject} sent emergency request.", job.Type);
                 break;
 
-            case NotificationType.TourStarted:
-                await _cloudNotificationService.SendBatchMessages(fcmTokens, title,
-                    $"Hi! {job.Subject} is started.", job.Type);
-                break;
-
             case NotificationType.WeatherAlert:
                 await _cloudNotificationService.SendBatchMessages(fcmTokens, title, job.Subject, job.Type);
                 break;
 
-            case NotificationType.CheckInActivity:
-                break;
+            // case NotificationType.CheckInActivity:
+            //     break;
 
             default:
                 throw new ArgumentOutOfRangeException();
@@ -116,8 +111,7 @@ public class NotificationWorker : BackgroundService
         {
             NotificationType.AttendanceActivity => "Attendance Activity",
             NotificationType.Emergency => "Emergency",
-            NotificationType.TourStarted => "Tour Started",
-            NotificationType.CheckInActivity => "Check In Activity",
+            // NotificationType.CheckInActivity => "Check In Activity",
             NotificationType.WeatherAlert => "Weather Alert!",
             _ => throw new ArgumentOutOfRangeException()
         };
