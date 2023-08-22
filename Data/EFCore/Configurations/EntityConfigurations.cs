@@ -14,9 +14,14 @@ public static class EntityConfigurations
             entity.HasIndex(e => e.Status);
             entity.HasIndex(e => e.Phone).IsUnique();
             entity.HasIndex(e => e.Email).IsUnique();
+            entity.Property(e => e.Phone).HasMaxLength(20).IsUnicode(false);
+            entity.Property(e => e.Email).HasMaxLength(128);
             entity.Property(e => e.Password).HasMaxLength(256);
-            entity.Property(e => e.Phone).HasMaxLength(256).IsUnicode(false);
-            entity.Property(e => e.Status).HasMaxLength(256);
+            entity.Property(e => e.FirstName).HasMaxLength(64);
+            entity.Property(e => e.LastName).HasMaxLength(64);
+            entity.Property(e => e.Gender).HasMaxLength(64);
+            entity.Property(e => e.Role).HasMaxLength(64);
+            entity.Property(e => e.Status).HasMaxLength(64);
         });
 
         modelBuilder.Entity<Attachment>(entity =>
@@ -35,24 +40,35 @@ public static class EntityConfigurations
             entity.Property(e => e.LastName).HasMaxLength(256);
         });
 
-        modelBuilder.Entity<Notification>();
+        modelBuilder.Entity<Notification>(entity =>
+        {
+            entity.Property(e => e.Type).HasMaxLength(128);
+            entity.Property(e => e.Title).HasMaxLength(256);
+            entity.Property(e => e.Payload).HasMaxLength(1024);
+        });
 
-        modelBuilder.Entity<Schedule>();
+        modelBuilder.Entity<Schedule>(entity =>
+        {
+            entity.Property(e => e.Title).HasMaxLength(256);
+            entity.Property(e => e.Description).HasMaxLength(1024);
+            entity.Property(e => e.Vehicle).HasMaxLength(64);
+        });
 
         modelBuilder.Entity<Tour>(entity =>
         {
             entity.HasIndex(e => e.CreatedAt);
-            entity.Property(e => e.Title).HasMaxLength(256);
+            entity.Property(e => e.Title).HasMaxLength(512);
             entity.Property(e => e.Departure).HasMaxLength(256);
             entity.Property(e => e.Destination).HasMaxLength(256);
-            entity.Property(e => e.Type).HasMaxLength(256);
+            entity.Property(e => e.Type).HasMaxLength(64);
+            entity.Property(e => e.Duration).HasMaxLength(128);
             entity.Property(e => e.CreatedAt).HasColumnType("datetime");
         });
 
         modelBuilder.Entity<Trip>(entity =>
         {
             entity.HasIndex(e => e.Code).IsUnique();
-            entity.Property(e => e.Code).HasMaxLength(256);
+            entity.Property(e => e.Code).HasMaxLength(64);
             entity.Property(e => e.EndTime).HasColumnType("datetime");
             entity.Property(e => e.StartTime).HasColumnType("datetime");
             entity.HasOne(e => e.CreatedBy).WithMany()
@@ -62,17 +78,16 @@ public static class EntityConfigurations
         modelBuilder.Entity<TourGroup>(entity =>
         {
             entity.HasOne(e => e.Trip).WithMany(x => x.TourGroups);
-            entity.Property(e => e.Status).HasMaxLength(256);
+            entity.Property(e => e.GroupName).HasMaxLength(512);
+            entity.Property(e => e.Status).HasMaxLength(64);
             entity.HasMany(x => x.AttendanceActivities).WithOne(x => x.TourGroup).HasForeignKey(x => x.TourGroupId);
         });
 
         modelBuilder.Entity<TourGuide>(entity =>
         {
             entity.ToTable("TourGuide");
-            entity.Property(e => e.Email).HasMaxLength(256);
-            entity.Property(e => e.FirstName).HasMaxLength(256);
-            entity.Property(e => e.Gender).HasMaxLength(256);
-            entity.Property(e => e.LastName).HasMaxLength(256);
+            entity.Property(e => e.FirstContactNumber).HasMaxLength(20);
+            entity.Property(e => e.SecondContactNumber).HasMaxLength(20);
         });
 
         modelBuilder.Entity<TourImage>().HasKey(e => new { e.TourId, e.AttachmentId });
@@ -81,9 +96,6 @@ public static class EntityConfigurations
         {
             entity.ToTable("Traveler");
             entity.Property(e => e.Address).HasMaxLength(256);
-            entity.Property(e => e.FirstName).HasMaxLength(256);
-            entity.Property(e => e.Gender).HasMaxLength(256);
-            entity.Property(e => e.LastName).HasMaxLength(256);
         });
 
         modelBuilder.Entity<Traveler>()
@@ -109,9 +121,9 @@ public static class EntityConfigurations
         modelBuilder.Entity<AttendanceActivity>(entity =>
         {
             entity.HasKey(x => x.Id);
-            entity.Property(x => x.Title).IsRequired();
+            entity.Property(x => x.Title).IsRequired().HasMaxLength(256);
             entity.Property(x => x.CreatedAt).IsRequired();
-            entity.Property(x => x.Note).IsRequired().HasDefaultValue(string.Empty);
+            entity.Property(x => x.Note).IsRequired().HasDefaultValue(string.Empty).HasMaxLength(512);
             entity.Property(x => x.TourGroupId).IsRequired();
             entity.Property(x => x.IsDeleted).HasDefaultValue(false);
             entity.Property(x => x.IsOpen).HasDefaultValue(true);
@@ -121,16 +133,17 @@ public static class EntityConfigurations
         {
             entity.HasKey(x => x.Id);
             entity.Property(x => x.Present).IsRequired();
-            entity.Property(x => x.Reason).IsRequired().HasDefaultValue(string.Empty);
+            entity.Property(x => x.Reason).IsRequired().HasDefaultValue(string.Empty).HasMaxLength(256);
             entity.HasOne(x => x.User).WithMany().HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.NoAction);
         });
 
         modelBuilder.Entity<CheckInActivity>(entity =>
         {
             entity.HasKey(x => x.Id);
-            entity.Property(x => x.Title).IsRequired();
+            entity.Property(x => x.Title).IsRequired().HasMaxLength(256);
             entity.Property(x => x.CreatedAt).IsRequired();
-            entity.Property(x => x.Note).IsRequired().HasDefaultValue(string.Empty);
+            entity.Property(x => x.Note).IsRequired().HasDefaultValue(string.Empty).HasMaxLength(512);
+            ;
             entity.Property(x => x.TourGroupId).IsRequired();
             entity.Property(x => x.IsDeleted).HasDefaultValue(false);
         });
@@ -138,9 +151,10 @@ public static class EntityConfigurations
         modelBuilder.Entity<IncurredCostActivity>(entity =>
         {
             entity.HasKey(x => x.Id);
-            entity.Property(x => x.Title).IsRequired();
+            entity.Property(x => x.Title).IsRequired().HasMaxLength(256);
+            entity.Property(x => x.Currency).HasMaxLength(10);
             entity.Property(x => x.CreatedAt).IsRequired();
-            entity.Property(x => x.Note).IsRequired().HasDefaultValue(string.Empty);
+            entity.Property(x => x.Note).IsRequired().HasDefaultValue(string.Empty).HasMaxLength(512);
             entity.Property(x => x.TourGroupId).IsRequired();
             entity.Property(x => x.IsDeleted).HasDefaultValue(false);
         });

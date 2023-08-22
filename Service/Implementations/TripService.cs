@@ -81,7 +81,8 @@ public class TripService : BaseService, ITripService
                 {
                     // Add to DB if tour guide not exist
                     var user = groupModel.TourGuide.Adapt<TourGuide>();
-                    var newPassword = AuthHelper.GeneratePassword(8);
+                    // var newPassword = AuthHelper.GeneratePassword(8);
+                    var newPassword = "123123";
                     user.Password = AuthHelper.HashPassword(newPassword);
                     user.Status = UserStatus.Active;
                     tourGuide = UnitOfWork.TourGuides.Add(user);
@@ -121,7 +122,8 @@ public class TripService : BaseService, ITripService
                     {
                         // Add to DB if traveler not exist
                         var user = travelerModel.Adapt<Traveler>();
-                        var newPassword = AuthHelper.GeneratePassword(8);
+                        // var newPassword = AuthHelper.GeneratePassword(8);
+                        var newPassword = "123123";
                         user.Password = AuthHelper.HashPassword(newPassword);
                         user.Status = UserStatus.Active;
                         traveler = UnitOfWork.Travelers.Add(user);
