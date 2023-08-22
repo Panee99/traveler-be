@@ -45,10 +45,10 @@
         <None Update="Workers\Notification\Templates\emergency.html">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Controllers\Statics\Trip.zip">
+        <None Update="Controllers\Statics\Tour.zip">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="Controllers\Statics\Tour.zip">
+        <None Update="Controllers\Statics\Trip.zip">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
     </ItemGroup>
