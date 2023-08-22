@@ -7,6 +7,7 @@ using Service.Models.Tour;
 
 namespace Application.Pages.Manager;
 
+[IgnoreAntiforgeryToken]
 public class ToursModel : PageModel
 {
     // DI

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Application.Pages.Manager;
 
+[IgnoreAntiforgeryToken]
 public class IndexModel : PageModel
 {
     /// <summary>

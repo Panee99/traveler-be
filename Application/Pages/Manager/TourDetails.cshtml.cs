@@ -12,6 +12,7 @@ using Shared.ResultExtensions;
 
 namespace Application.Pages.Manager;
 
+[IgnoreAntiforgeryToken]
 public class TourDetails : PageModel
 {
     private readonly ITourService _tourService;

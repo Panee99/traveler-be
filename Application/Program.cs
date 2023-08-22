@@ -1,6 +1,6 @@
 using Application.Configurations;
 using Application.Middlewares;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.DataProtection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
@@ -27,6 +27,10 @@ var builder = WebApplication.CreateBuilder(args);
         .AddSerilog();
 
     builder.Services.AddRazorPages();
+    builder.Services.AddDataProtection()
+        .SetApplicationName("travelers-app")
+        .PersistKeysToFileSystem(new DirectoryInfo("/var/dpkeys/"));
+
     builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
 
     builder.Services

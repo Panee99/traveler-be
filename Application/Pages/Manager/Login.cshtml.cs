@@ -8,6 +8,7 @@ using Shared.Helpers;
 
 namespace Application.Pages.Manager;
 
+[IgnoreAntiforgeryToken]
 public class Login : PageModel
 {
     private readonly UnitOfWork _unitOfWork;

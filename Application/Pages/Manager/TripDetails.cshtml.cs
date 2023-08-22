@@ -13,6 +13,7 @@ using Shared.ResultExtensions;
 
 namespace Application.Pages.Manager;
 
+[IgnoreAntiforgeryToken]
 public class TripDetails : PageModel
 {
     private readonly UnitOfWork _unitOfWork;
