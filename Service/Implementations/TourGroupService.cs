@@ -197,4 +197,25 @@ public class TourGroupService : BaseService, ITourGroupService
 
         return activities;
     }
+
+    public async Task<Result> UpdateCurrentSchedule(Guid tourGroupId, CurrentScheduleModel model)
+    {
+        var tourGroup = await UnitOfWork.TourGroups.FindAsync(tourGroupId);
+        if (tourGroup is null) return Error.NotFound(DomainErrors.TourGroup.NotFound);
+
+        var existScheduleForGroup = await UnitOfWork.TourGroups.Query()
+            .Where(g => g.Id == tourGroupId)
+            .SelectMany(g => g.Trip.Tour.Schedules)
+            .AnyAsync(schedule => schedule.Id == model.ScheduleId);
+
+        if (existScheduleForGroup)
+        {
+            tourGroup.CurrentScheduleId = model.ScheduleId;
+            UnitOfWork.TourGroups.Update(tourGroup);
+            await UnitOfWork.SaveChangesAsync();
+        }
+        else return Error.Conflict("ScheduleId not exist in this group's Tour");
+
+        return Result.Success();
+    }
 }

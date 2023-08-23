@@ -19,6 +19,18 @@ public class TourGroupsController : ApiController
     }
 
     /// <summary>
+    /// Change current schedule
+    /// </summary>
+    [Authorize(UserRole.TourGuide)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [HttpPut("{id:guid}/current-schedule")]
+    public async Task<IActionResult> UpdateCurrentSchedule(Guid id, CurrentScheduleModel model)
+    {
+        var result = await _tourGroupService.UpdateCurrentSchedule(id, model);
+        return result.Match(Ok, OnError);
+    }
+
+    /// <summary>
     /// End a tour group
     /// </summary>
     [Authorize(UserRole.TourGuide)]
