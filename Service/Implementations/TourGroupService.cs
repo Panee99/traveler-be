@@ -101,9 +101,8 @@ public class TourGroupService : BaseService, ITourGroupService
         await _notificationService.EnqueueNotification(new NotificationJob(
             userIds,
             NotificationType.Emergency,
-            $"{sender.FirstName} {sender.LastName}",
-            null,
-            sender.AvatarId
+            sender.AvatarId,
+            $"{sender.FirstName} {sender.LastName}"
         ));
 
         return Result.Success();
@@ -185,7 +184,7 @@ public class TourGroupService : BaseService, ITourGroupService
             .Select(x => new ActivityViewModel
                 { Type = ActivityType.CheckIn, Data = x, CreatedAt = (DateTime)x.CreatedAt! })
             .ToList();
-        
+
         var incurredCostActivities = UnitOfWork.IncurredCostActivities.Query()
             .Where(x => x.TourGroupId == tourGroupId)
             .Where(x => x.IsDeleted == false)

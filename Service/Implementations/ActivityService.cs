@@ -82,13 +82,8 @@ public class ActivityService : BaseService, IActivityService
             if (tourGroup.TourGuideId != null) receiverIds.Add(tourGroup.TourGuideId.Value);
 
             await _notificationService.EnqueueNotification(
-                new NotificationJob(
-                    receiverIds,
-                    NotificationType.AttendanceActivity,
-                    dataModel?.Title,
-                    null,
-                    null
-                ));
+                new NotificationJob(receiverIds, NotificationType.AttendanceActivity, null,
+                    dataModel?.Title));
         }
 
         // Return

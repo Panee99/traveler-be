@@ -6,7 +6,6 @@ public record NotificationJob
 (
     ICollection<Guid> ReceiverIds,
     NotificationType Type,
-    string Subject,
-    string? DirectObject,
-    Guid? ImageId
+    Guid? ImageId,
+    params string[] Data
 );

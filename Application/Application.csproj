@@ -51,6 +51,9 @@
         <None Update="Controllers\Statics\Trip.zip">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
+        <None Update="Workers\Notification\Templates\weather-alert.html">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
     </ItemGroup>
 
     <ItemGroup>

@@ -24,9 +24,9 @@ public class CloudNotificationService : ICloudNotificationService
 
     public async Task SendBatchMessages(
         ICollection<string> tokens,
+        NotificationType type,
         string title,
-        string payload,
-        NotificationType type)
+        string payload)
     {
         if (tokens.Count == 0) return;
 
@@ -42,7 +42,7 @@ public class CloudNotificationService : ICloudNotificationService
             {
                 if (response.IsSuccess) continue;
                 if (response.Exception.ErrorCode is ErrorCode.NotFound) continue;
-                
+
                 _logger.LogError(response.Exception,
                     "Sending attendance notification failed: {Message}",
                     response.Exception.Message);
