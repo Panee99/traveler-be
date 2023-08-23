@@ -7,8 +7,6 @@ namespace Service.Interfaces;
 
 public interface ITourGroupService
 {
-    // Task<Result<TourGroupViewModel>> Update(Guid groupId, TourGroupUpdateModel model);
-
     Task<Result> Delete(Guid groupId);
     
     Task<Result<TourGroupViewModel>> Get(Guid id);
@@ -22,4 +20,6 @@ public interface ITourGroupService
     Task<Result<List<UserViewModel>>> ListMembers(Guid tourGroupId);
 
     Task<Result<List<ActivityViewModel>>> ListActivities(Guid tourGroupId);
+    
+    Task<Result> UpdateCurrentSchedule(Guid tourGroupId, CurrentScheduleModel model);
 }

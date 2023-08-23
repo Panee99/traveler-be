@@ -24,9 +24,9 @@ public class CloudNotificationService : ICloudNotificationService
 
     public async Task SendBatchMessages(
         ICollection<string> tokens,
+        NotificationType type,
         string title,
-        string payload,
-        NotificationType type)
+        string payload)
     {
         if (tokens.Count == 0) return;
 
@@ -42,9 +42,9 @@ public class CloudNotificationService : ICloudNotificationService
             {
                 if (response.IsSuccess) continue;
                 if (response.Exception.ErrorCode is ErrorCode.NotFound) continue;
-                
+
                 _logger.LogError(response.Exception,
-                    "Sending attendance notification failed: {Message}",
+                    "Sending notification failed: {Message}",
                     response.Exception.Message);
             }
         }
@@ -83,7 +83,6 @@ public class CloudNotificationService : ICloudNotificationService
                     ClickAction = type switch
                     {
                         NotificationType.AttendanceActivity => NotificationAction.Attendance,
-                        NotificationType.TourStarted => NotificationAction.StartTour,
                         NotificationType.WeatherAlert => NotificationAction.Warning,
                         _ => null
                     }
@@ -97,5 +96,4 @@ internal struct NotificationAction
 {
     public const string Warning = "ACTION_WARNING";
     public const string Attendance = "ACTION_ATTENDENCE";
-    public const string StartTour = "ACTION_START_TOUR";
 }

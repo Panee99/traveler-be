@@ -3,6 +3,8 @@ using Data.Entities;
 using Data.Enums;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Serilog;
 using Service.Channels.Notification;
 using Service.Interfaces;
 using Service.Models.Notification;
@@ -13,14 +15,16 @@ namespace Service.Implementations;
 
 public class NotificationService : BaseService, INotificationService
 {
+    private readonly ILogger<NotificationService> _logger;
     private readonly ICloudStorageService _cloudStorageService;
     private readonly INotificationJobQueue _notificationJobQueue;
 
     public NotificationService(UnitOfWork unitOfWork, ICloudStorageService cloudStorageService,
-        INotificationJobQueue notificationJobQueue) : base(unitOfWork)
+        INotificationJobQueue notificationJobQueue, ILogger<NotificationService> logger) : base(unitOfWork)
     {
         _cloudStorageService = cloudStorageService;
         _notificationJobQueue = notificationJobQueue;
+        _logger = logger;
     }
 
     public async Task EnqueueNotification(NotificationJob notificationJob)
@@ -88,9 +92,9 @@ public class NotificationService : BaseService, INotificationService
 
     public async Task SaveNotifications(
         IEnumerable<Guid> receiverIds,
+        NotificationType type,
         string title,
         string payload,
-        NotificationType type,
         Guid? imageId)
     {
         var notifications = receiverIds.Select(travelerId => new Notification()
@@ -104,7 +108,14 @@ public class NotificationService : BaseService, INotificationService
             ImageId = imageId
         });
 
-        UnitOfWork.Notifications.AddRange(notifications);
-        await UnitOfWork.SaveChangesAsync();
+        try
+        {
+            UnitOfWork.Notifications.AddRange(notifications);
+            await UnitOfWork.SaveChangesAsync();
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Saving notification failed");
+        }
     }
 }

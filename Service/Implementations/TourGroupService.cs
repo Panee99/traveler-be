@@ -102,9 +102,8 @@ public class TourGroupService : BaseService, ITourGroupService
         await _notificationService.EnqueueNotification(new NotificationJob(
             userIds,
             NotificationType.Emergency,
-            $"{sender.FirstName} {sender.LastName}",
-            null,
-            sender.AvatarId
+            sender.AvatarId,
+            $"{sender.FirstName} {sender.LastName}"
         ));
 
         return Result.Success();
@@ -186,7 +185,7 @@ public class TourGroupService : BaseService, ITourGroupService
             .Select(x => new ActivityViewModel
                 { Type = ActivityType.CheckIn, Data = x, CreatedAt = (DateTime)x.CreatedAt! })
             .ToList();
-        
+
         var incurredCostActivities = UnitOfWork.IncurredCostActivities.Query()
             .Include(x => x.Image)
             .Where(x => x.TourGroupId == tourGroupId)
@@ -208,5 +207,26 @@ public class TourGroupService : BaseService, ITourGroupService
             .OrderByDescending(x => x.CreatedAt).ToList();
 
         return activities;
+    }
+
+    public async Task<Result> UpdateCurrentSchedule(Guid tourGroupId, CurrentScheduleModel model)
+    {
+        var tourGroup = await UnitOfWork.TourGroups.FindAsync(tourGroupId);
+        if (tourGroup is null) return Error.NotFound(DomainErrors.TourGroup.NotFound);
+
+        var existScheduleForGroup = await UnitOfWork.TourGroups.Query()
+            .Where(g => g.Id == tourGroupId)
+            .SelectMany(g => g.Trip.Tour.Schedules)
+            .AnyAsync(schedule => schedule.Id == model.ScheduleId);
+
+        if (existScheduleForGroup)
+        {
+            tourGroup.CurrentScheduleId = model.ScheduleId;
+            UnitOfWork.TourGroups.Update(tourGroup);
+            await UnitOfWork.SaveChangesAsync();
+        }
+        else return Error.Conflict("ScheduleId not exist in this group's Tour");
+
+        return Result.Success();
     }
 }

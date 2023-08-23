@@ -1,6 +1,5 @@
 using Application.Configurations;
 using Application.Middlewares;
-using Microsoft.AspNetCore.DataProtection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;

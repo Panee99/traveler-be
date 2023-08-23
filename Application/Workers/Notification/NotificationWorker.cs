@@ -16,6 +16,7 @@ public class NotificationWorker : BackgroundService
 
     private readonly IRazorEngineCompiledTemplate _attendanceTemplate;
     private readonly IRazorEngineCompiledTemplate _emergencyTemplate;
+    private readonly IRazorEngineCompiledTemplate _weatherAlertTemplate;
 
     public NotificationWorker(
         INotificationJobQueue jobQueue,
@@ -31,6 +32,7 @@ public class NotificationWorker : BackgroundService
         var razorEngine = new RazorEngine();
         _attendanceTemplate = razorEngine.Compile(_readTemplate("attendance.html"));
         _emergencyTemplate = razorEngine.Compile(_readTemplate("emergency.html"));
+        _weatherAlertTemplate = razorEngine.Compile(_readTemplate("weather-alert.html"));
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -42,7 +44,17 @@ public class NotificationWorker : BackgroundService
             {
                 var job = await _jobQueue.DequeueAsync();
                 _ = Task.Run(
-                    async () => { await _handleNotification(job); }, stoppingToken);
+                    async () =>
+                    {
+                        try
+                        {
+                            await _handleNotification(job);
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine(e);
+                        }
+                    }, stoppingToken);
             }
             catch (Exception ex)
             {
@@ -77,32 +89,33 @@ public class NotificationWorker : BackgroundService
         switch (job.Type)
         {
             case NotificationType.AttendanceActivity:
-                await notificationService.SaveNotifications(job.ReceiverIds, title,
-                    await _attendanceTemplate.RunAsync(new { Name = job.Subject }), job.Type, job.ImageId);
+                await notificationService.SaveNotifications(job.ReceiverIds, job.Type, title,
+                    await _attendanceTemplate.RunAsync(), job.ImageId);
 
-                await _cloudNotificationService.SendBatchMessages(fcmTokens, title,
-                    $"A new attendance activity opened. {job.Subject}", job.Type);
+                await _cloudNotificationService.SendBatchMessages(fcmTokens, job.Type, title,
+                    $"A new attendance activity opened. {job.Data[0]}");
                 break;
 
             case NotificationType.Emergency:
-                await notificationService.SaveNotifications(job.ReceiverIds, title,
-                    await _emergencyTemplate.RunAsync(new { Name = job.Subject }), job.Type, job.ImageId);
+                await notificationService.SaveNotifications(job.ReceiverIds, job.Type, title,
+                    await _emergencyTemplate.RunAsync(new { Name = job.Data[0] }), job.ImageId);
 
-                await _cloudNotificationService.SendBatchMessages(fcmTokens, title,
-                    $"Notice! User {job.Subject} sent emergency request.", job.Type);
-                break;
-
-            case NotificationType.TourStarted:
-                await _cloudNotificationService.SendBatchMessages(fcmTokens, title,
-                    $"Hi! {job.Subject} is started.", job.Type);
+                await _cloudNotificationService.SendBatchMessages(fcmTokens, job.Type, title,
+                    $"Notice! User {job.Data[0]} sent emergency request.");
                 break;
 
             case NotificationType.WeatherAlert:
-                await _cloudNotificationService.SendBatchMessages(fcmTokens, title, job.Subject, job.Type);
+                await notificationService.SaveNotifications(job.ReceiverIds, job.Type, title,
+                    await _weatherAlertTemplate.RunAsync(
+                        new { Event = job.Data[0], Headline = job.Data[1] }),
+                    job.ImageId);
+
+                await _cloudNotificationService.SendBatchMessages(fcmTokens, job.Type, title,
+                    $"{job.Data[0]}! {job.Data[1]}.");
                 break;
 
-            case NotificationType.CheckInActivity:
-                break;
+            // case NotificationType.CheckInActivity:
+            //     break;
 
             default:
                 throw new ArgumentOutOfRangeException();
@@ -116,9 +129,8 @@ public class NotificationWorker : BackgroundService
         {
             NotificationType.AttendanceActivity => "Attendance Activity",
             NotificationType.Emergency => "Emergency",
-            NotificationType.TourStarted => "Tour Started",
-            NotificationType.CheckInActivity => "Check In Activity",
             NotificationType.WeatherAlert => "Weather Alert!",
+            // NotificationType.CheckInActivity => "Check In Activity",
             _ => throw new ArgumentOutOfRangeException()
         };
     }
