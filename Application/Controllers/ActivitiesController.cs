@@ -75,4 +75,15 @@ public class ActivitiesController : ApiController
         var result = await _activityService.Attend(code);
         return result.Match(Ok, OnError);
     }
+    
+    /// <summary>
+    /// Attend
+    /// </summary>
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [HttpGet("{id:guid}")]
+    public async Task<IActionResult> Get(Guid id)
+    {
+        var result = await _activityService.Get(id);
+        return result.Match(Ok, OnError);
+    }
 }
