@@ -44,7 +44,7 @@ public class CloudNotificationService : ICloudNotificationService
                 if (response.Exception.ErrorCode is ErrorCode.NotFound) continue;
 
                 _logger.LogError(response.Exception,
-                    "Sending attendance notification failed: {Message}",
+                    "Sending notification failed: {Message}",
                     response.Exception.Message);
             }
         }
