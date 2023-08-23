@@ -97,19 +97,18 @@ public class WeatherUpdateJob : IJob
             await unitOfWork.SaveChangesAsync();
 
             // Send notification
-            var groupsInTrip = await unitOfWork.Trips.Query()
-                .Where(e => e.Id == trip.Id)
-                .SelectMany(e => e.TourGroups)
-                .Include(g => g.Travelers)
+            var groups = await unitOfWork.TourGroups.Query()
+                .Where(g => g.TripId == trip.Id)
+                .Select(g => new { g.TourGuideId, TravelerIds = g.Travelers.Select(t => t.Id) })
                 .ToListAsync();
 
-            var receiverIds = groupsInTrip.SelectMany(group =>
-            {
-                var userIds = group.Travelers.Select(t => t.Id).ToList();
-                if (group.TourGuideId != null)
-                    userIds.Add(group.TourGuideId.Value);
-                return userIds;
-            }).ToList();
+            var receiverIds = groups.Select(x =>
+                {
+                    var ids = x.TravelerIds.ToList();
+                    if (x.TourGuideId != null) ids.Add(x.TourGuideId.Value);
+                    return ids;
+                })
+                .SelectMany(x => x).ToList();
 
             foreach (var alert in alerts)
             {
