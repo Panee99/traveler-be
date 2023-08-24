@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Service.Commons.QueryExtensions;
 using Service.Interfaces;
 using Service.Models.Tour;
 
@@ -10,13 +11,16 @@ namespace Application.Pages.Manager;
 [IgnoreAntiforgeryToken]
 public class ToursModel : PageModel
 {
+    private const int PageSize = 2;
+    
     // DI
     private readonly ITourService _tourService;
 
     // Get
-    [BindProperty(SupportsGet = true)] public string? SearchValue { get; set; }
+    [BindProperty(SupportsGet = true)] public string SearchValue { get; set; } = "";
+    [BindProperty(SupportsGet = true)] public int PageNo { get; set; } = 1;
 
-    public List<TourViewModel> Tours = new();
+    public PaginationModel<TourViewModel> Data = new();
     public UserSessionModel? CurrentUser { get; set; }
 
     // Post
@@ -79,12 +83,12 @@ public class ToursModel : PageModel
     {
         var filterModel = new TourFilterModel()
         {
-            Page = 1,
-            Size = 5,
+            Page = PageNo,
+            Size = PageSize,
             Title = SearchValue,
         };
 
         var result = await _tourService.Filter(filterModel);
-        if (result.IsSuccess) Tours = result.Value.Values;
+        if (result.IsSuccess) Data = result.Value;
     }
 }

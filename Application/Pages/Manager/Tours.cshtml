@@ -74,7 +74,7 @@
                     <th>Departure</th>
                     <th>Destination</th>
                     <th>Type</th>
-                    <th>CreatedAt</th>
+                    <th>Created At</th>
                     <th>Duration</th>
                     @* <th>Description</th> *@
                     <th>Thumbnail</th>
@@ -84,7 +84,7 @@
                 <tbody>
                 <!-- Table Data -->
 
-                @foreach (var tour in Model.Tours)
+                @foreach (var tour in Model.Data.Values)
                 {
                     <tr>
                         @* <td>@tour.Id</td> *@
@@ -116,27 +116,43 @@
     </div>
 
     <!-- Pagination -->
-    @* <div class="row"> *@
-    @*     <div class="col-md-12"> *@
-    @*         <ul class="pagination justify-content-center"> *@
-    @*             <li class="page-item disabled"> *@
-    @*                 <a class="page-link" href="#" tabindex="-1">Previous</a> *@
-    @*             </li> *@
-    @*             <li class="page-item active"> *@
-    @*                 <a class="page-link" href="#">1</a> *@
-    @*             </li> *@
-    @*             <li class="page-item"> *@
-    @*                 <a class="page-link" href="#">2</a> *@
-    @*             </li> *@
-    @*             <li class="page-item"> *@
-    @*                 <a class="page-link" href="#">3</a> *@
-    @*             </li> *@
-    @*             <li class="page-item"> *@
-    @*                 <a class="page-link" href="#">Next</a> *@
-    @*             </li> *@
-    @*         </ul> *@
-    @*     </div> *@
-    @* </div> *@
+    <div class="row">
+        <div class="col-md-12">
+            <ul class="pagination justify-content-center">
+                @{
+                    var pageMax = (int)Math.Ceiling((double)Model.Data.Max / Model.Data.Size);
+                    var hasPrev = Model.Data.Page == 1 ? "disabled" : "";
+                    var hasNext = Model.Data.Page == pageMax ? "disabled" : "";
+
+                    var linkPrev = Model.Data.Page > 1
+                        ? Url.Page("Tours", new { PageNo = Model.Data.Page - 1, Model.SearchValue })
+                        : "#";
+                    
+                    var linkNext = Model.Data.Page < pageMax
+                        ? Url.Page("Tours", new { PageNo = Model.Data.Page + 1, Model.SearchValue })
+                        : "#";
+                }
+
+                <li class="page-item @hasPrev">
+                    <a class="page-link" href="@linkPrev" tabindex="-1">Previous</a>
+                </li>
+
+                @for (var i = 1; i < pageMax + 1; i++)
+                {
+                    var active = Model.PageNo == i ? "active" : "";
+                    <li class="page-item @active">
+                        <a class="page-link"
+                           href="@Url.Page("Tours", new { PageNo = i, Model.SearchValue })">
+                            @i
+                        </a>
+                    </li>
+                }
+                <li class="page-item @hasNext">
+                    <a class="page-link" href="@linkNext">Next</a>
+                </li>
+            </ul>
+        </div>
+    </div>
 
 </div>
 
