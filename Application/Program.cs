@@ -27,12 +27,12 @@ var builder = WebApplication.CreateBuilder(args);
 
     builder.Services.AddRazorPages();
 
-    if (!builder.Environment.IsDevelopment())
-    {
-        builder.Services.AddDataProtection()
-            .SetApplicationName("travelers-app")
-            .PersistKeysToFileSystem(new DirectoryInfo("/var/dpkeys/"));
-    }
+    // if (!builder.Environment.IsDevelopment())
+    // {
+    //     builder.Services.AddDataProtection()
+    //         .SetApplicationName("travelers-app")
+    //         .PersistKeysToFileSystem(new DirectoryInfo("/var/dpkeys/"));
+    // }
 
     builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
 
