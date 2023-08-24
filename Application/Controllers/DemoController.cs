@@ -28,22 +28,26 @@ public class DemoController : ApiController
         if (!await _unitOfWork.Trips.AnyAsync(e => e.Id == tripId))
             return OnError(Error.NotFound(DomainErrors.Trip.NotFound));
 
+        var effective = DateTime.Today.AddDays(-1);
+        var expires = DateTime.Today.AddDays(1);
+
         var alert = new WeatherAlert()
         {
             TripId = tripId,
-            Headline = "Flood Warning issued July 16 at 7:51PM EDT until July 18 at 8:00AM EDT by NWS",
-            Areas = "Hampden",
+            Headline =
+                $"Flood Warning issued {effective.ToString("MMMM d 'at' h:mmtt")} until {expires.ToString("MMMM d 'at' h:mmtt")} by NWS",
+            Areas = "Sing Buri, Ang Thong",
             Certainty = "Likely",
             Description =
-                @"...The National Weather Service in Boston/Norton MA has issued a\\nFlood Warning for the following rivers in Massachusetts...\\nConnecticut...Rhode Island...\\nConnecticut River At Thompsonville affecting Hampden and Hartford\\nCounties.\\nFarmington River At Simsbury affecting Hartford County.\\nWood River At Hope Valley affecting Washington County.\\nFor the Connecticut River...including Montague",
-            Effective = DateTime.Parse("2023-07-17 15:00:00.0000000"),
-            Expires = DateTime.Parse("2023-07-18 12:00:00.0000000"),
+                @"...The National Weather Service in Thailand has issued a\\nFlood Warning for the following rivers in Sing Buri, Ang Thong.",
+            Effective = effective,
+            Expires = expires,
             Urgency = "Expected",
             Event = "Flood Warning",
             Instruction =
                 @"Caution is urged when walking near riverbanks.\\nBe especially cautious at night when it is harder to recognize the\\ndangers of flooding.\\nTurn around",
             Severity = "Moderate",
-            Note = "Alert for Hampden (Massachusetts) Issued by the National Weather Service"
+            Note = "Alert for Sing Buri, Ang Thong Issued by the National Weather Service"
         };
 
         // Remove old records
