@@ -7,7 +7,7 @@ namespace Service.Interfaces;
 
 public interface INotificationService
 {
-    Task<Result<List<NotificationViewModel>>> ListAll(Guid userId, Guid tripId);
+    Task<Result<List<NotificationViewModel>>> ListAll(Guid userId);
 
     Task SaveNotifications(Guid? tripId, IEnumerable<Guid> receiverIds, NotificationType type,
         string title, string payload, Guid? imageId);

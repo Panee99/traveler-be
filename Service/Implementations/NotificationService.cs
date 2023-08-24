@@ -4,7 +4,6 @@ using Data.Enums;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Serilog;
 using Service.Channels.Notification;
 using Service.Interfaces;
 using Service.Models.Notification;
@@ -32,15 +31,11 @@ public class NotificationService : BaseService, INotificationService
         await _notificationJobQueue.EnqueueAsync(notificationJob);
     }
 
-    public async Task<Result<List<NotificationViewModel>>> ListAll(Guid userId, Guid tripId)
+    public async Task<Result<List<NotificationViewModel>>> ListAll(Guid userId)
     {
-        if (!await UnitOfWork.Trips.AnyAsync(e => e.Id == tripId))
-            return Error.NotFound(DomainErrors.Trip.NotFound);
-        
         var notifications = await UnitOfWork.Notifications
             .Query()
-            .Where(e => e.ReceiverId == userId &&
-                        e.TripId == tripId)
+            .Where(e => e.ReceiverId == userId)
             .OrderByDescending(e => e.Timestamp)
             .Include(e => e.Image)
             .ToListAsync();

@@ -17,4 +17,6 @@ public class NotificationViewModel
     public string ImageUrl { get; set; } = null!;
 
     public DateTime Timestamp { get; set; }
+
+    public Guid? TripId { get; set; }
 }
