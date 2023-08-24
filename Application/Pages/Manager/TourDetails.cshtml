@@ -61,53 +61,62 @@
 
 </div>
 
+
 <!-- Trips Table -->
 <div class="col col-md-6">
     <h4>Trips: </h4>
-    <!-- Table -->
-    <div class="row mt-4">
-        <div class="col-md-12">
-            <table class="table table-bordered" style="white-space: nowrap;">
-                <thead>
-                <tr>
-                    <th>Id</th>
-                    <th>Code</th>
-                    <th>StartTime</th>
-                    <th>EndTime</th>
-                    <th></th>
-                    <th></th>
-                </tr>
-                </thead>
-                <tbody>
-                <!-- Table Data -->
-
-                @foreach (var trip in Model.Trips)
-                {
+    @if (Model.Trips.Count == 0)
+    {
+        <h6>This Tour have no Trip yet.</h6>
+    }
+    else
+    {
+        <!-- Table -->
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <table class="table table-bordered" style="white-space: nowrap;">
+                    <thead>
                     <tr>
-                        <td>@trip.Id</td>
-                        <td>@trip.Code</td>
-                        <td>@DateOnly.FromDateTime(trip.StartTime)</td>
-                        <td>@DateOnly.FromDateTime(trip.EndTime)</td>
-                        <td>
-                            <a href="/manager/trips/@trip.Id">
-                                <button class="btn btn-outline-primary">
-                                    <i class="bi bi-eye-fill"></i>
-                                </button>
-                            </a>
-                        </td>
-                        <td>
-                            <button onclick="deleteTrip('@trip.Id', '@trip.Code', '@DateOnly.FromDateTime(trip.StartTime)', '@DateOnly.FromDateTime(trip.EndTime)')" type="button" class="btn btn-outline-danger">
-                                <i class="bi bi-trash"></i>
-                            </button>
-                        </td>
+                        <th>Id</th>
+                        <th>Code</th>
+                        <th>StartTime</th>
+                        <th>EndTime</th>
+                        <th></th>
+                        <th></th>
                     </tr>
-                }
+                    </thead>
+                    <tbody>
+                    <!-- Table Data -->
 
-                </tbody>
-            </table>
+                    @foreach (var trip in Model.Trips)
+                    {
+                        <tr>
+                            <td>@trip.Id</td>
+                            <td>@trip.Code</td>
+                            <td>@DateOnly.FromDateTime(trip.StartTime)</td>
+                            <td>@DateOnly.FromDateTime(trip.EndTime)</td>
+                            <td>
+                                <a href="/manager/trips/@trip.Id">
+                                    <button class="btn btn-outline-primary">
+                                        <i class="bi bi-eye-fill"></i>
+                                    </button>
+                                </a>
+                            </td>
+                            <td>
+                                <button onclick="deleteTrip('@trip.Id', '@trip.Code', '@DateOnly.FromDateTime(trip.StartTime)', '@DateOnly.FromDateTime(trip.EndTime)')" type="button" class="btn btn-outline-danger">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </div>
+    }
 </div>
+
 
 <hr/>
 

@@ -153,45 +153,56 @@
 
     <div class="col col-md-6" style="padding-left: 40px">
         <h4>Incurred Costs: </h4>
-        @foreach (var group in Model.Trip.TourGroups.Where(g => g.IncurredCostActivities.Count > 0))
-        {
-            <li class="list-group-item">
-                <h4 style="color: #9e2a2b">Group @group.GroupNo: </h4>
-                <ul class="list-group">
-                    <!-- Incurred Costs -->
-                    @foreach (var cost in group.IncurredCostActivities)
-                    {
-                        <li class="list-group-item">
-                            <div class="row">
-                                <div class="col-md-9">
-                                    <h6 class="text-primary">
-                                        <b>@cost.Title</b>
-                                    </h6>
-                                    <p>
-                                        <b>Note:</b> @cost.Note
-                                    </p>
-                                    <p>
-                                        <b>Amount:</b> @cost.Cost @cost.Currency
-                                    </p>
-                                    <p>
-                                        <b>Date:</b> @cost.CreatedAt
-                                    </p>
-                                </div>
-
-                                @if (cost.Image != null)
-                                {
-                                    <div class="col-md-3">
-                                        <img src="@Model.CloudStorageService.GetMediaLink(cost.Image?.FileName)" width="150px" height="150px" alt="@cost.Image?.Id">
-                                    </div>
-                                }
-                            </div>
-                        </li>
-                    }
-                    <!-- End Costs -->
-                </ul>
-            </li>
-            <hr>
+        @{
+            var incurredCostsNotEmpty = Model.Trip.TourGroups.Any(g => g.IncurredCostActivities.Count > 0);
         }
-        <!-- End Groups -->
+
+        @if (incurredCostsNotEmpty)
+        {
+            @foreach (var group in Model.Trip.TourGroups.Where(g => g.IncurredCostActivities.Count > 0))
+            {
+                <li class="list-group-item">
+                    <h4 style="color: #9e2a2b">Group @group.GroupNo: </h4>
+                    <ul class="list-group">
+                        <!-- Incurred Costs -->
+                        @foreach (var cost in group.IncurredCostActivities)
+                        {
+                            <li class="list-group-item">
+                                <div class="row">
+                                    <div class="col-md-9">
+                                        <h6 class="text-primary">
+                                            <b>@cost.Title</b>
+                                        </h6>
+                                        <p>
+                                            <b>Note:</b> @cost.Note
+                                        </p>
+                                        <p>
+                                            <b>Amount:</b> @cost.Cost @cost.Currency
+                                        </p>
+                                        <p>
+                                            <b>Date:</b> @cost.CreatedAt
+                                        </p>
+                                    </div>
+
+                                    @if (cost.Image != null)
+                                    {
+                                        <div class="col-md-3">
+                                            <img src="@Model.CloudStorageService.GetMediaLink(cost.Image?.FileName)" width="150px" height="150px" alt="@cost.Image?.Id">
+                                        </div>
+                                    }
+                                </div>
+                            </li>
+                        }
+                        <!-- End Costs -->
+                    </ul>
+                </li>
+                <hr>
+            }
+            <!-- End Groups -->
+        }
+        else
+        {
+            <h6>There are no records yet.</h6>
+        }
     </div>
 </div>
