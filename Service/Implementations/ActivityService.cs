@@ -69,7 +69,7 @@ public class ActivityService : BaseService, IActivityService
         //     new FirebaseAttendanceModel
         //         { Items = attendanceEntity.Items!.Adapt<ICollection<FirebaseAttendanceItem>>(), Title = "" });
 
-        if (entity is AttendanceActivity)
+        if (entity is AttendanceActivity activity)
         {
             // Notifications
             var receiverIds = await UnitOfWork.TourGroups
@@ -81,8 +81,13 @@ public class ActivityService : BaseService, IActivityService
 
             if (tourGroup.TourGuideId != null) receiverIds.Add(tourGroup.TourGuideId.Value);
 
+            var tripId = await UnitOfWork.TourGroups.Query()
+                .Where(group => group.Id == activity.TourGroupId)
+                .Select(group => group.TripId)
+                .FirstOrDefaultAsync();
+
             await _notificationService.EnqueueNotification(
-                new NotificationJob(receiverIds, NotificationType.AttendanceActivity, null));
+                new NotificationJob(tripId, receiverIds, NotificationType.AttendanceActivity, null));
         }
 
         // Return

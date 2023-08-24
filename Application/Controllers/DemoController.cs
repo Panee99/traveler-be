@@ -3,8 +3,10 @@ using Data.Entities;
 using Data.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Service;
 using Service.Channels.Notification;
 using Service.Interfaces;
+using Shared.ResultExtensions;
 
 namespace Application.Controllers;
 
@@ -23,6 +25,9 @@ public class DemoController : ApiController
     [HttpGet("weather-alert")]
     public async Task<IActionResult> DemoWeatherAlert(Guid tripId)
     {
+        if (!await _unitOfWork.Trips.AnyAsync(e => e.Id == tripId))
+            return OnError(Error.NotFound(DomainErrors.Trip.NotFound));
+
         var alert = new WeatherAlert()
         {
             TripId = tripId,
@@ -44,6 +49,7 @@ public class DemoController : ApiController
         // Remove old records
         _unitOfWork.WeatherAlerts.RemoveRange(
             _unitOfWork.WeatherAlerts.Query().Where(e => e.TripId == tripId));
+
         // Add new
         _unitOfWork.WeatherAlerts.Add(alert);
         await _unitOfWork.SaveChangesAsync();
@@ -68,7 +74,7 @@ public class DemoController : ApiController
             .ToList();
 
         await _notificationService.EnqueueNotification(new NotificationJob(
-            receiverIds, NotificationType.WeatherAlert, null, 
+            tripId, receiverIds, NotificationType.WeatherAlert, null,
             alert.Event, alert.Headline));
 
         return Ok();

@@ -21,9 +21,9 @@ public class NotificationsController : ApiController
     /// </summary>
     [ProducesResponseType(typeof(List<NotificationViewModel>), StatusCodes.Status200OK)]
     [HttpGet("")]
-    public async Task<IActionResult> ListAll()
+    public async Task<IActionResult> ListAll([FromQuery] Guid tripId)
     {
-        var result = await _notificationService.ListAll(CurrentUser.Id);
+        var result = await _notificationService.ListAll(CurrentUser.Id, tripId);
         return result.Match(Ok, OnError);
     }
 

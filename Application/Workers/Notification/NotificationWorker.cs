@@ -89,7 +89,7 @@ public class NotificationWorker : BackgroundService
         switch (job.Type)
         {
             case NotificationType.AttendanceActivity:
-                await notificationService.SaveNotifications(job.ReceiverIds, job.Type, title,
+                await notificationService.SaveNotifications(job.TripId, job.ReceiverIds, job.Type, title,
                     await _attendanceTemplate.RunAsync(), job.ImageId);
 
                 await _cloudNotificationService.SendBatchMessages(fcmTokens, job.Type, title,
@@ -97,7 +97,7 @@ public class NotificationWorker : BackgroundService
                 break;
 
             case NotificationType.Emergency:
-                await notificationService.SaveNotifications(job.ReceiverIds, job.Type, title,
+                await notificationService.SaveNotifications(job.TripId, job.ReceiverIds, job.Type, title,
                     await _emergencyTemplate.RunAsync(new { Name = job.Data[0] }), job.ImageId);
 
                 await _cloudNotificationService.SendBatchMessages(fcmTokens, job.Type, title,
@@ -105,7 +105,7 @@ public class NotificationWorker : BackgroundService
                 break;
 
             case NotificationType.WeatherAlert:
-                await notificationService.SaveNotifications(job.ReceiverIds, job.Type, title,
+                await notificationService.SaveNotifications(job.TripId, job.ReceiverIds, job.Type, title,
                     await _weatherAlertTemplate.RunAsync(
                         new { Event = job.Data[0], Headline = job.Data[1] }),
                     job.ImageId);

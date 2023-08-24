@@ -113,7 +113,7 @@ public class WeatherUpdateJob : IJob
             foreach (var alert in alerts)
             {
                 await notificationService.EnqueueNotification(new NotificationJob(
-                    receiverIds, NotificationType.WeatherAlert, null,
+                    trip.Id, receiverIds, NotificationType.WeatherAlert, null,
                     alert.Event, alert.Headline));
             }
         }

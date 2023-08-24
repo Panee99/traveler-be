@@ -32,11 +32,15 @@ public class NotificationService : BaseService, INotificationService
         await _notificationJobQueue.EnqueueAsync(notificationJob);
     }
 
-    public async Task<Result<List<NotificationViewModel>>> ListAll(Guid userId)
+    public async Task<Result<List<NotificationViewModel>>> ListAll(Guid userId, Guid tripId)
     {
+        if (!await UnitOfWork.Trips.AnyAsync(e => e.Id == tripId))
+            return Error.NotFound(DomainErrors.Trip.NotFound);
+        
         var notifications = await UnitOfWork.Notifications
             .Query()
-            .Where(e => e.ReceiverId == userId)
+            .Where(e => e.ReceiverId == userId &&
+                        e.TripId == tripId)
             .OrderByDescending(e => e.Timestamp)
             .Include(e => e.Image)
             .ToListAsync();
@@ -91,6 +95,7 @@ public class NotificationService : BaseService, INotificationService
     }
 
     public async Task SaveNotifications(
+        Guid? tripId,
         IEnumerable<Guid> receiverIds,
         NotificationType type,
         string title,
@@ -99,6 +104,7 @@ public class NotificationService : BaseService, INotificationService
     {
         var notifications = receiverIds.Select(travelerId => new Notification()
         {
+            TripId = tripId,
             ReceiverId = travelerId,
             Title = title,
             Payload = payload,

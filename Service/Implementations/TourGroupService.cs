@@ -98,10 +98,13 @@ public class TourGroupService : BaseService, ITourGroupService
         var userIds = group.Travelers.Select(t => t.Id).ToList();
         if (group.TourGuideId != null) userIds.Add(group.TourGuideId.Value);
 
+        var tripId = await UnitOfWork.TourGroups.Query()
+            .Where(e => e.Id == tourGroupId)
+            .Select(e => e.TripId)
+            .FirstOrDefaultAsync();
+
         await _notificationService.EnqueueNotification(new NotificationJob(
-            userIds,
-            NotificationType.Emergency,
-            sender.AvatarId,
+            tripId, userIds, NotificationType.Emergency, sender.AvatarId,
             $"{sender.FirstName} {sender.LastName}"
         ));
 
