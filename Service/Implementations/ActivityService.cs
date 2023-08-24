@@ -193,6 +193,24 @@ public class ActivityService : BaseService, IActivityService
         return Result.Success();
     }
 
+    public async Task<Result<ActivityViewModel>> Get(Guid id)
+    {
+        //! support only incurred cost activity
+        var activity = await UnitOfWork.IncurredCostActivities.Query()
+            .Include(x => x.Image)
+            .Where(x => x.Id == id)
+            .Where(x => x.IsDeleted == false)
+            .Select(x => new ActivityViewModel
+                { Type = ActivityType.IncurredCost, Data = x, CreatedAt = (DateTime)x.CreatedAt! })
+            .FirstOrDefaultAsync();
+        // set incurred costs image url
+        if (activity is not { Data: IncurredCostActivity incurredCostActivity }) return Error.NotFound();
+        
+        incurredCostActivity.ImageUrl = _cloudStorageService.GetMediaLink(activity.Data.Image?.FileName);
+        
+        return activity;
+    }
+    
     private (dynamic repo, Guid? tourGroupId, dynamic? dataModel) _destructurePartialActivityModel(
         PartialActivityModel model)
     {

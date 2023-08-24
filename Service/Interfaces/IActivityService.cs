@@ -14,4 +14,6 @@ public interface IActivityService
     Task<Result> Update(PartialActivityModel model);
     
     Task<Result> Attend(Guid code);
+    
+    Task<Result<ActivityViewModel>> Get(Guid id);
 }
