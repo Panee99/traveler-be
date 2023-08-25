@@ -169,29 +169,29 @@
                     </h4>
                     <ul class="list-group">
                         <!-- Incurred Costs -->
-                        @foreach (var cost in group.IncurredCostActivities)
+                        @foreach (var cost in group.IncurredCostActivities.Select((value, i) => new { value, i = i + 1 }))
                         {
                             <li class="list-group-item">
                                 <div class="row">
                                     <div class="col-md-9">
                                         <h6 class="text-primary">
-                                            <b>1. @cost.Title</b>
+                                            <b>@cost.i. @cost.value.Title</b>
                                         </h6>
                                         <p>
-                                            <b>Note:</b> @cost.Note
+                                            <b>Note:</b> @cost.value.Note
                                         </p>
                                         <p>
-                                            <b>Amount: <span style="color: #157811">@cost.Cost</span> <span style="color: #4477CE">VND</span></b>
+                                            <b>Amount: <span style="color: #157811">@cost.value.Cost</span> <span style="color: #4477CE">VND</span></b>
                                         </p>
                                         <p>
-                                            <b>Date:</b> @cost.CreatedAt
+                                            <b>Date:</b> @cost.value.CreatedAt
                                         </p>
                                     </div>
 
-                                    @if (cost.Image != null)
+                                    @if (cost.value.Image != null)
                                     {
                                         <div class="col-md-3">
-                                            <img src="@Model.CloudStorageService.GetMediaLink(cost.Image?.FileName)" width="150px" height="150px" alt="@cost.Image?.Id">
+                                            <img src="@Model.CloudStorageService.GetMediaLink(cost.value.Image?.FileName)" width="150px" height="150px" alt="@cost.value.Image?.Id">
                                         </div>
                                     }
                                 </div>
