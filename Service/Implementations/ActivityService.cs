@@ -87,7 +87,8 @@ public class ActivityService : BaseService, IActivityService
                 .FirstOrDefaultAsync();
 
             await _notificationService.EnqueueNotification(
-                new NotificationJob(tripId, receiverIds, NotificationType.AttendanceActivity, null));
+                new NotificationJob(tripId, receiverIds,
+                    NotificationType.AttendanceActivity, null));
         }
 
         // Return
@@ -205,12 +206,12 @@ public class ActivityService : BaseService, IActivityService
             .FirstOrDefaultAsync();
         // set incurred costs image url
         if (activity is not { Data: IncurredCostActivity incurredCostActivity }) return Error.NotFound();
-        
+
         incurredCostActivity.ImageUrl = _cloudStorageService.GetMediaLink(activity.Data.Image?.FileName);
-        
+
         return activity;
     }
-    
+
     private (dynamic repo, Guid? tourGroupId, dynamic? dataModel) _destructurePartialActivityModel(
         PartialActivityModel model)
     {

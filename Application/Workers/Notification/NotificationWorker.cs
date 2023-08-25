@@ -93,7 +93,7 @@ public class NotificationWorker : BackgroundService
                     await _attendanceTemplate.RunAsync(), job.ImageId);
 
                 await _cloudNotificationService.SendBatchMessages(fcmTokens, job.Type, title,
-                    $"A new attendance activity opened. {job.Data[0]}");
+                    "A new attendance activity opened.");
                 break;
 
             case NotificationType.Emergency:
