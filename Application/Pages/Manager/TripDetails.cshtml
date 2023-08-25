@@ -152,7 +152,7 @@
     </div>
 
     <div class="col col-md-6" style="padding-left: 40px">
-        <h4>Incurred Costs: </h4>
+        <h4 style="color:#765827;">Incurred Costs: </h4>
         @{
             var incurredCostsNotEmpty = Model.Trip.TourGroups.Any(g => g.IncurredCostActivities.Count > 0);
         }
@@ -161,8 +161,12 @@
         {
             @foreach (var group in Model.Trip.TourGroups.Where(g => g.IncurredCostActivities.Count > 0))
             {
+                var totalCostInGroup = group.IncurredCostActivities.Select(a => a.Cost).Sum();
                 <li class="list-group-item">
-                    <h4 style="color: #9e2a2b">Group @group.GroupNo: </h4>
+                    <h4 style="color: #9e2a2b">
+                        Group @group.GroupNo -
+                        <b style="color: #65451F">@totalCostInGroup</b> <span style="color: #4477CE">VND</span>
+                    </h4>
                     <ul class="list-group">
                         <!-- Incurred Costs -->
                         @foreach (var cost in group.IncurredCostActivities)
@@ -171,13 +175,13 @@
                                 <div class="row">
                                     <div class="col-md-9">
                                         <h6 class="text-primary">
-                                            <b>@cost.Title</b>
+                                            <b>1. @cost.Title</b>
                                         </h6>
                                         <p>
                                             <b>Note:</b> @cost.Note
                                         </p>
                                         <p>
-                                            <b>Amount:</b> @cost.Cost @cost.Currency
+                                            <b>Amount: <span style="color: #157811">@cost.Cost</span> <span style="color: #4477CE">VND</span></b>
                                         </p>
                                         <p>
                                             <b>Date:</b> @cost.CreatedAt
@@ -204,5 +208,13 @@
         {
             <h6>There are no records yet.</h6>
         }
+        @{
+            var totalCost = Model.Trip.TourGroups
+                .SelectMany(g => g.IncurredCostActivities)
+                .Select(a => a.Cost)
+                .Sum();
+        }
+        <h2>Total: <b style="color: #084f09">@totalCost</b> <span style="color: #4477CE">VND</span></h2>
+
     </div>
 </div>

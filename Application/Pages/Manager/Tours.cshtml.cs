@@ -11,7 +11,7 @@ namespace Application.Pages.Manager;
 [IgnoreAntiforgeryToken]
 public class ToursModel : PageModel
 {
-    private const int PageSize = 2;
+    private const int PageSize = 5;
     
     // DI
     private readonly ITourService _tourService;
