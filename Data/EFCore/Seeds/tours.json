@@ -1,28 +1,30 @@
 ﻿[
   {
     "Id": "60f45523-bd04-449a-9889-55fb70beb802",
-    "Title": "Tour 4 đảo Nam Phú Quốc",
-    "Departure": "Hồ Chí Minh",
-    "Destination": "Phú Quốc",
+    "Title": "Four Islands Excursion in South Phu Quoc",
+    "Departure": "Ho Chi Minh",
+    "Destination": "Phu Quoc",
     "Type": "Domestic",
     "CreatedAt": "2023-05-15 19:34:32.000",
-    "Duration": "1 day, 0 night",
-    "Description": "Với cát trắng nguyên sơ và nước màu ngọc lam, khung cảnh của Phú Quốc thực sự là một bữa tiệc cho các giác quan. Bạn sẽ đến với thiên đường Hòn Móng Tay để phơi nắng trên bãi biển xinh đẹp dưới bóng mát của hàng trăm cây cọ. Sau đó, bạn sẽ được khám phá thế giới dưới nước đầy màu sắc khi lặn tại Hòm Gầm Ghì. Sau bữa trưa ngon miệng được chuẩn bị bởi thuỷ thủ đoàn, bạn sẽ được cảm nhận bãi biển cát ngọc ngút ngàn và lặn ống thở trong làn nước trong vắt tại điểm đến cuối cùng, đó chính là Hòn Mây Rút.\n\nChưa hết đâu nhé, vì hãy sẵn sàng cho hoạt động câu cá thú vị tại Hòn Thơm. Chắc chắc bạn sẽ bị mê hoặc bởi không khí biển và không gian cực \"chill\" tại Nam Phú Quốc đấy!",
-    "Guide": null,
+    "Duration": "8 Hours 30 Minutes",
+    "Description": "Relish the divine beauty of Vietnam's southernmost islands\nVisit Mong Tay Island, Gam Ghi Island, May Rut Island, and Thom Island\nFeel the sprawling pearly sand beach and snorkel in crystal-clear water\nEnjoy tasty seafood lunch and complimentary drone video and photo footage as you're on tour",
+    "Guide": "You are suggested to bring your own towels and sunscreen. \nPickup and drop-off at locations outside the designated areas will require an additional charge.",
     "ThumbnailId": "dd887040-bd1a-42f0-e93a-08db55428f57",
-    "CreatedById": "69f7719f-be55-42ca-843e-bc46cd1b450d"
+    "CreatedById": "69f7719f-be55-42ca-843e-bc46cd1b450d",
+    "DeletedById": null
   },
   {
     "Id": "aff4f4f3-6368-4afc-bc98-d82b662cfadb",
-    "Title": "Du lịch Nhật Bản",
-    "Departure": "Hồ Chí Minh",
-    "Destination": "Nhật Bản",
+    "Title": "Japan Full Package Tour (Tokyo, Yamanashi, Mount Fuji, Ibaraki)",
+    "Departure": "Ho Chi Minh",
+    "Destination": "Japan",
     "Type": "International",
     "CreatedAt": "2023-04-08 18:31:53.820",
-    "Duration": "5 days, 4 nights",
-    "Description": "Tham quan Nhật Bản trong 5 ngày 4 đêm\nKhám phá một trong những thành phố bận rộn nhất thế giới—Tokyo với các trung tâm mua sắm nổi tiếng như: Thành phố điện tử Akihabara, Trung tâm mua sắm Ami Premium Outlets,...\nChụp hình với cảnh đẹp không thể thiếu khi đến với Nhật Bản, đó chính là Núi Phú Sĩ—ngọn núi cao nhất Nhật Bản so với mực nước biển là 3776 mét\nViếng Chùa cổ Asakusa Kannon—ngôi đền linh thiêng và là một trong những ngôi đền cổ kính nhất hiện nay của Tokyo với kiến trúc truyền thống hết sức đặc trưng\nTrải nghiệm tắm Onsen—nét văn hóa độc đáo ở xứ sở hoa anh đào",
-    "Guide": null,
+    "Duration": "5 Days",
+    "Description": "Visit Japan in 5 days and 4 nights\nExplore one of the busiest city in the world—Tokyo where you can finally visit famous shopping centers such as Akihabara Electronic City, Ami Premium Outlets, etc.\nAdmire Japan's iconic Mount Fuji—the highest mountain in Japan at 3776 meters above sea level\nVisit Asakusa Kannon Ancient Temple—a sacred temple and one of Tokyo's most ancient temples today with its distinctive traditional architecture\nExperience onsen—a unique culture in the land of cherry blossoms",
+    "Guide": "",
     "ThumbnailId": "33e91f79-21a8-4284-8cd8-08db43075b7b",
-    "CreatedById": "69f7719f-be55-42ca-843e-bc46cd1b450d"
+    "CreatedById": "69f7719f-be55-42ca-843e-bc46cd1b450d",
+    "DeletedById": null
   }
 ]
