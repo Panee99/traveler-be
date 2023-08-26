@@ -1,4 +1,5 @@
-﻿using Application.Commons;
+﻿using System.Globalization;
+using Application.Commons;
 using Data.EFCore;
 using Data.Entities;
 using Microsoft.AspNetCore.Mvc;
@@ -14,13 +15,13 @@ using Shared.ResultExtensions;
 namespace Application.Pages.Manager;
 
 [IgnoreAntiforgeryToken]
-public class TripDetails : PageModel
+public class TripDetailsModel : PageModel
 {
     private readonly UnitOfWork _unitOfWork;
     private readonly ITourService _tourService;
     public readonly ICloudStorageService CloudStorageService;
 
-    public TripDetails(
+    public TripDetailsModel(
         UnitOfWork unitOfWork,
         ITourService tourService, ICloudStorageService cloudStorageService)
     {
@@ -97,5 +98,14 @@ public class TripDetails : PageModel
         var users = group.Travelers.Select(t => (User)t).ToList();
         if (group.TourGuide != null) users.Insert(0, group.TourGuide);
         return users;
+    }
+
+    public static string FormatMoney(double amount)
+    {
+        var cultureInfo = new CultureInfo("vi-VN");
+        cultureInfo.NumberFormat.CurrencySymbol = "₫";
+        var formattedAmount = amount.ToString("C0", cultureInfo);
+
+        return formattedAmount;
     }
 }

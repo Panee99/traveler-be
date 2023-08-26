@@ -1,5 +1,5 @@
 ﻿@page "/manager/tours/{tourId:guid}"
-@model Application.Pages.Manager.TourDetails
+@model Application.Pages.Manager.TourDetailsModel
 @{
     ViewData["Title"] = "Tour Details";
 }
@@ -27,7 +27,7 @@
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
         <li class="breadcrumb-item">
-            <a href="/manager/home" style="text-decoration: none">Tours</a>
+            <a href="@Url.Page("Tours")" style="text-decoration: none">Tours</a>
         </li>
         <li class="breadcrumb-item active" aria-current="page">@Model.Tour.Id</li>
     </ol>

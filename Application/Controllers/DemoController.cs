@@ -39,13 +39,16 @@ public class DemoController : ApiController
             Areas = "Sing Buri, Ang Thong",
             Certainty = "Likely",
             Description =
-                @"...The National Weather Service in Thailand has issued a\\nFlood Warning for the following rivers in Sing Buri, Ang Thong.",
+                "The National Weather Service in Thailand has issued a " +
+                "Flood Warning for the following rivers in Sing Buri, Ang Thong.",
             Effective = effective,
             Expires = expires,
             Urgency = "Expected",
             Event = "Flood Warning",
             Instruction =
-                @"Caution is urged when walking near riverbanks.\\nBe especially cautious at night when it is harder to recognize the\\ndangers of flooding.\\nTurn around",
+                "Caution is urged when walking near riverbanks. " +
+                "Be especially cautious at night when it is harder to recognize the " +
+                "dangers of flooding. Turn around",
             Severity = "Moderate",
             Note = "Alert for Sing Buri, Ang Thong Issued by the National Weather Service"
         };

@@ -13,13 +13,13 @@ using Shared.ResultExtensions;
 namespace Application.Pages.Manager;
 
 [IgnoreAntiforgeryToken]
-public class TourDetails : PageModel
+public class TourDetailsModel : PageModel
 {
     private readonly ITourService _tourService;
     private readonly ITripService _tripService;
     private readonly UnitOfWork _unitOfWork;
 
-    public TourDetails(ITourService tourService, ITripService tripService, UnitOfWork unitOfWork)
+    public TourDetailsModel(ITourService tourService, ITripService tripService, UnitOfWork unitOfWork)
     {
         _tourService = tourService;
         _tripService = tripService;

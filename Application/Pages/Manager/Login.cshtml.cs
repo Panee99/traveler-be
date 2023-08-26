@@ -9,11 +9,11 @@ using Shared.Helpers;
 namespace Application.Pages.Manager;
 
 [IgnoreAntiforgeryToken]
-public class Login : PageModel
+public class LoginModel : PageModel
 {
     private readonly UnitOfWork _unitOfWork;
 
-    public Login(UnitOfWork unitOfWork)
+    public LoginModel(UnitOfWork unitOfWork)
     {
         _unitOfWork = unitOfWork;
     }
