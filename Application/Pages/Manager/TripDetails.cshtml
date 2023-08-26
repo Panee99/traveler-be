@@ -62,18 +62,20 @@
                 <div>
                     <h4 class="mb-4">Trip Info: </h4>
                     <p>
-                        <strong>ID: <span style="color: #40916c">@Model.Trip.Id.ToString().ToUpper()</span></strong>
+                        <strong>ID: <span style="color: #6c757d">@Model.Trip.Id.ToString().ToUpper()</span></strong>
                     </p>
                     <p>
                         <strong>Code:<span class="card-title" style="color: #3f37c9"> @Model.Trip.Code</span></strong>
                     </p>
                     <p>
-                        <strong>Start Time: </strong> @DateOnly.FromDateTime(Model.Trip.StartTime)
+                        <strong>Start Time:&nbsp;</strong> <b class="text-success">@DateOnly.FromDateTime(Model.Trip.StartTime)</b>
                     </p>
                     <p>
-                        <strong>End Time: </strong> @DateOnly.FromDateTime(Model.Trip.EndTime)
+                        <strong>End Time:&nbsp;&nbsp;&nbsp;</strong> <b class="text-success">@DateOnly.FromDateTime(Model.Trip.EndTime)</b>
                     </p>
-
+                    <p>
+                        <strong>Created At: </strong> @Model.Trip.CreatedAt
+                    </p>
                 </div>
             </div>
         </div>

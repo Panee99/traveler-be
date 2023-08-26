@@ -8,6 +8,7 @@ public record TripViewModel
     public string Code = null!;
     public DateTime StartTime;
     public DateTime EndTime;
+    public DateTime CreatedAt;
     public Guid TourId;
     public TourViewModel? Tour;
 }

@@ -77,10 +77,11 @@
                 <table class="table table-bordered" style="white-space: nowrap;">
                     <thead>
                     <tr>
-                        <th>Id</th>
+                        @* <th>Id</th> *@
                         <th>Code</th>
                         <th>StartTime</th>
                         <th>EndTime</th>
+                        <th>Created At</th>
                         <th></th>
                         <th></th>
                     </tr>
@@ -91,10 +92,11 @@
                     @foreach (var trip in Model.Trips)
                     {
                         <tr>
-                            <td>@trip.Id</td>
-                            <td>@trip.Code</td>
-                            <td>@DateOnly.FromDateTime(trip.StartTime)</td>
-                            <td>@DateOnly.FromDateTime(trip.EndTime)</td>
+                            @* <td>@trip.Id</td> *@
+                            <td><b class="text-primary">@trip.Code</b></td>
+                            <td><b class="text-success">@DateOnly.FromDateTime(trip.StartTime)</b></td>
+                            <td><b class="text-success">@DateOnly.FromDateTime(trip.EndTime)</b></td>
+                            <td>@trip.CreatedAt</td>
                             <td>
                                 <a href="/manager/trips/@trip.Id">
                                     <button class="btn btn-outline-primary">

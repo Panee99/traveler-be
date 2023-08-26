@@ -5,6 +5,8 @@
     "Code": "2304-AD9DLAX",
     "StartTime": "2023-07-17 00:00:00.000",
     "EndTime": "2023-07-21 00:00:00.000",
-    "CreatedById": "69f7719f-be55-42ca-843e-bc46cd1b450d"
+    "CreatedAt": "2023-05-07 16:03:59.0000000",
+    "CreatedById": "69f7719f-be55-42ca-843e-bc46cd1b450d",
+    "DeletedById": null
   }
 ]
