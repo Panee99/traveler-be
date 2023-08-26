@@ -231,17 +231,17 @@ public class TripService : BaseService, ITripService
         foreach (var group in tripModel.TourGroups)
         {
             if (group.TourGuide.FirstName.Length >= 64 || group.TourGuide.LastName.Length >= 64)
-                return Error.Validation("First Name, Last Name length < 64");
+                return Error.Validation("First Name, Last Name length must < 64");
             if (group.TourGuide.Email.Length >= 128)
-                return Error.Validation("Email length < 128");
+                return Error.Validation("Email length must < 128");
 
             foreach (var traveler in group.Travelers)
             {
                 if (traveler.FirstName.Length >= 64 || traveler.LastName.Length >= 64)
-                    return Error.Validation("First Name, Last Name length < 64");
+                    return Error.Validation("First Name, Last Name length must < 64");
 
                 if (traveler.Email.Length >= 128)
-                    return Error.Validation("Email length < 128");
+                    return Error.Validation("Email length must < 128");
             }
         }
 

@@ -137,11 +137,17 @@ public class TourService : BaseService, ITourService
 
     private static Result ValidateTourData(TourModel tourModel)
     {
-        if (tourModel.Title.Length >= 512) return Error.Validation("Title length < 512");
-        if (tourModel.Departure.Length >= 256) return Error.Validation("Departure length < 256");
-        if (tourModel.Destination.Length >= 256) return Error.Validation("Destination length < 256");
-        if (tourModel.Duration.Length >= 128) return Error.Validation("Duration length < 128");
+        if (tourModel.Title.Length >= 512) return Error.Validation("Title length must < 512");
+        if (tourModel.Departure.Length >= 256) return Error.Validation("Departure length must < 256");
+        if (tourModel.Destination.Length >= 256) return Error.Validation("Destination length must < 256");
+        if (tourModel.Duration.Length >= 128) return Error.Validation("Duration length must < 128");
 
+        foreach (var schedule in tourModel.Schedules)
+        {
+            if (schedule.Title.Length >= 256) return Error.Validation("Schedule title length must < 256");
+            if (schedule.Description.Length >= 1024) return Error.Validation("Schedule description length must < 1024");
+        }
+        
         //
         return Result.Success();
     }
