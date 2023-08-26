@@ -6,11 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using Service;
-using Service.Implementations;
 using Service.Interfaces;
 using Service.Models.Tour;
-using Shared.ResultExtensions;
 
 namespace Application.Pages.Manager;
 
