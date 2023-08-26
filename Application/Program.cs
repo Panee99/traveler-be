@@ -26,7 +26,7 @@ var builder = WebApplication.CreateBuilder(args);
         .AddSerilog();
 
     builder.Services.AddRazorPages();
-
+    
     // if (!builder.Environment.IsDevelopment())
     // {
     //     builder.Services.AddDataProtection()
@@ -38,7 +38,11 @@ var builder = WebApplication.CreateBuilder(args);
 
     builder.Services
         .AddCors()
-        .AddSession(options => options.IdleTimeout = TimeSpan.FromMinutes(60))
+        .AddSession(options =>
+        {
+            options.IdleTimeout = TimeSpan.FromMinutes(60);
+            options.Cookie.Path = "/manager";
+        })
         .AddSwagger()
         .AddEndpointsApiExplorer()
         .AddSwaggerGenNewtonsoftSupport()

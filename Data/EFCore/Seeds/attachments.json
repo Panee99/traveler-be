@@ -1,11 +1,5 @@
 ﻿[
   {
-    "Id": "b3e881e7-514e-406a-8cd7-08db43075b7b",
-    "Extension": ".jpg",
-    "ContentType": "image/jpeg",
-    "CreatedAt": "2023-04-22 14:58:28.230"
-  },
-  {
     "Id": "33e91f79-21a8-4284-8cd8-08db43075b7b",
     "Extension": ".jpg",
     "ContentType": "image/jpeg",
@@ -70,12 +64,6 @@
     "Extension": ".webp",
     "ContentType": "image/webp",
     "CreatedAt": "2023-05-31 19:16:08.917"
-  },
-  {
-    "Id": "6b259aed-2a91-40c7-29ef-08db6d5f699a",
-    "Extension": ".jpg",
-    "ContentType": "image/jpeg",
-    "CreatedAt": "2023-06-15 12:14:36.487"
   },
   {
     "Id": "0767bb98-bb08-450e-504e-08db75feb65c",
