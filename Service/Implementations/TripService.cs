@@ -5,7 +5,6 @@ using Mapster;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Service.Commons;
-using Service.Commons.Mapping;
 using Service.ImportHelpers;
 using Service.Interfaces;
 using Service.Models.TourGroup;
@@ -34,6 +33,9 @@ public class TripService : BaseService, ITripService
         {
             // Read data from Excel
             var tripModel = TripImportHelper.ReadTripArchive(tripZipData);
+            // Validate
+            var validateResult = ValidateTripData(tripModel);
+            if (!validateResult.IsSuccess) return validateResult.Error;
 
             // Check if tour id exist
             var tour = await UnitOfWork.Tours.Query()
@@ -61,7 +63,8 @@ public class TripService : BaseService, ITripService
                 StartTime = tripModel.StartTime,
                 EndTime = tripModel.EndTime,
                 TourId = tourId,
-                CreatedById = createdById
+                CreatedById = createdById,
+                CreatedAt = DateTimeHelper.VnNow()
             };
 
             UnitOfWork.Trips.Add(trip);
@@ -166,7 +169,7 @@ public class TripService : BaseService, ITripService
         }
     }
 
-    // If trip time overlap return true
+    // If user trip time overlap return true
     private async Task<bool> _checkIfUserAlreadyInAnotherTrip(
         Guid userId, UserRole role, DateTime tripStartDate, DateTime tripEndDate)
     {
@@ -210,11 +213,40 @@ public class TripService : BaseService, ITripService
                 trip.StartTime, trip.EndTime, tripStartDate, tripEndDate));
     }
 
-    public static bool CheckTripTimeOverlap(
+    private static bool CheckTripTimeOverlap(
         DateTime startDate1, DateTime endDate1,
         DateTime startDate2, DateTime endDate2)
     {
         return endDate1 >= startDate2 && endDate2 >= startDate1;
+    }
+
+    private static Result ValidateTripData(TripImportHelper.TripModel tripModel)
+    {
+        if (tripModel.StartTime > tripModel.EndTime)
+            return Error.Validation("StartTime must not greater than EndTime");
+
+        if (tripModel.StartTime.Date < DateTimeHelper.VnNow().Date)
+            return Error.Validation("StartTime must not less than Today");
+
+        foreach (var group in tripModel.TourGroups)
+        {
+            if (group.TourGuide.FirstName.Length >= 64 || group.TourGuide.LastName.Length >= 64)
+                return Error.Validation("First Name, Last Name length < 64");
+            if (group.TourGuide.Email.Length >= 128)
+                return Error.Validation("Email length < 128");
+
+            foreach (var traveler in group.Travelers)
+            {
+                if (traveler.FirstName.Length >= 64 || traveler.LastName.Length >= 64)
+                    return Error.Validation("First Name, Last Name length < 64");
+
+                if (traveler.Email.Length >= 128)
+                    return Error.Validation("Email length < 128");
+            }
+        }
+
+        //
+        return Result.Success();
     }
 
     // public async Task<Result<TripViewModel>> Update(Guid id, TripUpdateModel model)

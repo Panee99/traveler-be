@@ -37,6 +37,9 @@ public class TourService : BaseService, ITourService
         {
             // Read data
             var tourModel = TourImportHelper.ReadTourArchive(tourZipData);
+            // Validate
+            var validationResult = ValidateTourData(tourModel);
+            if (!validationResult.IsSuccess) return validationResult.Error;
 
             // Check existed tour title
             if (await UnitOfWork.Tours.Query()
@@ -132,13 +135,24 @@ public class TourService : BaseService, ITourService
         if (!result.IsSuccess) throw new Exception("Upload tour thumbnail failed");
     }
 
+    private static Result ValidateTourData(TourModel tourModel)
+    {
+        if (tourModel.Title.Length >= 512) return Error.Validation("Title length < 512");
+        if (tourModel.Departure.Length >= 256) return Error.Validation("Departure length < 256");
+        if (tourModel.Destination.Length >= 256) return Error.Validation("Destination length < 256");
+        if (tourModel.Duration.Length >= 128) return Error.Validation("Duration length < 128");
+
+        //
+        return Result.Success();
+    }
+    
     public async Task<Result> Delete(Guid id)
     {
         var entity = await UnitOfWork.Tours.Query()
             .Where(e => e.DeletedById == null)
             .Where(e => e.Id == id)
             .FirstOrDefaultAsync();
-        
+
         if (entity is null) return Error.NotFound();
 
         if (CurrentUser is null) return Error.Authentication();
