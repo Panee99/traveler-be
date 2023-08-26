@@ -35,7 +35,8 @@ public class DemoController : ApiController
         {
             TripId = tripId,
             Headline =
-                $"Flood Warning issued {effective.ToString("MMMM d 'at' h:mmtt")} until {expires.ToString("MMMM d 'at' h:mmtt")} by NWS",
+                $"Flood Warning issued {effective.ToString("MMMM d 'at' h:mmtt")} until " +
+                $"{expires.ToString("MMMM d 'at' h:mmtt")} by NWS",
             Areas = "Sing Buri, Ang Thong",
             Certainty = "Likely",
             Description =

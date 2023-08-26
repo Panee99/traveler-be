@@ -94,8 +94,8 @@
                         <tr>
                             @* <td>@trip.Id</td> *@
                             <td><b class="text-primary">@trip.Code</b></td>
-                            <td><b class="text-success">@DateOnly.FromDateTime(trip.StartTime)</b></td>
-                            <td><b class="text-success">@DateOnly.FromDateTime(trip.EndTime)</b></td>
+                            <td><b style="color: #9A3B3B">@DateOnly.FromDateTime(trip.StartTime)</b></td>
+                            <td><b style="color: #9A3B3B">@DateOnly.FromDateTime(trip.EndTime)</b></td>
                             <td>@trip.CreatedAt</td>
                             <td>
                                 <a href="/manager/trips/@trip.Id">
