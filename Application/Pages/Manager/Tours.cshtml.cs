@@ -50,7 +50,7 @@ public class ToursModel : PageModel
         // Check if file exist
         if (ReferenceEquals(ImportFile, null))
         {
-            ErrorMessage = "Choose a file";
+            // ErrorMessage = "Choose a file";
         }
         // Import data
         else
