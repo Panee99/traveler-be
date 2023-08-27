@@ -5,7 +5,6 @@
   },
   {
     "TravelerId": "ed3ebf19-3225-4f93-93a6-2ca03d43529b",
-    "TourGroupId": "d71fbdb2-5f38-4aca-830e-d8d7d55b33cd",
-    "DependantId": "e6618130-62e9-4053-4047-08db269c26be"
+    "TourGroupId": "d71fbdb2-5f38-4aca-830e-d8d7d55b33cd"
   }
 ]

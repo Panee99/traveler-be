@@ -13,12 +13,13 @@ public class TripsController : ApiController
 {
     private readonly ITripService _tripService;
     private static readonly byte[] TripSampleData;
+    private const string TripSampleFileName = "Trip-Sample.zip";
 
     static TripsController()
     {
         // Read sample data to memory
-        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "Controllers", "Statics", "Trip.zip");
-        if (!System.IO.File.Exists(filePath)) throw new Exception("'Trip.zip' file not found.");
+        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "Controllers", "Statics", TripSampleFileName);
+        if (!System.IO.File.Exists(filePath)) throw new Exception($"'{TripSampleFileName}' file not found.");
         TripSampleData = System.IO.File.ReadAllBytes(filePath);
     }
 
@@ -37,7 +38,7 @@ public class TripsController : ApiController
         return File(
             TripSampleData,
             "application/zip",
-            "Trip.zip"
+            TripSampleFileName
         );
     }
 

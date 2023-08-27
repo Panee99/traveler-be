@@ -149,11 +149,6 @@ public class TourGroupService : BaseService, ITourGroupService
         {
             var member = traveler.Adapt<UserViewModel>();
             member.AvatarUrl = _cloudStorageService.GetMediaLink(traveler.Avatar?.FileName);
-            member.DependantId = UnitOfWork.TravelersInTourGroups.Query()
-                .Where(e => e.TravelerId == member.Id &&
-                            e.TourGroupId == tourGroupId)
-                .Select(e => e.DependantId)
-                .FirstOrDefaultAsync().Result;
 
             return member;
         }).ToList();

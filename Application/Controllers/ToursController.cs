@@ -13,14 +13,14 @@ namespace Application.Controllers;
 public class ToursController : ApiController
 {
     private readonly ITourService _tourService;
-
     private static readonly byte[] TourSampleData;
+    private const string TourSampleFileName = "Tour-Sample.zip";
 
     static ToursController()
     {
         // Read sample data to memory
-        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "Controllers", "Statics", "Tour.zip");
-        if (!System.IO.File.Exists(filePath)) throw new Exception("'Tour.xlsx' file not found.");
+        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "Controllers", "Statics", TourSampleFileName);
+        if (!System.IO.File.Exists(filePath)) throw new Exception($"'{TourSampleFileName}' file not found.");
         TourSampleData = System.IO.File.ReadAllBytes(filePath);
     }
 
@@ -38,7 +38,7 @@ public class ToursController : ApiController
         return File(
             TourSampleData,
             "application/zip",
-            "Tour.zip"
+            TourSampleFileName
         );
     }
 

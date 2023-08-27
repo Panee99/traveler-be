@@ -9,8 +9,4 @@ public class TravelerInTourGroup
     public Guid TourGroupId { get; set; }
 
     public TourGroup TourGroup { get; set; } = null!;
-
-    public Guid? DependantId { get; set; }
-
-    public Traveler? Dependant { get; set; }
 }

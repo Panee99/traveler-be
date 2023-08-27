@@ -12,6 +12,5 @@ public class UserViewModel
     public Gender? Gender { get; set; }
     public UserRole Role { get; set; }
     public UserStatus Status { get; set; }
-    public Guid? DependantId { get; set; }
     public string? AvatarUrl { get; set; }
 }

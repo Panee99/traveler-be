@@ -54,6 +54,12 @@
         <None Update="Workers\Notification\Templates\weather-alert.html">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
+        <None Update="Controllers\Statics\Tour-Sample.zip">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Controllers\Statics\Trip-Sample.zip">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
     </ItemGroup>
 
     <ItemGroup>
